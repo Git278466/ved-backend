@@ -1,0 +1,22 @@
+[2026-05-12T13:10:42.169Z] [ERROR] Unhandled Promise Rejection: Error: EBUSY: resource busy or locked, unlink 'C:\Users\swaya\Downloads\vedwith\backend\.wwebjs_auth\session\CrashpadMetrics-active.pma'
+[2026-05-13T06:12:11.461Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/workshops/live","method":"GET"}
+[2026-05-13T06:12:27.446Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/admins/login","method":"OPTIONS"}
+[2026-05-13T06:12:27.476Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/auth/login","method":"OPTIONS"}
+[2026-05-13T06:12:29.624Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/admins/login","method":"OPTIONS"}
+[2026-05-13T06:12:29.631Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/auth/login","method":"OPTIONS"}
+[2026-05-13T06:13:23.654Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/admins/login","method":"OPTIONS"}
+[2026-05-13T06:13:23.663Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/auth/login","method":"OPTIONS"}
+[2026-05-13T06:18:53.638Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/workshops/live","method":"GET"}
+[2026-05-13T06:18:56.389Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/workshops/live","method":"GET"}
+[2026-05-13T06:19:06.938Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/admins/login","method":"OPTIONS"}
+[2026-05-13T06:19:06.946Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/auth/login","method":"OPTIONS"}
+[2026-05-13T06:19:09.756Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/admins/login","method":"OPTIONS"}
+[2026-05-13T06:19:09.767Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/auth/login","method":"OPTIONS"}
+[2026-05-13T06:19:11.692Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/admins/login","method":"OPTIONS"}
+[2026-05-13T06:19:11.703Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/auth/login","method":"OPTIONS"}
+[2026-05-13T06:19:13.555Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/admins/login","method":"OPTIONS"}
+[2026-05-13T06:19:13.564Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/auth/login","method":"OPTIONS"}
+[2026-05-13T06:19:41.447Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/workshops/live","method":"GET"}
+[2026-05-13T06:19:43.820Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/workshops/live","method":"GET"}
+[2026-05-13T06:19:55.838Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/admins/login","method":"OPTIONS"}
+[2026-05-13T06:19:55.861Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/auth/login","method":"OPTIONS"}
