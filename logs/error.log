@@ -20,3 +20,13 @@
 [2026-05-13T06:19:43.820Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/workshops/live","method":"GET"}
 [2026-05-13T06:19:55.838Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/admins/login","method":"OPTIONS"}
 [2026-05-13T06:19:55.861Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/auth/login","method":"OPTIONS"}
+[2026-05-15T05:53:04.734Z] [ERROR] Uncaught Exception: listen EADDRINUSE: address already in use 0.0.0.0:5000
+[2026-05-15T05:53:24.356Z] [ERROR] Uncaught Exception: listen EADDRINUSE: address already in use 0.0.0.0:5000
+[2026-05-15T06:58:28.217Z] [ERROR] Uncaught Exception: listen EADDRINUSE: address already in use 0.0.0.0:5000
+[2026-05-15T08:51:49.045Z] [WARN] MongoDB disconnected — attempting reconnect...
+[2026-05-21T11:08:05.851Z] [ERROR] Uncaught Exception: listen EADDRINUSE: address already in use 0.0.0.0:5000
+[2026-05-21T13:08:01.858Z] [WARN] MongoDB disconnected — attempting reconnect...
+[2026-05-21T13:08:01.867Z] [ERROR] MongoDB connection error: Server selection timed out after 10000 ms
+[2026-05-21T13:08:01.868Z] [WARN] Retrying MongoDB connection (1/5) in 5s...
+[2026-05-21T13:08:01.872Z] [ERROR] MongoDB error: Server selection timed out after 10000 ms
+[2026-05-22T08:44:40.410Z] [ERROR] Uncaught Exception: listen EADDRINUSE: address already in use 0.0.0.0:5000

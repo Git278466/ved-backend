@@ -10,6 +10,7 @@ router.use(protectAdmin);
 router.use(hasPermission('dashboard.view'));
 
 router.get('/stats',           scopeToOwn, ctrl.getStats);
-router.get('/recent-activity', ctrl.getRecentActivity);
+router.get('/admin-activity',             ctrl.getAdminActivity);
+router.get('/recent-activity',            ctrl.getRecentActivity);
 
 module.exports = router;

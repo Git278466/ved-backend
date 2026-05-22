@@ -8,18 +8,29 @@ exports.getStatus = (req, res) => {
 
 exports.getQR = (req, res) => {
   const qr = wa.getQR();
-  if (!qr) return res.json({ success: false, message: 'No QR available. Check status.' });
+  if (!qr) return res.json({ success: false, message: 'No QR available. Trigger Connect first.' });
   res.json({ success: true, qr });
 };
 
+exports.getPhoneInfo = (req, res) => {
+  res.json({ success: true, data: wa.getPhoneInfo() });
+};
+
 exports.connect = (req, res) => {
-  wa.initWhatsApp();
-  res.json({ success: true, message: 'WhatsApp initialization started. Fetch /qr for QR code.' });
+  // alwaysFreshQR=true when user explicitly clicks Connect — avoids stuck-session
+  const fresh = req.query.fresh === '1' || req.body?.fresh === true;
+  wa.initWhatsApp(fresh);
+  res.json({ success: true, message: 'WhatsApp initialization started.' });
 };
 
 exports.reconnect = async (req, res) => {
   await wa.reconnect();
-  res.json({ success: true, message: 'Session cleared. Reconnecting WhatsApp...' });
+  res.json({ success: true, message: 'Session cleared. Reconnecting…' });
+};
+
+exports.forceReinit = async (req, res) => {
+  await wa.forceReinit();
+  res.json({ success: true, message: 'Reinitializing without clearing session…' });
 };
 
 exports.clearSession = async (req, res) => {
@@ -36,7 +47,9 @@ exports.disconnect = async (req, res) => {
 exports.sendTest = async (req, res) => {
   try {
     const { mobile, message } = req.body;
-    if (!mobile || !message) return res.status(400).json({ success: false, message: 'mobile and message required.' });
+    if (!mobile || !message) {
+      return res.status(400).json({ success: false, message: 'mobile and message are required.' });
+    }
     const result = await wa.sendMessage(mobile, message);
     res.json({ success: true, data: result });
   } catch (err) {

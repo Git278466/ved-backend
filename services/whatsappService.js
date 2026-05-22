@@ -5,172 +5,274 @@ const qrcode = require('qrcode');
 const path   = require('path');
 const fs     = require('fs');
 
-let _client    = null;
-let _qrDataUrl = null;
-let _status    = 'disconnected';
-let _statusMsg = 'Not connected';
+let _client      = null;
+let _qrDataUrl   = null;
+let _status      = 'disconnected';
+let _statusMsg   = 'Not connected';
+let _phoneInfo   = null;
+let _watchdog    = null;   // general init watchdog
+let _stuckTimer  = null;   // fires if loading_screen 100% but no QR/auth
 
 const AUTH_PATH  = path.join(__dirname, '..', '.wwebjs_auth');
 const CACHE_PATH = path.join(__dirname, '..', '.wwebjs_cache');
 
-/* ── Find system Chrome / Edge ─────────────────────────────────── */
+/* ── Find Chrome / Chromium (Windows + Linux VPS) ───────────── */
 function findBrowser() {
   const candidates = [
+    // Windows
     'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
     'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
     'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
     'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+    // Linux VPS (Ubuntu/Debian/CentOS)
+    '/usr/bin/google-chrome',
+    '/usr/bin/google-chrome-stable',
+    '/usr/bin/chromium-browser',
+    '/usr/bin/chromium',
+    '/snap/bin/chromium',
   ];
   for (const p of candidates) {
     if (fs.existsSync(p)) {
-      console.log('[WhatsApp] Using browser:', p);
+      console.log('[WA] Browser:', p);
       return p;
     }
   }
-  console.warn('[WhatsApp] No system browser found — using bundled Chromium');
+  console.warn('[WA] No browser found — WhatsApp will be unavailable');
   return null;
 }
 
-/* ── Clear corrupted session ───────────────────────────────────── */
+/* ── Clear session files ────────────────────────────────────── */
 function clearSession() {
+  _clearTimers();
   try {
     if (fs.existsSync(AUTH_PATH))  fs.rmSync(AUTH_PATH,  { recursive: true, force: true });
     if (fs.existsSync(CACHE_PATH)) fs.rmSync(CACHE_PATH, { recursive: true, force: true });
-    console.log('[WhatsApp] Session cleared.');
+    console.log('[WA] Session cleared');
   } catch (e) {
-    console.error('[WhatsApp] Could not clear session:', e.message);
+    console.error('[WA] Clear error:', e.message);
   }
 }
 
-/* ── Puppeteer args ─────────────────────────────────────────────── */
-const PUPPETEER_ARGS = [
-  '--no-sandbox',
-  '--disable-setuid-sandbox',
-  '--disable-dev-shm-usage',
-  '--disable-accelerated-2d-canvas',
-  '--no-first-run',
-  '--no-zygote',
-  '--disable-gpu',
-  '--disable-features=site-per-process',
+/* ── Is session old? (> 12 hours = likely expired) ─────────── */
+function _isSessionStale() {
+  const sessionDir = path.join(AUTH_PATH, 'session');
+  if (!fs.existsSync(sessionDir)) return false;
+  try {
+    const stat = fs.statSync(sessionDir);
+    const ageHours = (Date.now() - stat.mtimeMs) / 3600000;
+    return ageHours > 12;
+  } catch { return false; }
+}
+
+function _clearTimers() {
+  if (_watchdog)   { clearTimeout(_watchdog);   _watchdog   = null; }
+  if (_stuckTimer) { clearTimeout(_stuckTimer); _stuckTimer = null; }
+}
+
+function _set(s, msg) {
+  _status = s; _statusMsg = msg;
+  console.log(`[WA] ${s}: ${msg}`);
+}
+
+/* ── Puppeteer args ─────────────────────────────────────────── */
+const PARGS = [
+  '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage',
+  '--disable-gpu', '--no-first-run', '--no-zygote',
+  '--disable-extensions', '--disable-background-networking',
+  '--disable-background-timer-throttling', '--disable-renderer-backgrounding',
+  '--disable-default-apps', '--disable-sync', '--disable-translate',
+  '--disable-features=TranslateUI,BlinkGenPropertyTrees,site-per-process',
   '--disable-site-isolation-trials',
   '--disable-blink-features=AutomationControlled',
+  '--window-size=1280,800', '--ignore-certificate-errors',
+  '--allow-running-insecure-content',
   '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
 ];
 
-/* ── Init ───────────────────────────────────────────────────────── */
-function initWhatsApp() {
-  if (_client) return;
+/* ── Main init ──────────────────────────────────────────────── */
+function initWhatsApp(alwaysFreshQR = false) {
+  if (_client && !['failed','disconnected'].includes(_status)) {
+    console.log('[WA] Already running — skip');
+    return;
+  }
 
-  _status    = 'initializing';
-  _statusMsg = 'Starting…';
+  // Destroy stale client
+  if (_client) {
+    try { _client.destroy().catch(() => {}); } catch (_) {}
+    _client = null;
+  }
+  _clearTimers();
 
-  const executablePath = findBrowser();
+  // If session is stale OR caller wants fresh QR, wipe it first
+  if (alwaysFreshQR || _isSessionStale()) {
+    console.log('[WA] Stale/forced — clearing session before connect');
+    clearSession();
+  }
 
-  const puppeteerConfig = {
-    headless:        true,
-    handleSIGINT:    false,
-    handleSIGTERM:   false,
-    args:            PUPPETEER_ARGS,
-    defaultViewport: null,
-  };
-  if (executablePath) puppeteerConfig.executablePath = executablePath;
+  _set('initializing', 'Opening Chrome… (10–20 sec)');
+  _qrDataUrl = null;
+  _phoneInfo = null;
+
+  const execPath = findBrowser();
 
   _client = new Client({
     authStrategy: new LocalAuth({ dataPath: AUTH_PATH }),
-    puppeteer: puppeteerConfig,
+    restartOnAuthFail: true,          // auto-retry if session auth fails
+    puppeteer: {
+      headless:     true,
+      handleSIGINT: false, handleSIGTERM: false, handleSIGHUP: false,
+      args:            PARGS,
+      defaultViewport: null,
+      timeout:         30000,
+      ...(execPath ? { executablePath: execPath } : {}),
+    },
+  });
+
+  /* ── 90-sec global watchdog ──────────────────────────────── */
+  _watchdog = setTimeout(() => {
+    if (['initializing','connecting','qr_waiting'].includes(_status)) {
+      console.error('[WA] Global timeout — killing');
+      _set('failed', 'Timeout. Click "Clear & Reconnect".');
+      _destroyClient();
+    }
+  }, 90_000);
+
+  /* ─── EVENTS ─────────────────────────────────────────────── */
+
+  _client.on('loading_screen', (pct) => {
+    _set('connecting', `Loading WhatsApp Web… ${pct}%`);
+
+    // When it hits 100% but no QR/auth in 25 sec → old session stuck → auto-clear & reinit
+    if (Number(pct) >= 100) {
+      if (_stuckTimer) clearTimeout(_stuckTimer);
+      _stuckTimer = setTimeout(() => {
+        if (_status === 'connecting') {
+          console.warn('[WA] Stuck at 100% — clearing stale session, getting fresh QR');
+          _destroyClient();
+          clearSession();
+          setTimeout(() => initWhatsApp(true), 1500);
+        }
+      }, 25_000);
+    }
   });
 
   _client.on('qr', async (qr) => {
-    _status    = 'qr_waiting';
-    _statusMsg = 'Scan QR with WhatsApp';
-    console.log('[WhatsApp] QR ready — waiting for scan');
-    try { _qrDataUrl = await qrcode.toDataURL(qr); }
-    catch (_) { _qrDataUrl = null; }
-  });
+    // QR appeared — cancel stuck timer, reset watchdog to 60s for scanning
+    if (_stuckTimer) { clearTimeout(_stuckTimer); _stuckTimer = null; }
+    if (_watchdog)   { clearTimeout(_watchdog);   _watchdog   = null; }
 
-  _client.on('loading_screen', (pct) => {
-    _status    = 'connecting';
-    _statusMsg = `Loading ${pct}%…`;
+    _set('qr_waiting', 'Scan this QR with WhatsApp now');
+    console.log('[WA] QR ready to scan');
+
+    try { _qrDataUrl = await qrcode.toDataURL(qr, { scale: 6 }); }
+    catch (e) { console.error('[WA] QR error:', e.message); }
+
+    // QR expires in 30 sec — set a new one automatically (wwebjs fires qr event again)
+    _watchdog = setTimeout(() => {
+      if (_status === 'qr_waiting') {
+        _set('qr_waiting', 'QR expired — new QR loading…');
+        _qrDataUrl = null;
+      }
+    }, 30_000);
   });
 
   _client.on('authenticated', () => {
-    _status    = 'connecting';
-    _statusMsg = 'Authenticated — loading chats…';
+    if (_stuckTimer) { clearTimeout(_stuckTimer); _stuckTimer = null; }
+    if (_watchdog)   { clearTimeout(_watchdog);   _watchdog   = null; }
+    _set('connecting', 'Authenticated — finalising…');
     _qrDataUrl = null;
   });
 
-  _client.on('ready', () => {
-    _status    = 'ready';
-    _statusMsg = 'Connected ✅';
+  _client.on('ready', async () => {
+    _clearTimers();
     _qrDataUrl = null;
-    console.log('[WhatsApp] Ready');
+    try {
+      const info = _client?.info;
+      _phoneInfo = { name: info?.pushname || '', number: info?.wid?.user || '' };
+      _set('ready', `Connected ✅  ${_phoneInfo.name || _phoneInfo.number}`);
+    } catch (_) { _set('ready', 'Connected ✅'); }
+    console.log('[WA] Ready', _phoneInfo);
   });
 
-  _client.on('auth_failure', () => {
-    _status    = 'failed';
-    _statusMsg = 'Auth failed — clear session and try again';
-    _client    = null;
+  _client.on('auth_failure', (msg) => {
+    // Session expired → auto-clear and reinit with fresh QR
+    console.warn('[WA] Auth failure:', msg, '— auto-clearing and getting fresh QR');
+    _clearTimers();
+    _destroyClient();
     clearSession();
+    _set('initializing', 'Session expired — getting fresh QR…');
+    setTimeout(() => initWhatsApp(true), 2000);
   });
 
   _client.on('disconnected', (reason) => {
-    _status    = 'disconnected';
-    _statusMsg = `Disconnected (${reason})`;
-    _client    = null;
+    _clearTimers();
+    _set('disconnected', `Disconnected (${reason})`);
+    _client = null; _qrDataUrl = null; _phoneInfo = null;
   });
 
-  // Catch init errors — auto-clear session on frame-detach errors
   _client.initialize().catch(err => {
+    _clearTimers();
     const msg = err?.message || '';
-    console.error('[WhatsApp] Init error:', msg);
-    _client = null;
+    console.error('[WA] Init error:', msg);
 
-    if (msg.includes('frame was detached') ||
-        msg.includes('Target closed')       ||
-        msg.includes('Session closed')      ||
-        msg.includes('Navigation failed')) {
+    const isCrash = msg.includes('frame was detached') || msg.includes('Target closed') ||
+                    msg.includes('Session closed')      || msg.includes('Navigation failed') ||
+                    msg.includes('net::ERR')            || msg.includes('Protocol error');
+    if (isCrash) {
       clearSession();
-      _status    = 'failed';
-      _statusMsg = 'Session cleared. Click Connect to try again.';
+      _set('failed', 'Browser crashed. Click "Clear & Reconnect".');
     } else {
-      _status    = 'failed';
-      _statusMsg = msg || 'Initialization failed';
+      _set('failed', (msg || 'Init failed').substring(0, 120));
     }
+    _client = null;
   });
 }
 
-/* ── Helpers ────────────────────────────────────────────────────── */
-function getStatus() {
-  return { status: _status, message: _statusMsg, hasQr: !!_qrDataUrl };
+/* ── Destroy client safely ──────────────────────────────────── */
+function _destroyClient() {
+  if (_client) {
+    try { _client.destroy().catch(() => {}); } catch (_) {}
+    _client = null;
+  }
 }
-function getQR()    { return _qrDataUrl; }
-function isReady()  { return _status === 'ready' && !!_client; }
 
-/* ── Send message ───────────────────────────────────────────────── */
+/* ── Public API ─────────────────────────────────────────────── */
+function getStatus()    { return { status: _status, message: _statusMsg, hasQr: !!_qrDataUrl, phone: _phoneInfo }; }
+function getQR()        { return _qrDataUrl; }
+function isReady()      { return _status === 'ready' && !!_client; }
+function getPhoneInfo() { return _phoneInfo; }
+
 async function sendMessage(to, text) {
   if (!isReady()) throw new Error('WhatsApp not connected. Please scan QR first.');
   let num = String(to).replace(/\D/g, '');
   if (num.length === 10) num = '91' + num;
-  await _client.sendMessage(num + '@c.us', text);
-  return { success: true };
+  if (num.length < 10)   throw new Error(`Invalid number: ${to}`);
+  const sent = await _client.sendMessage(num + '@c.us', text);
+  return { success: true, messageId: sent?.id?.id };
 }
 
-/* ── Disconnect ─────────────────────────────────────────────────── */
 async function disconnect() {
-  if (_client) {
-    try { await _client.destroy(); } catch (_) {}
-    _client = null;
-  }
-  _status    = 'disconnected';
-  _statusMsg = 'Disconnected';
-  _qrDataUrl = null;
+  _clearTimers();
+  _destroyClient();
+  _status = 'disconnected'; _statusMsg = 'Disconnected';
+  _qrDataUrl = null; _phoneInfo = null;
 }
 
-/* ── Reconnect (clears session for clean restart) ───────────────── */
 async function reconnect() {
   await disconnect();
   clearSession();
-  setTimeout(initWhatsApp, 1500);
+  await new Promise(r => setTimeout(r, 1500));
+  initWhatsApp(true);
 }
 
-module.exports = { initWhatsApp, getStatus, getQR, isReady, sendMessage, disconnect, reconnect, clearSession };
+async function forceReinit() {
+  await disconnect();
+  await new Promise(r => setTimeout(r, 1000));
+  initWhatsApp(false);
+}
+
+module.exports = {
+  initWhatsApp, forceReinit,
+  getStatus, getQR, isReady, getPhoneInfo,
+  sendMessage, disconnect, reconnect, clearSession,
+};

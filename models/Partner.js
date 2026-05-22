@@ -1,6 +1,7 @@
 'use strict';
 
-const mongoose = require('mongoose');
+const mongoose     = require('mongoose');
+const generateCode = require('../utils/generateCode');
 
 const partnerSchema = new mongoose.Schema(
   {
@@ -21,6 +22,9 @@ const partnerSchema = new mongoose.Schema(
     city:    { type: String, trim: true },
     state:   { type: String, trim: true },
     country: { type: String, trim: true, default: 'India' },
+
+    // ── Unique code ──────────────────────────────────────────────
+    code: { type: String, unique: true, sparse: true, trim: true, index: true },
 
     // ── Classification ───────────────────────────────────────────
     partnerType: {
@@ -52,6 +56,18 @@ const partnerSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// ── Auto-generate unique code using organization name ────────────
+// Format: first 4 letters of organization name + random 4-digit number
+// e.g. "Youth For India NGO" → YOUT-3842
+partnerSchema.pre('save', async function (next) {
+  if (this.isNew && !this.code) {
+    const { namePrefix } = require('../utils/generateCode');
+    const prefix = namePrefix(this.organizationName || 'PART');
+    this.code = await generateCode(this.constructor, prefix);
+  }
+  next();
+});
 
 // ── Compound indexes ──────────────────────────────────────────────
 partnerSchema.index({ status: 1, partnerType: 1 });

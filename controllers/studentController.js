@@ -156,8 +156,14 @@ exports.createStudent = async (req, res) => {
 // ── PUT /api/students/:id ─────────────────────────────────────
 exports.updateStudent = async (req, res) => {
   try {
+    const updates = { ...req.body };
+    // Track who changed the status
+    if (updates.status) {
+      updates.statusUpdatedAt = new Date();
+      if (req.admin?._id) updates.statusUpdatedBy = req.admin._id;
+    }
     const student = await Student.findByIdAndUpdate(
-      req.params.id, req.body, { new: true, runValidators: true }
+      req.params.id, updates, { new: true, runValidators: true }
     );
     if (!student) return res.status(404).json({ success: false, message: 'Student not found.' });
     res.json({ success: true, message: 'Student updated.', data: student });

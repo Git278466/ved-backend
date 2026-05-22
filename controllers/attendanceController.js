@@ -2,6 +2,7 @@
 
 const Attendance = require('../models/Attendance');
 const Student    = require('../models/Student');
+// Student already imported — used for scoping attendance by owner
 
 const syncStudentCounts = async (studentId) => {
   const [presentCount, totalAttendance] = await Promise.all([
@@ -21,6 +22,20 @@ exports.getAttendance = async (req, res) => {
     if (date) {
       const d = new Date(date);
       filter.date = { $gte: d, $lt: new Date(d.getTime() + 86400000) };
+    }
+
+    // Scope: Associate Partner / Institution see only attendance for their own students
+    if (req.scopedAdminId) {
+      const myStudentIds = await Student
+        .find({ submittedBy: req.scopedAdminId }, '_id')
+        .lean()
+        .then(s => s.map(x => x._id));
+      filter.student = student
+        ? (myStudentIds.some(id => id.toString() === student) ? student : null)
+        : { $in: myStudentIds };
+      if (filter.student === null) {
+        return res.json({ success: true, total: 0, data: [] });
+      }
     }
 
     const skip  = (Number(page) - 1) * Number(limit);

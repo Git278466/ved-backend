@@ -55,27 +55,35 @@ app.use(
         return callback(null, true);
       }
 
-      const allowedOrigins = [
+      // Production origins — add your Hostinger domain here
+      const productionOrigins = [
+        "https://vededufoundation.in",
+        "https://www.vededufoundation.in",
+        "http://vededufoundation.in",
+        "http://www.vededufoundation.in",
+      ];
+
+      // Dev origins — only allowed when NODE_ENV !== production
+      const devOrigins = [
         "http://127.0.0.1:5500",
         "http://localhost:5500",
         "http://127.0.0.1:5501",
         "http://localhost:5501",
-        "http://127.0.0.1:3000",
         "http://localhost:3000",
-        "http://127.0.0.1:8080",
-        "http://localhost:8080",
-        "https://vededufoundation.in",
-        "https://www.vededufoundation.in",
-        "http://vededufoundation.in",
-        "http://www.vededufoundation.in"
+        "http://127.0.0.1:3000",
       ];
+
+      const allowedOrigins = process.env.NODE_ENV === 'production'
+        ? productionOrigins
+        : [...productionOrigins, ...devOrigins];
 
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
 
-      // Allow any localhost/127.0.0.1 port during development
-      if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+      // In dev mode allow any localhost port
+      if (process.env.NODE_ENV !== 'production' &&
+          /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
         return callback(null, true);
       }
 
@@ -184,6 +192,10 @@ servePage("/counselling-cert",        "counselling-cert.html");
 servePage("/counselling-cert.html",   "counselling-cert.html");
 servePage("/workshops",               "workshops.html");
 servePage("/workshops.html",          "workshops.html");
+servePage("/mobilization-form",       "mobilization-form.html");
+servePage("/mobilization-form.html",  "mobilization-form.html");
+servePage("/institution-dashboard",       "institution-dashboard.html");
+servePage("/institution-dashboard.html",  "institution-dashboard.html");
 
 /* =========================
    HEALTH ROUTES
@@ -217,22 +229,17 @@ app.get("/api/health", (req, res) => {
 /* =========================
    ROUTE IMPORTS SAFE
 ========================= */
-function safeRoute(path) {
+function safeRoute(routePath) {
   try {
-    return require(path);
+    return require(routePath);
   } catch (err) {
-    console.error(`\n❌ ROUTE LOAD ERROR in ${path}:\n   ${err.message}\n   ${err.stack?.split('\n')[1]||''}\n`);
+    console.error(`\n❌ ROUTE LOAD ERROR in ${routePath}:\n   ${err.message}\n   ${err.stack?.split('\n')[1]||''}\n`);
 
+    // Fallback: handle ALL methods & paths so nothing hits the 404 handler
     const router = express.Router();
-
-    router.get("/", (req, res) => {
-      res.json({
-        success: true,
-        message: `${path} route placeholder working`,
-        data: []
-      });
+    router.all('*', (req, res) => {
+      res.json({ success: true, message: `${routePath} route unavailable`, data: [], total: 0 });
     });
-
     return router;
   }
 }
@@ -250,11 +257,74 @@ const reportRoutes = safeRoute("./routes/reportRoutes");
 const filterPresetRoutes = safeRoute("./routes/filterPresetRoutes");
 const leadRoutes         = safeRoute("./routes/leadRoutes");
 const campaignRoutes     = safeRoute("./routes/campaignRoutes");
-const whatsappRoutes     = safeRoute("./routes/whatsappRoutes");
 const emailRoutes        = safeRoute("./routes/emailRoutes");
 const referrerRoutes             = safeRoute("./routes/referrerRoutes");
 const counsellingResponseRoutes  = safeRoute("./routes/counsellingResponseRoutes");
 const workshopRoutes             = safeRoute("./routes/workshopRoutes");
+const mobilizationRoutes         = safeRoute("./routes/mobilizationRoutes");
+const institutionLeadRoutes      = safeRoute("./routes/institutionLeadRoutes");
+
+/* =========================
+   ADMIN UTILITIES
+========================= */
+const { protectAdmin } = require('./middleware/authMiddleware');
+const { isSuperAdmin }  = require('./middleware/roleMiddleware');
+
+app.post('/api/admin-utils/backfill-codes', protectAdmin, isSuperAdmin, async (req, res) => {
+  try {
+    const generateCode = require('./utils/generateCode');
+    const Admin        = require('./models/Admin');
+    const Role         = require('./models/Role');
+    const Institution  = require('./models/Institution');
+    const Partner      = require('./models/Partner');
+    let total = 0;
+
+    // Remove code from Super Admins
+    const superAdminRole = await Role.findOne({ name: 'Super Admin', isSystem: true }).lean();
+    if (superAdminRole) {
+      const r = await Admin.updateMany(
+        { role: superAdminRole._id, code: { $exists: true, $ne: null } },
+        { $unset: { code: '' } }
+      );
+      total += r.modifiedCount;
+    }
+
+    const { namePrefix } = generateCode;
+
+    // Admins: first 4 letters of firstName + random digits
+    const missingAdmins = await Admin.find({
+      $or: [{ code: null }, { code: { $exists: false } }],
+      ...(superAdminRole ? { role: { $ne: superAdminRole._id } } : {}),
+    }).populate('role', 'name isSystem');
+
+    for (const admin of missingAdmins) {
+      if (admin.role?.isSystem) continue;
+      const code = await generateCode(Admin, namePrefix(admin.firstName || admin.email || 'ADMI'));
+      await Admin.updateOne({ _id: admin._id }, { code });
+      total++;
+    }
+
+    // Institutions: first 4 letters of institution name
+    const missingInst = await Institution.find({ $or: [{ code: null }, { code: { $exists: false } }] });
+    for (const doc of missingInst) {
+      const code = await generateCode(Institution, namePrefix(doc.name || 'INST'));
+      await Institution.updateOne({ _id: doc._id }, { code });
+      total++;
+    }
+
+    // Partners: first 4 letters of organization name
+    const missingPart = await Partner.find({ $or: [{ code: null }, { code: { $exists: false } }] });
+    for (const doc of missingPart) {
+      const code = await generateCode(Partner, namePrefix(doc.organizationName || 'PART'));
+      await Partner.updateOne({ _id: doc._id }, { code });
+      total++;
+    }
+
+    res.json({ success: true, summary: `${total} record(s) updated`, total });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 
 /* =========================
    API ROUTES
@@ -274,11 +344,113 @@ app.use("/api/reports", reportRoutes);
 app.use("/api/filter-presets", filterPresetRoutes);
 app.use("/api/leads",         leadRoutes);
 app.use("/api/campaigns",     campaignRoutes);
-app.use("/api/whatsapp",      whatsappRoutes);
 app.use("/api/email",         emailRoutes);
 app.use("/api/referrers",              referrerRoutes);
 app.use("/api/counselling-responses",  counsellingResponseRoutes);
 app.use("/api/workshops",              workshopRoutes);
+// ── Mobilization — inline handler (guaranteed to work) ───────
+(function () {
+  let Mob;
+  try { Mob = require("./models/Mobilization"); } catch (_) {}
+
+  // POST /api/mobilization  — public
+  app.post("/api/mobilization", async (req, res) => {
+    if (!Mob) return res.status(503).json({ success: false, message: "Mobilization model unavailable." });
+    try {
+      if (!req.body.fullName) return res.status(400).json({ success: false, message: "Full name is required." });
+      const doc = await Mob.create(req.body);
+      res.status(201).json({ success: true, message: "Registration successful! We will get in touch soon.", data: doc });
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+  });
+
+  // All routes below — admin auth required
+  const mobAuth = async (req, res, next) => {
+    try {
+      const h = req.headers.authorization || "";
+      if (!h.startsWith("Bearer ")) return res.status(401).json({ success: false, message: "Not authorised." });
+      const decoded = jwt.verify(h.split(" ")[1], process.env.JWT_SECRET);
+      if (decoded.type === "student") return res.status(403).json({ success: false, message: "Admins only." });
+      const Admin = require("./models/Admin");
+      const admin = await Admin.findById(decoded.id).select("-password").lean();
+      if (!admin || admin.status !== "active") return res.status(401).json({ success: false, message: "Admin not found." });
+      req.admin = admin;
+      next();
+    } catch (e) { res.status(401).json({ success: false, message: "Invalid or expired token." }); }
+  };
+
+  // GET /api/mobilization  — list
+  app.get("/api/mobilization", mobAuth, async (req, res) => {
+    if (!Mob) return res.status(503).json({ success: false, message: "Mobilization model unavailable.", data: [], total: 0 });
+    try {
+      const { search, status, gender, skillCourse, educationDest, dateFrom, dateTo, page = 1, limit = 25 } = req.query;
+      const filter = {};
+      if (status)        filter.status      = status;
+      if (gender)        filter.gender      = gender;
+      if (skillCourse)   filter.skillCourse = new RegExp(skillCourse, "i");
+      if (educationDest) filter.educationDest = educationDest;
+      if (dateFrom || dateTo) {
+        filter.registrationDate = {};
+        if (dateFrom) filter.registrationDate.$gte = new Date(dateFrom);
+        if (dateTo)   filter.registrationDate.$lte = new Date(new Date(dateTo).setHours(23, 59, 59, 999));
+      }
+      if (search) {
+        filter.$or = [
+          { fullName:     new RegExp(search, "i") },
+          { mobile:       new RegExp(search, "i") },
+          { guardianName: new RegExp(search, "i") },
+          { skillCourse:  new RegExp(search, "i") },
+        ];
+      }
+      const pageNum  = Math.max(1, Number(page));
+      const limitNum = Math.min(100, Math.max(1, Number(limit)));
+      const skip     = (pageNum - 1) * limitNum;
+      const [total, data] = await Promise.all([
+        Mob.countDocuments(filter),
+        Mob.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum),
+      ]);
+      res.json({ success: true, total, page: pageNum, limit: limitNum, pages: Math.ceil(total / limitNum), data });
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+  });
+
+  // GET /api/mobilization/stats
+  app.get("/api/mobilization/stats", mobAuth, async (req, res) => {
+    if (!Mob) return res.status(503).json({ success: false, message: "Unavailable.", data: {} });
+    try {
+      const [total, newC, contacted, enrolled] = await Promise.all([
+        Mob.countDocuments(),
+        Mob.countDocuments({ status: "new" }),
+        Mob.countDocuments({ status: "contacted" }),
+        Mob.countDocuments({ status: "enrolled" }),
+      ]);
+      res.json({ success: true, data: { total, newCount: newC, contactedCount: contacted, enrolledCount: enrolled } });
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+  });
+
+  // PATCH /api/mobilization/:id
+  app.patch("/api/mobilization/:id", mobAuth, async (req, res) => {
+    if (!Mob) return res.status(503).json({ success: false, message: "Unavailable." });
+    try {
+      const doc = await Mob.findByIdAndUpdate(req.params.id, req.body, { new: true });
+      if (!doc) return res.status(404).json({ success: false, message: "Not found." });
+      res.json({ success: true, data: doc });
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+  });
+
+  // DELETE /api/mobilization/:id
+  app.delete("/api/mobilization/:id", mobAuth, async (req, res) => {
+    if (!Mob) return res.status(503).json({ success: false, message: "Unavailable." });
+    try {
+      const doc = await Mob.findByIdAndDelete(req.params.id);
+      if (!doc) return res.status(404).json({ success: false, message: "Not found." });
+      res.json({ success: true, message: "Deleted." });
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+  });
+
+  // Keep the route-file-based router as backup (won't conflict since inline routes above take priority)
+  app.use("/api/mobilization", mobilizationRoutes);
+}());
+
+app.use("/api/institution",            institutionLeadRoutes);
 
 /* =========================
    AUTH ALIAS ROUTES
@@ -449,6 +621,64 @@ process.on("uncaughtException", (err) => {
 ========================= */
 const PORT = process.env.PORT || 5000;
 
+/* ── Auto-backfill unique codes on startup ─────────────────────── */
+async function autoBackfillCodes() {
+  try {
+    const generateCode = require('./utils/generateCode');
+    const Admin       = require('./models/Admin');
+    const Role        = require('./models/Role');
+    const Institution = require('./models/Institution');
+    const Partner     = require('./models/Partner');
+
+    // ── Super Admin: remove any code they have ──────────────────
+    const superAdminRole = await Role.findOne({ name: 'Super Admin', isSystem: true }).lean();
+    if (superAdminRole) {
+      const removed = await Admin.updateMany(
+        { role: superAdminRole._id, code: { $exists: true, $ne: null } },
+        { $unset: { code: '' } }
+      );
+      if (removed.modifiedCount) console.log(`[codes] Removed code from ${removed.modifiedCount} Super Admin(s)`);
+    }
+
+    // ── Other admins: assign role-based prefix (first 4 letters of role name) ──
+    const roles = await Role.find({ isSystem: { $ne: true } }).lean();
+    const prefixMap = {};
+    roles.forEach(r => {
+      // First 4 letters of role name, letters only, uppercase
+      const prefix = r.name.replace(/[^A-Za-z]/g, '').substring(0, 4).toUpperCase();
+      prefixMap[r._id.toString()] = prefix || 'ADMI';
+    });
+
+    const missingAdmins = await Admin.find({
+      $or: [{ code: null }, { code: { $exists: false } }],
+      ...(superAdminRole ? { role: { $ne: superAdminRole._id } } : {}),
+    }).populate('role', 'name isSystem');
+
+    for (const admin of missingAdmins) {
+      if (admin.role?.isSystem) continue;  // skip Super Admin
+      const prefix = prefixMap[admin.role?._id?.toString()] || 'ADM';
+      admin.code = await generateCode(Admin, prefix);
+      await Admin.updateOne({ _id: admin._id }, { code: admin.code });
+      console.log(`[codes] Admin "${admin.firstName}" → ${admin.code}`);
+    }
+
+    // ── Institutions & Partners ──────────────────────────────────
+    for (const { Model, prefix, label } of [
+      { Model: Institution, prefix: 'INST', label: 'Institution' },
+      { Model: Partner,     prefix: 'PART', label: 'Partner' },
+    ]) {
+      const missing = await Model.find({ $or: [{ code: null }, { code: { $exists: false } }] });
+      for (const doc of missing) {
+        doc.code = await generateCode(Model, prefix);
+        await Model.updateOne({ _id: doc._id }, { code: doc.code });
+        console.log(`[codes] ${label} "${doc.name || doc.organizationName}" → ${doc.code}`);
+      }
+    }
+  } catch (err) {
+    console.warn('[codes] Auto-backfill error:', err.message);
+  }
+}
+
 app.listen(PORT, "0.0.0.0", () => {
   const os      = require("os");
   const nets    = Object.values(os.networkInterfaces()).flat();
@@ -469,6 +699,9 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log("║  the same WiFi / LAN network.                        ║");
   console.log("╚══════════════════════════════════════════════════════╝");
   console.log("");
+
+  // ── Backfill unique codes for any records missing them ────────
+  autoBackfillCodes();
 
   // ── Schedule daily backup at 2:00 AM ──────────────────────
   cron.schedule("0 2 * * *", async () => {

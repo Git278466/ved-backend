@@ -36,3 +36,72 @@
 [2026-05-13T06:19:43.820Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/workshops/live","method":"GET"}
 [2026-05-13T06:19:55.838Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/admins/login","method":"OPTIONS"}
 [2026-05-13T06:19:55.861Z] [ERROR] Server Error: Not allowed by CORS {"url":"/api/auth/login","method":"OPTIONS"}
+[2026-05-14T12:42:28.789Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-14T12:42:28.828Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-15T05:53:04.734Z] [ERROR] Uncaught Exception: listen EADDRINUSE: address already in use 0.0.0.0:5000
+[2026-05-15T05:53:04.765Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-15T05:53:24.356Z] [ERROR] Uncaught Exception: listen EADDRINUSE: address already in use 0.0.0.0:5000
+[2026-05-15T05:53:24.365Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-15T05:55:11.107Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-15T05:55:11.115Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-15T06:35:12.387Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-15T06:35:12.411Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-15T06:57:40.033Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-15T06:57:40.055Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-15T06:58:28.217Z] [ERROR] Uncaught Exception: listen EADDRINUSE: address already in use 0.0.0.0:5000
+[2026-05-15T06:58:28.230Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-15T08:51:49.045Z] [WARN] MongoDB disconnected — attempting reconnect...
+[2026-05-15T08:51:54.420Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-16T06:06:11.551Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-16T06:06:11.673Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-16T07:09:15.281Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-16T07:09:15.293Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-16T07:13:34.823Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-16T07:13:34.835Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-16T11:48:10.438Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-16T11:48:10.469Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-21T05:50:43.968Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-21T05:50:43.988Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-21T06:47:16.383Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-21T06:47:16.402Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-21T07:37:22.025Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-21T07:37:22.040Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-21T09:00:40.495Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-21T09:00:40.524Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-21T09:03:55.202Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-21T09:03:55.214Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-21T09:04:23.435Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-21T09:04:23.444Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-21T09:24:55.482Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-21T09:24:55.502Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-21T10:22:00.992Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-21T10:22:01.041Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-21T10:28:02.269Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-21T10:28:02.310Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-21T10:58:16.917Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-21T10:58:16.940Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-21T11:08:05.851Z] [ERROR] Uncaught Exception: listen EADDRINUSE: address already in use 0.0.0.0:5000
+[2026-05-21T11:08:05.871Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-21T11:08:50.505Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-21T11:08:50.515Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-21T11:11:01.406Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-21T11:11:01.423Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-21T11:12:13.867Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-21T11:12:13.895Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-21T11:57:56.239Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-21T11:57:56.255Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-21T13:08:01.858Z] [WARN] MongoDB disconnected — attempting reconnect...
+[2026-05-21T13:08:01.784Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-21T13:08:01.867Z] [ERROR] MongoDB connection error: Server selection timed out after 10000 ms
+[2026-05-21T13:08:01.868Z] [WARN] Retrying MongoDB connection (1/5) in 5s...
+[2026-05-21T13:08:01.872Z] [ERROR] MongoDB error: Server selection timed out after 10000 ms
+[2026-05-21T13:08:07.101Z] [INFO] MongoDB connected: undefined / undefined
+[2026-05-21T13:08:08.922Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-22T05:45:44.434Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-22T05:45:44.554Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-22T06:28:34.208Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-22T06:28:34.223Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-22T08:34:57.828Z] [INFO] VED Foundation server started on port 5000 [development]
+[2026-05-22T08:34:57.864Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation
+[2026-05-22T08:44:40.410Z] [ERROR] Uncaught Exception: listen EADDRINUSE: address already in use 0.0.0.0:5000
+[2026-05-22T08:44:40.432Z] [INFO] MongoDB connected: 127.0.0.1 / ved_foundation

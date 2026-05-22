@@ -3,6 +3,10 @@
 const Lead         = require('../models/Lead');
 const LeadActivity = require('../models/LeadActivity');
 const Student      = require('../models/Student');
+const Admin        = require('../models/Admin');
+const XLSX         = require('xlsx');
+let pdfParse;
+try { pdfParse = require('pdf-parse'); } catch (_) { pdfParse = null; }
 
 // ── Score rules ───────────────────────────────────────────────
 const ACTIVITY_SCORE = {
@@ -50,8 +54,24 @@ exports.getLeads = async (req, res) => {
   try {
     const { page = 1, limit = 25, sortBy = 'createdAt', sortOrder = 'desc' } = req.query;
     const filter = buildLeadFilter(req.query);
-    const skip   = (Number(page) - 1) * Number(limit);
-    const sort   = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
+
+    // Scope: Associate Partner / Institution only see leads they created or are assigned to
+    if (req.scopedAdminId) {
+      const scopeCond = { $or: [
+        { createdBy:  req.scopedAdminId },
+        { assignedTo: req.scopedAdminId },
+      ]};
+      // If buildLeadFilter already set $or (e.g. for search), combine with $and
+      if (filter.$or) {
+        filter.$and = [{ $or: filter.$or }, scopeCond];
+        delete filter.$or;
+      } else {
+        Object.assign(filter, scopeCond);
+      }
+    }
+
+    const skip = (Number(page) - 1) * Number(limit);
+    const sort = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
 
     const [data, total] = await Promise.all([
       Lead.find(filter)
@@ -71,8 +91,12 @@ exports.getLeads = async (req, res) => {
 // ── GET /api/leads/funnel ──────────────────────────────────────
 exports.getFunnelStats = async (req, res) => {
   try {
+    const matchScope = req.scopedAdminId
+      ? { $or: [{ createdBy: req.scopedAdminId }, { assignedTo: req.scopedAdminId }] }
+      : {};
     const stages = ['new', 'contacted', 'interested', 'applied', 'enrolled', 'converted', 'lost'];
     const counts = await Lead.aggregate([
+      ...(Object.keys(matchScope).length ? [{ $match: matchScope }] : []),
       { $group: { _id: '$stage', count: { $sum: 1 }, avgScore: { $avg: '$score' } } },
     ]);
 
@@ -313,6 +337,243 @@ exports.bulkAssign = async (req, res) => {
     }
     await Lead.updateMany({ _id: { $in: ids } }, { assignedTo: assignedTo || null });
     res.json({ success: true, message: `${ids.length} lead(s) assigned.` });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/* ── GET /api/leads/export  →  Excel file ────────────────────────
+   Supports same filters as getLeads (stage, source, priority,
+   search, startDate, endDate, etc.)  — no pagination.
+──────────────────────────────────────────────────────────────── */
+exports.exportLeads = async (req, res) => {
+  try {
+    const filter = buildLeadFilter(req.query);
+    if (req.scopedAdminId) {
+      const scopeCond = { $or: [{ createdBy: req.scopedAdminId }, { assignedTo: req.scopedAdminId }] };
+      if (filter.$or) { filter.$and = [{ $or: filter.$or }, scopeCond]; delete filter.$or; }
+      else Object.assign(filter, scopeCond);
+    }
+    const leads  = await Lead.find(filter)
+      .sort({ createdAt: -1 })
+      .populate('assignedTo', 'firstName lastName email')
+      .lean();
+
+    // Build rows
+    const rows = leads.map((l, i) => ({
+      'S.No':           i + 1,
+      'Name':           l.name            || '',
+      'Email':          l.email           || '',
+      'Mobile':         l.mobile          || '',
+      'City':           l.city            || '',
+      'State':          l.state           || '',
+      'Course Interest':l.courseInterest  || '',
+      'Stage':          l.stage           || '',
+      'Source':         l.source          || '',
+      'Priority':       l.priority        || '',
+      'Score':          l.score           ?? '',
+      'Assigned To':    l.assignedTo
+                          ? ((l.assignedTo.firstName||'')+' '+(l.assignedTo.lastName||'')).trim()
+                          : 'Unassigned',
+      'Next Follow-up': l.nextFollowUp
+                          ? new Date(l.nextFollowUp).toLocaleDateString('en-IN')
+                          : '',
+      'Tags':           (l.tags || []).join(', '),
+      'Notes':          l.notes           || '',
+      'Created At':     new Date(l.createdAt).toLocaleDateString('en-IN'),
+    }));
+
+    const ws  = XLSX.utils.json_to_sheet(rows);
+
+    // Auto column width
+    const colWidths = Object.keys(rows[0] || {}).map(key => ({
+      wch: Math.max(key.length, ...rows.map(r => String(r[key] || '').length)) + 2,
+    }));
+    ws['!cols'] = colWidths;
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Leads');
+
+    const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+
+    const date = new Date().toISOString().slice(0,10);
+    res.setHeader('Content-Disposition', 'attachment; filename="leads-' + date + '.xlsx"');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.send(buf);
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/* ── POST /api/leads/import ─────────────────────────────────────
+   Accepts multipart/form-data with a file field named 'file'.
+   Supports: .xlsx, .xls, .csv, .pdf
+   Returns:  { success, imported, skipped, errors[], data[] }
+───────────────────────────────────────────────────────────────── */
+exports.importLeads = async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ success:false, message:'No file uploaded.' });
+    const assignedTo = req.body.assignedTo || null;  // optional: assign all leads to this admin
+
+    const ext  = req.file.originalname.split('.').pop().toLowerCase();
+    let rows   = [];
+
+    // ── Parse file ──────────────────────────────────────────────
+    if (['xlsx','xls','csv'].includes(ext)) {
+      const wb = XLSX.read(req.file.buffer, { type:'buffer', dateNF:'yyyy-mm-dd' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      rows = XLSX.utils.sheet_to_json(ws, { defval:'' });
+    } else if (ext === 'pdf') {
+      if (!pdfParse) return res.status(400).json({ success:false, message:'PDF parsing library not available. Please use Excel/CSV.' });
+      const data = await pdfParse(req.file.buffer);
+      rows = _parsePdfText(data.text);
+    } else {
+      return res.status(400).json({ success:false, message:'Unsupported format. Use .xlsx, .xls, .csv, or .pdf' });
+    }
+
+    if (!rows.length) return res.status(400).json({ success:false, message:'File is empty or has no parseable rows.' });
+
+    // ── Normalise column names (case-insensitive) ────────────────
+    const MAP = {
+      name:['name','full name','fullname','student name','lead name','contact'],
+      email:['email','email address','mail'],
+      mobile:['mobile','phone','contact number','phone number','mob','cell'],
+      city:['city','town'],
+      state:['state','province'],
+      courseInterest:['course','course interest','interested course','program','programme'],
+      source:['source','lead source'],
+      stage:['stage','lead stage','status'],
+      priority:['priority'],
+      score:['score'],
+      notes:['notes','note','remarks','comment'],
+    };
+
+    const VALID_SOURCES  = ['website','referral','event','social_media','walk_in','manual','csv_import','other'];
+    const VALID_STAGES   = ['new','contacted','interested','applied','enrolled','converted','lost'];
+    const VALID_PRIORITY = ['low','medium','high'];
+
+    const normalize = (key) => String(key||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+    const headers = Object.keys(rows[0] || {});
+
+    // Build field → header mapping
+    const fieldMap = {};
+    for (const [field, aliases] of Object.entries(MAP)) {
+      for (const h of headers) {
+        if (aliases.some(a => normalize(h).includes(normalize(a)))) {
+          if (!fieldMap[field]) fieldMap[field] = h;
+        }
+      }
+    }
+
+    let imported=0, skipped=0;
+    const errors=[], preview=[];
+
+    for (let i=0; i<rows.length; i++) {
+      const row = rows[i];
+      const get = (field) => String(row[fieldMap[field]] || '').trim();
+
+      const name = get('name');
+      if (!name) { skipped++; errors.push('Row ' + (i+2) + ': Name is required — skipped.'); continue; }
+
+      const source   = VALID_SOURCES.includes(get('source').toLowerCase())  ? get('source').toLowerCase()  : 'csv_import';
+      const stage    = VALID_STAGES.includes(get('stage').toLowerCase())     ? get('stage').toLowerCase()   : 'new';
+      const priority = VALID_PRIORITY.includes(get('priority').toLowerCase())? get('priority').toLowerCase(): 'medium';
+      const score    = Number(get('score')) || 10;
+
+      try {
+        const lead = await Lead.create({
+          name,
+          email:          get('email')  || undefined,
+          mobile:         get('mobile') || undefined,
+          city:           get('city')   || undefined,
+          state:          get('state')  || undefined,
+          courseInterest: get('courseInterest') || undefined,
+          notes:          get('notes')  || undefined,
+          source, stage, priority, score,
+          createdBy:  req.admin?._id,
+          assignedTo: assignedTo || undefined,   // bulk-assign to selected partner
+        });
+        imported++;
+        if (preview.length < 5) preview.push({ name, email: get('email'), mobile: get('mobile'), stage, source });
+      } catch (err) {
+        skipped++;
+        errors.push('Row ' + (i+2) + ' ("' + name + '"): ' + err.message);
+      }
+    }
+
+    res.json({ success:true, imported, skipped, errors: errors.slice(0,20), preview,
+      message: 'Imported ' + imported + ' lead(s)' + (skipped ? ', skipped ' + skipped : '') + '.' });
+
+  } catch (err) {
+    res.status(500).json({ success:false, message: err.message });
+  }
+};
+
+// ── Parse plain-text from PDF into row objects ────────────────
+function _parsePdfText(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  if (!lines.length) return [];
+  const rows  = [];
+  for (const line of lines) {
+    const parts = line.split(/[,|\t]/).map(p => p.trim());
+    if (parts.length >= 2) {
+      rows.push({ name: parts[0], mobile: parts[1], email: parts[2]||'', city: parts[3]||'', course: parts[4]||'' });
+    }
+  }
+  return rows;
+}
+
+/* ── GET /api/leads/partner-progress ─────────────────────────────
+   Returns lead stage breakdown for every Associate Partner admin.
+   Used by the admin overview to track each partner's performance.
+─────────────────────────────────────────────────────────────────── */
+exports.getPartnerProgress = async (req, res) => {
+  try {
+    const Role = require('../models/Role');
+
+    // 1. Find the Associate Partner role
+    const apRole = await Role.findOne({ name: 'Associate Partner' }).lean();
+    if (!apRole) return res.json({ success: true, data: [] });
+
+    // 2. Get all Associate Partner admins
+    const partners = await Admin.find({ role: apRole._id })
+      .select('firstName lastName email code role')
+      .lean();
+
+    if (!partners.length) return res.json({ success: true, data: [] });
+
+    const stages = ['new', 'contacted', 'interested', 'applied', 'enrolled', 'converted', 'lost'];
+
+    // 3. For each partner aggregate their lead counts by stage
+    const data = await Promise.all(partners.map(async (p) => {
+      const agg = await Lead.aggregate([
+        { $match: { assignedTo: p._id } },
+        { $group: { _id: '$stage', count: { $sum: 1 } } },
+      ]);
+
+      const byStage = {};
+      agg.forEach(x => { byStage[x._id] = x.count; });
+
+      const total     = agg.reduce((s, x) => s + x.count, 0);
+      const converted = byStage['converted'] || 0;
+      const convRate  = total ? Math.round((converted / total) * 100) : 0;
+
+      return {
+        _id:       p._id,
+        name:      ((p.firstName || '') + ' ' + (p.lastName || '')).trim() || p.email,
+        email:     p.email,
+        code:      p.code || '',
+        total,
+        converted,
+        convRate,
+        byStage:   stages.map(s => ({ stage: s, count: byStage[s] || 0 })),
+      };
+    }));
+
+    // Sort by total leads descending
+    data.sort((a, b) => b.total - a.total);
+
+    res.json({ success: true, data });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

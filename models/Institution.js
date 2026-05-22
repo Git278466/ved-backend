@@ -1,6 +1,7 @@
 'use strict';
 
-const mongoose = require('mongoose');
+const mongoose     = require('mongoose');
+const generateCode = require('../utils/generateCode');
 
 const institutionSchema = new mongoose.Schema(
   {
@@ -35,6 +36,9 @@ const institutionSchema = new mongoose.Schema(
     establishedYear:  { type: Number, min: 1800, max: new Date().getFullYear() },
     totalStudents:    { type: Number, default: 0, min: 0 },
 
+    // ── Unique code ──────────────────────────────────────────────
+    code: { type: String, unique: true, sparse: true, trim: true, index: true },
+
     // ── Status & linking ─────────────────────────────────────────
     status: {
       type: String,
@@ -48,6 +52,18 @@ const institutionSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// ── Auto-generate unique code using institution name ─────────────
+// Format: first 4 letters of name + random 4-digit number
+// e.g. "Delhi Public School" → DELH-5821
+institutionSchema.pre('save', async function (next) {
+  if (this.isNew && !this.code) {
+    const { namePrefix } = require('../utils/generateCode');
+    const prefix = namePrefix(this.name || 'INST');
+    this.code = await generateCode(this.constructor, prefix);
+  }
+  next();
+});
 
 // ── Compound indexes ──────────────────────────────────────────────
 institutionSchema.index({ state: 1, city: 1, status: 1 });

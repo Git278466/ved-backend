@@ -53,11 +53,19 @@ function permissionsToObject(permissionArray = []) {
 }
 
 function validatePermissions(permissionArray = []) {
+  // If PERMISSIONS list is empty (e.g. module not loaded), skip validation
   if (!Array.isArray(PERMISSIONS) || PERMISSIONS.length === 0) {
     return [];
   }
-
   return permissionArray.filter(p => !PERMISSIONS.includes(p));
+}
+
+// Filter and keep only valid permissions (never hard-reject — just drop unknowns)
+function sanitizePermissions(permissionArray = []) {
+  if (!Array.isArray(PERMISSIONS) || PERMISSIONS.length === 0) {
+    return permissionArray; // can't validate — pass through
+  }
+  return permissionArray.filter(p => PERMISSIONS.includes(p));
 }
 
 async function addUserCount(role) {
@@ -168,18 +176,15 @@ exports.createRole = async (req, res) => {
 
     const normalizedPermissions = normalizePermissions(permissions);
     const invalid = validatePermissions(normalizedPermissions);
-
     if (invalid.length) {
-      return res.status(400).json({
-        success: false,
-        message: `Invalid permissions: ${invalid.join(', ')}`
-      });
+      console.warn('[createRole] Ignoring unknown permissions:', invalid.join(', '));
     }
+    const safePermissions = sanitizePermissions(normalizedPermissions);
 
     const role = await Role.create({
       name: String(name).trim(),
       description: description || '',
-      permissions: normalizedPermissions,
+      permissions: safePermissions,
       status: status || 'active',
       icon: icon || 'fa-shield',
       color: color || '#2563EB',
@@ -238,15 +243,10 @@ exports.updateRole = async (req, res) => {
     if (permissions !== undefined) {
       const normalizedPermissions = normalizePermissions(permissions);
       const invalid = validatePermissions(normalizedPermissions);
-
       if (invalid.length) {
-        return res.status(400).json({
-          success: false,
-          message: `Invalid permissions: ${invalid.join(', ')}`
-        });
+        console.warn('[updateRole] Ignoring unknown permissions:', invalid.join(', '));
       }
-
-      role.permissions = normalizedPermissions;
+      role.permissions = sanitizePermissions(normalizedPermissions);
     }
 
     if (name !== undefined) {

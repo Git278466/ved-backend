@@ -16,10 +16,6 @@ const roleSchema = new mongoose.Schema(
 
     permissions: {
       type: [String],
-      validate: {
-        validator: (arr) => arr.every(p => PERMISSIONS.includes(p)),
-        message:   (props) => `Invalid permission: ${props.value}`,
-      },
       default: [],
     },
 

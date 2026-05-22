@@ -1,2 +1,6 @@
 node_modules/
 .env
+.env.production
+logs/
+*.log
+.wwebjs_auth/

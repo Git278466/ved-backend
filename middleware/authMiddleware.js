@@ -163,4 +163,90 @@ const optionalAuth = async (req, res, next) => {
   next();
 };
 
-module.exports = { protect, protectAdmin, optionalAuth };
+/**
+ * protectInstitution
+ * ──────────────────
+ * For Institution-role admin users.
+ * Populates req.admin and resolves req.institution from the Institution
+ * document where linkedAdmin === req.admin._id.
+ * Rejects if role name is not "Institution" (case-insensitive).
+ */
+const protectInstitution = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization || '';
+    if (!authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ success: false, message: 'Not authorised. Please log in.' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return res.status(401).json({ success: false, message: 'Invalid or expired token.' });
+    }
+
+    if (decoded.type === 'student') {
+      return res.status(403).json({ success: false, message: 'Institution access only.' });
+    }
+
+    const admin = await Admin.findById(decoded.id)
+      .select('-password')
+      .populate({ path: 'role', select: 'name description permissions isSystem status icon color' })
+      .lean();
+
+    if (!admin || admin.status !== 'active') {
+      return res.status(401).json({ success: false, message: 'Account not found or inactive.' });
+    }
+
+    const roleName = admin.role?.name?.toLowerCase() || '';
+    const isSuperAdmin = admin.role?.isSystem === true && admin.role?.name === 'Super Admin';
+
+    if (!isSuperAdmin && roleName !== 'institution') {
+      return res.status(403).json({ success: false, message: 'Institution role required.' });
+    }
+
+    req.admin = admin;
+
+    if (!isSuperAdmin) {
+      const Institution = require('../models/Institution');
+
+      // 1. Try by direct linkedAdmin link
+      let institution = await Institution.findOne({ linkedAdmin: admin._id }).lean();
+
+      // 2. Fallback: match by email, then auto-link for future requests
+      if (!institution && admin.email) {
+        institution = await Institution.findOne({ email: admin.email }).lean();
+        if (institution) {
+          await Institution.findByIdAndUpdate(institution._id, { linkedAdmin: admin._id });
+        }
+      }
+
+      // 3. Fallback: find any institution whose name matches admin firstName (loose match)
+      if (!institution && admin.firstName) {
+        institution = await Institution.findOne({
+          name: new RegExp(admin.firstName, 'i'),
+          status: 'active',
+        }).lean();
+        if (institution) {
+          await Institution.findByIdAndUpdate(institution._id, { linkedAdmin: admin._id });
+        }
+      }
+
+      if (!institution) {
+        return res.status(403).json({
+          success: false,
+          message: 'No institution is linked to your account. Ask your Super Admin to link an Institution record to your admin account.',
+        });
+      }
+      req.institution = institution;
+    }
+
+    next();
+  } catch (err) {
+    console.error('protectInstitution error:', err);
+    res.status(500).json({ success: false, message: 'Server error.' });
+  }
+};
+
+module.exports = { protect, protectAdmin, optionalAuth, protectInstitution };

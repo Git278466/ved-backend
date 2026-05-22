@@ -1,7 +1,8 @@
 'use strict';
 
-const mongoose = require('mongoose');
-const bcrypt   = require('bcryptjs');
+const mongoose     = require('mongoose');
+const bcrypt       = require('bcryptjs');
+const generateCode = require('../utils/generateCode');
 
 const adminSchema = new mongoose.Schema(
   {
@@ -49,6 +50,9 @@ const adminSchema = new mongoose.Schema(
     failedLoginCount: { type: Number, default: 0 },
     lockedUntil:      { type: Date },
 
+    // ── Unique code ──────────────────────────────────────────────
+    code: { type: String, unique: true, sparse: true, trim: true, index: true },
+
     // ── Meta ─────────────────────────────────────────────────────
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
     notes:     { type: String, trim: true },
@@ -56,8 +60,27 @@ const adminSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ── Hash password before save ─────────────────────────────────────
+// ── Check if this role is Super Admin (no code needed) ──────────
+async function isSuperAdminRole(roleId) {
+  if (!roleId) return false;
+  const Role = require('./Role');
+  const role = await Role.findById(roleId).select('name isSystem').lean();
+  return !!(role && (role.isSystem || role.name === 'Super Admin'));
+}
+
+// ── Auto-generate unique code using first name ────────────────────
+// Format: first 4 letters of firstName + random 4-digit number
+// e.g.  "Rishav Gupta" → RISH-7423,  "Swayam Sahu" → SWAY-3891
 adminSchema.pre('save', async function (next) {
+  if (this.isNew && !this.code) {
+    const sa = await isSuperAdminRole(this.role);
+    if (!sa) {
+      const { namePrefix } = require('../utils/generateCode');
+      const prefix = namePrefix(this.firstName || this.email || 'ADMI');
+      this.code = await generateCode(this.constructor, prefix);
+    }
+    // Super Admin gets no code
+  }
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
   this.passwordChangedAt = new Date();

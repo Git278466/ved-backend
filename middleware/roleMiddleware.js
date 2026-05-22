@@ -78,9 +78,10 @@ const isSuperAdmin = (req, res, next) => {
 const scopeToOwn = (req, res, next) => {
   const scopedRoles = ['Institution', 'Associate Partner'];
   const role = req.admin?.role;
-  req.ownerFilter = (role && scopedRoles.includes(role.name))
-    ? { submittedBy: req.admin._id }
-    : {};
+  const isScoped = !!(role && scopedRoles.includes(role.name));
+
+  req.ownerFilter   = isScoped ? { submittedBy: req.admin._id } : {};
+  req.scopedAdminId = isScoped ? req.admin._id : null;   // used by leads, attendance
   next();
 };
 

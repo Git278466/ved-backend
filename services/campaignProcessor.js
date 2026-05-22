@@ -21,6 +21,15 @@ async function startCampaign(campaignId) {
   if (!campaign) throw new Error('Campaign not found');
   if (campaign.status === 'running') throw new Error('Already running');
 
+  // For WhatsApp campaigns, verify the client is ready before starting
+  if (campaign.type === 'whatsapp' && !whatsapp.isReady()) {
+    await Campaign.findByIdAndUpdate(campaignId, {
+      status: 'failed',
+      notes: 'WhatsApp is not connected. Connect WhatsApp first before launching this campaign.',
+    });
+    throw new Error('WhatsApp is not connected. Please connect WhatsApp first before launching this campaign.');
+  }
+
   // ── 1. Build recipient list ──────────────────────────────────
   const filter = _buildStudentFilter(campaign);
   const students = await Student.find(filter)

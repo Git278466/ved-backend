@@ -1,90 +1,161 @@
 'use strict';
 
 /**
- * Master permissions list.
+ * Master permissions list — matches frontend MODULES × PERM_TYPES matrix.
  * Format: "<module>.<action>"
  * Super Admin bypasses all checks — these apply to every other role.
+ *
+ * Frontend PERM_TYPES: view | create | update | delete | export | approve
+ * Frontend MODULES: dashboard | students | attendance | certificates | reports
+ *                   admin_management | roles | institutions | associate_partners
+ *                   leads | donations | website_content | settings
  */
 const PERMISSIONS = [
-  // ── Dashboard ───────────────────────────────────────────────
-  'dashboard.view',
 
-  // ── Students ────────────────────────────────────────────────
+  // ── Dashboard ────────────────────────────────────────────────
+  'dashboard.view',
+  'dashboard.create',
+  'dashboard.update',
+  'dashboard.delete',
+  'dashboard.export',
+  'dashboard.approve',
+
+  // ── Students ─────────────────────────────────────────────────
   'students.view',
   'students.create',
   'students.update',
   'students.delete',
-  'students.approve',
   'students.export',
+  'students.approve',
 
-  // ── Attendance ──────────────────────────────────────────────
+  // ── Attendance ───────────────────────────────────────────────
   'attendance.view',
   'attendance.create',
   'attendance.update',
   'attendance.delete',
+  'attendance.export',
+  'attendance.approve',
 
-  // ── Certificates ────────────────────────────────────────────
+  // ── Certificates ─────────────────────────────────────────────
   'certificates.view',
-  'certificates.issue',
+  'certificates.create',
+  'certificates.update',
   'certificates.delete',
+  'certificates.issue',   // legacy action kept for compatibility
+  'certificates.export',
+  'certificates.approve',
 
-  // ── Roles ───────────────────────────────────────────────────
-  'roles.view',
-  'roles.create',
-  'roles.update',
-  'roles.delete',
+  // ── Reports / Analytics ──────────────────────────────────────
+  'reports.view',
+  'reports.create',
+  'reports.update',
+  'reports.delete',
+  'reports.export',
+  'reports.approve',
 
-  // ── Admin management ────────────────────────────────────────
+  // ── Admin Management ─────────────────────────────────────────
   'admin_management.view',
   'admin_management.create',
   'admin_management.update',
   'admin_management.delete',
+  'admin_management.export',
+  'admin_management.approve',
 
-  // ── Institutions ────────────────────────────────────────────
+  // ── Roles & Permissions ──────────────────────────────────────
+  'roles.view',
+  'roles.create',
+  'roles.update',
+  'roles.delete',
+  'roles.export',
+  'roles.approve',
+
+  // ── Institutions ─────────────────────────────────────────────
   'institutions.view',
   'institutions.create',
   'institutions.update',
   'institutions.delete',
+  'institutions.export',
+  'institutions.approve',
 
-  // ── Associate partners ──────────────────────────────────────
+  // ── Associate Partners ────────────────────────────────────────
   'associate_partners.view',
   'associate_partners.create',
   'associate_partners.update',
   'associate_partners.delete',
+  'associate_partners.export',
+  'associate_partners.approve',
 
-  // ── Leads / CRM ─────────────────────────────────────────────
+  // ── Leads / CRM ──────────────────────────────────────────────
   'leads.view',
   'leads.create',
   'leads.update',
   'leads.delete',
   'leads.export',
+  'leads.approve',
 
-  // ── Reports ─────────────────────────────────────────────────
-  'reports.view',
-  'reports.export',
+  // ── Referrals & Commission ───────────────────────────────────
+  'referrals.view',
+  'referrals.create',
+  'referrals.update',
+  'referrals.delete',
+  'referrals.export',
+  'referrals.approve',
 
-  // ── Donations ───────────────────────────────────────────────
+  // ── Online Workshops ─────────────────────────────────────────
+  'workshops.view',
+  'workshops.create',
+  'workshops.update',
+  'workshops.delete',
+  'workshops.export',
+  'workshops.approve',
+
+  // ── Mobilization ─────────────────────────────────────────────
+  'mobilization.view',
+  'mobilization.create',
+  'mobilization.update',
+  'mobilization.delete',
+  'mobilization.export',
+  'mobilization.approve',
+
+  // ── Counselling & Certs ──────────────────────────────────────
+  'counselling_cert.view',
+  'counselling_cert.create',
+  'counselling_cert.update',
+  'counselling_cert.delete',
+  'counselling_cert.export',
+  'counselling_cert.approve',
+
+  // ── Donations ────────────────────────────────────────────────
   'donations.view',
   'donations.create',
   'donations.update',
   'donations.delete',
+  'donations.export',
+  'donations.approve',
 
-  // ── Settings ────────────────────────────────────────────────
-  'settings.view',
-  'settings.update',
-
-  // ── Website content ─────────────────────────────────────────
+  // ── Website Content ──────────────────────────────────────────
   'website_content.view',
   'website_content.create',
   'website_content.update',
+  'website_content.delete',
+  'website_content.export',
+  'website_content.approve',
 
-  // ── Filter presets ───────────────────────────────────────────
+  // ── Settings ─────────────────────────────────────────────────
+  'settings.view',
+  'settings.create',
+  'settings.update',
+  'settings.delete',
+  'settings.export',
+  'settings.approve',
+
+  // ── Filter Presets ────────────────────────────────────────────
   'filter_presets.view',
   'filter_presets.create',
   'filter_presets.update',
   'filter_presets.delete',
 
-  // ── Audit log (read-only access) ─────────────────────────────
+  // ── Audit Log ────────────────────────────────────────────────
   'audit_log.view',
 ];
 

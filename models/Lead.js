@@ -34,6 +34,25 @@ const leadSchema = new mongoose.Schema({
   // ── Assignment ──────────────────────────────────────────────
   assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', default: null },
 
+  // ── Institution Assignment ───────────────────────────────────
+  assignedInstitution: { type: mongoose.Schema.Types.ObjectId, ref: 'Institution', default: null },
+  institutionAssignedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', default: null },
+  institutionAssignedAt: { type: Date },
+  institutionStatus: {
+    type: String,
+    enum: ['new', 'contacted', 'interested', 'not_interested', 'follow_up', 'converted', 'rejected'],
+    default: 'new',
+  },
+  institutionRemarks:      { type: String, trim: true },
+  institutionFollowUpDate: { type: Date },
+  institutionStatusHistory: [{
+    status:     { type: String },
+    remarks:    { type: String },
+    followUpDate: { type: Date },
+    changedBy:  { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
+    changedAt:  { type: Date, default: Date.now },
+  }],
+
   // ── Notes & tags ────────────────────────────────────────────
   notes: { type: String, trim: true },
   tags:  [{ type: String, trim: true }],
@@ -73,6 +92,9 @@ const leadSchema = new mongoose.Schema({
 
 leadSchema.index({ stage: 1 });
 leadSchema.index({ assignedTo: 1 });
+leadSchema.index({ assignedInstitution: 1 });
+leadSchema.index({ assignedInstitution: 1, institutionStatus: 1 });
+leadSchema.index({ assignedInstitution: 1, institutionFollowUpDate: 1 });
 leadSchema.index({ score: -1 });
 leadSchema.index({ nextFollowUp: 1 });
 leadSchema.index({ createdAt: -1 });

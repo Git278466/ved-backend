@@ -76,6 +76,61 @@ exports.getStats = async (req, res) => {
   }
 };
 
+// ── GET /api/dashboard/admin-activity ─────────────────────────
+// Super admin sees all admins; regular admin sees only their own stats
+exports.getAdminActivity = async (req, res) => {
+  try {
+    const roleName  = req.admin?.role?.name || '';
+    const isSuperAdmin = roleName.toLowerCase().includes('super') || req.admin?.role?.isSystem;
+
+    // Per-admin stats aggregated from Student.statusUpdatedBy
+    const activityAgg = await Student.aggregate([
+      { $match: { statusUpdatedBy: { $exists: true, $ne: null } } },
+      {
+        $group: {
+          _id:        '$statusUpdatedBy',
+          approved:   { $sum: { $cond: [{ $eq: ['$status', 'approved']   }, 1, 0] } },
+          rejected:   { $sum: { $cond: [{ $eq: ['$status', 'rejected']   }, 1, 0] } },
+          waitlisted: { $sum: { $cond: [{ $eq: ['$status', 'waitlisted'] }, 1, 0] } },
+          total:      { $sum: 1 },
+          lastAction: { $max: '$statusUpdatedAt' },
+        },
+      },
+      { $sort: { total: -1 } },
+    ]);
+
+    // Restrict to own record for non-super admins
+    const filtered = isSuperAdmin
+      ? activityAgg
+      : activityAgg.filter(a => String(a._id) === String(req.admin._id));
+
+    // Populate admin name + role from Admin collection
+    const populated = await Admin.populate(filtered, {
+      path: '_id',
+      select: 'firstName lastName email status',
+      populate: { path: 'role', select: 'name color icon' },
+    });
+
+    // System-wide pending count
+    const [pendingTotal, todayApproved] = await Promise.all([
+      Student.countDocuments({ status: 'pending' }),
+      Student.countDocuments({
+        status: 'approved',
+        statusUpdatedAt: { $gte: new Date(new Date().setHours(0, 0, 0, 0)) },
+        ...(isSuperAdmin ? {} : { statusUpdatedBy: req.admin._id }),
+      }),
+    ]);
+
+    res.json({
+      success: true,
+      data: { activity: populated, pendingTotal, todayApproved },
+    });
+  } catch (err) {
+    console.error('admin-activity error:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 // ── GET /api/dashboard/recent-activity ────────────────────────
 exports.getRecentActivity = async (req, res) => {
   try {
