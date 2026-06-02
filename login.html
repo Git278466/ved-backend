@@ -1,0 +1,798 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="VED Admin"/>
+  <meta name="theme-color" content="#0A1628"/>
+  <meta name="description" content="Login to VED Foundation Admin Portal"/>
+  <title>Login | VED Foundation</title>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%230A1628'/%3E%3Crect x='28' y='28' width='60' height='60' rx='12' fill='%23F97316'/%3E%3Crect x='104' y='28' width='60' height='60' rx='12' fill='rgba(255,255,255,0.15)'/%3E%3Crect x='28' y='104' width='60' height='60' rx='12' fill='rgba(255,255,255,0.15)'/%3E%3Crect x='104' y='104' width='60' height='60' rx='12' fill='rgba(255,255,255,0.08)'/%3E%3Ctext x='96' y='108' font-family='Arial,sans-serif' font-size='48' font-weight='800' fill='white' text-anchor='middle' dominant-baseline='middle' opacity='0.9'%3EVF%3C/text%3E%3C/svg%3E"/>
+  <link rel="icon" type="image/jpeg" href="vedlogo.jpeg"/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    :root{
+      --blue:#0b63ce;
+      --blue-dark:#074a9d;
+      --orange:#f7941d;
+      --orange-dark:#e46f00;
+      --green:#16a34a;
+      --navy:#08254d;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --light:#f5f8fd;
+      --white:#ffffff;
+      --border:#e5e7eb;
+      --shadow:0 16px 45px rgba(15,23,42,.12);
+      --shadow-lg:0 25px 70px rgba(15,35,70,.13);
+      --danger:#ef4444;
+      --radius:18px;
+    }
+
+    html{scroll-behavior:smooth}
+
+    body{
+      font-family:'Inter',sans-serif;
+      color:var(--text);
+      background:#fff;
+      min-height:100vh;
+      line-height:1.6;
+    }
+
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;display:block}
+    .container{width:min(1180px,92%);margin:auto}
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:12px 22px;
+      border-radius:4px;
+      font-weight:800;
+      font-size:.92rem;
+      border:0;
+      cursor:pointer;
+      transition:.25s;
+      white-space:nowrap;
+      font-family:'Inter',sans-serif;
+    }
+
+    .btn-primary{
+      background:var(--orange);
+      color:#fff;
+      box-shadow:0 10px 22px rgba(247,148,29,.3);
+    }
+
+    .btn-primary:hover{
+      background:var(--orange-dark);
+      transform:translateY(-2px);
+    }
+
+    .btn-primary:disabled{
+      opacity:.65;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    .login-section{
+      min-height:calc(100vh - 74px);
+      display:flex;
+      align-items:center;
+      padding:0;
+      background:#eef8ff;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .login-bg{
+      position:absolute;
+      inset:0;
+      /* extend the dark overlay to 52% so white text stays readable throughout the left column */
+      background:linear-gradient(90deg,rgba(5,85,115,.88) 0%,rgba(5,85,115,.72) 48%,rgba(238,248,255,.95) 54%,rgba(238,248,255,1) 100%);
+      z-index:0;
+    }
+
+    .login-shape{
+      position:absolute;
+      left:0;top:0;
+      /* wider so the bottom of the diagonal still covers the full left column */
+      width:52%;height:100%;
+      background:linear-gradient(135deg,#007c89,#074d8f);
+      /* bottom-right = 84% × 52% = 43.7% of viewport — matches left column end */
+      clip-path:polygon(0 0,100% 0,84% 100%,0 100%);
+      z-index:1;
+    }
+
+    .login-wrap{
+      position:relative;
+      z-index:3;
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:48px;
+      align-items:center;
+      padding:60px 0;
+    }
+
+    .login-left{padding-right:10px}
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.18);
+      color:#fcd34d;
+      border:1px solid rgba(255,255,255,.3);
+      font-weight:900;
+      font-size:.78rem;
+      margin-bottom:18px;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+    }
+
+    .login-left h1{
+      font-size:clamp(2rem,3.8vw,3.8rem);
+      line-height:1.1;
+      font-weight:900;
+      letter-spacing:-1.4px;
+      margin-bottom:18px;
+      color:#fff;
+    }
+
+    .login-left h1 span{
+      color:#fcd34d;
+    }
+
+    .login-left p{
+      color:rgba(255,255,255,.82);
+      font-size:1rem;
+      margin-bottom:24px;
+      max-width:420px;
+    }
+
+    .info-points{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      max-width:440px;
+    }
+
+    .point-card{
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.22);
+      border-radius:14px;
+      padding:18px;
+      transition:.25s;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .point-card:hover{
+      transform:translateY(-4px);
+      background:rgba(255,255,255,.18);
+    }
+
+    .point-card strong{
+      display:block;
+      color:#fff;
+      margin-bottom:5px;
+      font-size:.95rem;
+      font-weight:900;
+    }
+
+    .point-card span{
+      color:rgba(255,255,255,.7);
+      font-size:.86rem;
+    }
+
+    .login-card{
+      background:rgba(255,255,255,.78);
+      border-radius:34px;
+      box-shadow:var(--shadow-lg);
+      padding:16px;
+      position:relative;
+      overflow:visible;
+      border:1px solid #e7edf6;
+      z-index:20;
+    }
+
+    .login-card::before{
+      content:"";
+      position:absolute;
+      inset:42px -18px -18px 42px;
+      background:linear-gradient(135deg,rgba(7,95,196,.18),rgba(255,143,18,.20));
+      border-radius:34px;
+      z-index:-1;
+      pointer-events:none;
+    }
+
+    .login-panel{
+      position:relative;
+      z-index:30;
+      background:#fff;
+      border-radius:26px;
+      padding:34px;
+      border:1px solid #e7edf6;
+    }
+
+    .login-panel::before{
+      content:"Portal";
+      position:absolute;
+      right:22px;
+      top:22px;
+      padding:7px 13px;
+      border-radius:999px;
+      background:#eaf3ff;
+      color:var(--blue-dark);
+      font-size:.76rem;
+      font-weight:900;
+      pointer-events:none;
+    }
+
+    .login-panel h3{
+      font-size:1.9rem;
+      margin-bottom:8px;
+      color:#10233f;
+      font-weight:900;
+    }
+
+    .login-panel > p{
+      color:var(--muted);
+      margin-bottom:24px;
+      padding-right:80px;
+    }
+
+    .login-tabs{
+      display:flex;
+      gap:8px;
+      margin-bottom:20px;
+    }
+
+    .login-tab{
+      flex:1;
+      padding:9px 12px;
+      border-radius:10px;
+      border:2px solid #e7edf6;
+      background:#f8faff;
+      font-size:.86rem;
+      font-weight:800;
+      color:var(--muted);
+      cursor:pointer;
+      transition:.2s;
+      font-family:'Inter',sans-serif;
+      text-align:center;
+    }
+
+    .login-tab.active{
+      border-color:var(--blue);
+      background:#eaf3ff;
+      color:var(--blue-dark);
+    }
+
+    .login-form{
+      display:grid;
+      gap:16px;
+      position:relative;
+      z-index:40;
+    }
+
+    .form-group{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .form-group label{
+      font-size:.95rem;
+      font-weight:800;
+      color:#16325c;
+    }
+
+    .required{
+      color:var(--danger);
+      margin-left:4px;
+    }
+
+    .login-form input{
+      width:100%;
+      padding:14px 16px;
+      border:1px solid #dfe8f7;
+      border-radius:10px;
+      outline:none;
+      font-size:1rem;
+      background:#fff;
+      transition:.25s ease;
+      font-family:'Inter',sans-serif;
+    }
+
+    .login-form input:focus{
+      border-color:var(--blue);
+      box-shadow:0 0 0 4px rgba(11,99,206,.10);
+    }
+
+    .password-wrap{
+      position:relative;
+    }
+
+    .password-wrap input{
+      padding-right:64px;
+    }
+
+    .toggle-password{
+      position:absolute;
+      right:12px;
+      top:50%;
+      transform:translateY(-50%);
+      border:none;
+      background:#eaf3ff;
+      cursor:pointer;
+      font-size:.82rem;
+      font-weight:900;
+      color:var(--blue-dark);
+      padding:7px 10px;
+      border-radius:7px;
+      font-family:'Inter',sans-serif;
+    }
+
+    .login-options{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+      font-size:.92rem;
+    }
+
+    .remember-me{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:#334155;
+      font-weight:700;
+    }
+
+    .remember-me input{
+      width:auto;
+      accent-color:var(--blue);
+    }
+
+    .forgot-link{
+      color:var(--blue);
+      font-weight:900;
+    }
+
+    .forgot-link:hover{
+      text-decoration:underline;
+    }
+
+    .login-btn{
+      width:100%;
+      padding:14px 20px;
+      border-radius:10px;
+      font-size:1rem;
+      background:linear-gradient(135deg,var(--blue),var(--blue-dark));
+      box-shadow:0 14px 30px rgba(11,99,206,.24);
+      position:relative;
+      z-index:100;
+      cursor:pointer;
+      pointer-events:auto;
+    }
+
+    .login-btn:hover{
+      background:linear-gradient(135deg,var(--blue-dark),#063f86);
+    }
+
+    .login-footer{
+      text-align:center;
+      color:var(--muted);
+      font-size:.95rem;
+      margin-top:8px;
+    }
+
+    .login-footer a{
+      color:var(--orange);
+      font-weight:900;
+    }
+
+    #loginMessage{
+      font-weight:800;
+      font-size:.95rem;
+      margin-top:4px;
+      min-height:24px;
+    }
+
+    .spinner-inline{
+      display:inline-block;
+      width:14px;
+      height:14px;
+      border:2px solid rgba(255,255,255,.5);
+      border-top-color:#fff;
+      border-radius:50%;
+      animation:spin .7s linear infinite;
+      vertical-align:middle;
+      margin-right:8px;
+    }
+
+    @keyframes spin{
+      to{transform:rotate(360deg)}
+    }
+
+    .scroll-top{
+      position:fixed;
+      right:22px;
+      bottom:22px;
+      width:45px;
+      height:45px;
+      border-radius:50%;
+      border:none;
+      background:var(--orange);
+      color:#fff;
+      font-size:22px;
+      font-weight:900;
+      cursor:pointer;
+      display:none;
+      place-items:center;
+      box-shadow:0 14px 30px rgba(0,0,0,.18);
+      z-index:999;
+    }
+
+    .scroll-top.show{
+      display:grid;
+    }
+
+    @media(max-width:900px){
+      .login-section{padding:50px 0}
+      .login-wrap{grid-template-columns:1fr}
+      .login-left{display:none}
+    }
+
+    @media(max-width:520px){
+      .login-panel{padding:28px 22px}
+      .login-panel > p{padding-right:0}
+      .login-card{border-radius:24px;padding:10px}
+      .login-panel{border-radius:18px}
+      .login-options{align-items:flex-start;flex-direction:column}
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="header-placeholder"></div>
+
+  <main>
+    <section class="login-section">
+      <div class="login-bg"></div>
+      <div class="login-shape"></div>
+      <div class="container">
+        <div class="login-wrap">
+
+          <div class="login-left">
+            <div class="eyebrow">● Secure access</div>
+            <h1>Login to your <span>account</span></h1>
+            <p>
+              Access your registration details, workshop updates, certificates,
+              and your dashboard through this secure login page.
+            </p>
+
+            <div class="info-points">
+              <div class="point-card">
+                <strong>Workshop Access</strong>
+                <span>Login to check workshop information and registration details.</span>
+              </div>
+
+              <div class="point-card">
+                <strong>Certificate Support</strong>
+                <span>Manage the details linked to your certificate information.</span>
+              </div>
+
+              <div class="point-card">
+                <strong>Quick Login</strong>
+                <span>Simple and clean login experience for students and admins.</span>
+              </div>
+
+              <div class="point-card">
+                <strong>Safe Portal</strong>
+                <span>Secure form layout with clean validation and password visibility toggle.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="login-card">
+            <div class="login-panel">
+              <h3>Login</h3>
+              <p>Enter your registered email and password to continue.</p>
+
+              <div class="login-tabs">
+                <button type="button" class="login-tab active" id="tabStudent">
+                  🎓 Student
+                </button>
+
+                <button type="button" class="login-tab" id="tabAdmin">
+                  🛡️ Admin
+                </button>
+              </div>
+
+              <div id="tabHint" style="
+                background:#eaf3ff;border:1px solid #bfdbfe;border-radius:8px;
+                padding:9px 14px;font-size:.83rem;color:#1e40af;font-weight:600;
+                margin-bottom:4px;display:flex;align-items:center;gap:8px">
+                <span>ℹ️</span>
+                <span id="tabHintText">Use the email &amp; password you set during registration.</span>
+              </div>
+
+              <form class="login-form" id="loginForm">
+
+                <div class="form-group">
+                  <label for="loginEmail">Email Address <span class="required">*</span></label>
+                  <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="Enter your email"
+                    required
+                    autocomplete="email"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="loginPassword">Password <span class="required">*</span></label>
+
+                  <div class="password-wrap">
+                    <input
+                      type="password"
+                      id="loginPassword"
+                      placeholder="Enter your password"
+                      required
+                      autocomplete="current-password"
+                    >
+
+                    <button type="button" class="toggle-password" id="togglePassword">
+                      Show
+                    </button>
+                  </div>
+                </div>
+
+                <div class="login-options">
+                  <label class="remember-me">
+                    <input type="checkbox" id="rememberMe">
+                    Remember me
+                  </label>
+
+                  <a href="#" class="forgot-link">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary login-btn" id="loginBtn">
+                  Login Now
+                </button>
+
+                <p id="loginMessage"></p>
+
+                <div class="login-footer">
+                  Don't have an account?
+                  <a href="registeration.html">Register Now</a>
+                </div>
+
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <button class="scroll-top" id="scrollTopBtn" type="button">↑</button>
+
+  <script src="/config.js"></script>
+  <script>
+    const API_BASE = window.VED_API_BASE;
+
+    let currentTab = "student";
+
+    const loginForm = document.getElementById("loginForm");
+    const loginBtn = document.getElementById("loginBtn");
+    const msgEl = document.getElementById("loginMessage");
+
+    const tabStudent = document.getElementById("tabStudent");
+    const tabAdmin = document.getElementById("tabAdmin");
+
+    const togglePassword = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("loginPassword");
+
+    const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+    function setMessage(message, type = "normal") {
+      msgEl.textContent = message;
+
+      if (type === "success") {
+        msgEl.style.color = "#16a34a";
+      } else if (type === "error") {
+        msgEl.style.color = "#ef4444";
+      } else {
+        msgEl.style.color = "#1f2937";
+      }
+    }
+
+    function setTab(type) {
+      currentTab = type;
+
+      tabStudent.classList.toggle("active", type === "student");
+      tabAdmin.classList.toggle("active", type === "admin");
+
+      const hint = document.getElementById("tabHintText");
+      if (hint) {
+        hint.textContent = type === "admin"
+          ? "Admin login — use your admin credentials."
+          : "Use the email & password you set during registration.";
+      }
+
+      setMessage("");
+    }
+
+    tabStudent.addEventListener("click", () => setTab("student"));
+    tabAdmin.addEventListener("click", () => setTab("admin"));
+
+    togglePassword.addEventListener("click", () => {
+      const isPassword = passwordInput.type === "password";
+
+      passwordInput.type = isPassword ? "text" : "password";
+      togglePassword.textContent = isPassword ? "Hide" : "Show";
+    });
+
+    async function tryLogin(endpoints, email, password) {
+      let lastErrorMessage = "Login failed";
+
+      for (const endpoint of endpoints) {
+        try {
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email, password })
+          });
+
+          let data = {};
+
+          try {
+            data = await res.json();
+          } catch {
+            data = {};
+          }
+
+          if (res.ok && data.success) {
+            return {
+              success: true,
+              data,
+              endpoint
+            };
+          }
+
+          lastErrorMessage = data.message || data.error || lastErrorMessage;
+
+        } catch (error) {
+          lastErrorMessage = "Backend server se connection nahi ho pa raha. Please try again.";
+        }
+      }
+
+      return {
+        success: false,
+        message: lastErrorMessage
+      };
+    }
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+
+      if (!email || !password) {
+        setMessage("Please enter email and password.", "error");
+        return;
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.innerHTML = '<span class="spinner-inline"></span> Logging in...';
+      setMessage("");
+
+      try {
+        let endpoints = [];
+
+        if (currentTab === "admin") {
+          endpoints = [
+            `${API_BASE}/admins/login`,
+            `${API_BASE}/auth/login`
+          ];
+        } else {
+          endpoints = [
+            `${API_BASE}/students/login`
+          ];
+        }
+
+        const result = await tryLogin(endpoints, email, password);
+
+        if (!result.success) {
+          setMessage(result.message || "Invalid email or password.", "error");
+          return;
+        }
+
+        const data = result.data;
+
+        setMessage("Login successful. Redirecting...", "success");
+
+        if (currentTab === "admin") {
+          localStorage.setItem("ved_admin_token", data.token || "");
+          localStorage.setItem("ved_admin_info", JSON.stringify(data.admin || data.user || {}));
+
+          const roleName = (data.admin || data.user || {})?.role?.name || "";
+          const isInstitution = roleName.toLowerCase() === "institution";
+
+          setTimeout(() => {
+            window.location.href = isInstitution ? "institution-dashboard.html" : "Dashboard.html";
+          }, 700);
+
+        } else {
+          localStorage.setItem("ved_student_token", data.token || "");
+          localStorage.setItem("ved_student_info", JSON.stringify(data.student || data.user || {}));
+
+          setTimeout(() => {
+            const params = new URLSearchParams(window.location.search);
+            const returnUrl = params.get('return');
+            window.location.href = returnUrl ? decodeURIComponent(returnUrl) : "index.html";
+          }, 700);
+        }
+
+      } catch (error) {
+        console.error(error);
+        setMessage("Backend server se connection nahi ho pa raha. Please try again.", "error");
+
+      } finally {
+        setTimeout(() => {
+          loginBtn.disabled = false;
+          loginBtn.textContent = "Login Now";
+        }, 900);
+      }
+    });
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 350) {
+        scrollTopBtn.classList.add("show");
+      } else {
+        scrollTopBtn.classList.remove("show");
+      }
+    });
+
+    scrollTopBtn.addEventListener("click", () => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    });
+  </script>
+
+  <script src="shared.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+    window.addEventListener('online',  () => console.log('Back online'));
+    window.addEventListener('offline', () => console.log('Gone offline'));
+  </script>
+</body>
+</html>

@@ -1,0 +1,778 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CEP Certificate — VED Foundation</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<script src="/config.js"></script>
+<!-- PDF libs loaded lazily on download -->
+<style>
+:root{
+  --navy:#0A1628;--royal:#1A4FBB;--royal-light:#2563EB;
+  --orange:#F97316;--success:#22C55E;--warning:#EAB308;--danger:#EF4444;
+  --gray-100:#EEF2FB;--gray-200:#DCE4F5;--gray-400:#94A3C0;--gray-600:#5B6B8A;
+  --white:#fff;--off-white:#F1F5FF;
+  --radius:12px;--shadow:0 4px 20px rgba(10,22,40,.14);
+  --gold:#D4A017;--gold-light:#F0C040;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:#2D3A55;min-height:100vh;}
+a{text-decoration:none;color:inherit;}
+
+/* ── Top bar ── */
+.topbar{background:var(--navy);color:#fff;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+.topbar-brand{display:flex;align-items:center;gap:12px;font-family:'Sora',sans-serif;font-weight:700;font-size:18px;}
+.topbar-brand img{height:36px;border-radius:8px;}
+.topbar-right{display:flex;align-items:center;gap:16px;}
+.topbar-user{font-size:13px;color:rgba(255,255,255,.75);}
+.topbar-user strong{color:#fff;}
+.btn-back{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:7px 14px;font-size:13px;cursor:pointer;transition:.2s;}
+.btn-back:hover{background:rgba(255,255,255,.2);}
+
+/* ── Page body ── */
+.page-body{max-width:960px;margin:32px auto;padding:0 20px 60px;}
+
+/* ── Tabs ── */
+.tab-bar{display:flex;gap:4px;background:var(--white);border-radius:12px;padding:6px;box-shadow:var(--shadow);margin-bottom:28px;}
+.tab-btn{flex:1;padding:10px 16px;border-radius:8px;border:none;cursor:pointer;font-size:14px;font-weight:600;color:var(--gray-600);transition:.2s;}
+.tab-btn.active{background:var(--royal);color:#fff;box-shadow:0 2px 8px rgba(26,79,187,.35);}
+.tab-btn:not(.active):hover{background:var(--gray-100);}
+
+/* ── Card ── */
+.card{background:#fff;border-radius:16px;padding:32px;box-shadow:var(--shadow);margin-bottom:24px;}
+.card-title{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:6px;display:flex;align-items:center;gap:10px;}
+.card-subtitle{font-size:13px;color:var(--gray-400);margin-bottom:28px;}
+
+/* ── Info band (auto-filled partner info) ── */
+.info-band{display:grid;grid-template-columns:1fr 1fr;gap:16px;background:var(--gray-100);border-radius:10px;padding:18px;margin-bottom:28px;}
+.info-item label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray-400);display:block;margin-bottom:4px;}
+.info-item span{font-size:14px;font-weight:600;color:var(--navy);}
+.info-item .code-chip{font-family:'Courier New',monospace;background:var(--navy);color:#fff;padding:3px 10px;border-radius:6px;font-size:13px;}
+
+/* ── Form ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group.full{grid-column:1/-1;}
+.form-group label{font-size:13px;font-weight:600;color:var(--navy);}
+.form-group label span{color:var(--danger);}
+.form-control{padding:10px 14px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:14px;font-family:inherit;transition:.2s;background:#fff;}
+.form-control:focus{outline:none;border-color:var(--royal);box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+textarea.form-control{resize:vertical;min-height:80px;}
+
+/* ── Buttons ── */
+.btn{padding:11px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:.2s;display:inline-flex;align-items:center;gap:8px;}
+.btn-primary{background:var(--royal);color:#fff;box-shadow:0 2px 10px rgba(26,79,187,.3);}
+.btn-primary:hover{background:var(--royal-light);transform:translateY(-1px);}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.btn-outline{background:transparent;color:var(--royal);border:1.5px solid var(--royal);}
+.btn-outline:hover{background:var(--royal);color:#fff;}
+.btn-success{background:var(--success);color:#fff;}
+.btn-success:hover{filter:brightness(1.1);}
+.form-actions{margin-top:28px;display:flex;gap:12px;justify-content:flex-end;}
+
+/* ── Status badge ── */
+.badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.badge-pending{background:#FEF3C7;color:#92400E;}
+.badge-approved{background:#DCFCE7;color:#166534;}
+.badge-rejected{background:#FEE2E2;color:#991B1B;}
+
+/* ── Requests table ── */
+.requests-table{width:100%;border-collapse:collapse;}
+.requests-table th{padding:12px 16px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray-400);border-bottom:2px solid var(--gray-200);}
+.requests-table td{padding:14px 16px;font-size:13px;border-bottom:1px solid var(--gray-100);vertical-align:middle;}
+.requests-table tr:hover td{background:var(--gray-100);}
+.requests-table .empty{text-align:center;padding:48px;color:var(--gray-400);}
+
+/* ── Toast ── */
+#toastBox{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;}
+.toast{padding:14px 18px;border-radius:10px;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.15);display:flex;align-items:center;gap:10px;min-width:280px;animation:slideIn .3s ease;}
+.toast-success{background:#DCFCE7;color:#166534;border-left:4px solid var(--success);}
+.toast-error  {background:#FEE2E2;color:#991B1B;border-left:4px solid var(--danger);}
+.toast-info   {background:#EFF6FF;color:#1e40af;border-left:4px solid var(--royal);}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+
+/* ── Loader ── */
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(10,22,40,.4);z-index:9998;align-items:center;justify-content:center;}
+.loading-overlay.show{display:flex;}
+.loading-spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── Notification banner ── */
+.notif-banner{padding:14px 18px;border-radius:10px;font-size:14px;font-weight:500;display:flex;align-items:flex-start;gap:12px;margin-bottom:20px;}
+.notif-banner.approved{background:#DCFCE7;color:#166534;border:1px solid #86efac;}
+.notif-banner.rejected{background:#FEE2E2;color:#991B1B;border:1px solid #fca5a5;}
+.notif-banner i{margin-top:2px;flex-shrink:0;}
+
+/* ═══════════════════════════════════════════════
+   CERTIFICATE TEMPLATE (print-ready)
+   ═══════════════════════════════════════════════ */
+.cert-wrap{display:none;}
+.cert-wrap.show{display:block;}
+
+#certTemplate{
+  width:794px;min-height:1123px;
+  background:#fff;
+  margin:0 auto;
+  font-family:'Times New Roman',serif;
+  position:relative;
+  padding:0;
+}
+
+/* Outer gold border */
+.cert-outer{
+  position:absolute;inset:12px;
+  border:6px solid var(--gold);
+}
+/* Inner border */
+.cert-inner{
+  position:absolute;inset:22px;
+  border:2px solid var(--gold);
+}
+/* Top/bottom center diamonds */
+.cert-dmd-top{
+  position:absolute;top:4px;left:50%;
+  transform:translateX(-50%) rotate(45deg);
+  width:20px;height:20px;background:var(--gold);z-index:3;
+}
+.cert-dmd-bot{
+  position:absolute;bottom:4px;left:50%;
+  transform:translateX(-50%) rotate(45deg);
+  width:20px;height:20px;background:var(--gold);z-index:3;
+}
+
+.cert-content{
+  position:relative;z-index:2;
+  padding:68px 80px 54px;
+  display:flex;flex-direction:column;align-items:center;
+  min-height:1123px;
+}
+
+/* CertED logo */
+.cert-certed-logo{text-align:center;margin-bottom:1px;}
+.cert-certed-logo img{height:170px;object-fit:contain;mix-blend-mode:multiply;}
+
+/* Title */
+.cert-title{
+  font-family:'Sora',sans-serif;
+  font-size:36px;font-weight:900;
+  color:#1a1a1a;
+  text-align:center;
+  line-height:1.2;
+  margin-bottom:10px;letter-spacing:2px;
+}
+
+/* Ornamental scroll divider */
+.cert-ornament{
+  display:flex;align-items:center;width:88%;margin:14px 0 18px;gap:0;
+}
+.cert-ornament::before,.cert-ornament::after{
+  content:'';flex:1;height:1px;background:var(--gold);
+}
+.cert-ornament-scroll{
+  color:var(--gold);font-size:20px;padding:0 8px;
+  font-family:Georgia,serif;letter-spacing:-2px;
+  line-height:1;
+}
+
+/* Subtitle */
+.cert-subtitle{
+  font-size:16px;color:#333;
+  margin-bottom:36px;
+}
+
+/* Partner name on gold underline */
+.cert-name-wrap{
+  width:82%;text-align:center;margin-bottom:24px;
+}
+.cert-partner-name{
+  font-size:28px;font-weight:700;color:#111;
+  font-family:'Sora',sans-serif;
+  display:block;min-height:38px;padding-bottom:6px;
+  border-bottom:2px solid var(--gold);
+  width:100%;text-align:center;
+}
+
+/* Body text */
+.cert-body-text{font-size:15px;color:#333;text-align:center;margin-bottom:5px;line-height:2;}
+.cert-body-text strong{color:#111;}
+
+/* Diamond divider */
+.cert-divider{
+  display:flex;align-items:center;
+  margin:22px 0;
+  width:55%;
+}
+.cert-divider::before,.cert-divider::after{content:'';flex:1;height:1px;background:var(--gold);}
+.cert-divider-diamond{width:10px;height:10px;background:var(--gold);transform:rotate(45deg);margin:0 12px;flex-shrink:0;}
+
+/* Details table */
+.cert-details{width:88%;border-collapse:collapse;margin-bottom:22px;}
+.cert-details td{padding:13px 6px;font-size:14px;color:#222;vertical-align:middle;}
+.cert-details td.cert-lbl{font-weight:500;width:170px;white-space:nowrap;color:#1a1a1a;}
+.cert-details td.cert-colon{width:18px;color:#444;font-weight:600;font-size:14px;}
+.cert-details td.cert-val{border-bottom:1px dotted #888;padding-bottom:10px;color:#333;}
+
+/* Signature row */
+.cert-sig-row{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  width:100%;margin-top:auto;padding-top:18px;
+}
+.cert-sig-left{display:flex;align-items:flex-start;gap:12px;}
+.cert-ved-logo{width:50px;height:60px;object-fit:contain;display:block;margin:0 auto;background:transparent;padding:0;border:none}
+.cert-ved-logo img{mix-blend-mode:normal;filter:none;display:block;max-width:100%;height:auto;width:auto}
+.cert-venture{font-size:11px;font-weight:700;color:#333;line-height:1.6;}
+
+.cert-sig-block{text-align:center;}
+.cert-sig-for{font-size:12px;color:#1A4FBB;font-weight:600;margin-bottom:4px;font-family:'DM Sans',sans-serif;}
+.cert-sig-img{height:58px;object-fit:contain;display:block;margin:0 auto 2px;mix-blend-mode:multiply;}
+.cert-sig-line{width:160px;border-bottom:1.5px solid #555;margin:8px auto 12px;}
+.cert-sig-role{font-size:13px;font-weight:700;color:#1A4FBB;font-family:'DM Sans',sans-serif;}
+.cert-sig-auth{
+  font-size:12px;color:#333;
+  padding-top:5px;margin-top:6px;
+  width:160px;text-align:center;
+  font-family:'DM Sans',sans-serif;
+}
+
+/* QR code */
+.cert-qr{width:78px;height:78px;object-fit:contain;}
+.cert-qr-label{font-size:9px;color:#666;text-align:center;margin-top:2px;}
+
+/* Footer */
+.cert-footer{
+  font-size:10px;color:#555;text-align:center;
+  border-top:1px solid var(--gold);padding-top:10px;
+  width:100%;margin-top:24px;line-height:1.7;
+  font-family:'DM Sans',sans-serif;
+}
+
+/* Download action bar */
+.cert-actions{display:flex;gap:12px;margin-top:20px;justify-content:center;}
+
+/* Print styles */
+@media print{
+  body *{visibility:hidden;}
+  #certTemplate,#certTemplate *{visibility:visible;}
+  #certTemplate{position:fixed;inset:0;width:100%;height:100%;}
+  .cert-actions,.topbar,.tab-bar,.card,.notif-banner{display:none!important;}
+}
+
+@media(max-width:860px){
+  #certTemplate{width:100%;transform-origin:top left;transform:scale(.5);}
+  .info-band{grid-template-columns:1fr;}
+  .form-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <img src="/vedlogo.jpeg" alt="VED Foundation"/>
+    VED Foundation
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-user">Welcome, <strong id="topbarName">—</strong></div>
+    <button class="btn-back" onclick="window.location.href='Dashboard.html'">
+      <i class="fa-solid fa-arrow-left"></i> Dashboard
+    </button>
+  </div>
+</div>
+
+<div class="page-body">
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-request" onclick="switchTab('request')">
+      <i class="fa-solid fa-file-circle-plus"></i> Request Certificate
+    </button>
+    <button class="tab-btn" id="tab-status" onclick="switchTab('status')">
+      <i class="fa-solid fa-list-check"></i> My Requests
+    </button>
+    <button class="tab-btn" id="tab-cert" onclick="switchTab('cert')" style="display:none">
+      <i class="fa-solid fa-award"></i> View Certificate
+    </button>
+  </div>
+
+  <!-- ───── Request Form Tab ───── -->
+  <div id="panel-request">
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-id-card" style="color:var(--gold)"></i> CEP Certificate Request</div>
+      <div class="card-subtitle">Your partner details below are auto-filled from your profile. Fill in institution information and submit.</div>
+
+      <!-- Auto-filled partner info -->
+      <div class="info-band">
+        <div class="info-item">
+          <label>Partner Name</label>
+          <span id="dispName">—</span>
+        </div>
+        <div class="info-item">
+          <label>Application Number</label>
+          <span><code class="code-chip" id="dispCode">—</code></span>
+        </div>
+      </div>
+
+      <form id="certForm" onsubmit="submitRequest(event)">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Institution Name <span>*</span></label>
+            <input class="form-control" id="institutionName" placeholder="e.g. ABC College of Education" required/>
+          </div>
+          <div class="form-group full">
+            <label>Registered Address <span>*</span></label>
+            <textarea class="form-control" id="registeredAddress" placeholder="Full registered address of the institution" required></textarea>
+          </div>
+          <div class="form-group">
+            <label>Registration Date <span>*</span></label>
+            <input class="form-control" type="date" id="registrationDate" required/>
+          </div>
+          <div class="form-group">
+            <label>Remarks (optional)</label>
+            <input class="form-control" id="remarks" placeholder="Any additional notes"/>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="reset" class="btn btn-outline">Clear</button>
+          <button type="submit" class="btn btn-primary" id="submitBtn">
+            <i class="fa-solid fa-paper-plane"></i> Submit Request
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ───── My Requests Tab ───── -->
+  <div id="panel-status" style="display:none">
+    <div id="notifBanners"></div>
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--royal)"></i> My Certificate Requests</div>
+      <div class="card-subtitle">Track status of all your submitted requests below.</div>
+      <div id="requestsTableWrap">
+        <div style="text-align:center;padding:40px;color:var(--gray-400)">
+          <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── Certificate View Tab ───── -->
+  <div id="panel-cert" style="display:none">
+    <div class="cert-actions">
+      <button class="btn btn-primary" onclick="printCert()">
+        <i class="fa-solid fa-print"></i> Print / Save as PDF
+      </button>
+      <button class="btn btn-outline" onclick="downloadCertPDF()">
+        <i class="fa-solid fa-download"></i> Download PDF
+      </button>
+      <button class="btn btn-outline" onclick="switchTab('status')">
+        <i class="fa-solid fa-arrow-left"></i> Back to Requests
+      </button>
+    </div>
+
+    <!-- Certificate HTML Template -->
+    <div id="certTemplate">
+      <!-- Decorative borders -->
+      <div class="cert-outer"></div>
+      <div class="cert-inner"></div>
+      <div class="cert-dmd-top"></div>
+      <div class="cert-dmd-bot"></div>
+
+      <div class="cert-content">
+        <!-- CertED Technologies Logo -->
+        <div class="cert-certed-logo">
+          <img src="/vedlogo.jpeg" alt="VED Foundation"/>
+        </div>
+
+        <div class="cert-title">CERTIFICATE OF<br/>C.E.P COLLABORATION</div>
+
+        <div class="cert-ornament">
+          <div class="cert-ornament-scroll">❧ ❧ ❧</div>
+        </div>
+
+        <div class="cert-subtitle">This is to certify that</div>
+
+        <div class="cert-name-wrap">
+          <span class="cert-partner-name" id="certPartnerName">Partner Full Name</span>
+        </div>
+
+        <div class="cert-body-text">has full right to take admission on behalf of</div>
+        <div class="cert-body-text"><strong>CERTED TECHNOLOGIES</strong></div>
+        <div class="cert-body-text">become part of the Channel Education Partner.</div>
+
+        <div class="cert-divider"><div class="cert-divider-diamond"></div></div>
+
+        <table class="cert-details">
+          <tr>
+            <td class="cert-lbl">Application Number</td>
+            <td class="cert-colon">:</td>
+            <td class="cert-val" id="certAppNum">—</td>
+          </tr>
+          <tr>
+            <td class="cert-lbl">Institutions Name</td>
+            <td class="cert-colon">:</td>
+            <td class="cert-val" id="certInstName">—</td>
+          </tr>
+          <tr>
+            <td class="cert-lbl">Registered Address</td>
+            <td class="cert-colon">:</td>
+            <td class="cert-val" id="certAddress">—</td>
+          </tr>
+          <tr>
+            <td class="cert-lbl">Registration Date</td>
+            <td class="cert-colon">:</td>
+            <td class="cert-val" id="certRegDate">—</td>
+          </tr>
+        </table>
+
+        <!-- Signature row -->
+        <div class="cert-sig-row">
+          <div class="cert-sig-left">
+            <img src="/vedlogo.jpeg" class="cert-ved-logo" alt="VED Foundation"/>
+            <div class="cert-venture">
+              <strong>Venture of Certed</strong><br/>
+              <strong>Technologies</strong>
+            </div>
+          </div>
+
+          <!-- QR Code -->
+          <div style="text-align:center">
+            <img id="certQR" class="cert-qr" src="" alt="QR"/>
+            <div class="cert-qr-label">Scan to verify</div>
+            <div style="font-size:8px;color:#999;margin-top:1px" id="certNumber">CEP-2026-XXXXXX</div>
+          </div>
+
+          <div class="cert-sig-block">
+            <img src="/background-removebg-preview.png" class="cert-sig-img" alt="Signature"/>
+            <div class="cert-sig-line"></div>
+            <div class="cert-sig-auth">Auth. Signature</div>
+          </div>
+        </div>
+
+        <div class="cert-footer">
+          Head Office: Abhilasha Bhavan Bhind Road, Pinto Park Tiraha, Gwalior, Madhya Pradesh 474005<br/>
+          Contact Details +91 7400650306
+        </div>
+      </div>
+    </div>
+
+    <div class="cert-actions" style="margin-top:16px">
+      <button class="btn btn-primary" onclick="printCert()">
+        <i class="fa-solid fa-print"></i> Print / Save as PDF
+      </button>
+      <button class="btn btn-outline" onclick="downloadCertPDF()">
+        <i class="fa-solid fa-download"></i> Download PDF
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+</div>
+
+<!-- Toast container -->
+<div id="toastBox"></div>
+
+<script>
+/* ── Config ────────────────────────────────────────────────── */
+const API = (window.VED_API_BASE || 'http://localhost:5000/api').replace(/\/api$/,'') + '/api';
+const TOKEN_KEY = 'ved_admin_token';
+const USER_KEY  = 'ved_admin_info';
+
+let _currentUser = null;
+let _requests    = [];
+
+/* ── Auth helpers ──────────────────────────────────────────── */
+function getToken() { return localStorage.getItem(TOKEN_KEY); }
+function getUser()  {
+  try { return JSON.parse(localStorage.getItem(USER_KEY)); } catch { return null; }
+}
+
+async function apiFetch(method, path, body = null) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(API + path, opts);
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, status: res.status, data };
+}
+
+/* ── Toast ─────────────────────────────────────────────────── */
+function toast(msg, type = 'info') {
+  const icons = { success:'fa-circle-check', error:'fa-circle-xmark', info:'fa-circle-info' };
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.innerHTML = `<i class="fa-solid ${icons[type]||icons.info}"></i> ${msg}`;
+  document.getElementById('toastBox').appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+/* ── Loading ───────────────────────────────────────────────── */
+function showLoader() { document.getElementById('loadingOverlay').classList.add('show'); }
+function hideLoader() { document.getElementById('loadingOverlay').classList.remove('show'); }
+
+/* ── Tab switching ─────────────────────────────────────────── */
+function switchTab(tab) {
+  ['request','status','cert'].forEach(t => {
+    document.getElementById(`panel-${t}`).style.display = t === tab ? '' : 'none';
+    const btn = document.getElementById(`tab-${t}`);
+    if (btn) btn.classList.toggle('active', t === tab);
+  });
+  if (tab === 'status') loadMyRequests();
+}
+
+/* ── Init ──────────────────────────────────────────────────── */
+async function init() {
+  const token = getToken();
+  if (!token) { window.location.href = 'login.html'; return; }
+
+  // Verify token
+  const r = await apiFetch('GET', '/auth/me');
+  if (!r.ok || !r.data.admin) { window.location.href = 'login.html'; return; }
+
+  _currentUser = r.data.admin;
+  const name = `${_currentUser.firstName} ${_currentUser.lastName}`.trim();
+  document.getElementById('topbarName').textContent = name;
+  document.getElementById('dispName').textContent   = name;
+
+  const code = _currentUser.code || '—';
+  document.getElementById('dispCode').textContent   = code;
+
+  // Set today as default registration date
+  document.getElementById('registrationDate').value = new Date().toISOString().split('T')[0];
+
+  // Check for pending notifications (approved certs)
+  checkNewNotifications();
+}
+
+/* ── Check notifications (approved/rejected certs) ─────────── */
+async function checkNewNotifications() {
+  const r = await apiFetch('GET', '/notifications?unread=true&limit=10');
+  if (!r.ok) return;
+  const notifs = r.data.data || [];
+  const certNotifs = notifs.filter(n => n.type === 'cert_approved' || n.type === 'cert_rejected');
+  if (!certNotifs.length) return;
+
+  const banners = document.getElementById('notifBanners');
+  banners.innerHTML = certNotifs.map(n => `
+    <div class="notif-banner ${n.type === 'cert_approved' ? 'approved' : 'rejected'}">
+      <i class="fa-solid ${n.type === 'cert_approved' ? 'fa-circle-check' : 'fa-circle-xmark'}"></i>
+      <div><strong>${n.title}</strong><br/>${n.message}</div>
+    </div>
+  `).join('');
+
+  // Mark as read
+  await apiFetch('PUT', '/notifications/read-all');
+}
+
+/* ── Submit certificate request ────────────────────────────── */
+async function submitRequest(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting…';
+  showLoader();
+
+  const payload = {
+    institutionName:   document.getElementById('institutionName').value.trim(),
+    registeredAddress: document.getElementById('registeredAddress').value.trim(),
+    registrationDate:  document.getElementById('registrationDate').value,
+    remarks:           document.getElementById('remarks').value.trim(),
+  };
+
+  const r = await apiFetch('POST', '/cep-certificates/request', payload);
+  hideLoader();
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Request';
+
+  if (r.ok) {
+    toast('Certificate request submitted successfully! Admin will review shortly.', 'success');
+    document.getElementById('certForm').reset();
+    document.getElementById('registrationDate').value = new Date().toISOString().split('T')[0];
+    setTimeout(() => switchTab('status'), 1500);
+  } else {
+    toast(r.data.message || 'Submission failed. Please try again.', 'error');
+  }
+}
+
+/* ── Load my requests ──────────────────────────────────────── */
+async function loadMyRequests() {
+  const wrap = document.getElementById('requestsTableWrap');
+  wrap.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray-400)"><i class="fa-solid fa-spinner fa-spin fa-2x"></i></div>';
+
+  const r = await apiFetch('GET', '/cep-certificates/my-requests');
+  if (!r.ok) {
+    wrap.innerHTML = '<div style="text-align:center;padding:40px;color:var(--danger)">Failed to load requests.</div>';
+    return;
+  }
+
+  _requests = r.data.data || [];
+
+  if (!_requests.length) {
+    wrap.innerHTML = `
+      <table class="requests-table"><thead><tr>
+        <th>Request #</th><th>Institution</th><th>Submitted</th><th>Status</th><th>Action</th>
+      </tr></thead>
+      <tbody><tr><td colspan="5" class="empty"><i class="fa-solid fa-inbox fa-2x" style="display:block;margin-bottom:8px"></i>No requests yet</td></tr></tbody></table>`;
+    return;
+  }
+
+  wrap.innerHTML = `
+    <table class="requests-table">
+      <thead><tr>
+        <th>Request #</th><th>Institution</th><th>Address</th><th>Submitted</th><th>Status</th><th>Action</th>
+      </tr></thead>
+      <tbody>
+        ${_requests.map(req => `
+          <tr>
+            <td><code style="font-size:12px">${req.requestNumber || '—'}</code></td>
+            <td><strong>${esc(req.institutionName)}</strong></td>
+            <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(req.registeredAddress)}</td>
+            <td>${formatDate(req.submittedAt)}</td>
+            <td><span class="badge badge-${req.status}">${req.status}</span></td>
+            <td>${actionCell(req)}</td>
+          </tr>
+          ${req.status === 'rejected' && req.rejectionReason ? `
+          <tr><td colspan="6" style="padding:6px 16px 12px;font-size:12px;color:var(--danger)">
+            <i class="fa-solid fa-triangle-exclamation"></i> Rejection reason: ${esc(req.rejectionReason)}
+          </td></tr>` : ''}
+        `).join('')}
+      </tbody>
+    </table>`;
+}
+
+function actionCell(req) {
+  if (req.status === 'approved' && req.certificate) {
+    return `<button class="btn btn-success" style="padding:6px 14px;font-size:12px" onclick="viewCertificate('${req.certificate._id}')">
+      <i class="fa-solid fa-award"></i> View Certificate
+    </button>`;
+  }
+  if (req.status === 'pending') {
+    return `<span style="color:var(--gray-400);font-size:12px"><i class="fa-solid fa-clock"></i> Awaiting review</span>`;
+  }
+  return '—';
+}
+
+/* ── View / render certificate ─────────────────────────────── */
+async function viewCertificate(certId) {
+  showLoader();
+  const r = await apiFetch('GET', `/cep-certificates/my-certificate/${certId}`);
+  hideLoader();
+
+  if (!r.ok) { toast('Failed to load certificate.', 'error'); return; }
+  const cert = r.data.data;
+
+  // Populate template
+  document.getElementById('certPartnerName').textContent = cert.partnerName;
+  document.getElementById('certAppNum').textContent      = cert.partnerCode || '—';
+  document.getElementById('certInstName').textContent    = cert.institutionName;
+  document.getElementById('certAddress').textContent     = cert.registeredAddress;
+  document.getElementById('certRegDate').textContent     = formatDate(cert.registrationDate);
+  document.getElementById('certNumber').textContent      = cert.certificateNumber;
+
+  if (cert.qrCode) {
+    document.getElementById('certQR').src = cert.qrCode;
+  }
+
+  // Show tab
+  document.getElementById('tab-cert').style.display = '';
+  switchTab('cert');
+
+  // Remove gray bg from logo for clean PDF export
+  const logoImg = document.querySelector('#certTemplate .cert-certed-logo img');
+  if (logoImg) { logoImg.dataset.bgRemoved = ''; removeCertLogoBackground(logoImg); }
+
+  toast('Certificate loaded successfully!', 'success');
+}
+
+/* Remove gray/white background from logo image via canvas */
+function removeCertLogoBackground(imgEl) {
+  if (!imgEl || imgEl.dataset.bgRemoved === '1') return;
+  const process = () => {
+    try {
+      const c = document.createElement('canvas');
+      c.width = imgEl.naturalWidth; c.height = imgEl.naturalHeight;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(imgEl, 0, 0);
+      const px = ctx.getImageData(0, 0, c.width, c.height);
+      const d  = px.data;
+      for (let i = 0; i < d.length; i += 4) {
+        if (d[i] > 210 && d[i+1] > 210 && d[i+2] > 210) d[i+3] = 0;
+      }
+      ctx.putImageData(px, 0, 0);
+      imgEl.src = c.toDataURL('image/png');
+      imgEl.style.mixBlendMode = 'normal';
+      imgEl.dataset.bgRemoved = '1';
+    } catch(e) {}
+  };
+  imgEl.complete && imgEl.naturalWidth ? process() : (imgEl.onload = process);
+}
+
+/* ── Print certificate ─────────────────────────────────────── */
+function printCert() { window.print(); }
+
+/* ── Download PDF via html2canvas + jsPDF ──────────────────── */
+async function downloadCertPDF() {
+  const btn = event.target.closest('button');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating…';
+
+  try {
+    // Lazy-load libraries
+    if (!window.html2canvas) {
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    }
+    if (!window.jspdf) {
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    }
+
+    const el      = document.getElementById('certTemplate');
+    const canvas  = await html2canvas(el, { scale: 2, useCORS: true, logging: false });
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+
+    const certNum = document.getElementById('certNumber').textContent || 'certificate';
+    pdf.save(`${certNum}.pdf`);
+    toast('PDF downloaded!', 'success');
+  } catch (err) {
+    toast('PDF generation failed. Please use Print instead.', 'error');
+    console.error(err);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-download"></i> Download PDF';
+}
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = resolve; s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
+/* ── Helpers ───────────────────────────────────────────────── */
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+}
+
+/* ── Boot ──────────────────────────────────────────────────── */
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+﻿<!-- footer.html -->
+<footer style="background:#f2f2f2;color:#4b5563;padding:70px 0 28px;border-top:1px solid #ddd;font-family:Arial,sans-serif;">
+
+  <style>
+    .footer-container{
+      width:100%;
+      max-width:1350px;
+      margin:auto;
+      padding:0 20px;
+    }
+
+    .footer-grid{
+      display:grid;
+      grid-template-columns:1.35fr .9fr .9fr .9fr 1fr;
+      gap:42px;
+      align-items:start;
+      margin-bottom:45px;
+    }
+
+    .footer-brand{
+      display:block;
+      margin-bottom:18px;
+    }
+
+    .footer-brand img{
+      width:145px;
+      height:auto;
+      object-fit:contain;
+      background:transparent;
+    }
+
+    .footer-col h4{
+      color:#374151;
+      font-size:16px;
+      font-weight:900;
+      text-transform:uppercase;
+      margin-bottom:18px;
+    }
+
+    .footer-col h4::after{
+      content:"";
+      display:block;
+      width:45px;
+      height:3px;
+      background:#0b63ce;
+      margin-top:8px;
+      border-radius:4px;
+    }
+
+    .footer-col p{
+      color:#4b5563;
+      font-size:15px;
+      line-height:1.7;
+      max-width:280px;
+      margin:0;
+    }
+
+    .footer-col ul{
+      list-style:none;
+      padding:0;
+      margin:0;
+      display:grid;
+      gap:10px;
+    }
+
+    .footer-col a{
+      color:#4b5563;
+      font-size:15px;
+      line-height:1.45;
+      text-decoration:none;
+      transition:0.3s;
+    }
+
+    .footer-col a:hover{
+      color:#0b63ce;
+    }
+
+    .footer-social{
+      display:flex;
+      gap:18px;
+      margin-top:22px;
+    }
+
+    .footer-social a{
+      width:28px;
+      height:28px;
+      display:grid;
+      place-items:center;
+      color:#16a34a;
+      font-weight:900;
+      font-size:20px;
+      text-decoration:none;
+    }
+
+    .footer-contact-box{
+      background:#fff;
+      border-radius:10px;
+      padding:18px;
+      border:1px solid #e5e7eb;
+    }
+
+    .footer-bottom{
+      border-top:1px solid #d5d5d5;
+      padding-top:20px;
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+      flex-wrap:wrap;
+      color:#64748b;
+      font-size:14px;
+    }
+
+    @media(max-width:1024px){
+      .footer-grid{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
+    @media(max-width:640px){
+      footer{
+        padding:48px 0 90px !important;
+      }
+
+      .footer-grid{
+        grid-template-columns:1fr;
+        gap:28px;
+      }
+
+      .footer-bottom{
+        flex-direction:column;
+        text-align:center;
+      }
+
+      .footer-brand img{
+        width:125px;
+      }
+    }
+  </style>
+
+  <div class="footer-container">
+
+    <div class="footer-grid">
+
+      <div class="footer-col">
+        <div class="footer-brand">
+          <img src="vedlogo.jpeg" alt="VED Foundation Logo">
+        </div>
+
+        <p>
+          VED Foundation is a non-profit organisation working for education,
+          skills, smart learning and student empowerment through workshops,
+          digital learning and community development programs.
+        </p>
+
+        <div class="footer-social">
+          <a href="#">◎</a>
+          <a href="#">in</a>
+          <a href="#">f</a>
+          <a href="#">𝕏</a>
+          <a href="#">▶</a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>About Us</h4>
+        <ul>
+          <li><a href="#about">About VED Foundation</a></li>
+          <li><a href="#about">Our Vision and Mission</a></li>
+          <li><a href="#stories">Impact Stories</a></li>
+          <li><a href="#programs">Programs</a></li>
+          <li><a href="#campaigns">Campaigns</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Our Work</h4>
+        <ul>
+          <li><a href="smartclasses.html">Smart Classes</a></li>
+          <li><a href="#work">Education Support</a></li>
+          <li><a href="#programs">Workshops</a></li>
+          <li><a href="agriculture.html">Agriculture</a></li>
+          <li><a href="solarpanel.html">Solar Awareness</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Get Involved</h4>
+        <ul>
+          <li><a href="donation.html">Donate Now</a></li>
+          <li><a href="#register">Register for Workshop</a></li>
+          <li><a href="#register">Download Certificate</a></li>
+          <li><a href="#campaigns">Support Campaigns</a></li>
+          <li><a href="#">Volunteer With Us</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Get In Touch</h4>
+
+        <div class="footer-contact-box">
+          <p><b>Email:</b><br> vededufoundation@gmail.com</p>
+          <p style="margin-top:12px;"><b>Phone:</b><br> +91 9009015026</p>
+          <p style="margin-top:12px;"><b>Location:</b><br> India</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 VED Foundation. All Rights Reserved.</span>
+      <span>Designed for Education • Skills • Empowerment</span>
+    </div>
+
+  </div>
+</footer>

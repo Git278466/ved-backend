@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard | VED Foundation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="/config.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --blue:#0b63ce;--blue-dark:#074a9d;--orange:#f7941d;--orange-dark:#e46f00;
+      --green:#16a34a;--navy:#08254d;--text:#1f2937;--muted:#6b7280;
+      --light:#f5f8fd;--white:#ffffff;--border:#e5e7eb;
+      --shadow:0 16px 45px rgba(15,23,42,.12);--danger:#ef4444;--radius:14px;
+    }
+    body{font-family:'Inter',sans-serif;color:var(--text);background:var(--light);min-height:100vh}
+    a{text-decoration:none;color:inherit}
+
+    /* HEADER */
+    .header{
+      background:#fff;border-bottom:1px solid var(--border);
+      padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;
+      position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(15,23,42,.06);
+    }
+    .header-logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.1rem;color:var(--navy)}
+    .header-logo span{color:var(--orange)}
+    .header-actions{display:flex;align-items:center;gap:12px}
+    .student-badge{
+      background:#eaf3ff;color:var(--blue-dark);
+      padding:6px 14px;border-radius:999px;font-size:.82rem;font-weight:800;
+    }
+    .btn-logout{
+      padding:8px 18px;border-radius:8px;background:var(--danger);color:#fff;
+      font-weight:700;font-size:.86rem;border:none;cursor:pointer;
+      font-family:'Inter',sans-serif;transition:.2s;
+    }
+    .btn-logout:hover{background:#dc2626}
+
+    /* LAYOUT */
+    .page-wrap{max-width:1080px;margin:0 auto;padding:32px 20px}
+    .welcome-bar{
+      background:linear-gradient(135deg,var(--blue),var(--blue-dark));
+      border-radius:var(--radius);padding:28px 32px;margin-bottom:28px;color:#fff;
+      display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;
+    }
+    .welcome-bar h2{font-size:1.6rem;font-weight:900;margin-bottom:4px}
+    .welcome-bar p{opacity:.85;font-size:.95rem}
+    .status-pill{
+      padding:10px 20px;border-radius:999px;font-weight:800;font-size:.9rem;
+      background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
+      white-space:nowrap;
+    }
+
+    /* CARDS GRID */
+    .cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;margin-bottom:28px}
+    .stat-card{
+      background:#fff;border-radius:var(--radius);padding:22px;
+      border:1px solid var(--border);box-shadow:0 4px 16px rgba(15,23,42,.07);
+      display:flex;align-items:center;gap:16px;
+    }
+    .stat-icon{
+      width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+      font-size:20px;flex-shrink:0;
+    }
+    .stat-icon.blue{background:#eaf3ff;color:var(--blue)}
+    .stat-icon.orange{background:#fff3df;color:var(--orange-dark)}
+    .stat-icon.green{background:#dcfce7;color:var(--green)}
+    .stat-icon.purple{background:#f3e8ff;color:#7c3aed}
+    .stat-label{font-size:.8rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+    .stat-value{font-size:1.5rem;font-weight:900;color:var(--navy)}
+
+    /* DETAIL SECTIONS */
+    .sections-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+    @media(max-width:680px){.sections-grid{grid-template-columns:1fr}}
+
+    .section-card{
+      background:#fff;border-radius:var(--radius);padding:26px;
+      border:1px solid var(--border);box-shadow:0 4px 16px rgba(15,23,42,.07);
+    }
+    .section-title{
+      font-size:1rem;font-weight:800;color:var(--navy);margin-bottom:18px;
+      display:flex;align-items:center;gap:8px;
+    }
+    .section-title span{
+      width:32px;height:32px;border-radius:8px;background:#eaf3ff;color:var(--blue);
+      display:flex;align-items:center;justify-content:center;font-size:14px;
+    }
+
+    .info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f1f5f9}
+    .info-row:last-child{border-bottom:none;padding-bottom:0}
+    .info-label{font-size:.88rem;color:var(--muted);font-weight:600}
+    .info-value{font-size:.9rem;font-weight:700;color:var(--text);text-align:right;max-width:60%}
+
+    /* BADGES */
+    .badge{display:inline-block;padding:4px 12px;border-radius:999px;font-size:.78rem;font-weight:800}
+    .badge-pending{background:#fff3df;color:#b45309}
+    .badge-approved{background:#dcfce7;color:#15803d}
+    .badge-rejected{background:#fee2e2;color:#b91c1c}
+    .badge-waitlisted{background:#e0e7ff;color:#4338ca}
+    .badge-issued{background:#dcfce7;color:#15803d}
+    .badge-na{background:#f1f5f9;color:var(--muted)}
+
+    /* ATTENDANCE BAR */
+    .att-bar-wrap{margin-top:10px}
+    .att-bar-bg{background:#f1f5f9;border-radius:999px;height:10px;overflow:hidden}
+    .att-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--blue-dark));transition:width .6s}
+    .att-pct{font-size:1.8rem;font-weight:900;color:var(--navy);margin-top:10px}
+    .att-sub{font-size:.85rem;color:var(--muted);margin-top:2px}
+
+    /* EMPTY / ERROR */
+    .empty-note{text-align:center;padding:28px;color:var(--muted);font-size:.9rem}
+    .error-bar{
+      background:#fee2e2;border:1px solid #fca5a5;border-radius:10px;
+      padding:14px 18px;color:#b91c1c;font-weight:700;font-size:.9rem;margin-bottom:20px;
+      display:none;
+    }
+    .spinner{
+      display:inline-block;width:18px;height:18px;
+      border:2.5px solid rgba(11,99,206,.25);border-top-color:var(--blue);
+      border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .loading-msg{padding:28px;text-align:center;color:var(--muted);font-size:.95rem}
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-logo">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="8" fill="#0b63ce"/>
+        <text x="8" y="22" font-family="Inter" font-size="15" font-weight="900" fill="#fff">V</text>
+      </svg>
+      VED <span>Foundation</span>
+    </div>
+    <div class="header-actions">
+      <span class="student-badge" id="studentBadge">🎓 Student Portal</span>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="page-wrap">
+
+    <!-- ERROR BAR -->
+    <div class="error-bar" id="errorBar"></div>
+
+    <!-- WELCOME -->
+    <div class="welcome-bar" id="welcomeBar">
+      <div>
+        <h2 id="welcomeName"><span class="spinner"></span> Loading...</h2>
+        <p id="welcomeSub">Welcome to your VED Foundation student portal</p>
+      </div>
+      <div class="status-pill" id="statusPill">—</div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="cards-grid">
+      <div class="stat-card">
+        <div class="stat-icon blue">🎓</div>
+        <div>
+          <div class="stat-label">Course</div>
+          <div class="stat-value" id="statCourse" style="font-size:1rem">—</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange">📅</div>
+        <div>
+          <div class="stat-label">Attendance</div>
+          <div class="stat-value" id="statAtt">—</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">✅</div>
+        <div>
+          <div class="stat-label">Present Days</div>
+          <div class="stat-value" id="statPresent">—</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple">📜</div>
+        <div>
+          <div class="stat-label">Certificate</div>
+          <div class="stat-value" id="statCert" style="font-size:.95rem">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DETAIL SECTIONS -->
+    <div class="sections-grid">
+
+      <!-- Personal Info -->
+      <div class="section-card">
+        <div class="section-title"><span>👤</span> Personal Information</div>
+        <div id="personalInfo"><div class="loading-msg"><span class="spinner"></span>Loading...</div></div>
+      </div>
+
+      <!-- Academic Info -->
+      <div class="section-card">
+        <div class="section-title"><span>📚</span> Academic Details</div>
+        <div id="academicInfo"><div class="loading-msg"><span class="spinner"></span>Loading...</div></div>
+      </div>
+
+      <!-- Registration Status -->
+      <div class="section-card">
+        <div class="section-title"><span>📋</span> Registration Status</div>
+        <div id="regStatus"><div class="loading-msg"><span class="spinner"></span>Loading...</div></div>
+      </div>
+
+      <!-- Attendance Summary -->
+      <div class="section-card">
+        <div class="section-title"><span>📊</span> Attendance Summary</div>
+        <div id="attSummary"><div class="loading-msg"><span class="spinner"></span>Loading...</div></div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  const API  = window.VED_API_BASE;
+  const TK   = 'ved_student_token';
+  const UK   = 'ved_student_info';
+
+  function getToken()    { return localStorage.getItem(TK) || ''; }
+  function getSaved()    { try { return JSON.parse(localStorage.getItem(UK) || 'null'); } catch { return null; } }
+  function logout()      { localStorage.removeItem(TK); localStorage.removeItem(UK); window.location.href = 'login.html'; }
+
+  function badgeClass(status) {
+    const map = { approved:'badge-approved', pending:'badge-pending', rejected:'badge-rejected', waitlisted:'badge-waitlisted', issued:'badge-issued', not_applicable:'badge-na' };
+    return map[String(status||'').toLowerCase()] || 'badge-na';
+  }
+
+  function fmt(v) { return v || '—'; }
+
+  function showError(msg) {
+    const el = document.getElementById('errorBar');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function infoRows(pairs) {
+    return pairs.map(([label, value]) => `
+      <div class="info-row">
+        <span class="info-label">${label}</span>
+        <span class="info-value">${value}</span>
+      </div>
+    `).join('');
+  }
+
+  function renderStudent(s) {
+    // Welcome bar
+    const name = s.fullName || s.name || s.email || 'Student';
+    document.getElementById('welcomeName').textContent = `Welcome, ${name}`;
+    document.getElementById('welcomeSub').textContent  = `Registered on ${s.registrationDate ? new Date(s.registrationDate).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—'}`;
+    document.getElementById('studentBadge').textContent = `🎓 ${s.email || 'Student Portal'}`;
+
+    const status = s.status || 'pending';
+    document.getElementById('statusPill').innerHTML = `<span class="badge ${badgeClass(status)}" style="background:rgba(255,255,255,.22);color:#fff;border:1px solid rgba(255,255,255,.4)">${status.charAt(0).toUpperCase()+status.slice(1)}</span>`;
+
+    // Stat cards
+    document.getElementById('statCourse').textContent  = s.standard || s.graduationCourse || '—';
+    const pct = s.totalAttendance ? Math.round((s.presentCount / s.totalAttendance) * 100) : 0;
+    document.getElementById('statAtt').textContent     = `${pct}%`;
+    document.getElementById('statPresent').textContent = `${s.presentCount || 0} / ${s.totalAttendance || 0}`;
+    const certStatus = s.certificateStatus || 'not_applicable';
+    document.getElementById('statCert').innerHTML = `<span class="badge ${badgeClass(certStatus)}">${certStatus.replace('_',' ')}</span>`;
+
+    // Personal info
+    document.getElementById('personalInfo').innerHTML = infoRows([
+      ['Full Name',   fmt(s.fullName)],
+      ['Email',       fmt(s.email)],
+      ['Mobile',      fmt(s.mobile)],
+      ['Gender',      fmt(s.gender)],
+      ['City',        fmt(s.city)],
+      ['State',       fmt(s.state)],
+      ['Pincode',     fmt(s.pincode)],
+      ['Category',    fmt(s.category)],
+    ]);
+
+    // Academic info
+    document.getElementById('academicInfo').innerHTML = infoRows([
+      ['Course / Class',    fmt(s.standard)],
+      ['Stream',            fmt(s.stream)],
+      ['School / College',  fmt(s.schoolName || s.collegeName)],
+      ['Marks / CGPA',      fmt(s.percentageCgpa || s.graduationCgpa)],
+      ['Passing Year',      fmt(s.passingYear)],
+      ['Specialization',    fmt(s.specialization)],
+    ]);
+
+    // Registration status
+    const regRows = [
+      ['Status', `<span class="badge ${badgeClass(status)}">${status.charAt(0).toUpperCase()+status.slice(1)}</span>`],
+      ['Registered', s.registrationDate ? new Date(s.registrationDate).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—'],
+    ];
+    if (s.statusReason) regRows.push(['Reason', fmt(s.statusReason)]);
+    if (s.certificateIssued) {
+      regRows.push(['Certificate No.',   fmt(s.certificateNumber)]);
+      regRows.push(['Certificate Status', `<span class="badge ${badgeClass(certStatus)}">${certStatus.replace('_',' ')}</span>`]);
+    }
+    document.getElementById('regStatus').innerHTML = infoRows(regRows);
+
+    // Attendance
+    const total   = s.totalAttendance || 0;
+    const present = s.presentCount    || 0;
+    const absent  = total - present;
+    document.getElementById('attSummary').innerHTML = `
+      <div class="att-pct">${pct}%</div>
+      <div class="att-sub">Attendance Rate</div>
+      <div class="att-bar-wrap">
+        <div class="att-bar-bg">
+          <div class="att-bar-fill" style="width:${pct}%"></div>
+        </div>
+      </div>
+      ${infoRows([
+        ['Total Classes', `${total}`],
+        ['Present',       `${present}`],
+        ['Absent',        `${absent}`],
+      ])}
+    `;
+  }
+
+  async function loadProfile() {
+    const token = getToken();
+    if (!token) { window.location.href = 'login.html'; return; }
+
+    // Render immediately from cached data while fetching
+    const cached = getSaved();
+    if (cached) renderStudent(cached);
+
+    try {
+      const res = await fetch(`${API}/auth/me`, {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+      });
+      const json = await res.json();
+
+      // Only redirect on auth failure — NOT on other errors
+      if (res.status === 401) {
+        localStorage.removeItem(TK);
+        localStorage.removeItem(UK);
+        window.location.href = 'login.html';
+        return;
+      }
+
+      if (!json.success) {
+        showError(json.message || 'Could not load profile. Backend may be offline.');
+        return;
+      }
+
+      const student = json.user || json.student || json.data;
+      if (student) {
+        localStorage.setItem(UK, JSON.stringify(student));
+        renderStudent(student);
+      }
+    } catch (err) {
+      // Backend offline — show cached data with warning
+      if (!cached) showError('Backend server se connection nahi ho pa raha. Please try again.');
+      else showError('Running on cached data — backend offline.');
+    }
+  }
+
+  loadProfile();
+</script>
+
+<div id="footer-placeholder"></div>
+<script src="shared.js"></script>
+<a href="mobilization-form.html" style="position:fixed;right:18px;bottom:18px;z-index:9999;background:#f7941d;color:#fff;padding:12px 20px;border-radius:999px;font-weight:900;font-size:.88rem;box-shadow:0 16px 34px rgba(247,148,29,.35);text-decoration:none;font-family:Inter,sans-serif;">Mobilization Form</a>
+</body>
+</html>

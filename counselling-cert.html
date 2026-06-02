@@ -1,0 +1,580 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#08254d"/>
+<title>Certificate Assessment — VED Foundation</title>
+<link rel="icon" href="vedlogo.jpeg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+/* ── Base (matches website) ───────────────────────────────── */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blue:#0b63ce;
+  --blue-dark:#074a9d;
+  --blue-lt:#eaf3ff;
+  --orange:#f7941d;
+  --orange-dark:#e46f00;
+  --green:#16a34a;
+  --green-lt:#dcfce7;
+  --navy:#08254d;
+  --text:#1f2937;
+  --muted:#6b7280;
+  --light:#f5f8fd;
+  --border:#e5e7eb;
+  --shadow:0 16px 45px rgba(15,23,42,.12);
+}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:'Inter',sans-serif;color:var(--text);background:#fff;line-height:1.6;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+
+/* ── HERO ── */
+.hero-strip{
+  background:linear-gradient(135deg,var(--navy) 0%,#0f3272 55%,var(--blue) 100%);
+  padding:60px 24px 68px;text-align:center;position:relative;overflow:hidden;
+}
+.hero-strip::before{content:'';position:absolute;top:-90px;right:-90px;width:360px;height:360px;background:rgba(255,255,255,.03);border-radius:50%}
+.hero-strip::after{content:'';position:absolute;bottom:-60px;left:-40px;width:260px;height:260px;background:rgba(247,148,29,.06);border-radius:50%}
+.hero-inner{position:relative;z-index:1;max-width:600px;margin:0 auto}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(247,148,29,.18);border:1px solid rgba(247,148,29,.4);
+  border-radius:999px;padding:6px 18px;font-size:.78rem;font-weight:700;color:#fcd34d;margin-bottom:18px;
+}
+.hero-strip h1{
+  font-size:clamp(1.8rem,3.8vw,2.8rem);font-weight:900;color:#fff;
+  line-height:1.15;margin-bottom:14px;letter-spacing:-.5px;
+}
+.hero-strip h1 em{color:var(--orange);font-style:normal}
+.hero-strip p{font-size:.97rem;color:rgba(255,255,255,.65);line-height:1.7;max-width:460px;margin:0 auto}
+.hero-strip p strong{color:#fcd34d}
+
+/* ── PROGRESS STRIP ── */
+.prog-strip{
+  background:#fff;border-bottom:2px solid var(--border);
+  position:sticky;top:74px;z-index:900;box-shadow:0 4px 14px rgba(15,23,42,.07);
+}
+.prog-inner{width:min(1140px,92%);margin:auto}
+.steps-row{display:flex;align-items:center;padding:16px 0}
+.si{display:flex;align-items:center;gap:9px}
+.sdot{
+  width:32px;height:32px;border-radius:50%;border:2px solid var(--border);
+  display:grid;place-items:center;font-size:.8rem;font-weight:800;
+  color:var(--muted);background:#fff;flex-shrink:0;transition:.3s;
+}
+.sdot.active{border-color:var(--blue);background:var(--blue);color:#fff;box-shadow:0 4px 12px rgba(11,99,206,.3)}
+.sdot.done{border-color:var(--green);background:var(--green);color:#fff}
+.slbl{font-size:.8rem;font-weight:600;color:var(--muted);white-space:nowrap}
+.slbl.active{color:var(--blue);font-weight:700}
+.slbl.done{color:var(--green);font-weight:700}
+.sline{flex:1;height:2px;background:var(--border);border-radius:99px;margin:0 14px;transition:.3s;min-width:30px}
+.sline.done{background:var(--green)}
+.pbar-track{height:4px;background:#e0e7ef}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--orange));border-radius:99px;transition:.5s}
+
+/* ── PAGE LAYOUT ── */
+.page-wrap{width:min(720px,92%);margin:44px auto 100px}
+
+/* ── STEP PANELS ── */
+.panel{display:none;animation:fadeUp .35s ease}
+.panel.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── STEP HEADER ── */
+.step-hd{text-align:center;margin-bottom:36px}
+.step-hd .step-chip{
+  display:inline-block;background:var(--blue-lt);color:var(--blue);
+  font-size:.7rem;font-weight:800;padding:4px 14px;border-radius:999px;
+  text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;
+}
+.step-hd h2{font-size:1.45rem;font-weight:900;color:var(--navy);margin-bottom:8px}
+.step-hd p{color:var(--muted);font-size:.93rem;max-width:480px;margin:0 auto}
+
+/* ── TYPE SELECT CARDS ── */
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:560px){.type-grid{grid-template-columns:1fr}}
+.type-card{
+  border:2.5px solid var(--border);border-radius:14px;padding:32px 24px;
+  cursor:pointer;transition:.25s;text-align:center;background:#fff;
+}
+.type-card:hover{
+  border-color:var(--blue);box-shadow:0 8px 24px rgba(11,99,206,.1);
+  transform:translateY(-5px);
+}
+.type-card.on{border-color:var(--blue);background:var(--blue-lt);box-shadow:0 8px 28px rgba(11,99,206,.15)}
+.type-icon{font-size:2.6rem;margin-bottom:14px}
+.type-card h3{font-size:1.05rem;font-weight:800;color:var(--navy);margin-bottom:6px}
+.type-card p{font-size:.83rem;color:var(--muted);line-height:1.55}
+.type-badge{
+  display:inline-block;
+  margin-top:12px;
+  padding:4px 14px;
+  border-radius:999px;
+  background:rgba(11,99,206,.08);
+  color:var(--blue);
+  border:1px solid rgba(11,99,206,.12);
+  font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+}
+
+/* ── QUESTION CARDS ── */
+.q-card{
+  background:#fff;border:1.5px solid var(--border);border-radius:12px;
+  padding:22px 22px 18px;margin-bottom:18px;
+  box-shadow:0 2px 8px rgba(15,23,42,.05);
+}
+.q-head{display:flex;align-items:flex-start;gap:10px;font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:14px}
+.q-num{
+  min-width:26px;height:26px;border-radius:50%;background:var(--blue-lt);
+  color:var(--blue);font-size:.72rem;font-weight:800;
+  display:grid;place-items:center;flex-shrink:0;
+}
+.q-req{color:#dc2626;margin-left:3px}
+.q-field{
+  width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;
+  font-size:.9rem;font-family:'Inter',sans-serif;outline:none;transition:.2s;
+}
+.q-field:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(11,99,206,.1)}
+.q-ta{resize:vertical;min-height:90px}
+
+/* ── CHIPS ── */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  padding:6px 14px;border:1.5px solid var(--border);border-radius:999px;
+  font-size:.83rem;cursor:pointer;transition:.2s;background:#fff;
+}
+.chip:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-lt)}
+.chip.on{border-color:var(--blue);background:var(--blue);color:#fff}
+
+/* ── STAR RATING ── */
+.stars{display:flex;gap:6px;font-size:1.4rem;cursor:pointer}
+.star{transition:.15s;opacity:.35}
+.star.on{opacity:1}
+.star-cap{font-size:.78rem;color:var(--muted);margin-top:5px;min-height:18px}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 28px;border-radius:10px;font-size:.92rem;font-weight:700;
+  cursor:pointer;border:none;transition:.2s;font-family:'Inter',sans-serif;
+}
+.btn-blue{background:var(--blue);color:#fff;box-shadow:0 4px 12px rgba(11,99,206,.25)}
+.btn-orange{background:var(--orange);color:#fff;box-shadow:0 4px 14px rgba(247,148,29,.3)}
+.btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--border)}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn-blue:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none}
+
+/* ── STICKY FOOT BAR ── */
+.foot-bar{
+  position:fixed;bottom:0;left:0;right:0;background:#fff;
+  border-top:1px solid var(--border);padding:14px 200px 14px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  z-index:800;box-shadow:0 -4px 18px rgba(15,23,42,.06);
+}
+.foot-hint{font-size:.8rem;color:var(--muted);font-weight:600}
+
+/* ── DONE SCREEN ── */
+.done-wrap{text-align:center;padding:50px 24px}
+.redir-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--blue);color:#fff;padding:13px 32px;
+  border-radius:10px;font-weight:700;font-size:.95rem;
+  box-shadow:0 4px 14px rgba(11,99,206,.3);transition:.2s;
+}
+.redir-btn:hover{background:var(--blue-dark);transform:translateY(-2px)}
+</style>
+</head>
+<body>
+
+<div id="header-placeholder"></div>
+
+<!-- ── HERO ── -->
+<div class="hero-strip">
+  <div class="hero-inner">
+    <div class="hero-tag">🎓 VED Foundation</div>
+    <h1>One Step Before Your <em>Certificate</em></h1>
+    <p>Complete a quick <strong>assessment</strong> and get your VED Foundation certificate straight to your inbox.</p>
+  </div>
+</div>
+
+<!-- ── PROGRESS STRIP ── -->
+<div class="prog-strip">
+  <div class="prog-inner">
+    <div class="steps-row">
+      <div class="si">
+        <div class="sdot active" id="sd0">1</div>
+        <span class="slbl active" id="sl0">Profile</span>
+      </div>
+      <div class="sline" id="sln0"></div>
+      <div class="si">
+        <div class="sdot" id="sd1">2</div>
+        <span class="slbl" id="sl1">Assessment</span>
+      </div>
+      <div class="sline" id="sln1"></div>
+      <div class="si">
+        <div class="sdot" id="sd2">3</div>
+        <span class="slbl" id="sl2">Certificate</span>
+      </div>
+    </div>
+    <div class="pbar-track"><div class="pbar-fill" id="pFill" style="width:10%"></div></div>
+  </div>
+</div>
+
+<!-- ── PAGE WRAP ── -->
+<main class="page-wrap">
+
+  <!-- PANEL 0: PROFILE SELECTION -->
+  <div class="panel on">
+    <div class="step-hd">
+      <div class="step-chip">Step 1 of 2</div>
+      <h2>Who Are You?</h2>
+      <p>Select your profile type to begin your personalised certificate assessment.</p>
+    </div>
+
+    <div class="type-grid">
+      <div class="type-card" id="tc-student" onclick="pick('student')">
+        <div class="type-icon">🎓</div>
+        <h3>Student</h3>
+        <p>Currently in school, college or preparing for your next big step.</p>
+        <span class="type-badge">Career Assessment →</span>
+      </div>
+      <div class="type-card" id="tc-professional" onclick="pick('professional')">
+        <div class="type-icon">💼</div>
+        <h3>Working Professional</h3>
+        <p>Already working and looking to upskill or advance your career.</p>
+        <span class="type-badge">Skills Assessment →</span>
+      </div>
+    </div>
+
+    <div style="height:80px"></div>
+  </div>
+
+  <!-- PANEL 1: ASSESSMENT + PERSONAL INFO -->
+  <div class="panel">
+    <div class="step-hd">
+      <div class="step-chip" id="qChip">Step 2 of 2</div>
+      <h2 id="qTitle">Assessment Questions</h2>
+      <p>Answer all questions and fill in your details to get your certificate.</p>
+    </div>
+
+    <!-- Personal Info at top of step 1 -->
+    <div class="q-card" style="background:var(--blue-lt);border-color:rgba(11,99,206,.15);margin-bottom:24px">
+      <div class="q-head" style="color:var(--blue)">
+        <span class="q-num" style="background:var(--blue);color:#fff">✦</span>
+        Your Details
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <input class="q-field" id="inp-name"   type="text"  placeholder="Full Name *"     maxlength="80" oninput="chk()"/>
+        <input class="q-field" id="inp-email"  type="email" placeholder="Email Address *"               oninput="chk()"/>
+        <input class="q-field" id="inp-mobile" type="tel"   placeholder="Mobile Number *" maxlength="15" oninput="chk()" style="grid-column:1/-1"/>
+      </div>
+    </div>
+
+    <!-- Dynamic questions -->
+    <div id="qBox"></div>
+    <p id="qErr" style="color:#dc2626;font-size:.85rem;text-align:center;display:none;padding:10px 0">Please answer all required questions and fill in your details.</p>
+  </div>
+
+  <!-- DONE WRAP -->
+  <div id="doneWrap" style="display:none" class="done-wrap">
+    <div style="font-size:3.5rem;margin-bottom:16px" id="cIcon">🎉</div>
+    <h2 style="font-size:1.5rem;font-weight:900;color:var(--navy);margin-bottom:10px">Assessment Complete!</h2>
+    <p style="color:var(--muted);max-width:440px;margin:0 auto 24px;font-size:.95rem">
+      Your responses have been saved. You will be redirected to the certificate form in <strong id="cNum">3</strong> seconds.
+    </p>
+    <a id="manualBtn" href="#" class="redir-btn" target="_blank">Open Certificate Form →</a>
+  </div>
+
+</main>
+
+<!-- STICKY BOTTOM NAV (only during form) -->
+<div class="foot-bar" id="footBar" style="display:none">
+  <div>
+    <button class="btn btn-ghost" id="backBtn" onclick="goBack()" style="display:none">← Back</button>
+    <span class="foot-hint" id="fHint">Select your profile to get started</span>
+  </div>
+  <button class="btn btn-blue" id="nxtBtn" onclick="goNext()" disabled>Continue →</button>
+</div>
+
+<div id="footer-placeholder"></div>
+
+<!-- shared.js loads header + footer exactly like every other page -->
+<script src="/config.js"></script>
+<script src="shared.js"></script>
+
+<script>
+const API_URL   = window.VED_API_BASE;
+const CERT_FORM = 'https://docs.google.com/forms/d/e/1FAIpQLSdWu5MiY7PA6644Z-vWuXXo_7vupyQmPSAaElYVGRmzcK5WzQ/viewform?usp=dialog';
+
+let step = 0, userType = '';
+const ans = {};
+
+/* ─── Question banks ─────────────────────────────────────── */
+const SQ = [
+  { id:'s1',  type:'chips', req:true, other:true, text:'Which career field interests you the most?',
+    opts:['Engineering & Technology','Management & Business','Government Jobs','Computer & IT','Healthcare & Medical','Defence Services','Creative & Designing','Entrepreneurship'] },
+  { id:'s2',  type:'chips', req:true, other:true, text:'What is your main goal after completing 10th / 12th?',
+    opts:['Higher Education','Government Job Preparation','Start Earning Early','Skill Development','Start a Business','Study Abroad'] },
+  { id:'s3',  type:'chips', req:true, other:true, text:'Which degree program are you planning to complete in the future?',
+    opts:['B.Tech / Engineering','BCA','BBA','B.Com','BA','B.Sc','Polytechnic / Diploma','Medical Degree','Law Degree','Other Graduation Degree'] },
+  { id:'s4',  type:'chips', req:true, other:true, text:'Are you interested in future technologies?',
+    opts:['Artificial Intelligence (AI)','Cyber Security','Data Analytics','Web Development','Robotics','Digital Marketing'] },
+  { id:'s5',  type:'chips', req:true, other:true, text:'Which type of education mode do you prefer?',
+    opts:['Online Degree Program','Regular Offline Degree Program','On-the-Job Degree Program','Distance Education Program'] },
+  { id:'s6',  type:'chips', req:true, text:'Do you want to start earning during your studies?',
+    opts:['Yes','No','Maybe'] },
+  { id:'s7',  type:'chips', req:true, other:true, text:'Which type of career would you prefer in future?',
+    opts:['Government Job','Private Sector Job','International Career','Freelancing','Business / Startup'] },
+  { id:'s8',  type:'chips', req:true, other:true, text:'What motivates you the most?',
+    opts:['High Salary','Job Security','Innovation & Creativity','Social Respect','International Opportunities','Flexible Lifestyle'] },
+  { id:'s9',  type:'chips', req:true, other:true, text:'Which skill would you like to improve?',
+    opts:['Communication Skills','Leadership Skills','Technical Skills','Coding Skills','Personality Development','Problem Solving Skills'] },
+  { id:'s10', type:'chips', req:true, text:'Are you interested in scholarship-based or affordable degree programs?',
+    opts:['Yes','No','Maybe'] },
+  { id:'s11', type:'chips', req:true, other:true, text:'What type of career opportunity attracts you the most?',
+    opts:['Software Engineer','Data Analyst','Business Manager','Government Officer','Digital Marketer','Graphic Designer','Cyber Security Expert','Entrepreneur'] },
+  { id:'s12', type:'chips', req:true, text:'Would you like internship and placement assistance in future?',
+    opts:['Yes','No'] },
+  { id:'s13', type:'chips', req:true, text:'Are you interested in international certification programs?',
+    opts:['Yes','No','Maybe'] },
+  { id:'s14', type:'chips', req:true, text:'Would you like career support from VED Educational Foundation?',
+    opts:['Yes','No'] },
+  { id:'s15', type:'chips', req:true, text:'Are you ready to participate in advanced career development programs and workshops?',
+    opts:['Yes','No','Maybe'] },
+];
+
+const PQ = [
+  { id:'p1',  type:'text',     req:true, text:'What is your current job role / designation?',
+    ph:'E.g. Software Engineer, Sales Manager, Teacher...' },
+  { id:'p2',  type:'select',   req:true, text:'Which industry do you currently work in?',
+    opts:['Information Technology','Education & Training','Healthcare','Banking & Finance','Manufacturing','Retail & E-commerce','Government / Public Sector','Media & Communication','Agriculture','Real Estate','Other'] },
+  { id:'p3',  type:'chips',    req:true, text:'How many years of work experience do you have?',
+    opts:['Less than 1 year','1–3 years','3–5 years','5–10 years','More than 10 years'] },
+  { id:'p4',  type:'chips',    req:true, other:true, text:'What skill are you primarily looking to develop?',
+    opts:['Digital & Tech Skills','Leadership & Management','Communication & Soft Skills','Data & Analytics','Marketing & Sales','Finance & Accounting','Entrepreneurship'] },
+  { id:'p5',  type:'chips',    req:true, other:true, text:'What is your main goal for this certificate?',
+    opts:['Career Advancement','Promotion / Pay Hike','Career Change','Start a Business','Expand Knowledge','Update Resume / LinkedIn'] },
+  { id:'p6',  type:'textarea', req:true, text:'What is your biggest professional challenge right now?',
+    ph:'E.g. lack of skills, stagnant growth, work-life balance...' },
+  { id:'p7',  type:'chips',    req:true, text:'Are you considering a career change?',
+    opts:['Yes, actively planning','Maybe in the future','No, growing in current field','Already in transition'] },
+  { id:'p8',  type:'chips',    req:true, other:true, text:'What type of learning have you done before?',
+    opts:['Online Courses (Coursera / Udemy)','Corporate Training','Workshops / Seminars','Formal Education','Self-Learning','None so far'] },
+  { id:'p9',  type:'chips',    req:true, text:'How many hours per week can you commit to this program?',
+    opts:['Less than 3 hours','3–5 hours','5–10 hours','More than 10 hours'] },
+  { id:'p10', type:'textarea', req:true, text:'What do you want to achieve in the next 12 months?',
+    ph:'Share your professional goals — promotion, new role, business launch...' },
+];
+
+/* ─── Type pick ───────────────────────────────────────────── */
+function pick(t) {
+  userType = t;
+  ['student','professional'].forEach(k =>
+    document.getElementById('tc-'+k).classList.toggle('on', k===t));
+  buildQs();
+  step = 1;
+  updateUI(1);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ─── Build questions ─────────────────────────────────────── */
+function buildQs() {
+  const qs = userType === 'student' ? SQ : PQ;
+  document.getElementById('qTitle').textContent =
+    userType === 'student' ? 'Goals & Interests' : 'Skills & Aspirations';
+  document.getElementById('qChip').textContent =
+    userType === 'student' ? 'Career Advancement Assessment' : 'Professional Assessment';
+
+  document.getElementById('qBox').innerHTML = qs.map((q, i) => {
+    let body = '';
+    if (q.type === 'chips') {
+      const allOpts = q.other ? [...q.opts, 'Other'] : q.opts;
+      body = `<div class="chips">${allOpts.map(o =>
+        `<div class="chip" onclick="selChip(this,'${q.id}')">${o}</div>`
+      ).join('')}</div>${q.other ? `<div id="other-wrap-${q.id}" style="display:none;margin-top:10px"><input type="text" class="q-field" id="other-inp-${q.id}" placeholder="Please specify…" oninput="ans['${q.id}']=this.value.trim();chk()"></div>` : ''}`;
+    } else if (q.type === 'select') {
+      body = `<select class="q-field" id="qf-${q.id}" onchange="ans['${q.id}']=this.value;chk()">
+        <option value="">— Choose an option —</option>
+        ${q.opts.map(o=>`<option>${o}</option>`).join('')}
+      </select>`;
+    } else if (q.type === 'text') {
+      body = `<input type="text" class="q-field" id="qf-${q.id}" placeholder="${q.ph||''}"
+        oninput="ans['${q.id}']=this.value;chk()"/>`;
+    } else if (q.type === 'textarea') {
+      body = `<textarea class="q-field q-ta" id="qf-${q.id}" placeholder="${q.ph||''}"
+        oninput="ans['${q.id}']=this.value;chk()"></textarea>`;
+    } else if (q.type === 'stars') {
+      body = `<div class="stars" id="sr-${q.id}">
+        ${[1,2,3,4,5].map(n=>`<span class="star" onclick="setStar('${q.id}',${n})">⭐</span>`).join('')}
+      </div>
+      <div class="star-cap" id="sc-${q.id}">${q.hint||''}</div>`;
+    }
+    return `<div class="q-card">
+      <div class="q-head"><span class="q-num">${i+1}</span>${q.text}${q.req?'<span class="q-req">*</span>':''}</div>
+      ${body}
+    </div>`;
+  }).join('');
+}
+
+function selChip(el, qid) {
+  el.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  const val = el.textContent.trim();
+  const otherWrap = document.getElementById('other-wrap-' + qid);
+  const otherInp  = document.getElementById('other-inp-'  + qid);
+  if (otherWrap) {
+    if (val === 'Other') {
+      otherWrap.style.display = 'block';
+      ans[qid] = '';
+      otherInp.value = '';
+      otherInp.focus();
+    } else {
+      otherWrap.style.display = 'none';
+      if (otherInp) otherInp.value = '';
+      ans[qid] = val;
+    }
+  } else {
+    ans[qid] = val;
+  }
+  chk();
+}
+
+function setStar(qid, n) {
+  ans[qid] = String(n);
+  document.getElementById('sr-'+qid).querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',i<n));
+  document.getElementById('sc-'+qid).textContent =
+    ['','⭐ Beginner','⭐⭐ Basic','⭐⭐⭐ Intermediate','⭐⭐⭐⭐ Advanced','⭐⭐⭐⭐⭐ Expert'][n];
+  chk();
+}
+
+function chk() {
+  const qs     = (userType==='student'?SQ:PQ).filter(q=>q.req);
+  const done   = qs.filter(q=>ans[q.id]&&String(ans[q.id]).trim()).length;
+  const name   = (document.getElementById('inp-name')?.value  || '').trim();
+  const email  = (document.getElementById('inp-email')?.value || '').trim();
+  const mobile = (document.getElementById('inp-mobile')?.value|| '').trim();
+  const detailsOk = name && email && mobile;
+  const allDone   = done >= qs.length && detailsOk;
+
+  document.getElementById('fHint').textContent =
+    detailsOk
+      ? `${done} of ${qs.length} questions answered`
+      : 'Fill your name, mobile & email first';
+
+  const nb = document.getElementById('nxtBtn');
+  if (allDone) {
+    nb.disabled = false;
+    nb.textContent = 'Submit & Get Certificate →';
+    nb.className = 'btn btn-orange';
+  } else {
+    nb.disabled = true;
+    nb.textContent = 'Continue →';
+    nb.className = 'btn btn-blue';
+  }
+}
+
+/* ─── UI step update ──────────────────────────────────────── */
+function updateUI(s) {
+  document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('on',i===s));
+  document.getElementById('pFill').style.width = ['10%','55%'][s] || '10%';
+
+  [0,1,2].forEach(i=>{
+    const d=document.getElementById('sd'+i);
+    const l=document.getElementById('sl'+i);
+    const ln=document.getElementById('sln'+i);
+    if(!d) return;
+    d.className='sdot '+(i<s?'done':i===s?'active':'');
+    d.textContent=i<s?'✓':i+1;
+    if(l) l.className='slbl '+(i<s?'done':i===s?'active':'');
+    if(ln) ln.className='sline '+(i<s?'done':'');
+  });
+
+  const bb = document.getElementById('backBtn');
+  bb.style.display = s>0 ? '' : 'none';
+
+  const footBar = document.getElementById('footBar');
+  const nb = document.getElementById('nxtBtn');
+  if (s===0) {
+    if (footBar) footBar.style.display = 'none';
+  } else if (s===1) {
+    if (footBar) footBar.style.display = '';
+    nb.textContent='Continue →'; nb.disabled=true; nb.className='btn btn-blue';
+    chk();
+  }
+}
+
+function goNext() {
+  if (step===1) {
+    submitAndRedirect();
+  }
+}
+
+function goBack() {
+  if (step>0) { step--; updateUI(step); window.scrollTo({top:0,behavior:'smooth'}); }
+}
+
+/* ─── Submit → save answers → redirect ───────────────────── */
+async function submitAndRedirect() {
+  document.getElementById('qErr').style.display = 'none';
+  const nb = document.getElementById('nxtBtn');
+  nb.disabled=true; nb.textContent='Please wait...';
+
+  const qs     = userType==='student' ? SQ : PQ;
+  const fname  = document.getElementById('inp-name')?.value.trim()  || '';
+  const femail = document.getElementById('inp-email')?.value.trim() || '';
+  const fmob   = document.getElementById('inp-mobile')?.value.trim()|| '';
+  try {
+    await fetch(`${API_URL}/counselling-responses`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        userType,
+        fullName: fname,
+        email:    femail,
+        mobile:   fmob,
+        counsellingAnswers: qs.map(q=>({ questionId:q.id, question:q.text, answer:ans[q.id]||'' })),
+        programName: 'Submitted via assessment form',
+      }),
+    });
+  } catch(_) { /* continue even if backend offline */ }
+
+  // Hide form elements, show done screen
+  document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
+  document.getElementById('footBar').style.display = 'none';
+  document.querySelector('.prog-strip').style.display = 'none';
+
+  const dw = document.getElementById('doneWrap');
+  dw.style.display = 'block';
+  dw.classList.add('on');
+  document.getElementById('pFill').style.width = '100%';
+  document.getElementById('manualBtn').href = CERT_FORM;
+
+  // Update step indicators — mark step 3 as active/complete
+  const sd2=document.getElementById('sd2'), sl2=document.getElementById('sl2');
+  if(sd2){ sd2.className='sdot done'; sd2.textContent='✓'; }
+  if(sl2) sl2.className='slbl done';
+  document.getElementById('sln0').className='sline done';
+  document.getElementById('sln1').className='sline done';
+
+  // Countdown then redirect
+  let n=3;
+  const iv = setInterval(()=>{
+    n--;
+    document.getElementById('cNum').textContent = n;
+    if(n<=0){
+      clearInterval(iv);
+      document.getElementById('cIcon').textContent = '🚀';
+      document.getElementById('cNum').textContent = 'Now!';
+      window.location.href = CERT_FORM;
+    }
+  }, 1000);
+}
+</script>
+
+<a href="mobilization-form.html" style="position:fixed;right:18px;bottom:18px;z-index:9999;background:#f7941d;color:#fff;padding:12px 20px;border-radius:999px;font-weight:900;font-size:.88rem;box-shadow:0 16px 34px rgba(247,148,29,.35);text-decoration:none;font-family:Inter,sans-serif;">Mobilization Form</a>
+
+</body>
+</html>

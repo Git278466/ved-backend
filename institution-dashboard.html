@@ -1,0 +1,1709 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="theme-color" content="#1A4FBB"/>
+<title>VED Foundation — Institution Panel</title>
+<link rel="icon" type="image/jpeg" href="vedlogo.jpeg"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<script src="/config.js"></script>
+<style>
+:root{
+  --navy:#0A1628;--navy-mid:#0F2044;--navy-light:#162B58;
+  --royal:#1A4FBB;--royal-light:#2563EB;--royal-glow:rgba(37,99,235,.18);
+  --orange:#F97316;--orange-light:#FB923C;--orange-glow:rgba(249,115,22,.18);
+  --white:#FFFFFF;--off-white:#F1F5FF;
+  --gray-100:#EEF2FB;--gray-200:#DCE4F5;--gray-400:#94A3C0;
+  --gray-600:#5B6B8A;--gray-800:#2D3A55;
+  --success:#22C55E;--warning:#EAB308;--danger:#EF4444;--info:#38BDF8;
+  --sidebar-w:260px;--sidebar-collapsed:72px;--header-h:64px;
+  --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+  --shadow-sm:0 2px 8px rgba(10,22,40,.10);--shadow-md:0 4px 20px rgba(10,22,40,.14);
+  --shadow-lg:0 8px 40px rgba(10,22,40,.20);--transition:all .22s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--gray-800);min-height:100vh;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+button{cursor:pointer;border:none;background:none;font-family:inherit;}
+input,select,textarea{font-family:inherit;}
+ul{list-style:none;}
+
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:10px;}
+::-webkit-scrollbar-thumb:hover{background:var(--royal);}
+
+/* ── Layout ── */
+.app-shell{display:flex;height:100vh;overflow:hidden;}
+
+/* ── Sidebar ── */
+.sidebar{
+  width:var(--sidebar-w);
+  background:linear-gradient(180deg,var(--navy) 0%,var(--navy-mid) 60%,#0C1C38 100%);
+  display:flex;flex-direction:column;flex-shrink:0;
+  transition:var(--transition);position:relative;z-index:100;
+  box-shadow:4px 0 24px rgba(0,0,0,.18);overflow:hidden;
+}
+.sidebar.collapsed{width:var(--sidebar-collapsed);}
+.sidebar.sidebar-closed{width:0!important;overflow:hidden!important;box-shadow:none;}
+.sidebar::before{content:'';position:absolute;top:-80px;right:-80px;width:220px;height:220px;
+  background:radial-gradient(circle,var(--royal-glow) 0%,transparent 70%);pointer-events:none;}
+.sidebar::after{content:'';position:absolute;bottom:60px;left:-60px;width:180px;height:180px;
+  background:radial-gradient(circle,var(--orange-glow) 0%,transparent 70%);pointer-events:none;}
+
+.sidebar-logo{display:flex;align-items:center;gap:12px;padding:18px 16px;
+  border-bottom:1px solid rgba(255,255,255,.08);min-height:var(--header-h);flex-shrink:0;}
+.logo-icon{width:36px;height:36px;flex-shrink:0;border-radius:var(--radius-sm);
+  background:linear-gradient(135deg,var(--royal),var(--orange));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Sora',sans-serif;font-weight:800;font-size:15px;color:#fff;
+  box-shadow:0 0 0 3px rgba(255,255,255,.08);}
+.logo-text{overflow:hidden;white-space:nowrap;transition:var(--transition);}
+.logo-text h2{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:#fff;}
+.logo-text span{font-size:11px;color:var(--orange-light);}
+.sidebar.collapsed .logo-text{opacity:0;width:0;}
+
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:12px 14px;
+  margin:10px 8px 4px;background:rgba(255,255,255,.05);border-radius:var(--radius-md);
+  border:1px solid rgba(255,255,255,.07);overflow:hidden;cursor:pointer;transition:var(--transition);}
+.sidebar-user:hover{background:rgba(255,255,255,.09);}
+.user-avatar{width:32px;height:32px;flex-shrink:0;border-radius:50%;
+  background:linear-gradient(135deg,var(--orange),var(--royal));
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:#fff;border:2px solid rgba(255,255,255,.18);}
+.user-info{overflow:hidden;white-space:nowrap;transition:var(--transition);}
+.sidebar.collapsed .user-info{opacity:0;width:0;}
+.user-info strong{display:block;font-size:13px;color:#fff;font-weight:600;}
+.user-info span{font-size:11px;color:var(--orange-light);}
+
+.sidebar-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:8px 8px;scrollbar-width:none;}
+.sidebar-nav::-webkit-scrollbar{display:none;}
+.nav-section{margin-bottom:6px;}
+.nav-section-label{font-size:9px;font-weight:700;color:var(--gray-400);text-transform:uppercase;
+  letter-spacing:1.5px;padding:10px 10px 4px;white-space:nowrap;transition:var(--transition);}
+.sidebar.collapsed .nav-section-label{opacity:0;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-sm);
+  color:var(--gray-400);transition:var(--transition);cursor:pointer;white-space:nowrap;
+  font-size:13px;font-weight:500;position:relative;margin-bottom:2px;}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.07);}
+.nav-item.active{color:#fff;background:linear-gradient(90deg,var(--royal) 0%,var(--royal-light) 100%);
+  box-shadow:0 4px 12px rgba(26,79,187,.35);}
+.nav-item i{width:18px;flex-shrink:0;font-size:14px;text-align:center;}
+.nav-item-text{overflow:hidden;white-space:nowrap;transition:var(--transition);}
+.sidebar.collapsed .nav-item-text{opacity:0;width:0;}
+.nav-badge{margin-left:auto;background:var(--orange);color:#fff;font-size:10px;font-weight:700;
+  border-radius:10px;padding:1px 7px;flex-shrink:0;}
+.sidebar.collapsed .nav-badge{display:none;}
+
+.sidebar-footer{padding:12px 10px;border-top:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.logout-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;
+  border-radius:var(--radius-sm);color:var(--danger);font-size:13px;font-weight:500;
+  transition:var(--transition);}
+.logout-btn:hover{background:rgba(239,68,68,.1);}
+.logout-btn i{width:18px;text-align:center;}
+
+/* ── Main ── */
+.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+
+/* ── Topbar ── */
+.topbar{height:var(--header-h);background:#fff;border-bottom:1px solid var(--gray-200);
+  display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0;
+  box-shadow:var(--shadow-sm);z-index:50;position:relative;}
+.topbar-toggle{width:36px;height:36px;border-radius:var(--radius-sm);
+  background:var(--gray-100);color:var(--gray-600);font-size:16px;
+  display:flex;align-items:center;justify-content:center;transition:var(--transition);}
+.topbar-toggle:hover{background:var(--gray-200);color:var(--navy);}
+.topbar-title{flex:1;}
+.topbar-title h1{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:var(--navy);}
+.topbar-title p{font-size:12px;color:var(--gray-600);}
+.topbar-actions{display:flex;align-items:center;gap:10px;}
+.topbar-btn{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--gray-100);
+  color:var(--gray-600);display:flex;align-items:center;justify-content:center;
+  font-size:15px;transition:var(--transition);position:relative;}
+.topbar-btn:hover{background:var(--royal);color:#fff;}
+.topbar-badge{position:absolute;top:4px;right:4px;width:8px;height:8px;
+  background:var(--danger);border-radius:50%;border:2px solid #fff;}
+
+/* ── Content ── */
+.content-area{flex:1;overflow-y:auto;padding:24px;}
+
+/* ── Views (sections) ── */
+.view{display:none;}
+.view.active{display:block;}
+
+/* ── Page header ── */
+.page-header{margin-bottom:24px;}
+.page-header h2{font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:var(--navy);}
+.page-header p{font-size:13px;color:var(--gray-600);margin-top:3px;}
+
+/* ── Stat cards ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px;}
+.stat-card{background:#fff;border-radius:var(--radius-lg);padding:20px;
+  box-shadow:var(--shadow-sm);border:1px solid var(--gray-200);transition:var(--transition);}
+.stat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.stat-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.stat-icon{width:42px;height:42px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;font-size:18px;}
+.stat-icon.blue{background:var(--royal-glow);color:var(--royal-light);}
+.stat-icon.orange{background:var(--orange-glow);color:var(--orange);}
+.stat-icon.green{background:rgba(34,197,94,.15);color:var(--success);}
+.stat-icon.red{background:rgba(239,68,68,.12);color:var(--danger);}
+.stat-icon.yellow{background:rgba(234,179,8,.12);color:var(--warning);}
+.stat-icon.purple{background:rgba(168,85,247,.12);color:#A855F7;}
+.stat-icon.teal{background:rgba(20,184,166,.12);color:#14B8A6;}
+.stat-icon.sky{background:rgba(56,189,248,.12);color:var(--info);}
+.stat-value{font-family:'Sora',sans-serif;font-size:26px;font-weight:700;color:var(--navy);}
+.stat-label{font-size:12px;color:var(--gray-600);font-weight:500;}
+.stat-sub{font-size:11px;color:var(--gray-400);margin-top:2px;}
+
+/* ── Tier card ── */
+.tier-card{background:linear-gradient(135deg,var(--navy) 0%,var(--royal) 100%);
+  border-radius:var(--radius-lg);padding:24px;color:#fff;margin-bottom:28px;}
+.tier-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.tier-badge{display:flex;align-items:center;gap:8px;}
+.tier-badge i{font-size:22px;}
+.tier-badge.normal i{color:#94A3C0;}
+.tier-badge.silver i{color:#C0C0C0;}
+.tier-badge.gold   i{color:#FFD700;}
+.tier-badge.platinum i{color:#E5E4E2;}
+.tier-name{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;}
+.tier-converts{font-size:13px;opacity:.75;}
+.tier-progress-wrap{margin-top:12px;}
+.tier-progress-label{display:flex;justify-content:space-between;font-size:12px;opacity:.8;margin-bottom:6px;}
+.tier-bar{height:8px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden;}
+.tier-bar-fill{height:100%;border-radius:4px;
+  background:linear-gradient(90deg,var(--orange-light),var(--orange));transition:width .6s ease;}
+
+/* ── Card ── */
+.card{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);
+  border:1px solid var(--gray-200);overflow:hidden;}
+.card-head{padding:16px 20px;border-bottom:1px solid var(--gray-100);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.card-head h3{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--navy);}
+.card-body{padding:20px;}
+
+/* ── Toolbar ── */
+.toolbar{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--gray-100);flex-wrap:wrap;}
+.search-box{flex:1;min-width:200px;display:flex;align-items:center;gap:8px;
+  background:var(--gray-100);border-radius:var(--radius-sm);padding:8px 14px;}
+.search-box i{color:var(--gray-400);font-size:13px;}
+.search-box input{border:none;background:transparent;outline:none;font-size:13px;color:var(--gray-800);width:100%;}
+.filter-select{padding:8px 12px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);
+  font-size:13px;color:var(--gray-800);background:#fff;outline:none;cursor:pointer;}
+.filter-select:focus{border-color:var(--royal);}
+.btn{padding:9px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;
+  transition:var(--transition);display:inline-flex;align-items:center;gap:7px;}
+.btn-primary{background:var(--royal);color:#fff;}
+.btn-primary:hover{background:var(--royal-light);}
+.btn-outline{background:#fff;color:var(--gray-800);border:1px solid var(--gray-200);}
+.btn-outline:hover{border-color:var(--royal);color:var(--royal);}
+.btn-sm{padding:6px 13px;font-size:12px;}
+.btn-success{background:var(--success);color:#fff;}
+.btn-success:hover{filter:brightness(1.1);}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-danger:hover{filter:brightness(1.1);}
+.btn-warning{background:var(--warning);color:#fff;}
+
+/* ── Table ── */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+thead th{padding:11px 14px;font-size:11px;font-weight:700;color:var(--gray-400);
+  text-transform:uppercase;letter-spacing:.8px;text-align:left;
+  background:var(--gray-100);border-bottom:1px solid var(--gray-200);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--gray-100);transition:var(--transition);}
+tbody tr:hover{background:var(--gray-100);}
+tbody td{padding:12px 14px;font-size:13px;color:var(--gray-800);vertical-align:middle;}
+.td-name{font-weight:600;color:var(--navy);}
+
+/* ── Status pills ── */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;
+  font-size:11px;font-weight:600;}
+.pill-new{background:rgba(56,189,248,.15);color:#0284C7;}
+.pill-contacted{background:rgba(168,85,247,.12);color:#7C3AED;}
+.pill-interested{background:rgba(34,197,94,.12);color:#16A34A;}
+.pill-not_interested{background:rgba(239,68,68,.10);color:var(--danger);}
+.pill-follow_up{background:rgba(234,179,8,.12);color:#B45309;}
+.pill-converted{background:rgba(34,197,94,.18);color:#15803D;}
+.pill-rejected{background:rgba(239,68,68,.12);color:var(--danger);}
+
+/* ── Action btns in table ── */
+.action-cell{display:flex;gap:6px;flex-wrap:wrap;}
+.icon-btn{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;font-size:13px;transition:var(--transition);}
+.icon-btn.view{background:rgba(56,189,248,.12);color:var(--info);}
+.icon-btn.edit{background:rgba(26,79,187,.12);color:var(--royal);}
+.icon-btn.convert{background:rgba(34,197,94,.12);color:var(--success);}
+.icon-btn.followup{background:rgba(234,179,8,.12);color:var(--warning);}
+.icon-btn:hover{filter:brightness(1.2);transform:scale(1.08);}
+
+/* ── Pagination ── */
+.pagination{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;border-top:1px solid var(--gray-100);flex-wrap:wrap;gap:10px;}
+.pagination-info{font-size:12px;color:var(--gray-600);}
+.pagination-btns{display:flex;gap:6px;}
+.page-btn{width:32px;height:32px;border-radius:6px;border:1px solid var(--gray-200);
+  background:#fff;font-size:13px;color:var(--gray-800);display:flex;align-items:center;
+  justify-content:center;cursor:pointer;transition:var(--transition);}
+.page-btn.active{background:var(--royal);color:#fff;border-color:var(--royal);}
+.page-btn:hover:not(.active){background:var(--gray-100);}
+
+/* ── Modal ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,22,40,.5);z-index:1000;
+  display:flex;align-items:center;justify-content:center;padding:16px;
+  opacity:0;visibility:hidden;transition:var(--transition);}
+.modal-overlay.open{opacity:1;visibility:visible;}
+.modal{background:#fff;border-radius:var(--radius-xl);width:100%;max-width:680px;
+  max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);
+  transform:translateY(20px);transition:var(--transition);}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;
+  border-bottom:1px solid var(--gray-100);}
+.modal-head h3{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--navy);}
+.modal-close{width:32px;height:32px;border-radius:50%;background:var(--gray-100);
+  color:var(--gray-600);font-size:16px;display:flex;align-items:center;justify-content:center;transition:var(--transition);}
+.modal-close:hover{background:var(--danger);color:#fff;}
+.modal-body{padding:24px;}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--gray-100);
+  display:flex;justify-content:flex-end;gap:10px;}
+
+/* ── Form elements ── */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.form-row.full{grid-template-columns:1fr;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group label{font-size:12px;font-weight:600;color:var(--gray-600);}
+.form-group input,.form-group select,.form-group textarea{
+  padding:9px 12px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);
+  font-size:13px;color:var(--gray-800);outline:none;transition:var(--transition);}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+  border-color:var(--royal);box-shadow:0 0 0 3px var(--royal-glow);}
+.form-group textarea{resize:vertical;min-height:80px;}
+
+/* ── Lead detail ── */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+.detail-field{}
+.detail-field label{font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.6px;}
+.detail-field p{font-size:14px;color:var(--gray-800);margin-top:3px;font-weight:500;}
+
+.history-timeline{display:flex;flex-direction:column;gap:12px;}
+.history-item{display:flex;gap:12px;align-items:flex-start;}
+.history-dot{width:10px;height:10px;border-radius:50%;background:var(--royal);flex-shrink:0;margin-top:4px;}
+.history-content{flex:1;}
+.history-status{font-size:12px;font-weight:700;color:var(--navy);}
+.history-meta{font-size:11px;color:var(--gray-400);margin-top:2px;}
+.history-remarks{font-size:12px;color:var(--gray-600);margin-top:3px;}
+
+/* ── Followup list ── */
+.followup-section{margin-bottom:24px;}
+.followup-section h3{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;
+  color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.followup-card{background:#fff;border-radius:var(--radius-md);padding:14px 16px;
+  border:1px solid var(--gray-200);margin-bottom:8px;box-shadow:var(--shadow-sm);}
+.followup-card.overdue{border-left:3px solid var(--danger);}
+.followup-card.today{border-left:3px solid var(--warning);}
+.followup-card.upcoming{border-left:3px solid var(--royal);}
+.followup-name{font-weight:600;color:var(--navy);font-size:14px;}
+.followup-meta{font-size:12px;color:var(--gray-600);margin-top:3px;}
+.followup-actions{display:flex;gap:8px;margin-top:10px;}
+
+/* ── Reports ── */
+.report-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+.report-tab{padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;
+  border:1px solid var(--gray-200);background:#fff;color:var(--gray-600);cursor:pointer;transition:var(--transition);}
+.report-tab.active{background:var(--royal);color:#fff;border-color:var(--royal);}
+
+/* ── Toast ── */
+.toast-container{position:fixed;top:80px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+.toast{display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:var(--radius-md);
+  background:#fff;box-shadow:var(--shadow-lg);border-left:4px solid var(--royal);
+  font-size:13px;font-weight:500;max-width:340px;animation:slideIn .3s ease;}
+.toast.success{border-color:var(--success);}
+.toast.error{border-color:var(--danger);}
+.toast.warning{border-color:var(--warning);}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+@keyframes fadeOut{to{transform:translateX(100%);opacity:0;}}
+
+/* ── Empty state ── */
+.empty-state{text-align:center;padding:48px 20px;}
+.empty-state i{font-size:40px;color:var(--gray-200);margin-bottom:12px;}
+.empty-state p{color:var(--gray-400);font-size:14px;}
+
+/* ── Loading spinner ── */
+.spinner{display:inline-block;width:24px;height:24px;border:3px solid var(--gray-200);
+  border-top-color:var(--royal);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-overlay{display:flex;justify-content:center;padding:48px;}
+
+/* ── Charts wrapper ── */
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.chart-card{background:#fff;border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);border:1px solid var(--gray-200);}
+.chart-card h4{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:16px;}
+.bar-chart{display:flex;flex-direction:column;gap:8px;}
+.bar-row{display:flex;align-items:center;gap:10px;}
+.bar-row-label{font-size:12px;color:var(--gray-600);width:100px;flex-shrink:0;text-transform:capitalize;}
+.bar-wrap{flex:1;height:14px;background:var(--gray-100);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--royal),var(--royal-light));transition:width .6s ease;}
+.bar-count{font-size:12px;font-weight:600;color:var(--navy);width:32px;text-align:right;}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  .sidebar{position:fixed;top:0;left:0;height:100%;z-index:200;}
+  .sidebar.sidebar-closed{transform:translateX(-100%);width:var(--sidebar-w)!important;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .form-row{grid-template-columns:1fr;}
+  .detail-grid{grid-template-columns:1fr;}
+  .content-area{padding:16px;}
+}
+
+/* ── Auth gate (redirect fallback only, no visible UI) ── */
+#authGate{display:none;}
+</style>
+</head>
+<body>
+
+<!-- Auth redirect placeholder (no visible UI — login handled by login.html) -->
+<div id="authGate"></div>
+
+<!-- ── App Shell ──────────────────────────────────── -->
+<div id="appShell" class="app-shell" style="display:none;">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">V</div>
+      <div class="logo-text">
+        <h2>VED Foundation</h2>
+        <span>Institution Panel</span>
+      </div>
+    </div>
+
+    <div class="sidebar-user" onclick="showView('dashboard')">
+      <div class="user-avatar" id="userAvatar">I</div>
+      <div class="user-info">
+        <strong id="institutionName">Institution</strong>
+        <span id="userTierBadge">Normal Tier</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-label">Main</div>
+        <div class="nav-item active" data-view="dashboard" onclick="showView('dashboard')">
+          <i class="fa-solid fa-gauge-high"></i>
+          <span class="nav-item-text">Dashboard</span>
+        </div>
+        <div class="nav-item" data-view="leads" onclick="showView('leads')">
+          <i class="fa-solid fa-users"></i>
+          <span class="nav-item-text">My Leads</span>
+          <span class="nav-badge" id="navNewBadge">0</span>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-label">Activities</div>
+        <div class="nav-item" data-view="followups" onclick="showView('followups')">
+          <i class="fa-solid fa-calendar-check"></i>
+          <span class="nav-item-text">Follow-ups</span>
+          <span class="nav-badge" id="navTodayBadge" style="background:var(--danger);">0</span>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-label">Insights</div>
+        <div class="nav-item" data-view="reports" onclick="showView('reports')">
+          <i class="fa-solid fa-chart-bar"></i>
+          <span class="nav-item-text">Reports</span>
+        </div>
+        <div class="nav-item" data-view="commission" onclick="showView('commission')">
+          <i class="fa-solid fa-coins"></i>
+          <span class="nav-item-text">Commission & Tier</span>
+        </div>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="doLogout()">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span class="nav-item-text">Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main area -->
+  <div class="main-area">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="topbar-toggle" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <div class="topbar-title">
+        <h1 id="viewTitle">Dashboard</h1>
+        <p id="viewSub">Overview of your assigned leads</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="topbar-btn" title="Refresh" onclick="refreshCurrentView()">
+          <i class="fa-solid fa-rotate-right"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content-area">
+
+      <!-- ═══ DASHBOARD VIEW ═══════════════════════════ -->
+      <section class="view active" id="view-dashboard">
+        <div class="page-header">
+          <h2>Welcome back, <span id="welcomeName">Institution</span></h2>
+          <p id="welcomeDate"></p>
+        </div>
+
+        <!-- Tier card -->
+        <div class="tier-card" id="tierCard">
+          <div class="tier-header">
+            <div class="tier-badge" id="tierBadge">
+              <i class="fa-solid fa-shield-halved"></i>
+              <div>
+                <div class="tier-name" id="tierName">Normal</div>
+                <div class="tier-converts">0 converted leads</div>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:22px;font-weight:700;" id="commissionDisplay">₹0</div>
+              <div style="font-size:12px;opacity:.7;">Commission Earned</div>
+            </div>
+          </div>
+          <div class="tier-progress-wrap" id="tierProgressWrap">
+            <div class="tier-progress-label">
+              <span id="tierProgressLabel">Progress to Silver</span>
+              <span id="tierProgressPct">0%</span>
+            </div>
+            <div class="tier-bar"><div class="tier-bar-fill" id="tierBarFill" style="width:0%"></div></div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid" id="dashStats">
+          <div class="stat-card">
+            <div class="stat-card-top">
+              <div><div class="stat-value" id="stat-total">—</div><div class="stat-label">Total Assigned</div></div>
+              <div class="stat-icon blue"><i class="fa-solid fa-list-ul"></i></div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-top">
+              <div><div class="stat-value" id="stat-new">—</div><div class="stat-label">New Leads</div></div>
+              <div class="stat-icon sky"><i class="fa-solid fa-star"></i></div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-top">
+              <div><div class="stat-value" id="stat-contacted">—</div><div class="stat-label">Contacted</div></div>
+              <div class="stat-icon purple"><i class="fa-solid fa-phone"></i></div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-top">
+              <div><div class="stat-value" id="stat-interested">—</div><div class="stat-label">Interested</div></div>
+              <div class="stat-icon teal"><i class="fa-solid fa-thumbs-up"></i></div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-top">
+              <div><div class="stat-value" id="stat-converted">—</div><div class="stat-label">Converted</div></div>
+              <div class="stat-icon green"><i class="fa-solid fa-user-check"></i></div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-top">
+              <div><div class="stat-value" id="stat-rejected">—</div><div class="stat-label">Rejected</div></div>
+              <div class="stat-icon red"><i class="fa-solid fa-user-xmark"></i></div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-top">
+              <div><div class="stat-value" id="stat-followup">—</div><div class="stat-label">Follow-up Pending</div></div>
+              <div class="stat-icon yellow"><i class="fa-solid fa-clock"></i></div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-top">
+              <div><div class="stat-value" id="stat-today">—</div><div class="stat-label">Today's Follow-ups</div></div>
+              <div class="stat-icon orange"><i class="fa-solid fa-calendar-day"></i></div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-top">
+              <div><div class="stat-value" id="stat-rate">—%</div><div class="stat-label">Conversion Rate</div></div>
+              <div class="stat-icon blue"><i class="fa-solid fa-percent"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today's follow-ups quick list -->
+        <div class="card">
+          <div class="card-head">
+            <h3><i class="fa-solid fa-bell" style="color:var(--orange);margin-right:6px;"></i>Today's Follow-ups</h3>
+            <button class="btn btn-outline btn-sm" onclick="showView('followups')">View All</button>
+          </div>
+          <div id="dashFollowupList" class="card-body">
+            <div class="loading-overlay"><div class="spinner"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ LEADS VIEW ════════════════════════════════ -->
+      <section class="view" id="view-leads">
+        <div class="page-header">
+          <h2>My Assigned Leads</h2>
+          <p>Manage and update leads assigned to your institution</p>
+        </div>
+
+        <div class="card">
+          <!-- Toolbar -->
+          <div class="toolbar">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="leadSearch" placeholder="Search name, mobile, email…" oninput="debouncedLoadLeads()"/>
+            </div>
+            <select class="filter-select" id="filterStatus" onchange="loadLeads(1)">
+              <option value="">All Statuses</option>
+              <option value="new">New</option>
+              <option value="contacted">Contacted</option>
+              <option value="interested">Interested</option>
+              <option value="not_interested">Not Interested</option>
+              <option value="follow_up">Follow-up</option>
+              <option value="converted">Converted</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <select class="filter-select" id="filterSource" onchange="loadLeads(1)">
+              <option value="">All Sources</option>
+              <option value="website">Website</option>
+              <option value="referral">Referral</option>
+              <option value="event">Event</option>
+              <option value="social_media">Social Media</option>
+              <option value="walk_in">Walk-in</option>
+              <option value="manual">Manual</option>
+              <option value="other">Other</option>
+            </select>
+            <input type="date" class="filter-select" id="filterFrom" onchange="loadLeads(1)" title="Assigned From"/>
+            <input type="date" class="filter-select" id="filterTo"   onchange="loadLeads(1)" title="Assigned To"/>
+            <button class="btn btn-outline btn-sm" onclick="exportLeads()">
+              <i class="fa-solid fa-download"></i> Export
+            </button>
+          </div>
+
+          <!-- Table -->
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Lead Name</th>
+                  <th>Mobile</th>
+                  <th>Email</th>
+                  <th>City</th>
+                  <th>Course</th>
+                  <th>Source</th>
+                  <th>Assigned</th>
+                  <th>Status</th>
+                  <th>Follow-up</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="leadsTableBody">
+                <tr><td colspan="11"><div class="loading-overlay"><div class="spinner"></div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination" id="leadsPagination"></div>
+        </div>
+      </section>
+
+      <!-- ═══ FOLLOW-UPS VIEW ═══════════════════════════ -->
+      <section class="view" id="view-followups">
+        <div class="page-header">
+          <h2>Follow-up Management</h2>
+          <p>Track overdue, today's, and upcoming follow-ups</p>
+        </div>
+        <div id="followupContent">
+          <div class="loading-overlay"><div class="spinner"></div></div>
+        </div>
+      </section>
+
+      <!-- ═══ REPORTS VIEW ══════════════════════════════ -->
+      <section class="view" id="view-reports">
+        <div class="page-header">
+          <h2>Reports</h2>
+          <p>Performance analytics for your institution</p>
+        </div>
+        <div class="report-tabs">
+          <button class="report-tab active" onclick="loadReport('summary',this)">Summary</button>
+          <button class="report-tab" onclick="loadReport('status',this)">By Status</button>
+          <button class="report-tab" onclick="loadReport('monthly',this)">Monthly</button>
+          <button class="report-tab" onclick="loadReport('followup',this)">Follow-up Report</button>
+        </div>
+        <div id="reportContent">
+          <div class="loading-overlay"><div class="spinner"></div></div>
+        </div>
+      </section>
+
+      <!-- ═══ COMMISSION VIEW ═══════════════════════════ -->
+      <section class="view" id="view-commission">
+        <div class="page-header">
+          <h2>Commission & Tier</h2>
+          <p>Your earnings and tier progress</p>
+        </div>
+        <div id="commissionContent">
+          <div class="loading-overlay"><div class="spinner"></div></div>
+        </div>
+      </section>
+
+    </div><!-- /content-area -->
+  </div><!-- /main-area -->
+</div><!-- /app-shell -->
+
+<!-- ── Lead Detail Modal ──────────────────────── -->
+<div class="modal-overlay" id="leadDetailModal">
+  <div class="modal" style="max-width:720px;">
+    <div class="modal-head">
+      <h3>Lead Details</h3>
+      <button class="modal-close" onclick="closeModal('leadDetailModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="leadDetailBody"></div>
+  </div>
+</div>
+
+<!-- ── Update Status Modal ────────────────────── -->
+<div class="modal-overlay" id="statusModal">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-head">
+      <h3>Update Lead Status</h3>
+      <button class="modal-close" onclick="closeModal('statusModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="statusLeadId"/>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>New Status</label>
+          <select id="statusValue">
+            <option value="new">New</option>
+            <option value="contacted">Contacted</option>
+            <option value="interested">Interested</option>
+            <option value="not_interested">Not Interested</option>
+            <option value="follow_up">Follow-up</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>Follow-up Date (optional)</label>
+          <input type="date" id="statusFollowUp"/>
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>Remarks</label>
+          <textarea id="statusRemarks" placeholder="Add call notes or remarks…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('statusModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitStatusUpdate()">Update Status</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Follow-up Modal ────────────────────────── -->
+<div class="modal-overlay" id="followupModal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-head">
+      <h3>Schedule Follow-up</h3>
+      <button class="modal-close" onclick="closeModal('followupModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="followupLeadId"/>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>Follow-up Date *</label>
+          <input type="date" id="followupDate"/>
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>Notes / Remarks</label>
+          <textarea id="followupRemarks" placeholder="What to discuss on follow-up…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('followupModal')">Cancel</button>
+      <button class="btn btn-warning" onclick="submitFollowUp()">Schedule Follow-up</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Convert Lead Modal ─────────────────────── -->
+<div class="modal-overlay" id="convertModal">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-head">
+      <h3>Convert Lead to Student</h3>
+      <button class="modal-close" onclick="closeModal('convertModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="convertLeadId"/>
+      <div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:var(--radius-sm);padding:12px;margin-bottom:16px;font-size:13px;color:#15803D;">
+        <i class="fa-solid fa-circle-info"></i> A student record will be created automatically after conversion.
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Course Name</label>
+          <input type="text" id="convertCourse" placeholder="e.g. Digital Marketing"/>
+        </div>
+        <div class="form-group">
+          <label>Batch Name (optional)</label>
+          <input type="text" id="convertBatch" placeholder="e.g. Batch 2025-A"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Fees (₹)</label>
+          <input type="number" id="convertFees" placeholder="0"/>
+        </div>
+        <div class="form-group">
+          <label>Joining Date</label>
+          <input type="date" id="convertJoining"/>
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>Conversion Remarks</label>
+          <textarea id="convertRemarks" placeholder="Any additional notes…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('convertModal')">Cancel</button>
+      <button class="btn btn-success" onclick="submitConvert()"><i class="fa-solid fa-user-plus"></i> Convert to Student</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast container ────────────────────────── -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   CONFIG & STATE
+═══════════════════════════════════════════════ */
+const API = (typeof window.APP_CONFIG !== 'undefined' && window.APP_CONFIG.API_URL)
+  ? window.APP_CONFIG.API_URL
+  : 'http://localhost:5000/api';
+
+let token        = localStorage.getItem('ved_admin_token') || '';
+let currentAdmin = null;
+let currentView  = 'dashboard';
+let leadsPage    = 1;
+let leadsTotalPages = 1;
+let debounceTimer = null;
+
+const VIEW_TITLES = {
+  dashboard:  ['Dashboard', 'Overview of your assigned leads'],
+  leads:      ['My Leads', 'Manage and update your assigned leads'],
+  followups:  ['Follow-ups', 'Track all follow-up activities'],
+  reports:    ['Reports', 'Performance analytics'],
+  commission: ['Commission & Tier', 'Your earnings and tier progress'],
+};
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('welcomeDate').textContent = new Date().toLocaleDateString('en-IN', {
+    weekday:'long', year:'numeric', month:'long', day:'numeric'
+  });
+  if (!token) {
+    redirectToLogin();
+    return;
+  }
+  // Use cached info for instant render, then verify in background
+  const cached = localStorage.getItem('ved_admin_info');
+  if (cached) {
+    try {
+      const info = JSON.parse(cached);
+      const roleName = info?.role?.name?.toLowerCase() || '';
+      if (roleName !== 'institution') { redirectToLogin(); return; }
+      currentAdmin = info;
+      initApp();
+      verifyAndLoad(); // background re-verify
+      return;
+    } catch { /* fall through to server verify */ }
+  }
+  verifyAndLoad();
+});
+
+async function verifyAndLoad() {
+  try {
+    const res  = await apiFetch('/auth/me');
+    const data = await res.json();
+    if (!res.ok || !data.admin) throw new Error('Not authenticated');
+    const roleName = data.admin?.role?.name?.toLowerCase() || '';
+    if (roleName !== 'institution') throw new Error('Not an institution account');
+    currentAdmin = data.admin;
+    localStorage.setItem('ved_admin_info', JSON.stringify(data.admin));
+    if (!document.getElementById('appShell').style.display || document.getElementById('appShell').style.display === 'none') {
+      initApp();
+    }
+  } catch {
+    redirectToLogin();
+  }
+}
+
+function redirectToLogin() {
+  window.location.href = 'login.html';
+}
+
+function initApp() {
+  document.getElementById('appShell').style.display  = 'flex';
+
+  const name = currentAdmin.firstName || 'Institution';
+  document.getElementById('welcomeName').textContent    = name;
+  document.getElementById('userAvatar').textContent     = name[0].toUpperCase();
+  document.getElementById('institutionName').textContent = name + ' ' + (currentAdmin.lastName || '');
+
+  loadDashboard();
+}
+
+/* ═══════════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════════ */
+function doLogout() {
+  token = '';
+  currentAdmin = null;
+  localStorage.removeItem('ved_admin_token');
+  localStorage.removeItem('ved_admin_info');
+  window.location.href = 'login.html';
+}
+
+/* ═══════════════════════════════════════════════
+   API HELPER
+═══════════════════════════════════════════════ */
+function apiFetch(path, opts = {}) {
+  return fetch(`${API}${path}`, {
+    ...opts,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      ...(opts.headers || {}),
+    },
+  });
+}
+
+/* Central error renderer for view containers */
+function renderApiError(el, status, message) {
+  if (!el) return;
+
+  // 401 → session expired
+  if (status === 401) {
+    doLogout();
+    return;
+  }
+
+  // 403 → no institution linked
+  if (status === 403) {
+    el.innerHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:48px 20px;">
+        <div style="width:60px;height:60px;border-radius:50%;background:rgba(234,179,8,.12);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+          <i class="fa-solid fa-link-slash" style="font-size:24px;color:var(--warning);"></i>
+        </div>
+        <h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--navy);margin-bottom:8px;">Institution Not Linked</h3>
+        <p style="color:var(--gray-600);font-size:13px;max-width:380px;line-height:1.6;">
+          Your admin account is not linked to any Institution record.<br>
+          Please ask your <strong>Super Admin</strong> to open the Institutions page in the admin panel and set your account as the linked admin for your institution.
+        </p>
+        <div style="margin-top:20px;padding:12px 20px;background:var(--gray-100);border-radius:var(--radius-sm);font-size:12px;color:var(--gray-600);">
+          <i class="fa-solid fa-circle-info" style="color:var(--royal);margin-right:6px;"></i>
+          Error: ${esc(message)}
+        </div>
+      </div>`;
+    return;
+  }
+
+  // 404 → routes not registered (server not restarted)
+  if (status === 404) {
+    el.innerHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:48px 20px;">
+        <div style="width:60px;height:60px;border-radius:50%;background:rgba(239,68,68,.10);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+          <i class="fa-solid fa-server" style="font-size:24px;color:var(--danger);"></i>
+        </div>
+        <h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--navy);margin-bottom:8px;">Backend Restart Required</h3>
+        <p style="color:var(--gray-600);font-size:13px;max-width:380px;line-height:1.6;">
+          The Institution API routes are not registered yet.<br>
+          Please <strong>restart the backend server</strong> (stop and run <code style="background:var(--gray-100);padding:2px 6px;border-radius:4px;">node server.js</code> again).
+        </p>
+        <div style="margin-top:20px;padding:12px 20px;background:var(--gray-100);border-radius:var(--radius-sm);font-size:12px;color:var(--gray-600);">
+          <i class="fa-solid fa-circle-info" style="color:var(--royal);margin-right:6px;"></i>
+          ${esc(message)}
+        </div>
+      </div>`;
+    return;
+  }
+
+  // Generic error
+  el.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:48px 20px;">
+      <i class="fa-solid fa-triangle-exclamation" style="font-size:32px;color:var(--danger);margin-bottom:12px;"></i>
+      <p style="color:var(--gray-600);font-size:13px;">${esc(message)}</p>
+    </div>`;
+}
+
+/* ═══════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════ */
+function showView(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  document.getElementById(`view-${view}`)?.classList.add('active');
+  document.querySelector(`[data-view="${view}"]`)?.classList.add('active');
+
+  const [title, sub] = VIEW_TITLES[view] || [view, ''];
+  document.getElementById('viewTitle').textContent = title;
+  document.getElementById('viewSub').textContent   = sub;
+  currentView = view;
+
+  if (window.innerWidth < 768) closeSidebar();
+
+  switch (view) {
+    case 'dashboard':  loadDashboard();     break;
+    case 'leads':      loadLeads(1);        break;
+    case 'followups':  loadFollowUps();     break;
+    case 'reports':    loadReport('summary', document.querySelector('.report-tab')); break;
+    case 'commission': loadCommission();    break;
+  }
+}
+
+function refreshCurrentView() { showView(currentView); }
+
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  if (window.innerWidth < 768) {
+    sb.classList.toggle('sidebar-closed');
+  } else {
+    sb.classList.toggle('collapsed');
+  }
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.add('sidebar-closed');
+}
+
+/* ═══════════════════════════════════════════════
+   DASHBOARD
+═══════════════════════════════════════════════ */
+async function loadDashboard() {
+  try {
+    const res  = await apiFetch('/institution/dashboard');
+    const data = await res.json();
+    if (!res.ok) {
+      renderApiError(document.getElementById('dashStats'), res.status, data.message);
+      return;
+    }
+    const d = data.data;
+
+    // Stats
+    document.getElementById('stat-total').textContent     = d.totalAssigned;
+    document.getElementById('stat-new').textContent       = d.newLeads;
+    document.getElementById('stat-contacted').textContent = d.contacted;
+    document.getElementById('stat-interested').textContent= d.interested;
+    document.getElementById('stat-converted').textContent = d.converted;
+    document.getElementById('stat-rejected').textContent  = d.rejected;
+    document.getElementById('stat-followup').textContent  = d.followUpPending;
+    document.getElementById('stat-today').textContent     = d.todayFollowUps;
+    document.getElementById('stat-rate').textContent      = d.conversionRate + '%';
+
+    // Nav badges
+    document.getElementById('navNewBadge').textContent   = d.newLeads;
+    document.getElementById('navTodayBadge').textContent = d.todayFollowUps;
+
+    // Tier card
+    renderTierCard(d);
+
+    // Today's followups
+    loadDashFollowups();
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+function renderTierCard(d) {
+  const tierMap = {
+    Normal: { icon: 'fa-shield', cls: 'normal' },
+    Silver: { icon: 'fa-award',  cls: 'silver' },
+    Gold:   { icon: 'fa-trophy', cls: 'gold'   },
+    Platinum:{ icon: 'fa-gem',   cls: 'platinum'},
+  };
+  const t = tierMap[d.currentTier] || tierMap.Normal;
+
+  document.getElementById('tierName').textContent = d.currentTier;
+  document.getElementById('tierBadge').className  = `tier-badge ${t.cls}`;
+  document.getElementById('tierBadge').querySelector('i').className = `fa-solid ${t.icon}`;
+  document.getElementById('tierBadge').querySelector('.tier-converts').textContent = `${d.converted} converted leads`;
+  document.getElementById('commissionDisplay').textContent = '₹' + (d.commissionEarned || 0).toLocaleString('en-IN');
+  document.getElementById('userTierBadge').textContent     = d.currentTier + ' Tier';
+
+  if (d.nextTier) {
+    const thresholds = { Silver: 50, Gold: 100, Platinum: 200 };
+    const nextName   = Object.keys(thresholds).find(k => thresholds[k] === d.nextTier.at) || 'Next';
+    const pct        = Math.min(100, Math.round((d.converted / d.nextTier.at) * 100));
+    document.getElementById('tierProgressLabel').textContent = `${d.nextTier.needed} more to ${nextName}`;
+    document.getElementById('tierProgressPct').textContent   = pct + '%';
+    document.getElementById('tierBarFill').style.width       = pct + '%';
+    document.getElementById('tierProgressWrap').style.display = 'block';
+  } else {
+    document.getElementById('tierProgressWrap').style.display = 'none';
+    document.getElementById('tierBarFill').style.width = '100%';
+  }
+}
+
+async function loadDashFollowups() {
+  const el = document.getElementById('dashFollowupList');
+  try {
+    const res  = await apiFetch('/institution/reports?type=followup');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+
+    const today = data.data.today || [];
+    if (!today.length) {
+      el.innerHTML = '<div class="empty-state"><i class="fa-regular fa-calendar-check"></i><p>No follow-ups scheduled for today</p></div>';
+      return;
+    }
+
+    el.innerHTML = today.slice(0, 5).map(l => `
+      <div class="followup-card today" style="margin-bottom:8px;">
+        <div class="followup-name">${esc(l.name)}</div>
+        <div class="followup-meta">
+          <i class="fa-solid fa-phone" style="color:var(--gray-400);margin-right:4px;"></i>${esc(l.mobile || '—')}
+          &nbsp;·&nbsp;${esc(l.city || '—')}
+          &nbsp;·&nbsp;<span class="pill pill-${l.institutionStatus}">${fmtStatus(l.institutionStatus)}</span>
+        </div>
+        <div class="followup-actions">
+          <button class="btn btn-sm btn-outline" onclick="openStatusModal('${l._id}')">Update Status</button>
+          <button class="btn btn-sm btn-primary" onclick="openLeadDetail('${l._id}')">View</button>
+        </div>
+      </div>`).join('');
+  } catch (err) {
+    el.innerHTML = `<div style="padding:16px;"><div style="color:var(--danger);font-size:13px;"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px;"></i>${esc(err.message)}</div></div>`;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   LEADS TABLE
+═══════════════════════════════════════════════ */
+function debouncedLoadLeads() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => loadLeads(1), 400);
+}
+
+async function loadLeads(page = 1) {
+  leadsPage = page;
+  const body  = document.getElementById('leadsTableBody');
+  const pager = document.getElementById('leadsPagination');
+  body.innerHTML  = '<tr><td colspan="11"><div class="loading-overlay"><div class="spinner"></div></div></td></tr>';
+  pager.innerHTML = '';
+
+  const params = new URLSearchParams({
+    page,
+    limit: 25,
+    ...(document.getElementById('leadSearch').value  ? { search:  document.getElementById('leadSearch').value } : {}),
+    ...(document.getElementById('filterStatus').value ? { status:  document.getElementById('filterStatus').value } : {}),
+    ...(document.getElementById('filterSource').value ? { source:  document.getElementById('filterSource').value } : {}),
+    ...(document.getElementById('filterFrom').value   ? { fromDate: document.getElementById('filterFrom').value } : {}),
+    ...(document.getElementById('filterTo').value     ? { toDate:   document.getElementById('filterTo').value } : {}),
+  });
+
+  try {
+    const res  = await apiFetch(`/institution/leads?${params}`);
+    const data = await res.json();
+    if (!res.ok) {
+      renderApiError(body.closest('.card') || body.parentElement, res.status, data.message);
+      return;
+    }
+
+    leadsTotalPages = data.pages || 1;
+
+    if (!data.data.length) {
+      body.innerHTML = '<tr><td colspan="11"><div class="empty-state"><i class="fa-solid fa-inbox"></i><p>No leads found</p></div></td></tr>';
+      return;
+    }
+
+    const offset = (page - 1) * 25;
+    body.innerHTML = data.data.map((l, i) => `
+      <tr>
+        <td style="color:var(--gray-400);font-size:12px;">${offset + i + 1}</td>
+        <td class="td-name">${esc(l.name)}</td>
+        <td>${esc(l.mobile || '—')}</td>
+        <td style="font-size:12px;color:var(--gray-600);">${esc(l.email || '—')}</td>
+        <td>${esc(l.city || '—')}</td>
+        <td>${esc(l.courseInterest || '—')}</td>
+        <td style="text-transform:capitalize;">${esc(l.source || '—')}</td>
+        <td style="font-size:12px;">${l.institutionAssignedAt ? fmtDate(l.institutionAssignedAt) : '—'}</td>
+        <td><span class="pill pill-${l.institutionStatus}">${fmtStatus(l.institutionStatus)}</span></td>
+        <td style="font-size:12px;${l.institutionFollowUpDate && isPast(l.institutionFollowUpDate) && !['converted','rejected','not_interested'].includes(l.institutionStatus) ? 'color:var(--danger);font-weight:600;' : ''}">
+          ${l.institutionFollowUpDate ? fmtDate(l.institutionFollowUpDate) : '—'}
+        </td>
+        <td>
+          <div class="action-cell">
+            <button class="icon-btn view"    title="View Details"    onclick="openLeadDetail('${l._id}')"><i class="fa-solid fa-eye"></i></button>
+            <button class="icon-btn edit"    title="Update Status"   onclick="openStatusModal('${l._id}','${l.institutionStatus}')"><i class="fa-solid fa-pen-to-square"></i></button>
+            <button class="icon-btn followup" title="Add Follow-up"  onclick="openFollowupModal('${l._id}')"><i class="fa-solid fa-calendar-plus"></i></button>
+            ${l.institutionStatus !== 'converted' ? `<button class="icon-btn convert" title="Convert Lead" onclick="openConvertModal('${l._id}')"><i class="fa-solid fa-user-plus"></i></button>` : ''}
+          </div>
+        </td>
+      </tr>`).join('');
+
+    renderPagination(pager, page, data.pages, data.total);
+  } catch (err) {
+    body.innerHTML = `<tr><td colspan="11"><p style="color:var(--danger);padding:16px;">${esc(err.message)}</p></td></tr>`;
+  }
+}
+
+function renderPagination(el, page, pages, total) {
+  if (pages <= 1) { el.innerHTML = `<span class="pagination-info">${total} leads</span>`; return; }
+  let btns = '';
+  const start = Math.max(1, page - 2);
+  const end   = Math.min(pages, page + 2);
+  if (start > 1) btns += `<button class="page-btn" onclick="loadLeads(1)">1</button>${start > 2 ? '<span style="padding:0 4px;color:var(--gray-400);">…</span>' : ''}`;
+  for (let p = start; p <= end; p++) btns += `<button class="page-btn${p === page ? ' active' : ''}" onclick="loadLeads(${p})">${p}</button>`;
+  if (end < pages) btns += `${end < pages - 1 ? '<span style="padding:0 4px;color:var(--gray-400);">…</span>' : ''}<button class="page-btn" onclick="loadLeads(${pages})">${pages}</button>`;
+
+  el.innerHTML = `
+    <span class="pagination-info">Page ${page} of ${pages} &nbsp;·&nbsp; ${total} leads</span>
+    <div class="pagination-btns">${btns}</div>`;
+}
+
+/* ═══════════════════════════════════════════════
+   LEAD DETAIL
+═══════════════════════════════════════════════ */
+async function openLeadDetail(id) {
+  openModal('leadDetailModal');
+  const body = document.getElementById('leadDetailBody');
+  body.innerHTML = '<div class="loading-overlay"><div class="spinner"></div></div>';
+
+  try {
+    const res  = await apiFetch(`/institution/leads/${id}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    const l = data.data;
+
+    body.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+        <div>
+          <h3 style="font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:var(--navy);">${esc(l.name)}</h3>
+          <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;">
+            <span class="pill pill-${l.institutionStatus}">${fmtStatus(l.institutionStatus)}</span>
+            <span class="pill" style="background:var(--gray-100);color:var(--gray-600);">${esc(l.source || 'manual')}</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          ${l.institutionStatus !== 'converted' ? `
+          <button class="btn btn-sm btn-outline" onclick="closeModal('leadDetailModal');openStatusModal('${l._id}','${l.institutionStatus}')">Update Status</button>
+          <button class="btn btn-sm btn-success" onclick="closeModal('leadDetailModal');openConvertModal('${l._id}')">Convert</button>` : ''}
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-field"><label>Mobile</label><p>${esc(l.mobile || '—')}</p></div>
+        <div class="detail-field"><label>Email</label><p>${esc(l.email || '—')}</p></div>
+        <div class="detail-field"><label>City</label><p>${esc(l.city || '—')}</p></div>
+        <div class="detail-field"><label>State</label><p>${esc(l.state || '—')}</p></div>
+        <div class="detail-field"><label>Course Interest</label><p>${esc(l.courseInterest || '—')}</p></div>
+        <div class="detail-field"><label>Lead Source</label><p style="text-transform:capitalize;">${esc(l.source || '—')}</p></div>
+        <div class="detail-field"><label>Assigned Date</label><p>${l.institutionAssignedAt ? fmtDate(l.institutionAssignedAt) : '—'}</p></div>
+        <div class="detail-field"><label>Assigned By</label><p>${l.institutionAssignedBy ? esc(l.institutionAssignedBy.firstName + ' ' + (l.institutionAssignedBy.lastName || '')) : '—'}</p></div>
+        <div class="detail-field"><label>Follow-up Date</label><p>${l.institutionFollowUpDate ? fmtDate(l.institutionFollowUpDate) : '—'}</p></div>
+        <div class="detail-field"><label>Last Remarks</label><p>${esc(l.institutionRemarks || '—')}</p></div>
+        ${l.convertedToStudent ? `<div class="detail-field"><label>Converted Student</label><p style="color:var(--success);">${esc(l.convertedToStudent.fullName || '')} <small style="color:var(--gray-400);">(${l.convertedToStudent.email || ''})</small></p></div>` : ''}
+        ${l.convertedAt ? `<div class="detail-field"><label>Converted On</label><p>${fmtDate(l.convertedAt)}</p></div>` : ''}
+      </div>
+
+      ${l.institutionStatusHistory?.length ? `
+      <div style="margin-top:20px;">
+        <h4 style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--navy);margin-bottom:12px;">Status History</h4>
+        <div class="history-timeline">
+          ${[...l.institutionStatusHistory].reverse().map(h => `
+            <div class="history-item">
+              <div class="history-dot"></div>
+              <div class="history-content">
+                <div class="history-status">${fmtStatus(h.status)}</div>
+                <div class="history-meta">
+                  ${h.changedBy ? esc(h.changedBy.firstName || '') : 'You'} · ${fmtDate(h.changedAt)}
+                  ${h.followUpDate ? ' · Follow-up: ' + fmtDate(h.followUpDate) : ''}
+                </div>
+                ${h.remarks ? `<div class="history-remarks">${esc(h.remarks)}</div>` : ''}
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>` : ''}
+    `;
+  } catch (err) {
+    body.innerHTML = `<p style="color:var(--danger);">${esc(err.message)}</p>`;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   STATUS UPDATE
+═══════════════════════════════════════════════ */
+function openStatusModal(id, currentStatus = 'new') {
+  document.getElementById('statusLeadId').value   = id;
+  document.getElementById('statusValue').value    = currentStatus;
+  document.getElementById('statusRemarks').value  = '';
+  document.getElementById('statusFollowUp').value = '';
+  openModal('statusModal');
+}
+
+async function submitStatusUpdate() {
+  const id       = document.getElementById('statusLeadId').value;
+  const status   = document.getElementById('statusValue').value;
+  const remarks  = document.getElementById('statusRemarks').value;
+  const followUp = document.getElementById('statusFollowUp').value;
+
+  try {
+    const res  = await apiFetch(`/institution/leads/${id}/status`, {
+      method: 'PATCH',
+      body:   JSON.stringify({ status, remarks, followUpDate: followUp || undefined }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    showToast('Status updated successfully', 'success');
+    closeModal('statusModal');
+    if (currentView === 'leads')   loadLeads(leadsPage);
+    if (currentView === 'dashboard') loadDashboard();
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   FOLLOW-UP
+═══════════════════════════════════════════════ */
+function openFollowupModal(id) {
+  document.getElementById('followupLeadId').value   = id;
+  document.getElementById('followupDate').value     = '';
+  document.getElementById('followupRemarks').value  = '';
+  openModal('followupModal');
+}
+
+async function submitFollowUp() {
+  const id       = document.getElementById('followupLeadId').value;
+  const date     = document.getElementById('followupDate').value;
+  const remarks  = document.getElementById('followupRemarks').value;
+
+  if (!date) { showToast('Please select a follow-up date', 'warning'); return; }
+
+  try {
+    const res  = await apiFetch(`/institution/leads/${id}/followup`, {
+      method: 'POST',
+      body:   JSON.stringify({ followUpDate: date, remarks }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    showToast('Follow-up scheduled', 'success');
+    closeModal('followupModal');
+    if (currentView === 'leads')     loadLeads(leadsPage);
+    if (currentView === 'followups') loadFollowUps();
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   CONVERT LEAD
+═══════════════════════════════════════════════ */
+function openConvertModal(id) {
+  document.getElementById('convertLeadId').value     = id;
+  document.getElementById('convertCourse').value     = '';
+  document.getElementById('convertBatch').value      = '';
+  document.getElementById('convertFees').value       = '';
+  document.getElementById('convertJoining').value    = '';
+  document.getElementById('convertRemarks').value    = '';
+  openModal('convertModal');
+}
+
+async function submitConvert() {
+  const id      = document.getElementById('convertLeadId').value;
+  const payload = {
+    courseName:  document.getElementById('convertCourse').value,
+    batchName:   document.getElementById('convertBatch').value,
+    fees:        Number(document.getElementById('convertFees').value) || 0,
+    joiningDate: document.getElementById('convertJoining').value || undefined,
+    remarks:     document.getElementById('convertRemarks').value,
+  };
+
+  try {
+    const res  = await apiFetch(`/institution/leads/${id}/convert`, {
+      method: 'POST',
+      body:   JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    showToast('Lead converted to student successfully!', 'success');
+    closeModal('convertModal');
+    if (currentView === 'leads')     loadLeads(leadsPage);
+    if (currentView === 'dashboard') loadDashboard();
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   FOLLOW-UPS VIEW
+═══════════════════════════════════════════════ */
+async function loadFollowUps() {
+  const el = document.getElementById('followupContent');
+  el.innerHTML = '<div class="loading-overlay"><div class="spinner"></div></div>';
+
+  try {
+    const res  = await apiFetch('/institution/reports?type=followup');
+    const data = await res.json();
+    if (!res.ok) {
+      renderApiError(el, res.status, data.message);
+      return;
+    }
+    const { overdue, today, upcoming } = data.data;
+
+    function renderList(leads, cls) {
+      if (!leads.length) return '<p style="color:var(--gray-400);font-size:13px;padding:8px 0;">None</p>';
+      return leads.map(l => `
+        <div class="followup-card ${cls}">
+          <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <div>
+              <div class="followup-name">${esc(l.name)}</div>
+              <div class="followup-meta">
+                <i class="fa-solid fa-phone" style="color:var(--gray-400);margin-right:4px;"></i>${esc(l.mobile || '—')}
+                &nbsp;·&nbsp;${esc(l.city || '—')}
+                &nbsp;·&nbsp;<span class="pill pill-${l.institutionStatus}">${fmtStatus(l.institutionStatus)}</span>
+              </div>
+              ${l.institutionRemarks ? `<div style="font-size:12px;color:var(--gray-600);margin-top:4px;">${esc(l.institutionRemarks)}</div>` : ''}
+            </div>
+            <div style="font-size:12px;font-weight:600;color:${cls === 'overdue' ? 'var(--danger)' : cls === 'today' ? 'var(--warning)' : 'var(--royal)'};">
+              ${fmtDate(l.institutionFollowUpDate)}
+            </div>
+          </div>
+          <div class="followup-actions">
+            <button class="btn btn-sm btn-outline" onclick="openStatusModal('${l._id}','${l.institutionStatus}')">Update Status</button>
+            <button class="btn btn-sm btn-outline" onclick="openFollowupModal('${l._id}')">Reschedule</button>
+            <button class="btn btn-sm btn-primary" onclick="openLeadDetail('${l._id}')">View Lead</button>
+          </div>
+        </div>`).join('');
+    }
+
+    el.innerHTML = `
+      <div class="followup-section">
+        <h3 style="color:var(--danger);">
+          <i class="fa-solid fa-triangle-exclamation"></i> Overdue (${overdue.length})
+        </h3>
+        ${renderList(overdue, 'overdue')}
+      </div>
+      <div class="followup-section">
+        <h3 style="color:var(--warning);">
+          <i class="fa-solid fa-clock"></i> Today (${today.length})
+        </h3>
+        ${renderList(today, 'today')}
+      </div>
+      <div class="followup-section">
+        <h3 style="color:var(--royal);">
+          <i class="fa-solid fa-calendar"></i> Upcoming — Next 7 Days (${upcoming.length})
+        </h3>
+        ${renderList(upcoming, 'upcoming')}
+      </div>`;
+  } catch (err) {
+    el.innerHTML = `<p style="color:var(--danger);">${esc(err.message)}</p>`;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   REPORTS
+═══════════════════════════════════════════════ */
+async function loadReport(type, tabEl) {
+  document.querySelectorAll('.report-tab').forEach(t => t.classList.remove('active'));
+  if (tabEl) tabEl.classList.add('active');
+
+  const el = document.getElementById('reportContent');
+  el.innerHTML = '<div class="loading-overlay"><div class="spinner"></div></div>';
+
+  try {
+    const res  = await apiFetch(`/institution/reports?type=${type}`);
+    const data = await res.json();
+    if (!res.ok) {
+      renderApiError(el, res.status, data.message);
+      return;
+    }
+
+    if (type === 'summary') {
+      const d = data.data;
+      el.innerHTML = `
+        <div class="stats-grid" style="margin-bottom:24px;">
+          <div class="stat-card"><div class="stat-card-top"><div><div class="stat-value">${d.total}</div><div class="stat-label">Total Leads</div></div><div class="stat-icon blue"><i class="fa-solid fa-list-ul"></i></div></div></div>
+          <div class="stat-card"><div class="stat-card-top"><div><div class="stat-value">${d.converted}</div><div class="stat-label">Converted</div></div><div class="stat-icon green"><i class="fa-solid fa-user-check"></i></div></div></div>
+          <div class="stat-card"><div class="stat-card-top"><div><div class="stat-value">${d.conversionRate}%</div><div class="stat-label">Conversion Rate</div></div><div class="stat-icon teal"><i class="fa-solid fa-percent"></i></div></div></div>
+          <div class="stat-card"><div class="stat-card-top"><div><div class="stat-value">₹${(d.commissionEarned||0).toLocaleString('en-IN')}</div><div class="stat-label">Commission Earned</div></div><div class="stat-icon orange"><i class="fa-solid fa-coins"></i></div></div></div>
+        </div>
+        <div class="chart-card">
+          <h4>Leads by Status</h4>
+          <div class="bar-chart">${renderBarChart(d.byStatus)}</div>
+        </div>`;
+    } else if (type === 'status') {
+      el.innerHTML = `
+        <div class="chart-card">
+          <h4>Lead Status Breakdown</h4>
+          <div class="bar-chart">${renderBarChart(data.data)}</div>
+        </div>`;
+    } else if (type === 'monthly') {
+      const rows = data.data;
+      const months = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      el.innerHTML = `
+        <div class="card">
+          <div class="card-head"><h3>Monthly Performance (Last 6 Months)</h3></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Month</th><th>Assigned</th><th>Converted</th><th>Rejected</th><th>Conversion %</th></tr></thead>
+              <tbody>
+                ${rows.length ? rows.map(r => {
+                  const pct = r.assigned > 0 ? ((r.converted / r.assigned) * 100).toFixed(1) : '0.0';
+                  return `<tr>
+                    <td>${months[r._id.month]} ${r._id.year}</td>
+                    <td>${r.assigned}</td>
+                    <td style="color:var(--success);font-weight:600;">${r.converted}</td>
+                    <td style="color:var(--danger);">${r.rejected}</td>
+                    <td>${pct}%</td>
+                  </tr>`;
+                }).join('') : '<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-chart-bar"></i><p>No data yet</p></div></td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        </div>`;
+    } else if (type === 'followup') {
+      const { overdue, today, upcoming } = data.data;
+      el.innerHTML = `
+        <div class="stats-grid" style="margin-bottom:24px;">
+          <div class="stat-card"><div class="stat-card-top"><div><div class="stat-value" style="color:var(--danger);">${overdue.length}</div><div class="stat-label">Overdue</div></div><div class="stat-icon red"><i class="fa-solid fa-triangle-exclamation"></i></div></div></div>
+          <div class="stat-card"><div class="stat-card-top"><div><div class="stat-value" style="color:var(--warning);">${today.length}</div><div class="stat-label">Today</div></div><div class="stat-icon yellow"><i class="fa-solid fa-clock"></i></div></div></div>
+          <div class="stat-card"><div class="stat-card-top"><div><div class="stat-value">${upcoming.length}</div><div class="stat-label">Upcoming (7 days)</div></div><div class="stat-icon blue"><i class="fa-solid fa-calendar"></i></div></div></div>
+        </div>
+        <div style="margin-bottom:12px;font-size:13px;color:var(--gray-600);">Switch to the <strong>Follow-ups</strong> tab for detailed management.</div>`;
+    }
+  } catch (err) {
+    el.innerHTML = `<p style="color:var(--danger);">${esc(err.message)}</p>`;
+  }
+}
+
+function renderBarChart(items) {
+  if (!items || !items.length) return '<p style="color:var(--gray-400);font-size:13px;">No data</p>';
+  const max = Math.max(...items.map(i => i.count || 0), 1);
+  return items.map(i => `
+    <div class="bar-row">
+      <div class="bar-row-label">${esc(fmtStatus(i._id || '—'))}</div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(((i.count||0)/max)*100)}%"></div></div>
+      <div class="bar-count">${i.count || 0}</div>
+    </div>`).join('');
+}
+
+/* ═══════════════════════════════════════════════
+   COMMISSION
+═══════════════════════════════════════════════ */
+async function loadCommission() {
+  const el = document.getElementById('commissionContent');
+  el.innerHTML = '<div class="loading-overlay"><div class="spinner"></div></div>';
+
+  try {
+    const res  = await apiFetch('/institution/commission');
+    const data = await res.json();
+    if (!res.ok) {
+      renderApiError(el, res.status, data.message);
+      return;
+    }
+    const d = data.data;
+
+    const tierColors = { Normal:'#94A3C0', Silver:'#C0C0C0', Gold:'#FFD700', Platinum:'#E5E4E2' };
+    const tColor = tierColors[d.tier] || '#94A3C0';
+
+    const totalEarned   = d.commissionByStatus?.find(c => c._id === 'paid')?.total    || 0;
+    const totalPending  = d.commissionByStatus?.find(c => c._id === 'pending')?.total || 0;
+    const totalApproved = d.commissionByStatus?.find(c => c._id === 'approved')?.total|| 0;
+
+    el.innerHTML = `
+      <!-- Tier card -->
+      <div class="tier-card" style="margin-bottom:24px;">
+        <div class="tier-header">
+          <div class="tier-badge tier-badge-${d.tier?.toLowerCase()}">
+            <i class="fa-solid fa-award" style="color:${tColor};font-size:28px;"></i>
+            <div>
+              <div class="tier-name">${d.tier} Tier</div>
+              <div class="tier-converts">${d.convertedLeads} converted leads</div>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:24px;font-weight:700;">₹${totalEarned.toLocaleString('en-IN')}</div>
+            <div style="font-size:12px;opacity:.7;">Commission Paid</div>
+          </div>
+        </div>
+        ${d.nextTier ? (() => {
+          const thresholds = { Silver:50, Gold:100, Platinum:200 };
+          const nextName   = Object.keys(thresholds).find(k => thresholds[k] === d.nextTier.at) || 'Next';
+          const pct = Math.min(100, Math.round((d.convertedLeads / d.nextTier.at) * 100));
+          return `
+          <div class="tier-progress-wrap">
+            <div class="tier-progress-label">
+              <span>${d.nextTier.needed} more conversions to reach ${nextName}</span>
+              <span>${pct}%</span>
+            </div>
+            <div class="tier-bar"><div class="tier-bar-fill" style="width:${pct}%"></div></div>
+          </div>`;
+        })() : '<div style="font-size:13px;opacity:.8;margin-top:8px;"><i class="fa-solid fa-crown"></i> You have reached the highest tier!</div>'}
+      </div>
+
+      <!-- Commission stats -->
+      <div class="stats-grid" style="margin-bottom:24px;">
+        <div class="stat-card"><div class="stat-card-top"><div><div class="stat-value">₹${totalEarned.toLocaleString('en-IN')}</div><div class="stat-label">Paid Commission</div></div><div class="stat-icon green"><i class="fa-solid fa-check-circle"></i></div></div></div>
+        <div class="stat-card"><div class="stat-card-top"><div><div class="stat-value">₹${totalApproved.toLocaleString('en-IN')}</div><div class="stat-label">Approved (Pending Payment)</div></div><div class="stat-icon blue"><i class="fa-solid fa-hourglass-half"></i></div></div></div>
+        <div class="stat-card"><div class="stat-card-top"><div><div class="stat-value">₹${totalPending.toLocaleString('en-IN')}</div><div class="stat-label">Under Review</div></div><div class="stat-icon yellow"><i class="fa-solid fa-clock"></i></div></div></div>
+        <div class="stat-card"><div class="stat-card-top"><div><div class="stat-value">${d.convertedLeads}</div><div class="stat-label">Total Conversions</div></div><div class="stat-icon orange"><i class="fa-solid fa-users"></i></div></div></div>
+      </div>
+
+      <!-- Tier table -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-head"><h3>Tier Requirements</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Tier</th><th>Converted Leads Required</th><th>Status</th></tr></thead>
+            <tbody>
+              ${[
+                {name:'Normal',   min:0,   max:49},
+                {name:'Silver',   min:50,  max:99},
+                {name:'Gold',     min:100, max:199},
+                {name:'Platinum', min:200, max:null},
+              ].map(t => `
+                <tr>
+                  <td style="font-weight:600;color:${tierColors[t.name]};">${t.name}</td>
+                  <td>${t.max ? `${t.min} – ${t.max}` : `${t.min}+`}</td>
+                  <td>${d.tier === t.name ? '<span class="pill pill-converted">Current</span>' :
+                    d.convertedLeads >= t.min ? '<span class="pill pill-interested">Achieved</span>' :
+                    '<span style="color:var(--gray-400);font-size:12px;">Locked</span>'}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Recent conversions -->
+      <div class="card">
+        <div class="card-head"><h3>Recent Conversions</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Lead Name</th><th>Commission</th><th>Status</th><th>Converted On</th></tr></thead>
+            <tbody>
+              ${d.recentConversions?.length ? d.recentConversions.map(c => `
+                <tr>
+                  <td class="td-name">${esc(c.name)}</td>
+                  <td>₹${(c.commissionAmount||0).toLocaleString('en-IN')}</td>
+                  <td><span class="pill pill-${c.commissionStatus === 'paid' ? 'converted' : 'follow_up'}">${c.commissionStatus || '—'}</span></td>
+                  <td style="font-size:12px;">${c.convertedAt ? fmtDate(c.convertedAt) : '—'}</td>
+                </tr>`).join('') : '<tr><td colspan="4"><div class="empty-state"><i class="fa-solid fa-coins"></i><p>No conversions yet</p></div></td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+  } catch (err) {
+    el.innerHTML = `<p style="color:var(--danger);">${esc(err.message)}</p>`;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   EXPORT
+═══════════════════════════════════════════════ */
+async function exportLeads() {
+  const status = document.getElementById('filterStatus').value;
+  try {
+    const res  = await apiFetch(`/institution/leads/export${status ? '?status=' + status : ''}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+
+    const headers = ['Name','Mobile','Email','City','Course','Source','Assigned Date','Status','Follow-up Date','Remarks'];
+    const rows = data.data.map(l => [
+      l.name, l.mobile||'', l.email||'', l.city||'', l.courseInterest||'',
+      l.source||'', l.institutionAssignedAt ? fmtDate(l.institutionAssignedAt) : '',
+      l.institutionStatus||'', l.institutionFollowUpDate ? fmtDate(l.institutionFollowUpDate) : '',
+      l.institutionRemarks||'',
+    ]);
+
+    const csv  = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a'); a.href = url; a.download = `leads_${Date.now()}.csv`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast(`Exported ${data.total} leads`, 'success');
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   MODAL HELPERS
+═══════════════════════════════════════════════ */
+function openModal(id) {
+  document.getElementById(id)?.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id)?.classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) closeModal(m.id); });
+});
+
+/* ═══════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════ */
+function showToast(msg, type = 'info') {
+  const icons = { success:'circle-check', error:'circle-xmark', warning:'triangle-exclamation', info:'circle-info' };
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<i class="fa-solid fa-${icons[type] || 'circle-info'}" style="color:var(--${type === 'error' ? 'danger' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info'});flex-shrink:0;"></i> ${esc(msg)}`;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(() => { el.style.animation = 'fadeOut .3s ease forwards'; setTimeout(() => el.remove(), 300); }, 3500);
+}
+
+/* ═══════════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════════ */
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+}
+
+function isPast(d) {
+  return d && new Date(d) < new Date();
+}
+
+function fmtStatus(s) {
+  const map = {
+    new:'New', contacted:'Contacted', interested:'Interested',
+    not_interested:'Not Interested', follow_up:'Follow-up',
+    converted:'Converted', rejected:'Rejected',
+  };
+  return map[s] || (s ? s.charAt(0).toUpperCase() + s.slice(1) : '—');
+}
+</script>
+</body>
+</html>

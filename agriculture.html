@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ved Foundation - Agriculture Development</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --blue:#0b63ce;
+  --blue-dark:#074a9d;
+  --orange:#f7941d;
+  --orange-dark:#e46f00;
+  --green:#16a34a;
+  --text:#1f2937;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --shadow:0 14px 34px rgba(15,23,42,.10);
+  --shadow-soft:0 8px 22px rgba(15,23,42,.08);
+}
+
+html{scroll-behavior:smooth;overflow-x:hidden}
+
+body{
+  font-family:'Inter',sans-serif;
+  background:#fff;
+  color:var(--text);
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+ul{list-style:none}
+
+.container{
+  width:min(1120px,92%);
+  margin:auto;
+}
+
+/* HERO */
+
+.agri-hero{
+  position:relative;
+  min-height:500px;
+  overflow:hidden;
+  background:#eef8ff;
+  display:flex;
+  align-items:center;
+}
+
+.agri-hero-bg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  opacity:.08;
+  z-index:0;
+}
+
+.agri-hero-shape{
+  position:absolute;
+  left:0;top:0;
+  width:42%;height:100%;
+  background:linear-gradient(135deg,#007c89,#074d8f);
+  clip-path:polygon(0 0,100% 0,74% 100%,0 100%);
+  z-index:1;
+}
+
+.agri-hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,rgba(5,85,115,.78) 0%,rgba(255,255,255,.82) 42%,rgba(255,255,255,.96) 100%);
+  opacity:.95;
+  z-index:0;
+}
+
+.agri-hero-wrap{
+  position:relative;
+  z-index:3;
+  width:min(1120px,92%);
+  margin:auto;
+  display:grid;
+  grid-template-columns:42% 58%;
+  min-height:500px;
+  align-items:center;
+  gap:42px;
+}
+
+.agri-hero-left{
+  height:100%;
+  display:flex;
+  align-items:center;
+}
+
+.agri-hero-left img{
+  width:100%;
+  height:280px;
+  object-fit:cover;
+  border-radius:14px;
+  box-shadow:0 16px 36px rgba(0,0,0,.15);
+}
+
+.agri-hero-right{
+  padding:42px 0;
+}
+
+.agri-mark{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:20px;
+}
+
+.agri-icon{
+  width:60px;
+  height:60px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#005ea8,#00a878);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-size:28px;
+  box-shadow:0 12px 24px rgba(0,94,168,.18);
+  flex:0 0 auto;
+}
+
+.agri-mark h2{
+  color:#005ea8;
+  font-size:clamp(1.55rem,2.6vw,2.35rem);
+  line-height:1;
+  font-weight:900;
+}
+
+.agri-mark span{
+  display:block;
+  color:#0fa66a;
+  letter-spacing:4px;
+  font-size:.76rem;
+  font-weight:900;
+  text-transform:uppercase;
+  margin-top:8px;
+}
+
+.agri-hero-right h1{
+  font-size:clamp(2.1rem,3.7vw,3.75rem);
+  line-height:1.1;
+  color:#23313d;
+  font-weight:900;
+  letter-spacing:-1.3px;
+  margin-bottom:18px;
+}
+
+.agri-hero-right h1 span{
+  color:var(--orange);
+}
+
+.agri-hero-right h1 strong{
+  display:block;
+  font-weight:900;
+  background:linear-gradient(180deg,transparent 58%,rgba(55,200,145,.45) 58%);
+}
+
+.agri-hero-right p{
+  max-width:680px;
+  color:#526174;
+  font-size:1rem;
+  margin-bottom:22px;
+}
+
+.hero-actions{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
+}
+
+/* COMMON */
+
+section{
+  padding:58px 0;
+}
+
+.section-light{
+  background:linear-gradient(180deg,#f6f9fe 0%,#ffffff 100%);
+}
+
+.section-head,
+.section-header{
+  text-align:center;
+  max-width:760px;
+  margin:0 auto 34px;
+}
+
+.section-head .tag,
+.eyebrow{
+  display:inline-block;
+  background:#fff3df;
+  color:#b45309;
+  border:1px solid #fed7aa;
+  padding:7px 13px;
+  border-radius:999px;
+  font-size:.78rem;
+  font-weight:900;
+  margin-bottom:10px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+
+.section-head h2,
+.section-title{
+  font-size:clamp(1.75rem,2.6vw,2.55rem);
+  line-height:1.16;
+  color:#10233f;
+  margin-bottom:10px;
+  font-weight:900;
+}
+
+.section-head p,
+.section-desc{
+  color:var(--muted);
+  font-size:.96rem;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px 20px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  font-weight:900;
+  transition:.25s;
+  font-size:.92rem;
+  white-space:nowrap;
+}
+
+.btn-orange,
+.btn-primary{
+  background:var(--orange);
+  color:#fff;
+  box-shadow:0 10px 22px rgba(247,148,29,.25);
+}
+
+.btn-orange:hover,
+.btn-primary:hover{
+  background:var(--orange-dark);
+  transform:translateY(-2px);
+}
+
+.btn-outline{
+  border:2px solid var(--blue);
+  color:var(--blue-dark);
+  background:#fff;
+}
+
+.btn-outline:hover{
+  background:var(--blue);
+  color:#fff;
+  transform:translateY(-2px);
+}
+
+.support-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px 20px;
+  border-radius:8px;
+  font-weight:900;
+  color:#172033;
+  background:#fff;
+  border:1px solid #e7edf6;
+  box-shadow:var(--shadow-soft);
+}
+
+/* STATS */
+
+.stats{
+  padding:34px 0;
+  background:linear-gradient(90deg,#063f86,#0b63ce);
+}
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+
+.stat-card{
+  background:rgba(255,255,255,.98);
+  border-radius:14px;
+  padding:22px 16px;
+  text-align:center;
+  box-shadow:var(--shadow-soft);
+}
+
+.stat-card h3{
+  font-size:1.9rem;
+  color:var(--orange);
+  margin-bottom:4px;
+  font-weight:900;
+}
+
+.stat-card p{
+  color:#24344d;
+  font-weight:800;
+  font-size:.92rem;
+}
+
+/* GRIDS */
+
+.about-grid{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:22px;
+}
+
+.coverage-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:22px;
+}
+
+.strength-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+}
+
+.services-grid,
+.highlight-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+
+.partner-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.about-card,
+.strength-card,
+.service-card,
+.highlight-card,
+.coverage-card,
+.partner-card{
+  background:#fff;
+  border:1px solid #e7edf6;
+  border-radius:16px;
+  padding:22px;
+  box-shadow:var(--shadow-soft);
+  transition:.25s;
+}
+
+.strength-card:hover,
+.service-card:hover,
+.highlight-card:hover,
+.partner-card:hover{
+  transform:translateY(-6px);
+  box-shadow:var(--shadow);
+}
+
+.custom-title{
+  font-size:1.35rem;
+  margin-bottom:12px;
+  color:#10233f;
+  font-weight:900;
+}
+
+.about-card p,
+.strength-card p,
+.service-card p,
+.highlight-card p,
+.coverage-card p,
+.partner-card p{
+  color:var(--muted);
+  font-size:.94rem;
+}
+
+.timeline{
+  display:grid;
+  gap:14px;
+  margin-top:20px;
+}
+
+.timeline-item{
+  display:grid;
+  grid-template-columns:50px 1fr;
+  gap:12px;
+  align-items:start;
+}
+
+.timeline-no,
+.icon-box{
+  width:50px;
+  height:50px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#0b63ce,#074a9d);
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:900;
+  box-shadow:0 10px 22px rgba(11,99,206,.20);
+}
+
+.icon-box{
+  font-size:1.2rem;
+  margin-bottom:14px;
+}
+
+.timeline-text h4,
+.strength-card h3,
+.service-card h3,
+.highlight-card h3,
+.partner-card h3,
+.coverage-card h3{
+  color:#10233f;
+  font-size:1.05rem;
+  font-weight:900;
+  margin-bottom:7px;
+}
+
+.service-list,
+.partner-list{
+  display:grid;
+  gap:9px;
+  margin-top:14px;
+}
+
+.service-list li,
+.partner-list li{
+  display:flex;
+  gap:9px;
+  align-items:flex-start;
+  color:#24344d;
+  font-size:.92rem;
+}
+
+.service-list li::before,
+.partner-list li::before{
+  content:"✓";
+  color:var(--orange);
+  font-weight:900;
+}
+
+.states{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin-top:18px;
+}
+
+.state-pill{
+  background:#fff;
+  border:1px solid #e7edf6;
+  border-radius:12px;
+  padding:12px 14px;
+  font-weight:800;
+  color:var(--blue-dark);
+  box-shadow:0 8px 18px rgba(15,23,42,.05);
+  font-size:.92rem;
+}
+
+/* PROJECT SLIDER */
+
+.project-slider-section{
+  background:#fff;
+  padding:58px 0;
+}
+
+.project-slider-wrap{
+  position:relative;
+}
+
+.project-slider{
+  display:flex;
+  gap:22px;
+  overflow-x:auto;
+  scroll-behavior:smooth;
+  scrollbar-width:none;
+  padding:8px 4px 18px;
+}
+
+.project-slider::-webkit-scrollbar{
+  display:none;
+}
+
+.project-card{
+  flex:0 0 calc(33.333% - 15px);
+  background:#fff;
+  border-radius:14px;
+  overflow:hidden;
+  transition:.25s;
+  border:1px solid #e7edf6;
+  box-shadow:var(--shadow-soft);
+  padding-bottom:18px;
+}
+
+.project-card:hover{
+  transform:translateY(-6px);
+  box-shadow:var(--shadow);
+}
+
+.project-card img{
+  width:100%;
+  height:190px;
+  object-fit:cover;
+  background:#dbeafe;
+}
+
+.project-card .date{
+  color:#16a34a;
+  font-size:1rem;
+  font-weight:800;
+  margin:16px 18px 6px;
+}
+
+.project-card h3{
+  font-size:1.12rem;
+  line-height:1.25;
+  color:#10233f;
+  font-weight:900;
+  margin:0 18px 14px;
+}
+
+.project-card a{
+  display:inline-flex;
+  align-items:center;
+  color:var(--blue);
+  font-size:.95rem;
+  font-weight:900;
+  margin-left:18px;
+  border-left:5px solid var(--orange);
+  padding-left:12px;
+}
+
+.slider-btn{
+  position:absolute;
+  top:34%;
+  transform:translateY(-50%);
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:0;
+  background:#24587f;
+  color:#fff;
+  font-size:2rem;
+  line-height:1;
+  cursor:pointer;
+  z-index:5;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 10px 24px rgba(0,0,0,.16);
+}
+
+.slider-btn.prev{left:-20px}
+.slider-btn.next{right:-20px}
+
+.slider-dots{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:10px;
+}
+
+.slider-dots .dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#d3dde7;
+}
+
+.slider-dots .dot.active{
+  background:#24587f;
+}
+
+/* SCROLL */
+
+.scroll-top{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  width:46px;
+  height:46px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--blue),var(--blue-dark));
+  color:#fff;
+  font-size:1.1rem;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 14px 24px rgba(11,99,206,.25);
+  z-index:999;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1024px){
+  .agri-hero{
+    min-height:460px;
+  }
+
+  .agri-hero-wrap{
+    min-height:460px;
+    grid-template-columns:44% 56%;
+    gap:30px;
+  }
+
+  .agri-hero-left img{
+    height:250px;
+  }
+
+  .agri-hero-right h1{
+    font-size:2.75rem;
+  }
+
+  .about-grid,
+  .coverage-grid{
+    grid-template-columns:1fr;
+  }
+
+  .services-grid,
+  .highlight-grid,
+  .partner-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .project-card{
+    flex:0 0 calc(50% - 12px);
+  }
+
+  .slider-btn.prev{left:4px}
+  .slider-btn.next{right:4px}
+}
+
+@media(max-width:820px){
+  .agri-hero{
+    min-height:auto;
+  }
+
+  .agri-hero::before{
+    background:linear-gradient(180deg,rgba(0,96,122,.72),rgba(255,255,255,.96));
+  }
+
+  .agri-hero-wrap{
+    grid-template-columns:1fr;
+    min-height:auto;
+    padding:36px 0;
+    gap:22px;
+  }
+
+  .agri-hero-left{
+    min-height:auto;
+  }
+
+  .agri-hero-left img{
+    height:245px;
+    width:100%;
+  }
+
+  .agri-hero-right{
+    background:rgba(255,255,255,.92);
+    border-radius:18px;
+    padding:24px;
+    box-shadow:0 14px 35px rgba(15,23,42,.08);
+  }
+
+  .agri-hero-right h1{
+    font-size:2.25rem;
+  }
+
+  section{
+    padding:48px 0;
+  }
+
+  .stats-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:640px){
+  .container,
+  .agri-hero-wrap{
+    width:min(100% - 24px,480px);
+  }
+
+  .agri-hero-wrap{
+    padding:28px 0;
+  }
+
+  .agri-hero-left img{
+    height:210px;
+  }
+
+  .agri-mark{
+    align-items:flex-start;
+    margin-bottom:16px;
+  }
+
+  .agri-icon{
+    width:52px;
+    height:52px;
+    font-size:24px;
+  }
+
+  .agri-mark h2{
+    font-size:1.35rem;
+  }
+
+  .agri-mark span{
+    letter-spacing:1.5px;
+    font-size:.66rem;
+  }
+
+  .agri-hero-right h1{
+    font-size:1.78rem;
+    line-height:1.18;
+  }
+
+  .agri-hero-right p{
+    font-size:.94rem;
+  }
+
+  .hero-actions{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .btn,
+  .support-btn{
+    width:100%;
+  }
+
+  .section-head,
+  .section-header{
+    margin-bottom:26px;
+  }
+
+  .section-head h2,
+  .section-title{
+    font-size:1.58rem;
+  }
+
+  .strength-grid,
+  .services-grid,
+  .highlight-grid,
+  .partner-grid,
+  .states{
+    grid-template-columns:1fr;
+  }
+
+  .about-card,
+  .strength-card,
+  .service-card,
+  .highlight-card,
+  .coverage-card,
+  .partner-card{
+    padding:20px;
+  }
+
+  .timeline-item{
+    grid-template-columns:44px 1fr;
+  }
+
+  .timeline-no,
+  .icon-box{
+    width:44px;
+    height:44px;
+    border-radius:12px;
+  }
+
+  .project-card{
+    flex:0 0 86%;
+  }
+
+  .project-card img{
+    height:170px;
+  }
+
+  .slider-btn{
+    width:38px;
+    height:38px;
+    font-size:1.7rem;
+  }
+}
+
+@media(max-width:380px){
+  .agri-hero-right h1{
+    font-size:1.62rem;
+  }
+
+  .agri-hero-left img{
+    height:185px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="header-placeholder"></div>
+
+<main>
+
+<section class="agri-hero" id="home">
+  <img class="agri-hero-bg" src="WhatsApp Image 2026-03-18 at 1.03.20 PM.jpeg" alt="Agriculture background">
+  <div class="agri-hero-shape"></div>
+
+  <div class="agri-hero-wrap">
+    <div class="agri-hero-left">
+      <img src="img 10.jpg" alt="Agriculture Development">
+    </div>
+
+    <div class="agri-hero-right">
+      <div class="agri-mark">
+        <div class="agri-icon">🌱</div>
+        <div>
+          <h2>Agriculture<br>Development</h2>
+          <span>Empowering Farmers</span>
+        </div>
+      </div>
+
+      <h1>
+        Empowering <span>Farmers</span>
+        <strong>with sustainable agriculture solutions</strong>
+      </h1>
+
+      <p>
+        VED Foundation works with communities and development partners to improve farm productivity,
+        water efficiency, climate resilience and rural livelihoods.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#programs" class="support-btn">Explore Programs</a>
+        <a href="#impact" class="btn btn-orange">See Our Impact</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="container stats-grid">
+    <div class="stat-card">
+      <h3>10,000+</h3>
+      <p>Farmers Reached</p>
+    </div>
+    <div class="stat-card">
+      <h3>50+</h3>
+      <p>Villages Connected</p>
+    </div>
+    <div class="stat-card">
+      <h3>6</h3>
+      <p>Core Intervention Areas</p>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="container">
+    <div class="section-head">
+      <span class="tag">About Agriculture Initiative</span>
+      <h2>Building stronger rural communities through better farming</h2>
+      <p>
+        Our agriculture development initiative supports farmers with modern techniques,
+        efficient irrigation, natural resource management and livelihood enhancement.
+      </p>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-card">
+        <h3 class="custom-title">How We Work with NGOs & Communities</h3>
+        <p>
+          We follow a practical, field-driven model where agricultural interventions are planned around real
+          village needs, local crops, water conditions and community participation.
+        </p>
+
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-no">01</div>
+            <div class="timeline-text">
+              <h4>Village Assessment</h4>
+              <p>We identify local farming challenges such as low yield, water scarcity, soil issues and limited awareness.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-no">02</div>
+            <div class="timeline-text">
+              <h4>Program Design</h4>
+              <p>Custom intervention plans are created for irrigation, crop practices, farm infrastructure and training.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-no">03</div>
+            <div class="timeline-text">
+              <h4>Implementation</h4>
+              <p>On-ground teams, NGO partners and local farmer groups work together for smooth execution.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-no">04</div>
+            <div class="timeline-text">
+              <h4>Monitoring & Scale-Up</h4>
+              <p>Outcomes are tracked continuously to improve adoption, income generation and sustainability.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-card">
+        <h3 class="custom-title">Program Strengths</h3>
+
+        <div class="strength-grid">
+          <article class="strength-card">
+            <div class="icon-box">🌱</div>
+            <h3>Sustainable Farming</h3>
+            <p>Promoting eco-friendly, low-waste and productivity-oriented agriculture practices.</p>
+          </article>
+
+          <article class="strength-card">
+            <div class="icon-box">💧</div>
+            <h3>Water Efficiency</h3>
+            <p>Focus on drip, sprinkler, recharge and irrigation planning for water conservation.</p>
+          </article>
+
+          <article class="strength-card">
+            <div class="icon-box">👨‍🌾</div>
+            <h3>Farmer Training</h3>
+            <p>Hands-on learning sessions, awareness camps and practical demonstration support.</p>
+          </article>
+
+          <article class="strength-card">
+            <div class="icon-box">📈</div>
+            <h3>Income Growth</h3>
+            <p>Helping farmers improve yield quality, reduce cost and connect with livelihood opportunities.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-light" id="programs">
+  <div class="container">
+    <div class="section-head">
+      <span class="tag">Agriculture Programs</span>
+      <h2>Our key areas of agricultural support</h2>
+      <p>
+        Intervention areas designed to solve practical farming problems while increasing resilience,
+        productivity and long-term rural sustainability.
+      </p>
+    </div>
+
+    <div class="services-grid">
+      <article class="service-card">
+        <div class="icon-box">💧</div>
+        <h3>Drip Irrigation Systems</h3>
+        <p>Efficient water delivery solutions for improved crop productivity and reduced wastage.</p>
+        <ul class="service-list">
+          <li>Water-saving farm systems</li>
+          <li>Improved root-zone irrigation</li>
+          <li>Suitable for vegetable and horticulture crops</li>
+          <li>Low-maintenance deployment support</li>
+        </ul>
+      </article>
+
+      <article class="service-card">
+        <div class="icon-box">🌾</div>
+        <h3>Crop Productivity Support</h3>
+        <p>Field guidance for better crop planning, seed selection and modern cultivation practices.</p>
+        <ul class="service-list">
+          <li>Seasonal crop planning</li>
+          <li>Improved cultivation practices</li>
+          <li>Balanced agri-input awareness</li>
+          <li>Yield improvement focus</li>
+        </ul>
+      </article>
+
+      <article class="service-card">
+        <div class="icon-box">🏡</div>
+        <h3>Polyhouse & Nursery Support</h3>
+        <p>Protected cultivation support for better plant growth and controlled output.</p>
+        <ul class="service-list">
+          <li>Polyhouse development</li>
+          <li>Seedling and nursery support</li>
+          <li>High-value crop opportunities</li>
+          <li>Income diversification model</li>
+        </ul>
+      </article>
+
+      <article class="service-card">
+        <div class="icon-box">🌦</div>
+        <h3>Weather & Farm Advisory</h3>
+        <p>Weather-linked decisions and guidance for sowing, irrigation and crop protection.</p>
+        <ul class="service-list">
+          <li>Weather-based farm decisions</li>
+          <li>Crop care timing support</li>
+          <li>Risk reduction awareness</li>
+          <li>Localized advisory model</li>
+        </ul>
+      </article>
+
+      <article class="service-card">
+        <div class="icon-box">🚜</div>
+        <h3>Farm Infrastructure</h3>
+        <p>Support for ponds, water structures, small farm systems and rural utility assets.</p>
+        <ul class="service-list">
+          <li>Farm pond support</li>
+          <li>Water storage solutions</li>
+          <li>Agri infrastructure planning</li>
+          <li>Small-farm productivity enhancement</li>
+        </ul>
+      </article>
+
+      <article class="service-card">
+        <div class="icon-box">🤝</div>
+        <h3>Farmer Group Empowerment</h3>
+        <p>Helping local groups, SHGs and village institutions create stronger agri livelihoods.</p>
+        <ul class="service-list">
+          <li>Community mobilization</li>
+          <li>Farmer group capacity building</li>
+          <li>Village-level awareness sessions</li>
+          <li>Livelihood strengthening support</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section-light" id="impact">
+  <div class="container">
+    <div class="section-head">
+      <span class="tag">Project Highlights</span>
+      <h2>Sample agriculture-focused NGO interventions</h2>
+      <p>Example project areas that reflect meaningful farm impact through community collaboration.</p>
+    </div>
+
+    <div class="highlight-grid">
+      <article class="highlight-card">
+        <div class="icon-box">01</div>
+        <h3>Drip Irrigation for Small Farmers</h3>
+        <p>Partner Type: NGO-led rural water initiative</p>
+        <p>Focus: Water efficiency and yield improvement</p>
+      </article>
+
+      <article class="highlight-card">
+        <div class="icon-box">02</div>
+        <h3>Village Farm Pond Development</h3>
+        <p>Partner Type: CSR + community development program</p>
+        <p>Focus: Water storage and drought support</p>
+      </article>
+
+      <article class="highlight-card">
+        <div class="icon-box">03</div>
+        <h3>Farmer Training & Demonstration Plots</h3>
+        <p>Partner Type: Agriculture NGO program</p>
+        <p>Focus: Practical learning and field adoption</p>
+      </article>
+
+      <article class="highlight-card">
+        <div class="icon-box">04</div>
+        <h3>Polyhouse for High-Value Crops</h3>
+        <p>Partner Type: Rural livelihood foundation</p>
+        <p>Focus: Diversified income generation</p>
+      </article>
+
+      <article class="highlight-card">
+        <div class="icon-box">05</div>
+        <h3>Weather-Based Crop Advisory</h3>
+        <p>Partner Type: Agri technology collaboration</p>
+        <p>Focus: Risk reduction and crop planning</p>
+      </article>
+
+      <article class="highlight-card">
+        <div class="icon-box">06</div>
+        <h3>Women Farmer Group Capacity Building</h3>
+        <p>Partner Type: SHG and rural empowerment mission</p>
+        <p>Focus: Skill-building and livelihood enhancement</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section-light" id="coverage">
+  <div class="container">
+    <div class="section-head">
+      <span class="tag">Regional Reach</span>
+      <h2>Serving rural communities across agricultural regions</h2>
+      <p>This model can be implemented across multiple states with local partners, farmer groups and village institutions.</p>
+    </div>
+
+    <div class="coverage-grid">
+      <article class="coverage-card">
+        <h3>Priority States</h3>
+        <p>Suitable for deployment across irrigation-stressed, agriculture-driven and livelihood-focused regions.</p>
+
+        <div class="states">
+          <div class="state-pill">Madhya Pradesh</div>
+          <div class="state-pill">Uttar Pradesh</div>
+          <div class="state-pill">Rajasthan</div>
+          <div class="state-pill">Chhattisgarh</div>
+          <div class="state-pill">Maharashtra</div>
+          <div class="state-pill">Odisha</div>
+          <div class="state-pill">Jharkhand</div>
+          <div class="state-pill">Bihar</div>
+          <div class="state-pill">Gujarat</div>
+          <div class="state-pill">Telangana</div>
+          <div class="state-pill">Karnataka</div>
+          <div class="state-pill">West Bengal</div>
+        </div>
+      </article>
+
+      <div class="partner-grid">
+        <article class="partner-card">
+          <div class="icon-box">🤝</div>
+          <h3>NGO Collaboration Areas</h3>
+          <p>We align with organizations working in farming, water, livelihoods, sustainability and rural transformation.</p>
+          <ul class="partner-list">
+            <li>Farmer welfare programs</li>
+            <li>Climate-resilient agriculture projects</li>
+            <li>Rural livelihood missions</li>
+            <li>Women-led agri-enterprise initiatives</li>
+            <li>Community water and land restoration</li>
+          </ul>
+        </article>
+
+        <article class="partner-card">
+          <div class="icon-box">📋</div>
+          <h3>What Partners Receive</h3>
+          <p>End-to-end support for planning, deployment, farmer engagement and basic impact monitoring.</p>
+          <ul class="partner-list">
+            <li>Program design assistance</li>
+            <li>Field execution coordination</li>
+            <li>Awareness and training modules</li>
+            <li>Localized implementation support</li>
+            <li>Outcome-oriented reporting structure</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="project-slider-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="eyebrow">Agriculture Impact</div>
+      <h2 class="section-title">Empowering Farmers Across India</h2>
+      <p class="section-desc">Real field implementations improving rural livelihoods.</p>
+    </div>
+
+    <div class="project-slider-wrap">
+      <button class="slider-btn prev" onclick="slideProjects(-1)">‹</button>
+
+      <div class="project-slider" id="projectSlider">
+        <div class="project-card">
+          <img src="https://simmonslandscape.com/wp-content/uploads/2022/03/Type-of-emitter-for-drip-irrigation-system-1024x729.jpeg" alt="Drip Irrigation Systems">
+          <p class="date">Madhya Pradesh</p>
+          <h3>Drip Irrigation Systems</h3>
+          <a href="#">Read More ›</a>
+        </div>
+
+        <div class="project-card">
+          <img src="https://www.niir.org/blog/wp-content/uploads/2025/07/hydroponic-farming-7-remarkable-benefits-for-a-su.webp" alt="Farmer Training Programs">
+          <p class="date">Uttar Pradesh</p>
+          <h3>Farmer Training Programs</h3>
+          <a href="#">Read More ›</a>
+        </div>
+
+        <div class="project-card">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNU2kOHlKrSOz1WqtGxlFYMnlS_8Ujwf03QQ&s" alt="Water Conservation Projects">
+          <p class="date">Rajasthan</p>
+          <h3>Water Conservation Projects</h3>
+          <a href="#">Read More ›</a>
+        </div>
+
+        <div class="project-card">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS649a43DTLfPVLtuZlDaOD_1sPxDYG8rzwog&s" alt="Organic Farming Initiatives">
+          <p class="date">Maharashtra</p>
+          <h3>Organic Farming Initiatives</h3>
+          <a href="#">Read More ›</a>
+        </div>
+
+        <div class="project-card">
+          <img src="https://www.nanalyze.com/app/uploads/2019/08/Crop-Yield-Forecasting-Teaser.jpg" alt="Crop Yield Improvement">
+          <p class="date">Chhattisgarh</p>
+          <h3>Crop Yield Improvement</h3>
+          <a href="#">Read More ›</a>
+        </div>
+
+        <div class="project-card">
+          <img src="https://images.forbesindia.com/blog/wp-content/uploads/2021/05/community-farmers-sm.jpg?im=Resize,width=600,aspect=fit,type=normal" alt="Rural Livelihood Programs">
+          <p class="date">Bihar</p>
+          <h3>Rural Livelihood Programs</h3>
+          <a href="#">Read More ›</a>
+        </div>
+      </div>
+
+      <button class="slider-btn next" onclick="slideProjects(1)">›</button>
+    </div>
+
+    <div class="slider-dots">
+      <span class="dot active"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div id="footer-placeholder"></div>
+
+
+<script src="shared.js"></script>
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+  const slider = document.getElementById("projectSlider");
+  const dots = document.querySelectorAll(".slider-dots .dot");
+
+  if (!slider) return;
+
+  let currentIndex = 0;
+  let autoSlide;
+  const cards = Array.from(slider.querySelectorAll(".project-card"));
+
+  function getVisibleCards() {
+    if (window.innerWidth <= 640) return 1;
+    if (window.innerWidth <= 1024) return 2;
+    return 3;
+  }
+
+  function getMaxIndex() {
+    return Math.max(0, cards.length - getVisibleCards());
+  }
+
+  function updateSlider() {
+    const card = cards[0];
+    const gap = parseInt(window.getComputedStyle(slider).gap) || 22;
+    const cardWidth = card.offsetWidth + gap;
+
+    slider.scrollTo({
+      left: currentIndex * cardWidth,
+      behavior: "smooth"
+    });
+
+    dots.forEach((dot, index) => {
+      dot.classList.toggle("active", index === Math.round(currentIndex / getVisibleCards()));
+    });
+  }
+
+  window.slideProjects = function (direction) {
+    currentIndex += direction;
+
+    if (currentIndex > getMaxIndex()) currentIndex = 0;
+    if (currentIndex < 0) currentIndex = getMaxIndex();
+
+    updateSlider();
+    restartAutoSlide();
+  };
+
+  function startAutoSlide() {
+    autoSlide = setInterval(() => {
+      window.slideProjects(1);
+    }, 3000);
+  }
+
+  function restartAutoSlide() {
+    clearInterval(autoSlide);
+    startAutoSlide();
+  }
+
+  dots.forEach((dot, index) => {
+    dot.addEventListener("click", () => {
+      currentIndex = index * getVisibleCards();
+      if (currentIndex > getMaxIndex()) currentIndex = getMaxIndex();
+      updateSlider();
+      restartAutoSlide();
+    });
+  });
+
+  slider.addEventListener("mouseenter", () => clearInterval(autoSlide));
+  slider.addEventListener("mouseleave", startAutoSlide);
+
+  window.addEventListener("resize", () => {
+    currentIndex = 0;
+    updateSlider();
+  });
+
+  updateSlider();
+  startAutoSlide();
+});
+
+const scrollTop = document.getElementById("scrollTop");
+
+window.addEventListener("scroll", () => {
+  if(window.scrollY > 300){
+    scrollTop.style.display = "block";
+  }else{
+    scrollTop.style.display = "none";
+  }
+});
+
+scrollTop.onclick = () => {
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+};
+</script>
+
+<a href="mobilization-form.html" style="position:fixed;right:18px;bottom:18px;z-index:9999;background:#f7941d;color:#fff;padding:12px 20px;border-radius:999px;font-weight:900;font-size:.88rem;box-shadow:0 16px 34px rgba(247,148,29,.35);text-decoration:none;font-family:Inter,sans-serif;">Mobilization Form</a>
+
+</body>
+</html>

@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Donate Now | VED Foundation</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="/config.js"></script>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    :root{
+      --blue:#0b63ce;
+      --blue-dark:#074a9d;
+      --orange:#f7941d;
+      --orange-dark:#dd6b08;
+      --green:#16a34a;
+      --navy:#071f43;
+      --text:#1f2937;
+      --muted:#64748b;
+      --white:#ffffff;
+      --border:#e5e7eb;
+      --light:#f6f9ff;
+      --cream:#fff8ed;
+      --shadow:0 18px 45px rgba(15,23,42,.12);
+      --shadow-lg:0 28px 80px rgba(7,31,67,.16);
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      font-family:'Inter',sans-serif;
+      background:#fff;
+      color:var(--text);
+      line-height:1.6;
+    }
+
+    a{
+      text-decoration:none;
+      color:inherit;
+    }
+
+    img{
+      max-width:100%;
+      display:block;
+    }
+
+    .container{
+      width:min(1180px,92%);
+      margin:auto;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:14px 24px;
+      border-radius:12px;
+      font-size:.96rem;
+      font-weight:900;
+      cursor:pointer;
+      transition:.25s ease;
+      border:none;
+      white-space:nowrap;
+      font-family:inherit;
+    }
+
+    .btn-primary{
+      background:linear-gradient(135deg,var(--blue),#0a4fb0);
+      color:#fff;
+      box-shadow:0 12px 26px rgba(11,99,206,.28);
+    }
+
+    .btn-primary:hover{
+      transform:translateY(-3px);
+      box-shadow:0 18px 34px rgba(11,99,206,.36);
+    }
+
+    .btn-accent{
+      background:linear-gradient(135deg,var(--orange),var(--orange-dark));
+      color:#fff;
+      box-shadow:0 12px 26px rgba(247,148,29,.32);
+    }
+
+    .btn-accent:hover{
+      transform:translateY(-3px);
+      box-shadow:0 18px 34px rgba(247,148,29,.40);
+    }
+
+    .btn-outline{
+      background:#fff;
+      color:var(--blue);
+      border:1px solid #cfe2ff;
+      box-shadow:0 10px 24px rgba(11,99,206,.10);
+    }
+
+    .btn-outline:hover{
+      background:#edf6ff;
+      transform:translateY(-3px);
+    }
+
+    .hero{
+      position:relative;
+      min-height:500px;
+      overflow:hidden;
+      background:#eef8ff;
+      display:flex;
+      align-items:center;
+      padding:0;
+    }
+
+    .hero-bg{
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg,rgba(5,85,115,.88) 0%,rgba(5,85,115,.72) 48%,rgba(238,248,255,.95) 54%,rgba(238,248,255,1) 100%);
+      z-index:0;
+    }
+
+    .hero-shape{
+      position:absolute;
+      left:0;top:0;
+      width:52%;height:100%;
+      background:linear-gradient(135deg,#007c89,#074d8f);
+      clip-path:polygon(0 0,100% 0,84% 100%,0 100%);
+      z-index:1;
+    }
+
+    .hero-wrap{
+      position:relative;
+      z-index:3;
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:42px;
+      align-items:center;
+      padding:60px 0;
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:rgba(255,255,255,.18);
+      color:#fcd34d;
+      border:1px solid rgba(255,255,255,.3);
+      padding:7px 16px;
+      border-radius:999px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+      font-size:.78rem;
+      margin-bottom:16px;
+    }
+
+    .section-head .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:#fff3df;
+      color:#b45309;
+      border:1px solid #fed7aa;
+      padding:9px 16px;
+      border-radius:999px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+      font-size:.8rem;
+      margin-bottom:16px;
+    }
+
+    .hero h1{
+      font-size:clamp(1.8rem,3.2vw,3rem);
+      line-height:1.1;
+      font-weight:900;
+      letter-spacing:-1px;
+      margin-bottom:16px;
+      color:#fff;
+      max-width:420px;
+    }
+
+    .hero h1 span{
+      color:#fcd34d;
+      position:relative;
+    }
+
+    .hero p{
+      color:rgba(255,255,255,.82);
+      font-size:1rem;
+      margin-bottom:20px;
+      max-width:420px;
+    }
+
+    .hero-actions{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-bottom:26px;
+    }
+
+    .trust-strip{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-bottom:26px;
+    }
+
+    .trust-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:rgba(255,255,255,.15);
+      border:1px solid rgba(255,255,255,.25);
+      color:#fff;
+      padding:8px 14px;
+      border-radius:999px;
+      font-size:.84rem;
+      font-weight:700;
+    }
+
+    .hero-points{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      max-width:440px;
+    }
+
+    .point-card,
+    .impact-card,
+    .step-card,
+    .donation-card,
+    .qr-card,
+    .donation-panel,
+    .mini-impact-card{
+      background:#fff;
+      border:1px solid #e6edf7;
+      box-shadow:0 12px 32px rgba(15,23,42,.08);
+    }
+
+    .point-card{
+      border-radius:14px;
+      padding:16px;
+      transition:.25s ease;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.2);
+      box-shadow:none;
+    }
+
+    .point-card:hover,
+    .impact-card:hover,
+    .step-card:hover,
+    .mini-impact-card:hover{
+      transform:translateY(-7px);
+      box-shadow:var(--shadow);
+    }
+
+    .point-card strong{
+      display:block;
+      color:#fff;
+      font-weight:900;
+      margin-bottom:4px;
+    }
+
+    .point-card span{
+      color:rgba(255,255,255,.72);
+      font-size:.86rem;
+    }
+
+    .hero-card{
+      background:#fff;
+      border:1px solid #e7edf6;
+      border-radius:28px;
+      box-shadow:var(--shadow-lg);
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero-card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at top right,rgba(247,148,29,.16),transparent 34%),
+        radial-gradient(circle at bottom left,rgba(11,99,206,.12),transparent 35%);
+      pointer-events:none;
+    }
+
+    .donation-panel{
+      position:relative;
+      z-index:2;
+      border-radius:24px;
+      padding:30px;
+      background:rgba(255,255,255,.93);
+      backdrop-filter:blur(10px);
+    }
+
+    .donation-panel h3{
+      color:#10233f;
+      font-size:1.55rem;
+      font-weight:900;
+      margin-bottom:8px;
+    }
+
+    .donation-panel p{
+      color:var(--muted);
+      margin-bottom:20px;
+    }
+
+    .amount-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .amount-btn{
+      padding:14px 10px;
+      border-radius:14px;
+      border:1px solid #fed7aa;
+      background:#fff8ed;
+      color:#b45309;
+      font-weight:900;
+      cursor:pointer;
+      transition:.25s ease;
+      font-family:inherit;
+      font-size:.95rem;
+    }
+
+    .amount-btn:hover,
+    .amount-btn.active{
+      background:linear-gradient(135deg,var(--orange),var(--orange-dark));
+      border-color:var(--orange);
+      color:#fff;
+      transform:translateY(-2px);
+      box-shadow:0 10px 22px rgba(247,148,29,.25);
+    }
+
+    .custom-amount-wrap{
+      position:relative;
+      width:100%;
+      margin-top:14px;
+    }
+
+    .custom-amount-wrap span{
+      position:absolute;
+      left:18px;
+      top:50%;
+      transform:translateY(-50%);
+      font-size:1.08rem;
+      font-weight:900;
+      color:#b45309;
+      line-height:1;
+      pointer-events:none;
+      z-index:2;
+    }
+
+    .custom-amount-wrap .donation-form-input{
+      width:100%;
+      height:54px;
+      padding:0 18px 0 46px;
+      border:1px solid #fed7aa;
+      border-radius:16px;
+      outline:none;
+      font-size:1rem;
+      font-weight:800;
+      color:#10233f;
+      background:#fffaf3;
+      box-shadow:0 8px 22px rgba(247,148,29,.10);
+      transition:.25s ease;
+      display:block;
+    }
+
+    .custom-amount-wrap .donation-form-input::placeholder{
+      color:#9ca3af;
+      font-weight:600;
+    }
+
+    .custom-amount-wrap .donation-form-input:focus{
+      border-color:#f7941d;
+      background:#fff;
+      box-shadow:0 0 0 4px rgba(247,148,29,.18);
+    }
+
+    .custom-amount-wrap input::-webkit-outer-spin-button,
+    .custom-amount-wrap input::-webkit-inner-spin-button{
+      -webkit-appearance:none;
+      margin:0;
+    }
+
+    .custom-amount-wrap input[type=number]{
+      appearance:textfield;
+      -moz-appearance:textfield;
+    }
+
+    .small-note{
+      margin-top:14px;
+      color:#64748b;
+      font-size:.88rem;
+      font-weight:700;
+      text-align:center;
+    }
+
+    section{
+      padding:82px 0;
+    }
+
+    .section-head{
+      text-align:center;
+      max-width:780px;
+      margin:0 auto 48px;
+    }
+
+    .section-head h2{
+      font-size:clamp(2rem,3vw,3rem);
+      line-height:1.14;
+      margin-bottom:12px;
+      color:#10233f;
+      font-weight:900;
+      letter-spacing:-1.4px;
+    }
+
+    .section-head p{
+      color:var(--muted);
+      font-size:1.02rem;
+    }
+
+    .impact-section{
+      background:#fff;
+    }
+
+    .impact-grid,
+    .steps-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:24px;
+    }
+
+    .impact-card,
+    .step-card{
+      border-radius:22px;
+      padding:30px 24px;
+      transition:.25s ease;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .impact-card::after{
+      content:"";
+      position:absolute;
+      width:110px;
+      height:110px;
+      border-radius:50%;
+      background:rgba(11,99,206,.06);
+      right:-34px;
+      top:-34px;
+    }
+
+    .impact-icon{
+      width:64px;
+      height:64px;
+      border-radius:20px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,#eaf3ff,#ffffff);
+      color:var(--blue);
+      border:1px solid #d9e9ff;
+      box-shadow:0 12px 26px rgba(11,99,206,.12);
+      font-weight:900;
+      margin-bottom:18px;
+      font-size:1.15rem;
+    }
+
+    .impact-card h3,
+    .step-card h4{
+      color:#10233f;
+      font-weight:900;
+      margin-bottom:8px;
+    }
+
+    .impact-card p,
+    .step-card p{
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    .mini-impact{
+      background:
+        linear-gradient(135deg,#071f43,#0b3f87);
+      color:#fff;
+      padding:76px 0;
+    }
+
+    .mini-impact .section-head h2,
+    .mini-impact .section-head p{
+      color:#fff;
+    }
+
+    .mini-impact-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:18px;
+    }
+
+    .mini-impact-card{
+      border-radius:22px;
+      padding:26px 20px;
+      text-align:center;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow:none;
+      color:#fff;
+      backdrop-filter:blur(10px);
+      transition:.25s ease;
+    }
+
+    .mini-impact-card strong{
+      display:block;
+      font-size:2rem;
+      line-height:1;
+      margin-bottom:9px;
+      color:#fff;
+      font-weight:900;
+    }
+
+    .mini-impact-card span{
+      font-size:.92rem;
+      color:#dbeafe;
+      font-weight:700;
+    }
+
+    #donate{
+      background:
+        radial-gradient(circle at top left,rgba(11,99,206,.08),transparent 32%),
+        linear-gradient(180deg,#f7fbff,#ffffff);
+    }
+
+    .donation-layout{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:28px;
+      align-items:stretch;
+    }
+
+    .donation-card,
+    .qr-card{
+      border-radius:28px;
+      padding:34px;
+      box-shadow:var(--shadow-lg);
+      position:relative;
+      overflow:hidden;
+      transition:.25s ease;
+      background:#fff;
+      border:1px solid #e6edf7;
+    }
+
+    .donation-card h3,
+    .qr-card h3{
+      font-size:1.8rem;
+      margin-bottom:10px;
+      color:#10233f;
+      font-weight:900;
+    }
+
+    .donation-card p,
+    .qr-card p{
+      color:var(--muted);
+      margin-bottom:20px;
+    }
+
+    .donation-form{
+      display:grid;
+      gap:14px;
+    }
+
+    .form-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+
+    .donation-form input,
+    .donation-form textarea,
+    .donation-form select{
+      width:100%;
+      padding:15px 16px;
+      border:1px solid #e5e7eb;
+      border-radius:14px;
+      outline:none;
+      font-size:.98rem;
+      background:#fff;
+      font-family:inherit;
+      color:#10233f;
+      transition:.25s ease;
+    }
+
+    .donation-form input:focus,
+    .donation-form textarea:focus,
+    .donation-form select:focus{
+      border-color:var(--blue);
+      box-shadow:0 0 0 4px rgba(11,99,206,.10);
+    }
+
+    .donation-form textarea{
+      min-height:112px;
+      resize:vertical;
+    }
+
+    .upi-note{
+      background:#fff8ed;
+      border:1px solid #fed7aa;
+      color:#92400e;
+      padding:13px 14px;
+      border-radius:14px;
+      font-size:.92rem;
+      font-weight:800;
+    }
+
+    .upi-note:empty{
+      display:none;
+    }
+
+    .upi-apps{
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:16px;
+      margin:18px 0 28px;
+    }
+
+    .upi-app{
+      width:76px;
+      height:76px;
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:22px;
+      padding:14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 8px 22px rgba(0,0,0,.08);
+      transition:.3s ease;
+    }
+
+    .upi-app:hover{
+      transform:translateY(-5px);
+      box-shadow:0 14px 28px rgba(11,99,206,.18);
+    }
+
+    .upi-app img{
+      max-width:52px;
+      max-height:52px;
+      object-fit:contain;
+    }
+
+    .qr-image-wrap{
+      display:flex;
+      justify-content:center;
+      margin:16px 0 18px;
+      background:
+        linear-gradient(135deg,#f8fbff,#fff8ed);
+      border:1px dashed #cfe2ff;
+      padding:18px;
+      border-radius:28px;
+    }
+
+    .qr-image-wrap img{
+      width:100%;
+      max-width:310px;
+      border-radius:22px;
+      border:1px solid var(--border);
+      box-shadow:0 18px 40px rgba(0,0,0,.12);
+      transition:.3s ease;
+      background:#fff;
+    }
+
+    .qr-image-wrap img:hover{
+      transform:scale(1.03);
+    }
+
+    .upi-box{
+      background:#eaf3ff;
+      border:1px solid #d9e9ff;
+      color:var(--blue-dark);
+      border-radius:16px;
+      padding:16px;
+      text-align:center;
+      margin-bottom:18px;
+      font-weight:900;
+      word-break:break-word;
+    }
+
+    .payment-actions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .payment-actions .full{
+      grid-column:1/-1;
+    }
+
+    .step-number{
+      width:62px;
+      height:62px;
+      margin:0 auto 16px;
+      border-radius:22px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,var(--orange),var(--orange-dark));
+      color:#fff;
+      font-weight:900;
+      box-shadow:0 12px 25px rgba(247,148,29,.28);
+      font-size:1.2rem;
+    }
+
+    .step-card{
+      text-align:center;
+    }
+
+    #donationMessage{
+      font-weight:800;
+      margin-top:8px;
+      color:var(--green);
+      min-height:24px;
+    }
+
+    .final-cta{
+      padding:76px 0;
+      background:
+        radial-gradient(circle at 12% 15%,rgba(247,148,29,.18),transparent 28%),
+        linear-gradient(135deg,#08254d,#0b63ce);
+      color:#fff;
+      text-align:center;
+    }
+
+    .final-cta h2{
+      font-size:clamp(2rem,3vw,3.2rem);
+      line-height:1.14;
+      font-weight:900;
+      margin-bottom:14px;
+    }
+
+    .final-cta p{
+      max-width:720px;
+      margin:0 auto 24px;
+      color:#dbeafe;
+      font-size:1.05rem;
+    }
+
+    footer{
+      background:#061b3a;
+      color:#cbd5e1;
+      padding:62px 0 24px;
+    }
+
+    @media(max-width:1100px){
+      .hero-wrap,
+      .donation-layout{
+        grid-template-columns:1fr;
+      }
+
+      .impact-grid,
+      .steps-grid{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .mini-impact-grid{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
+    @media(max-width:700px){
+      section{
+        padding:60px 0;
+      }
+
+      .hero{
+        padding:66px 0 58px;
+      }
+
+      .impact-grid,
+      .steps-grid,
+      .amount-grid,
+      .hero-points,
+      .mini-impact-grid,
+      .form-row{
+        grid-template-columns:1fr;
+      }
+
+      .hero-actions{
+        flex-direction:column;
+        align-items:stretch;
+      }
+
+      .btn{
+        width:100%;
+      }
+
+      .donation-card,
+      .qr-card,
+      .hero-card{
+        padding:20px;
+        border-radius:22px;
+      }
+
+      .donation-panel{
+        padding:22px;
+      }
+
+      .payment-actions{
+        grid-template-columns:1fr;
+      }
+
+      .upi-app{
+        width:64px;
+        height:64px;
+        padding:12px;
+        border-radius:18px;
+      }
+
+      .upi-app img{
+        max-width:42px;
+        max-height:42px;
+      }
+
+      .hero h1{
+        letter-spacing:-1px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="header-placeholder"></div>
+
+  <main>
+
+    <section class="hero" id="home">
+      <div class="hero-bg"></div>
+      <div class="hero-shape"></div>
+      <div class="container hero-wrap">
+
+        <div>
+          <div class="eyebrow">Support education, skills and student growth</div>
+
+          <h1>Give a Little Today, Create a <span>Better Future</span></h1>
+
+          <p>
+            Your donation helps VED Foundation support students with workshops,
+            digital learning, skill development, awareness programs and career guidance.
+            Every contribution becomes a step toward education, confidence and opportunity.
+          </p>
+
+          <div class="hero-actions">
+            <a href="#donate" class="btn btn-primary">Donate Now</a>
+            <a href="#qr-payment" class="btn btn-accent">Scan QR to Pay</a>
+            <a href="#impact" class="btn btn-outline">See Impact</a>
+          </div>
+
+          <div class="trust-strip">
+            <div class="trust-pill">Secure UPI Payment</div>
+            <div class="trust-pill">Quick QR Scan</div>
+            <div class="trust-pill">Student-Focused Cause</div>
+          </div>
+
+          <div class="hero-points">
+            <div class="point-card">
+              <strong>Education Support</strong>
+              <span>Help students get access to learning sessions and guidance.</span>
+            </div>
+
+            <div class="point-card">
+              <strong>Skill Programs</strong>
+              <span>Support workshops, training and digital learning activities.</span>
+            </div>
+
+            <div class="point-card">
+              <strong>Community Impact</strong>
+              <span>Enable more students to learn, grow and build confidence.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <div class="donation-panel">
+            <h3>Quick Donate</h3>
+            <p>Select an amount or enter your custom contribution.</p>
+
+            <div class="amount-grid">
+              <button type="button" class="amount-btn" onclick="setAmount(501, this)">₹501</button>
+              <button type="button" class="amount-btn" onclick="setAmount(1100, this)">₹1100</button>
+              <button type="button" class="amount-btn" onclick="setAmount(2100, this)">₹2100</button>
+              <button type="button" class="amount-btn" onclick="setAmount(5100, this)">₹5100</button>
+              <button type="button" class="amount-btn" onclick="setAmount(11000, this)">₹11000</button>
+              <button type="button" class="amount-btn" onclick="setAmount(21000, this)">₹21000</button>
+            </div>
+
+            <div class="custom-amount-wrap">
+              <span>₹</span>
+              <input 
+                type="number" 
+                id="selectedAmount" 
+                class="donation-form-input" 
+                placeholder="Enter custom amount" 
+                min="1"
+              >
+            </div>
+
+            <button type="button" class="btn btn-primary" style="width:100%; margin-top:14px;" onclick="goToDonationForm()">
+              Proceed to Donate
+            </button>
+
+            <div class="small-note">
+              Even a small donation can support a student’s learning journey.
+            </div>
+
+            <div class="upi-note" style="margin-top:14px;"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="impact-section" id="impact">
+      <div class="container">
+        <div class="section-head">
+          <span class="tag">Why Donate</span>
+          <h2>Your support creates real change</h2>
+          <p>
+            Donations help us build meaningful education and skill-development opportunities
+            for students and communities.
+          </p>
+        </div>
+
+        <div class="impact-grid">
+          <div class="impact-card">
+            <div class="impact-icon">ED</div>
+            <h3>Student Education</h3>
+            <p>Support learning sessions, awareness programs and practical educational opportunities for students.</p>
+          </div>
+
+          <div class="impact-card">
+            <div class="impact-icon">SK</div>
+            <h3>Skill Development</h3>
+            <p>Help students gain future-ready skills through workshops, digital tools and guided learning experiences.</p>
+          </div>
+
+          <div class="impact-card">
+            <div class="impact-icon">GR</div>
+            <h3>Growth & Reach</h3>
+            <p>Your donation allows us to reach more communities and create more meaningful training initiatives.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mini-impact">
+      <div class="container">
+        <div class="section-head">
+          <span class="tag">Foundation Impact</span>
+          <h2>Together, we can do more</h2>
+          <p>Every donor becomes a part of our mission to support education, confidence and growth.</p>
+        </div>
+
+        <div class="mini-impact-grid">
+          <div class="mini-impact-card">
+            <strong>₹501</strong>
+            <span>Can support learning material</span>
+          </div>
+
+          <div class="mini-impact-card">
+            <strong>₹1100</strong>
+            <span>Can support student workshops</span>
+          </div>
+
+          <div class="mini-impact-card">
+            <strong>₹5100</strong>
+            <span>Can support skill programs</span>
+          </div>
+
+          <div class="mini-impact-card">
+            <strong>₹11000</strong>
+            <span>Can support larger initiatives</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="donate">
+      <div class="container">
+        <div class="section-head">
+          <span class="tag">Donation Form</span>
+          <h2>Submit your donation details</h2>
+          <p>Fill your details and then complete payment through any UPI app or QR scan.</p>
+        </div>
+
+        <div class="donation-layout">
+
+          <div class="donation-card">
+            <h3>Donation Information</h3>
+            <p>Complete the form below and pay using UPI app or QR code.</p>
+
+            <form class="donation-form" onsubmit="submitDonationForm(event)">
+              <input type="text" id="donorName" placeholder="Full Name *" required>
+
+              <div class="form-row">
+                <input type="email" id="donorEmail" placeholder="Email Address *" required>
+                <input type="tel" id="donorPhone" placeholder="Phone Number *" required>
+              </div>
+
+              <select id="donationType" required>
+                <option value="">Select Donation Type *</option>
+                <option value="Student Support">Student Support</option>
+                <option value="Workshops">Workshops</option>
+                <option value="Skill Development">Skill Development</option>
+                <option value="Digital Learning">Digital Learning</option>
+                <option value="General Donation">General Donation</option>
+              </select>
+
+              <input type="number" id="donationAmount" placeholder="Donation Amount (₹) *" min="1" required>
+
+              <input type="text" id="payerUpi" placeholder="Your UPI ID (Optional)">
+
+              <textarea id="donationMessageBox" placeholder="Message / Purpose (Optional)"></textarea>
+
+              <button type="submit" class="btn btn-primary">
+                Submit Donation Details
+              </button>
+
+              <button type="button" class="btn btn-accent" onclick="payViaUPI()">
+                Pay via UPI App
+              </button>
+
+              <p id="donationMessage"></p>
+            </form>
+          </div>
+
+          <div class="qr-card" id="qr-payment">
+            <h3>Scan QR & Pay</h3>
+            <p>Use Google Pay, PhonePe, Paytm, BHIM or any UPI app.</p>
+
+            <div class="upi-apps">
+              <div class="upi-app">
+                <img src="https://images.seeklogo.com/logo-png/32/2/google-pay-logo-png_seeklogo-324563.png" alt="Google Pay">
+              </div>
+
+              <div class="upi-app">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg" alt="PhonePe">
+              </div>
+
+              <div class="upi-app">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="UPI">
+              </div>
+
+              <div class="upi-app">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/Paytm_logo.png" alt="Paytm">
+              </div>
+            </div>
+
+            <div class="qr-image-wrap">
+              <img src="donation.png" alt="Donation QR Code" id="qrImage">
+            </div>
+
+            <div class="upi-box">
+              UPI ID: <span id="upiText">321524581259290@cnrb</span>
+            </div>
+
+            <div class="payment-actions">
+              <button type="button" class="btn btn-primary full" onclick="payViaUPI()">
+                Pay via UPI App
+              </button>
+
+              <button type="button" class="btn btn-outline" onclick="openQR()">
+                View Full QR
+              </button>
+
+              <button type="button" class="btn btn-accent" onclick="copyUPI()">
+                Copy UPI ID
+              </button>
+            </div>
+
+            <div class="upi-note" style="margin-top:18px;">
+              After payment, please keep your UPI transaction ID for confirmation.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <span class="tag">How It Works</span>
+          <h2>Donate in 3 simple steps</h2>
+          <p>Quick and easy process for supporters and donors.</p>
+        </div>
+
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <h4>Fill Your Details</h4>
+            <p>Enter your name, contact details, donation purpose and amount.</p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <h4>Pay Through UPI</h4>
+            <p>Click Pay via UPI App or scan the QR code using any UPI app.</p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <h4>Save Confirmation</h4>
+            <p>Keep your payment transaction ID for donation confirmation.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-cta">
+      <div class="container">
+        <h2>Your kindness can support someone’s future</h2>
+        <p>
+          Join VED Foundation’s mission to make education, learning and skill development
+          more accessible for students.
+        </p>
+        <a href="#donate" class="btn btn-accent">Make a Donation</a>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script>
+    const FOUNDATION_UPI_ID = "321524581259290@cnrb";
+    const FOUNDATION_NAME = "VED Foundation";
+
+    function setAmount(amount, btn){
+      const selectedAmount = document.getElementById("selectedAmount");
+      const donationAmount = document.getElementById("donationAmount");
+
+      selectedAmount.value = amount;
+      donationAmount.value = amount;
+
+      document.querySelectorAll(".amount-btn").forEach(button => {
+        button.classList.remove("active");
+      });
+
+      if(btn){
+        btn.classList.add("active");
+      }
+    }
+
+    function goToDonationForm(){
+      const quickAmount = document.getElementById("selectedAmount").value.trim();
+
+      if(quickAmount && Number(quickAmount) > 0){
+        document.getElementById("donationAmount").value = quickAmount;
+      }
+
+      document.getElementById("donate").scrollIntoView({
+        behavior:"smooth"
+      });
+    }
+
+    const selectedAmountInput = document.getElementById("selectedAmount");
+
+    if(selectedAmountInput){
+      selectedAmountInput.addEventListener("input", function(){
+        document.getElementById("donationAmount").value = this.value;
+
+        document.querySelectorAll(".amount-btn").forEach(btn => {
+          btn.classList.remove("active");
+        });
+      });
+    }
+
+    function openQR(){
+      const img = document.getElementById("qrImage").src;
+      window.open(img, "_blank");
+    }
+
+    function copyUPI(){
+      if(navigator.clipboard){
+        navigator.clipboard.writeText(FOUNDATION_UPI_ID).then(() => {
+          alert("UPI ID copied: " + FOUNDATION_UPI_ID);
+        }).catch(() => {
+          alert("Please copy UPI ID manually: " + FOUNDATION_UPI_ID);
+        });
+      }else{
+        alert("Please copy UPI ID manually: " + FOUNDATION_UPI_ID);
+      }
+    }
+
+    function getDonationData(){
+      return {
+        name: document.getElementById("donorName").value.trim(),
+        email: document.getElementById("donorEmail").value.trim(),
+        phone: document.getElementById("donorPhone").value.trim(),
+        type: document.getElementById("donationType").value,
+        amount: document.getElementById("donationAmount").value.trim(),
+        payerUpi: document.getElementById("payerUpi").value.trim(),
+        purpose: document.getElementById("donationMessageBox").value.trim()
+      };
+    }
+
+    function submitDonationForm(event){
+      event.preventDefault();
+
+      const data = getDonationData();
+      const message = document.getElementById("donationMessage");
+
+      if(!data.name || !data.email || !data.phone || !data.type || !data.amount){
+        message.style.color = "red";
+        message.innerText = "Please fill all required fields.";
+        return;
+      }
+
+      if(Number(data.amount) <= 0){
+        message.style.color = "red";
+        message.innerText = "Please enter a valid donation amount.";
+        return;
+      }
+
+      message.style.color = "green";
+      message.innerText = "Details submitted successfully. Now click Pay via UPI App or scan QR code.";
+    }
+
+    function payViaUPI(){
+      const data = getDonationData();
+      const message = document.getElementById("donationMessage");
+
+      if(!data.name || !data.email || !data.phone || !data.type || !data.amount){
+        if(message){
+          message.style.color = "red";
+          message.innerText = "Please fill name, email, phone, donation type and amount before payment.";
+        }
+
+        document.getElementById("donate").scrollIntoView({
+          behavior:"smooth"
+        });
+
+        return;
+      }
+
+      if(Number(data.amount) <= 0){
+        if(message){
+          message.style.color = "red";
+          message.innerText = "Please enter a valid donation amount.";
+        }
+        return;
+      }
+
+      const transactionNote = `${data.type} Donation by ${data.name}`;
+
+      const upiLink =
+        "upi://pay" +
+        "?pa=" + encodeURIComponent(FOUNDATION_UPI_ID) +
+        "&pn=" + encodeURIComponent(FOUNDATION_NAME) +
+        "&am=" + encodeURIComponent(data.amount) +
+        "&cu=INR" +
+        "&tn=" + encodeURIComponent(transactionNote);
+
+      window.location.href = upiLink;
+    }
+
+    // Header/footer loaded by shared.js
+  </script>
+  <script src="shared.js"></script>
+
+  <a href="mobilization-form.html" style="position:fixed;right:18px;bottom:18px;z-index:9999;background:#f7941d;color:#fff;padding:12px 20px;border-radius:999px;font-weight:900;font-size:.88rem;box-shadow:0 16px 34px rgba(247,148,29,.35);text-decoration:none;font-family:Inter,sans-serif;">Mobilization Form</a>
+
+</body>
+</html>

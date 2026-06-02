@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VED Foundation - Smart Classes</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --blue:#0b63ce;
+  --blue-dark:#074a9d;
+  --orange:#ff941a;
+  --orange-dark:#e77f09;
+  --green:#10b981;
+  --navy:#102033;
+  --text:#172033;
+  --muted:#657285;
+  --light:#f6fbff;
+  --white:#ffffff;
+  --border:#e4edf6;
+  --shadow:0 14px 34px rgba(15,35,70,.10);
+  --shadow-soft:0 8px 22px rgba(15,35,70,.08);
+}
+
+html{
+  scroll-behavior:smooth;
+  overflow-x:hidden;
+}
+
+body{
+  font-family:'Inter',sans-serif;
+  color:var(--text);
+  background:#fff;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+
+.container{
+  width:min(1120px,92%);
+  margin:auto;
+}
+
+/* ================= HERO ================= */
+
+.solution-hero{
+  position:relative;
+  min-height:500px;
+  background:#eef8ff;
+  display:flex;
+  align-items:center;
+  overflow:hidden;
+}
+
+.solution-hero-bg{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,rgba(5,85,115,.78) 0%,rgba(255,255,255,.82) 42%,rgba(255,255,255,.96) 100%);
+  opacity:.95;
+  z-index:0;
+}
+
+.solution-hero-shape{
+  position:absolute;
+  left:0;top:0;
+  width:42%;height:100%;
+  background:linear-gradient(135deg,#007c89,#074d8f);
+  clip-path:polygon(0 0,100% 0,74% 100%,0 100%);
+  z-index:1;
+}
+
+.solution-hero-wrap{
+  position:relative;
+  z-index:3;
+  width:min(1120px,92%);
+  min-height:500px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:42% 58%;
+  align-items:center;
+  gap:42px;
+}
+
+.solution-hero-image{
+  height:280px;
+  width:100%;
+  margin-top:70px;
+  overflow:hidden;
+  border-radius:14px;
+  box-shadow:0 16px 36px rgba(0,0,0,.15);
+  background:#ddd;
+}
+
+.solution-hero-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.solution-hero-content{
+  padding:42px 0;
+}
+
+.hero-top{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:22px;
+}
+
+.hero-icon{
+  width:60px;
+  height:60px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#0060b9,#00a98e);
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-size:27px;
+  box-shadow:0 12px 24px rgba(0,106,122,.20);
+  flex:0 0 auto;
+}
+
+.hero-title-small strong{
+  display:block;
+  color:var(--blue);
+  font-size:clamp(1.55rem,2.6vw,2.35rem);
+  line-height:1;
+  font-weight:900;
+}
+
+.hero-small{
+  display:block;
+  color:#12a66a;
+  font-size:.78rem;
+  font-weight:900;
+  letter-spacing:5px;
+  text-transform:uppercase;
+  margin-top:8px;
+  white-space:nowrap;
+}
+
+.solution-hero h1{
+  max-width:760px;
+  color:#223142;
+  font-size:clamp(2.15rem,3.7vw,3.8rem);
+  line-height:1.1;
+  font-weight:900;
+  letter-spacing:-1.5px;
+  margin-bottom:18px;
+}
+
+.solution-hero h1 .orange-text{
+  color:var(--orange);
+}
+
+.solution-hero h1 .highlight{
+  color:#223142;
+  background:linear-gradient(180deg,transparent 55%,rgba(47,207,158,.45) 55%);
+  padding:0 6px;
+}
+
+.solution-hero p{
+  max-width:680px;
+  color:#5d6b7d;
+  font-size:1rem;
+  line-height:1.7;
+  margin-bottom:22px;
+}
+
+.hero-actions{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
+}
+
+.hero-actions .text-link{
+  color:#172033;
+  font-weight:800;
+  padding:10px 0;
+  transition:.25s;
+}
+
+.hero-actions .text-link:hover{
+  color:var(--blue);
+}
+
+/* ================= COMMON ================= */
+
+section{
+  padding:58px 0;
+}
+
+.section-head{
+  text-align:center;
+  max-width:760px;
+  margin:0 auto 34px;
+}
+
+.section-head .tag{
+  display:inline-block;
+  color:var(--orange);
+  background:#fff3df;
+  border:1px solid #fed7aa;
+  border-radius:999px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  font-size:.78rem;
+  margin-bottom:10px;
+  padding:7px 13px;
+}
+
+.section-head h2{
+  font-size:clamp(1.75rem,2.6vw,2.55rem);
+  line-height:1.16;
+  color:#10233f;
+  margin-bottom:10px;
+  font-weight:900;
+}
+
+.section-head p{
+  color:var(--muted);
+  font-size:.96rem;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border:0;
+  cursor:pointer;
+  font-weight:900;
+  white-space:nowrap;
+  transition:.25s;
+  border-radius:8px;
+  padding:12px 20px;
+  font-size:.92rem;
+}
+
+.btn-orange,
+.btn-outline{
+  background:var(--orange);
+  color:#fff;
+  box-shadow:0 10px 22px rgba(255,148,26,.22);
+}
+
+.btn-orange:hover,
+.btn-outline:hover{
+  background:var(--orange-dark);
+  transform:translateY(-2px);
+}
+
+.btn-blue,
+.btn-primary{
+  background:var(--blue);
+  color:#fff;
+  box-shadow:0 10px 22px rgba(11,99,206,.20);
+}
+
+.btn-blue:hover,
+.btn-primary:hover{
+  background:var(--blue-dark);
+  transform:translateY(-2px);
+}
+
+/* ================= STATS ================= */
+
+.stats{
+  padding:34px 0;
+  background:linear-gradient(90deg,#063f86,#0b63ce);
+}
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+
+.stat-card{
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:14px;
+  padding:20px 16px;
+  text-align:center;
+  color:#fff;
+}
+
+.stat-card h3{
+  font-size:1.95rem;
+  color:#fff;
+  font-weight:900;
+  margin-bottom:2px;
+}
+
+.stat-card p{
+  color:#dbeafe;
+  font-weight:700;
+  font-size:.92rem;
+}
+
+/* ================= CARDS ================= */
+
+.why-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:20px;
+}
+
+.products-grid,
+.testimonial-grid,
+.awards-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+
+.why-card,
+.product-card,
+.testimonial,
+.award-card,
+.impact-item{
+  background:#fff;
+  border:1px solid #e7edf6;
+  border-radius:14px;
+  box-shadow:var(--shadow-soft);
+  transition:.25s;
+}
+
+.why-card,
+.testimonial,
+.award-card{
+  padding:22px;
+}
+
+.why-card:hover,
+.product-card:hover,
+.testimonial:hover,
+.award-card:hover{
+  transform:translateY(-6px);
+  box-shadow:var(--shadow);
+}
+
+.why-icon,
+.award-badge,
+.impact-item .icon{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  background:#eaf3ff;
+  color:var(--blue);
+  display:grid;
+  place-items:center;
+  font-weight:900;
+  font-size:.95rem;
+  border:3px solid #fff;
+  box-shadow:0 0 0 1px #d9e9ff;
+  margin-bottom:14px;
+}
+
+.why-card h3,
+.product-card h3,
+.impact-item h4,
+.award-card h3{
+  color:#10233f;
+  margin-bottom:8px;
+  font-size:1.05rem;
+}
+
+.why-card p,
+.product-card p,
+.impact-item p,
+.testimonial p,
+.award-card p{
+  color:var(--muted);
+  font-size:.94rem;
+}
+
+/* ================= PRODUCTS ================= */
+
+.products{
+  background:#f6f9fe;
+}
+
+.tab-buttons{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:24px;
+}
+
+.tab-btn{
+  padding:10px 18px;
+  border-radius:999px;
+  border:1px solid #fed7aa;
+  background:#fff3df;
+  color:#b45309;
+  font-weight:900;
+  cursor:pointer;
+  transition:.25s;
+  font-size:.9rem;
+}
+
+.tab-btn.active,
+.tab-btn:hover{
+  background:var(--orange);
+  color:#fff;
+  border-color:var(--orange);
+}
+
+.product-card{
+  padding:0;
+  overflow:hidden;
+}
+
+.product-image{
+  height:150px;
+  background:linear-gradient(135deg,#eaf3ff,#fff3df);
+  display:grid;
+  place-items:center;
+  font-size:2.35rem;
+  font-weight:900;
+  color:var(--blue-dark);
+}
+
+.product-card h3,
+.product-card p,
+.product-card .card-link{
+  margin-left:20px;
+  margin-right:20px;
+}
+
+.product-card h3{
+  margin-top:18px;
+}
+
+.product-card p{
+  margin-bottom:14px;
+}
+
+.card-link{
+  display:inline-flex;
+  margin-bottom:20px;
+  color:var(--blue);
+  font-weight:900;
+}
+
+/* ================= TESTIMONIAL ================= */
+
+.stars{
+  color:var(--orange);
+  font-size:1rem;
+  margin-bottom:14px;
+}
+
+.person{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-top:16px;
+}
+
+.avatar{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:#eaf3ff;
+  color:var(--blue);
+  display:grid;
+  place-items:center;
+  font-weight:900;
+}
+
+.person span{
+  display:block;
+  color:var(--muted);
+  font-size:.86rem;
+}
+
+/* ================= AWARDS / IMPACT ================= */
+
+.award-badge{
+  width:62px;
+  height:62px;
+  margin:0 auto 14px;
+  font-size:1rem;
+}
+
+.award-card{
+  text-align:center;
+}
+
+.impact-wrap{
+  display:grid;
+  grid-template-columns:.95fr 1.05fr;
+  gap:24px;
+  align-items:center;
+}
+
+.impact-box{
+  background:linear-gradient(90deg,#063f86,#0b63ce);
+  color:#fff;
+  border-radius:18px;
+  padding:28px;
+  box-shadow:var(--shadow);
+}
+
+.impact-box h3{
+  font-size:1.75rem;
+  margin-bottom:10px;
+}
+
+.impact-box p{
+  color:#dbeafe;
+  margin-bottom:16px;
+  font-size:.96rem;
+}
+
+.impact-list{
+  display:grid;
+  gap:14px;
+}
+
+.impact-item{
+  display:flex;
+  gap:14px;
+  padding:16px;
+}
+
+.impact-item .icon{
+  flex:0 0 46px;
+  width:46px;
+  height:46px;
+  margin:0;
+}
+
+/* ================= CTA ================= */
+
+.cta{
+  padding:0 0 65px;
+}
+
+.cta-box{
+  background:linear-gradient(90deg,#063f86,#0b63ce);
+  color:#fff;
+  border-radius:18px;
+  padding:36px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:22px;
+  align-items:center;
+  box-shadow:var(--shadow);
+}
+
+.cta-box h2{
+  font-size:clamp(1.75rem,2.6vw,2.6rem);
+  line-height:1.16;
+  margin-bottom:10px;
+}
+
+.cta-box p{
+  color:#dbeafe;
+  max-width:700px;
+  font-size:.96rem;
+}
+
+/* ================= HIDE OLD FLOATING ================= */
+
+.support-btn,
+.floating-donate{
+  display:none!important;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:1200px){
+  .container,
+  .solution-hero-wrap{
+    width:min(1080px,92%);
+  }
+
+  .solution-hero h1{
+    font-size:3.25rem;
+  }
+}
+
+@media(max-width:1024px){
+  .solution-hero{
+    min-height:460px;
+  }
+
+  .solution-hero-wrap{
+    min-height:460px;
+    grid-template-columns:44% 56%;
+    gap:32px;
+  }
+
+  .solution-hero-image{
+    height:250px;
+    margin-top:55px;
+  }
+
+  .solution-hero h1{
+    font-size:2.75rem;
+  }
+
+  .hero-small{
+    letter-spacing:3px;
+  }
+
+  .stats-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .products-grid,
+  .testimonial-grid,
+  .awards-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .impact-wrap{
+    grid-template-columns:1fr;
+  }
+
+  .why-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:820px){
+  .solution-hero{
+    min-height:auto;
+  }
+
+  .solution-hero::after{
+    display:none;
+  }
+
+  .solution-hero-bg{
+    background:
+      linear-gradient(180deg,rgba(0,112,128,.72),rgba(255,255,255,.96)),
+      url('all_doc/smart-class.jpg') center/cover no-repeat;
+  }
+
+  .solution-hero-wrap{
+    grid-template-columns:1fr;
+    min-height:auto;
+    padding:38px 0;
+    gap:22px;
+  }
+
+  .solution-hero-image{
+    height:250px;
+    margin:0;
+  }
+
+  .solution-hero-content{
+    background:rgba(255,255,255,.92);
+    border-radius:18px;
+    padding:24px;
+    box-shadow:0 14px 35px rgba(15,23,42,.08);
+  }
+
+  .solution-hero h1{
+    font-size:2.3rem;
+    letter-spacing:-1px;
+  }
+
+  section{
+    padding:48px 0;
+  }
+
+  .cta-box{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:640px){
+  .container,
+  .solution-hero-wrap{
+    width:min(100% - 24px,480px);
+  }
+
+  .solution-hero-wrap{
+    padding:28px 0;
+  }
+
+  .solution-hero-image{
+    height:210px;
+  }
+
+  .hero-top{
+    align-items:flex-start;
+    margin-bottom:18px;
+  }
+
+  .hero-icon{
+    width:52px;
+    height:52px;
+    font-size:23px;
+  }
+
+  .hero-title-small strong{
+    font-size:1.38rem;
+  }
+
+  .hero-small{
+    font-size:.68rem;
+    letter-spacing:1.5px;
+    white-space:normal;
+  }
+
+  .solution-hero h1{
+    font-size:1.82rem;
+    line-height:1.18;
+  }
+
+  .solution-hero p{
+    font-size:.94rem;
+  }
+
+  .hero-actions{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .hero-actions .text-link{
+    text-align:center;
+  }
+
+  .btn{
+    width:100%;
+    padding:11px 18px;
+  }
+
+  .stats-grid,
+  .products-grid,
+  .testimonial-grid,
+  .awards-grid{
+    grid-template-columns:1fr;
+  }
+
+  .stat-card{
+    padding:18px 14px;
+  }
+
+  .stat-card h3{
+    font-size:1.7rem;
+  }
+
+  .section-head{
+    margin-bottom:26px;
+  }
+
+  .section-head h2{
+    font-size:1.65rem;
+  }
+
+  .why-card,
+  .testimonial,
+  .award-card{
+    padding:20px;
+  }
+
+  .product-image{
+    height:135px;
+  }
+
+  .impact-box{
+    padding:22px;
+  }
+
+  .impact-box h3{
+    font-size:1.45rem;
+  }
+
+  .impact-item{
+    flex-direction:column;
+  }
+
+  .cta{
+    padding-bottom:44px;
+  }
+
+  .cta-box{
+    padding:24px;
+  }
+
+  .cta-box h2{
+    font-size:1.55rem;
+  }
+}
+
+@media(max-width:380px){
+  .solution-hero h1{
+    font-size:1.65rem;
+  }
+
+  .hero-title-small strong{
+    font-size:1.24rem;
+  }
+
+  .solution-hero-image{
+    height:190px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="header-placeholder"></div>
+
+<main>
+
+<section class="solution-hero" id="home">
+  <div class="solution-hero-bg"></div>
+  <div class="solution-hero-shape"></div>
+
+  <div class="container solution-hero-wrap">
+    <div class="solution-hero-image">
+      <img src="img 2.jpeg" alt="Smart Classes">
+    </div>
+
+    <div class="solution-hero-content">
+      <div class="hero-top">
+        <div class="hero-icon">🎓</div>
+        <div class="hero-title-small">
+          <strong>Smart Classes</strong>
+          <span class="hero-small">Empowering Students</span>
+        </div>
+      </div>
+
+      <h1>
+        Empowering Students with
+        <span class="orange-text">Digital</span>
+        <span class="highlight">smart learning solutions</span>
+      </h1>
+
+      <p>
+        VED Foundation transforms traditional classrooms into interactive digital learning spaces with smart content,
+        teacher-friendly tools and modern education support for future-ready students.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#products" class="text-link">Explore Programs</a>
+        <a href="#impact" class="btn btn-orange">See Our Impact</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="container stats-grid">
+    <div class="stat-card">
+      <h3 class="counter" data-target="120000">0</h3>
+      <p>Students Reached</p>
+    </div>
+    <div class="stat-card">
+      <h3 class="counter" data-target="8500">0</h3>
+      <p>Teachers Empowered</p>
+    </div>
+    <div class="stat-card">
+      <h3 class="counter" data-target="950">0</h3>
+      <p>Partner Schools</p>
+    </div>
+    <div class="stat-card">
+      <h3 class="counter" data-target="6400">0</h3>
+      <p>Smart Classrooms</p>
+    </div>
+  </div>
+</section>
+
+<section id="why">
+  <div class="container">
+    <div class="section-head">
+      <span class="tag">Why Choose Us</span>
+      <h2>Designed to make teaching more effective and learning more meaningful</h2>
+      <p>Premium smart classroom solutions focused on clarity, engagement, trust and better learning outcomes.</p>
+    </div>
+
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-icon">01</div>
+        <h3>Pedagogy-first learning model</h3>
+        <p>Interactive teaching strategies, multimedia resources and structured classroom workflows help teachers explain concepts clearly.</p>
+      </div>
+
+      <div class="why-card">
+        <div class="why-icon">02</div>
+        <h3>Curriculum aligned resources</h3>
+        <p>Digital assets can be mapped to academic framework, textbook structure and class-level learning needs.</p>
+      </div>
+
+      <div class="why-card">
+        <div class="why-icon">03</div>
+        <h3>Real-world skill development</h3>
+        <p>Bring coding, robotics, AI, communication and applied learning into the classroom with practical activities.</p>
+      </div>
+
+      <div class="why-card">
+        <div class="why-icon">04</div>
+        <h3>Excellent implementation support</h3>
+        <p>From onboarding and training to classroom usage and technical assistance, schools get end-to-end support.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="products" id="products">
+  <div class="container">
+    <div class="section-head">
+      <span class="tag">Solutions</span>
+      <h2>Comprehensive products and services for digital education</h2>
+      <p>Showcase multiple offerings through a clean edtech product portfolio section.</p>
+    </div>
+
+    <div class="tab-buttons">
+      <button class="tab-btn active" data-tab="curriculum">Curriculum Solutions</button>
+      <button class="tab-btn" data-tab="labs">Lab Solutions</button>
+      <button class="tab-btn" data-tab="services">Value Added Services</button>
+    </div>
+
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+</section>
+
+<section id="impact">
+  <div class="container impact-wrap">
+    <div class="impact-box">
+      <h3>Drive measurable classroom impact</h3>
+      <p>Support better teacher delivery, stronger concept clarity and improved student engagement through an integrated digital ecosystem.</p>
+      <a href="#contact" class="btn btn-primary">Schedule Institution Demo</a>
+    </div>
+
+    <div class="impact-list">
+      <div class="impact-item">
+        <div class="icon">A</div>
+        <div>
+          <h4>Adaptive learning environment</h4>
+          <p>Blend classroom teaching, activity-based learning and assessment tracking with intuitive teacher workflows.</p>
+        </div>
+      </div>
+
+      <div class="impact-item">
+        <div class="icon">B</div>
+        <div>
+          <h4>Better teacher confidence</h4>
+          <p>Empower faculty with ready-to-use digital resources, smart presentation tools and structured training modules.</p>
+        </div>
+      </div>
+
+      <div class="impact-item">
+        <div class="icon">C</div>
+        <div>
+          <h4>Institution-wide visibility</h4>
+          <p>Monitor usage, implementation progress and engagement across schools, teachers and classrooms.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="testimonials">
+  <div class="container">
+    <div class="section-head">
+      <span class="tag">Testimonials</span>
+      <h2>What educators and schools say</h2>
+      <p>Add real school reviews here to build trust and conversion.</p>
+    </div>
+
+    <div class="testimonial-grid">
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p>“This platform helped our teachers deliver lessons more effectively. The classroom experience is now more engaging.”</p>
+        <div class="person">
+          <div class="avatar">RS</div>
+          <div>
+            <strong>R. Sharma</strong>
+            <span>Academic Head, Sunrise Public School</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p>“The teacher support, digital assets and lab setup made a real difference. Students participate more actively.”</p>
+        <div class="person">
+          <div class="avatar">AP</div>
+          <div>
+            <strong>A. Patel</strong>
+            <span>Principal, Global Edge Academy</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p>“From onboarding to implementation, the entire experience felt premium and reliable for future-ready schools.”</p>
+        <div class="person">
+          <div class="avatar">MK</div>
+          <div>
+            <strong>M. Khan</strong>
+            <span>Coordinator, Horizon International School</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-head">
+      <span class="tag">Awards & Recognition</span>
+      <h2>Showcase achievements and brand credibility</h2>
+      <p>This section is useful for highlighting recognition, certifications and institutional trust markers.</p>
+    </div>
+
+    <div class="awards-grid">
+      <div class="award-card">
+        <div class="award-badge">01</div>
+        <h3>Best Learning Innovation</h3>
+        <p>Recognized for delivering meaningful digital learning experiences to schools and educators.</p>
+      </div>
+
+      <div class="award-card">
+        <div class="award-badge">02</div>
+        <h3>Trusted School Partner</h3>
+        <p>Awarded for implementation quality, training support and scalable education solutions.</p>
+      </div>
+
+      <div class="award-card">
+        <div class="award-badge">03</div>
+        <h3>Future Ready Platform</h3>
+        <p>Combining pedagogy, technology and institution-wide enablement in one solution.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="project-slider-section" style="padding:70px 0;background:#ffffff;overflow:hidden;">
+  <div class="container" style="width:min(1120px,92%);margin:0 auto;">
+
+    <div class="section-header" style="text-align:center;max-width:760px;margin:0 auto 38px;">
+      <div class="eyebrow" style="display:inline-block;padding:8px 16px;border-radius:999px;background:#eaf3ff;color:#0b63ce;border:1px solid #d9e9ff;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;">
+        Smart Class Impact
+      </div>
+
+      <h2 class="section-title" style="font-size:clamp(28px,3vw,42px);line-height:1.15;color:#10233f;font-weight:900;margin:0 0 12px;">
+        Transforming Classrooms with Digital Learning
+      </h2>
+
+      <p class="section-desc" style="color:#64748b;font-size:16px;line-height:1.7;margin:0;">
+        Smart classroom solutions improving teaching quality, student engagement and digital learning access.
+      </p>
+    </div>
+
+    <div class="project-slider-wrap" style="position:relative;">
+
+      <button class="slider-btn prev" onclick="slideProjects(-1)" style="position:absolute;left:6px;top:36%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:#0b63ce;color:#fff;font-size:34px;line-height:1;cursor:pointer;z-index:5;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(11,99,206,.25);">
+        ‹
+      </button>
+
+      <div class="project-slider" id="projectSlider" style="display:flex;gap:22px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;padding:8px 4px 22px;">
+
+        <div class="project-card" style="flex:0 0 calc(33.333% - 15px);background:#fff;border:1px solid #e7edf6;border-radius:16px;overflow:hidden;box-shadow:0 12px 30px rgba(15,23,42,.08);transition:.3s;">
+          <img src="https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=900&q=80" alt="Digital Smart Classroom" style="width:100%;height:200px;object-fit:cover;">
+          <div style="padding:18px;">
+            <p style="color:#0b63ce;font-size:15px;font-weight:900;margin:0 0 6px;">Digital Learning</p>
+            <h3 style="font-size:20px;line-height:1.3;color:#10233f;font-weight:900;margin:0 0 16px;">Interactive Smart Classrooms</h3>
+            <a href="#" style="display:inline-flex;color:#f7941d;font-size:15px;font-weight:900;text-decoration:none;border-left:5px solid #0b63ce;padding-left:12px;">Read More ›</a>
+          </div>
+        </div>
+
+        <div class="project-card" style="flex:0 0 calc(33.333% - 15px);background:#fff;border:1px solid #e7edf6;border-radius:16px;overflow:hidden;box-shadow:0 12px 30px rgba(15,23,42,.08);transition:.3s;">
+          <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=900&q=80" alt="Students Learning" style="width:100%;height:200px;object-fit:cover;">
+          <div style="padding:18px;">
+            <p style="color:#0b63ce;font-size:15px;font-weight:900;margin:0 0 6px;">Student Engagement</p>
+            <h3 style="font-size:20px;line-height:1.3;color:#10233f;font-weight:900;margin:0 0 16px;">Better Concept Understanding</h3>
+            <a href="#" style="display:inline-flex;color:#f7941d;font-size:15px;font-weight:900;text-decoration:none;border-left:5px solid #0b63ce;padding-left:12px;">Read More ›</a>
+          </div>
+        </div>
+
+        <div class="project-card" style="flex:0 0 calc(33.333% - 15px);background:#fff;border:1px solid #e7edf6;border-radius:16px;overflow:hidden;box-shadow:0 12px 30px rgba(15,23,42,.08);transition:.3s;">
+          <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=900&q=80" alt="Teacher Digital Training" style="width:100%;height:200px;object-fit:cover;">
+          <div style="padding:18px;">
+            <p style="color:#0b63ce;font-size:15px;font-weight:900;margin:0 0 6px;">Teacher Support</p>
+            <h3 style="font-size:20px;line-height:1.3;color:#10233f;font-weight:900;margin:0 0 16px;">Teacher Training & Support</h3>
+            <a href="#" style="display:inline-flex;color:#f7941d;font-size:15px;font-weight:900;text-decoration:none;border-left:5px solid #0b63ce;padding-left:12px;">Read More ›</a>
+          </div>
+        </div>
+
+        <div class="project-card" style="flex:0 0 calc(33.333% - 15px);background:#fff;border:1px solid #e7edf6;border-radius:16px;overflow:hidden;box-shadow:0 12px 30px rgba(15,23,42,.08);transition:.3s;">
+          <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=900&q=80" alt="Digital Content Library" style="width:100%;height:200px;object-fit:cover;">
+          <div style="padding:18px;">
+            <p style="color:#0b63ce;font-size:15px;font-weight:900;margin:0 0 6px;">Content Library</p>
+            <h3 style="font-size:20px;line-height:1.3;color:#10233f;font-weight:900;margin:0 0 16px;">Curriculum Based E-Content</h3>
+            <a href="#" style="display:inline-flex;color:#f7941d;font-size:15px;font-weight:900;text-decoration:none;border-left:5px solid #0b63ce;padding-left:12px;">Read More ›</a>
+          </div>
+        </div>
+
+        <div class="project-card" style="flex:0 0 calc(33.333% - 15px);background:#fff;border:1px solid #e7edf6;border-radius:16px;overflow:hidden;box-shadow:0 12px 30px rgba(15,23,42,.08);transition:.3s;">
+          <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80" alt="Online Digital Learning" style="width:100%;height:200px;object-fit:cover;">
+          <div style="padding:18px;">
+            <p style="color:#0b63ce;font-size:15px;font-weight:900;margin:0 0 6px;">Hybrid Learning</p>
+            <h3 style="font-size:20px;line-height:1.3;color:#10233f;font-weight:900;margin:0 0 16px;">Online + Offline Learning</h3>
+            <a href="#" style="display:inline-flex;color:#f7941d;font-size:15px;font-weight:900;text-decoration:none;border-left:5px solid #0b63ce;padding-left:12px;">Read More ›</a>
+          </div>
+        </div>
+
+        <div class="project-card" style="flex:0 0 calc(33.333% - 15px);background:#fff;border:1px solid #e7edf6;border-radius:16px;overflow:hidden;box-shadow:0 12px 30px rgba(15,23,42,.08);transition:.3s;">
+          <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=900&q=80" alt="School Digital Transformation" style="width:100%;height:200px;object-fit:cover;">
+          <div style="padding:18px;">
+            <p style="color:#0b63ce;font-size:15px;font-weight:900;margin:0 0 6px;">School Upgrade</p>
+            <h3 style="font-size:20px;line-height:1.3;color:#10233f;font-weight:900;margin:0 0 16px;">Digital School Transformation</h3>
+            <a href="#" style="display:inline-flex;color:#f7941d;font-size:15px;font-weight:900;text-decoration:none;border-left:5px solid #0b63ce;padding-left:12px;">Read More ›</a>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="slider-btn next" onclick="slideProjects(1)" style="position:absolute;right:6px;top:36%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:#0b63ce;color:#fff;font-size:34px;line-height:1;cursor:pointer;z-index:5;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(11,99,206,.25);">
+        ›
+      </button>
+    </div>
+
+    <div class="slider-dots" style="display:flex;justify-content:center;gap:10px;margin-top:12px;">
+      <span class="dot active" style="width:10px;height:10px;border-radius:50%;background:#0b63ce;display:block;"></span>
+      <span class="dot" style="width:10px;height:10px;border-radius:50%;background:#d3dde7;display:block;"></span>
+      <span class="dot" style="width:10px;height:10px;border-radius:50%;background:#d3dde7;display:block;"></span>
+    </div>
+
+  </div>
+</section>
+</main>
+
+<div id="footer-placeholder"></div>
+
+<button class="scroll-top" id="scrollTopBtn">↑</button>
+
+
+<script src="shared.js"></script>
+<script>
+
+const productData = {
+  curriculum: [
+    {
+      icon: 'CE',
+      title: 'Classroom Edge Pro',
+      desc: 'Integrated digital content, interactive whiteboard tools and teacher-friendly lesson support for everyday classroom use.'
+    },
+    {
+      icon: 'EE',
+      title: 'Early Learning Edge',
+      desc: 'A joyful pre-primary programme with age-appropriate content, activity workflows and teacher resources.'
+    },
+    {
+      icon: '360',
+      title: 'School 360 Platform',
+      desc: 'A connected ecosystem that links classroom experience, at-home learning, analytics and school-level visibility.'
+    }
+  ],
+  labs: [
+    {
+      icon: 'AI',
+      title: 'STEM + AI Lab',
+      desc: 'Introduce coding, robotics, AI and innovation programmes in alignment with future-ready school initiatives.'
+    },
+    {
+      icon: 'LS',
+      title: 'Language Studio',
+      desc: 'Improve spoken English, listening and communication skills with guided digital language lab resources.'
+    },
+    {
+      icon: 'ME',
+      title: 'Music & Creativity Lab',
+      desc: 'Blend performing arts and creative exploration with structured school programmes and technology support.'
+    }
+  ],
+  services: [
+    {
+      icon: 'TA',
+      title: 'Teacher Academy',
+      desc: 'Ongoing faculty training and professional development to maximize the impact of digital learning tools.'
+    },
+    {
+      icon: 'MS',
+      title: 'Managed School Support',
+      desc: 'Academic and technical implementation assistance for smooth classroom operations and long-term success.'
+    },
+    {
+      icon: 'AMC',
+      title: 'Technical Care Services',
+      desc: 'Maintenance, networking support and infrastructure health checks for uninterrupted usage.'
+    }
+  ]
+};
+
+const productsGrid = document.getElementById('productsGrid');
+const tabButtons = document.querySelectorAll('.tab-btn');
+
+function renderProducts(tab){
+  productsGrid.innerHTML = productData[tab].map(item => `
+    <article class="product-card">
+      <div class="product-image">${item.icon}</div>
+      <h3>${item.title}</h3>
+      <p>${item.desc}</p>
+      <a href="#contact" class="card-link">Read More →</a>
+    </article>
+  `).join('');
+}
+
+tabButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderProducts(btn.dataset.tab);
+  });
+});
+
+renderProducts('curriculum');
+
+const counters = document.querySelectorAll('.counter');
+const speed = 70;
+
+const observer = new IntersectionObserver((entries, obs) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const counter = entry.target;
+      const target = +counter.dataset.target;
+      const increment = Math.ceil(target / speed);
+      let current = 0;
+
+      const updateCounter = () => {
+        current += increment;
+        if(current < target){
+          counter.textContent = current.toLocaleString() + '+';
+          requestAnimationFrame(updateCounter);
+        } else {
+          counter.textContent = target.toLocaleString() + '+';
+        }
+      };
+
+      updateCounter();
+      obs.unobserve(counter);
+    }
+  });
+}, { threshold: 0.4 });
+
+counters.forEach(counter => observer.observe(counter));
+</script>
+
+<a href="mobilization-form.html" class="floating-donate">Mobilization Form</a>
+
+</body>
+</html>

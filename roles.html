@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Roles & Permissions</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 30px;
+      background: #f5f7fb;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .role-card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .role-card h3 {
+      margin-bottom: 10px;
+      color: #0b63ce;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>Roles & Permissions</h2>
+
+<div id="rolesContainer" class="role-grid"></div>
+
+<script>
+const _ROLES_API = window.VED_API_BASE;
+async function loadRoles() {
+  try {
+    const token = localStorage.getItem('ved_admin_token') || '';
+    const res = await fetch(`${_ROLES_API}/roles`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const json = await res.json();
+
+    const container = document.getElementById("rolesContainer");
+    container.innerHTML = "";
+
+    const roles = json.data || json.roles || [];
+
+    if (!roles.length) {
+      container.innerHTML = "<p>No roles found or not authorised.</p>";
+      return;
+    }
+
+    roles.forEach(role => {
+      container.innerHTML += `
+        <div class="role-card">
+          <h3>${role.name}</h3>
+          <p>${(role.permissions || []).length} permissions</p>
+        </div>
+      `;
+    });
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById("rolesContainer").innerHTML =
+      "<p>Failed to load roles</p>";
+  }
+}
+
+loadRoles();
+</script>
+
+<div id="footer-placeholder"></div>
+<script src="/config.js"></script>
+<script src="shared.js"></script>
+<a href="mobilization-form.html" style="position:fixed;right:18px;bottom:18px;z-index:9999;background:#f7941d;color:#fff;padding:12px 20px;border-radius:999px;font-weight:900;font-size:.88rem;box-shadow:0 16px 34px rgba(247,148,29,.35);text-decoration:none;font-family:Inter,sans-serif;">Mobilization Form</a>
+</body>
+</html>

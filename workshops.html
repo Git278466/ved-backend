@@ -1,0 +1,561 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#08254d"/>
+<title>Workshop Center — VED Foundation</title>
+<link rel="icon" href="vedlogo.jpeg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blue:#0b63ce;--blue-dark:#074a9d;--blue-lt:#eaf3ff;
+  --orange:#f7941d;--orange-dark:#e46f00;
+  --green:#16a34a;--green-lt:#dcfce7;
+  --red:#ef4444;--navy:#08254d;
+  --text:#1f2937;--muted:#6b7280;--light:#f5f8fd;--border:#e5e7eb;
+  --shadow:0 4px 24px rgba(15,23,42,.1);
+  --shadow-lg:0 16px 48px rgba(15,23,42,.14);
+}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:'Inter',sans-serif;color:var(--text);background:#fff;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+
+/* ── LIVE ALERT BAR ── */
+#liveBar{
+  display:none;background:linear-gradient(90deg,#7f1d1d,#dc2626,#7f1d1d);
+  background-size:200% 100%;animation:shimmer 2s linear infinite;
+  padding:12px 20px;text-align:center;z-index:200;
+}
+#liveBar.show{display:block}
+@keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
+.live-bar-inner{display:inline-flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.live-blink{width:10px;height:10px;background:#fff;border-radius:50%;animation:blink 1s ease infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.2;transform:scale(.7)}}
+.live-bar-text{font-weight:800;color:#fff;font-size:.9rem}
+.live-bar-btn{background:#fff;color:#dc2626;padding:7px 18px;border-radius:999px;font-weight:900;font-size:.84rem;transition:.2s}
+.live-bar-btn:hover{transform:scale(1.05)}
+
+/* ── HERO ── */
+.hero{
+  position:relative;min-height:480px;overflow:hidden;
+  background:#eef8ff;display:flex;align-items:center;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(5,85,115,.78) 0%,rgba(255,255,255,.82) 42%,rgba(255,255,255,.96) 100%);
+  opacity:.95;
+}
+.hero-shape{
+  position:absolute;left:0;top:0;width:42%;height:100%;
+  background:linear-gradient(135deg,#007c89,#074d8f);
+  clip-path:polygon(0 0,100% 0,74% 100%,0 100%);z-index:1;
+}
+.hero-wrap{
+  position:relative;z-index:3;
+  display:grid;grid-template-columns:42% 58%;
+  align-items:center;gap:42px;min-height:480px;
+  width:min(1140px,92%);margin:auto;
+}
+.hero-image{
+  height:280px;border-radius:14px;overflow:hidden;
+  box-shadow:0 18px 42px rgba(0,0,0,.16);
+  border:6px solid rgba(255,255,255,.8);
+  transform:translateY(40px);
+}
+.hero-image img{width:100%;height:100%;object-fit:cover}
+.hero-content{padding:42px 0}
+.hero-icon{
+  width:58px;height:58px;border-radius:14px;
+  background:linear-gradient(135deg,#007c89,#0b63ce);
+  display:grid;place-items:center;font-size:1.5rem;
+  margin-bottom:14px;color:#fff;
+  box-shadow:0 12px 24px rgba(11,99,206,.20);
+}
+.eyebrow{
+  color:#0fa66a;font-size:.76rem;font-weight:900;
+  letter-spacing:4px;margin-bottom:16px;
+  text-transform:uppercase;display:block;
+}
+.hero h1{
+  font-size:clamp(2rem,3.7vw,3.6rem);line-height:1.1;
+  color:#172033;font-weight:900;letter-spacing:-1.2px;margin-bottom:14px;
+}
+.hero h1 span{color:var(--blue);position:relative}
+.hero h1 span::after{
+  content:"";position:absolute;left:0;bottom:4px;
+  width:100%;height:13px;
+  background:rgba(45,212,191,.35);z-index:-1;
+}
+.hero-sub{color:#475569;font-size:.98rem;line-height:1.7;margin-bottom:22px;max-width:480px}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:28px}
+.btn-hero-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 24px;border-radius:8px;border:none;cursor:pointer;
+  font-weight:900;font-size:.92rem;text-decoration:none;
+  background:var(--blue);color:#fff;
+  box-shadow:0 10px 22px rgba(11,99,206,.22);transition:.25s;
+  font-family:'Inter',sans-serif;
+}
+.btn-hero-primary:hover{background:var(--blue-dark);transform:translateY(-2px)}
+.btn-hero-outline{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 24px;border-radius:8px;border:none;cursor:pointer;
+  font-weight:900;font-size:.92rem;text-decoration:none;
+  background:var(--orange);color:#fff;
+  box-shadow:0 10px 22px rgba(247,148,29,.25);transition:.25s;
+  font-family:'Inter',sans-serif;
+}
+.btn-hero-outline:hover{background:var(--orange-dark);transform:translateY(-2px)}
+.hero-stats{
+  display:flex;gap:0;
+  background:#fff;border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;
+  box-shadow:0 4px 16px rgba(15,23,42,.08);
+  max-width:380px;
+}
+.h-stat{flex:1;padding:14px 16px;text-align:center;border-right:1px solid var(--border)}
+.h-stat:last-child{border-right:none}
+.h-val{font-size:1.5rem;font-weight:900;color:var(--navy)}
+.h-lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-top:2px}
+@media(max-width:900px){
+  .hero-wrap{grid-template-columns:1fr;gap:0;min-height:auto;padding:40px 0 24px}
+  .hero-shape{width:100%;height:220px;clip-path:polygon(0 0,100% 0,100% 74%,0 100%)}
+  .hero-image{transform:translateY(0);height:200px;margin:0 auto;max-width:340px}
+  .hero-content{padding:24px 0 0}
+  .hero-bg{background:linear-gradient(180deg,rgba(5,85,115,.78) 0%,rgba(255,255,255,.9) 40%)}
+}
+@media(max-width:560px){
+  .hero-stats{max-width:100%}
+  .hero-image{max-width:100%}
+}
+
+/* ── FILTER BAR ── */
+.filter-section{background:#fff;border-bottom:2px solid var(--border);padding:18px 0;position:sticky;top:74px;z-index:90;box-shadow:0 4px 16px rgba(15,23,42,.06)}
+.filter-inner{width:min(1140px,92%);margin:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.filter-btn{padding:8px 18px;border-radius:999px;border:2px solid var(--border);background:#fff;font-family:'Inter',sans-serif;font-size:.84rem;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s;white-space:nowrap}
+.filter-btn:hover{border-color:var(--blue);color:var(--blue)}
+.filter-btn.active{border-color:var(--blue);background:var(--blue);color:#fff}
+.filter-btn.live-filter{border-color:#ef4444;color:#ef4444;display:none}
+.filter-btn.live-filter.show{display:inline-flex;align-items:center;gap:6px}
+.filter-btn.live-filter.active{background:#ef4444;border-color:#ef4444;color:#fff}
+
+/* ── MAIN ── */
+.main-wrap{width:min(1140px,92%);margin:0 auto;padding:48px 0 80px}
+
+/* ── SECTION HEADER ── */
+.sec-hdr{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:10px}
+.sec-hdr h2{font-size:1.35rem;font-weight:900;color:var(--navy)}
+.sec-hdr p{font-size:.88rem;color:var(--muted)}
+.count-badge{background:var(--blue-lt);color:var(--blue);font-size:.78rem;font-weight:800;padding:3px 10px;border-radius:999px;margin-left:8px}
+
+/* ── CARD GRID ── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
+
+/* ── WORKSHOP CARD ── */
+.ws-card{
+  background:#fff;border-radius:20px;border:2px solid var(--border);
+  box-shadow:var(--shadow);overflow:hidden;transition:.3s;position:relative;
+  display:flex;flex-direction:column;
+}
+.ws-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:transparent}
+.ws-card.is-live{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.15),var(--shadow-lg)}
+
+/* Card top banner */
+.card-banner{padding:28px 24px 24px;position:relative;overflow:hidden;min-height:140px;display:flex;flex-direction:column;justify-content:flex-end}
+.card-banner::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.1)}
+.card-banner-bg{position:absolute;inset:0;background:linear-gradient(135deg,var(--card-color,var(--blue))dd,var(--card-color,var(--blue)));transition:.3s}
+.ws-card:hover .card-banner-bg{transform:scale(1.05)}
+.card-icon{position:absolute;top:16px;left:20px;font-size:2rem;z-index:1}
+.card-code{position:absolute;top:18px;right:16px;background:rgba(255,255,255,.2);color:#fff;font-size:.68rem;font-weight:800;padding:3px 10px;border-radius:999px;z-index:1;letter-spacing:.4px}
+
+/* LIVE badge */
+.live-badge{
+  position:absolute;top:16px;left:50%;transform:translateX(-50%);
+  background:#ef4444;color:#fff;font-size:.72rem;font-weight:900;
+  padding:4px 14px;border-radius:999px;z-index:2;
+  display:none;align-items:center;gap:6px;white-space:nowrap;
+  box-shadow:0 4px 12px rgba(239,68,68,.5);animation:livePulse 2s ease infinite;
+}
+.live-badge.show{display:inline-flex}
+@keyframes livePulse{0%,100%{box-shadow:0 4px 12px rgba(239,68,68,.5)}50%{box-shadow:0 4px 24px rgba(239,68,68,.8)}}
+.live-badge-dot{width:7px;height:7px;background:#fff;border-radius:50%;animation:blink 1s ease infinite}
+
+.card-title{position:relative;z-index:1;font-size:1.08rem;font-weight:900;color:#fff;line-height:1.3;margin-bottom:4px}
+.card-sub{position:relative;z-index:1;font-size:.78rem;color:rgba(255,255,255,.75);font-weight:500}
+
+/* Card body */
+.card-body{padding:20px 22px;flex:1;display:flex;flex-direction:column}
+.card-desc{font-size:.88rem;color:var(--muted);line-height:1.6;margin-bottom:16px;flex:1}
+.card-highlights{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+.card-hi{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);font-weight:500}
+.card-hi-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:var(--card-color,var(--blue))}
+
+/* Card footer */
+.card-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fafafa}
+.card-status{font-size:.76rem;font-weight:700;padding:4px 12px;border-radius:999px}
+.status-upcoming{background:var(--blue-lt);color:var(--blue)}
+.status-live{background:#fef2f2;color:#dc2626;animation:blink-bg 1.5s ease infinite}
+@keyframes blink-bg{0%,100%{background:#fef2f2}50%{background:#fee2e2}}
+.status-completed{background:#f1f5f9;color:var(--muted)}
+
+.btn-join{
+  display:inline-flex;align-items:center;gap:7px;padding:10px 20px;
+  border-radius:10px;font-family:'Inter',sans-serif;font-size:.86rem;font-weight:800;
+  border:none;cursor:pointer;transition:.2s;
+}
+.btn-join:hover{transform:translateY(-2px)}
+.btn-join-live{background:#dc2626;color:#fff;box-shadow:0 6px 18px rgba(220,38,38,.35);animation:livePulse2 2s ease infinite}
+@keyframes livePulse2{0%,100%{box-shadow:0 6px 18px rgba(220,38,38,.35)}50%{box-shadow:0 6px 28px rgba(220,38,38,.6)}}
+.btn-join-register{background:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(11,99,206,.25)}
+.btn-join-recording{background:var(--green-lt);color:var(--green);border:1.5px solid #86efac}
+
+/* ── TOAST ── */
+#wsToast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:#1e40af;color:#fff;padding:13px 26px;border-radius:999px;
+  font-size:.9rem;font-weight:700;z-index:9999;
+  box-shadow:0 8px 28px rgba(0,0,0,.22);
+  transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .35s;
+  opacity:0;pointer-events:none;white-space:nowrap;
+}
+#wsToast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* ── NO RESULTS ── */
+.empty{text-align:center;padding:80px 20px;color:var(--muted)}
+.empty-icon{font-size:3.5rem;margin-bottom:16px;opacity:.4;display:block}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){.card-grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}}
+@media(max-width:560px){.card-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div id="header-placeholder"></div>
+
+<!-- LIVE ALERT BAR -->
+<div id="liveBar">
+  <div class="live-bar-inner">
+    <div class="live-blink"></div>
+    <span class="live-bar-text" id="liveBarText">A workshop is LIVE right now!</span>
+    <a id="liveBarBtn" href="#live-section" class="live-bar-btn">🚀 Join Now ↓</a>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-shape"></div>
+
+  <div class="hero-wrap">
+    <div class="hero-image">
+      <img src="img 1.jpeg" alt="VED Foundation Workshop">
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-icon">🎓</div>
+      <span class="eyebrow">Workshop Center</span>
+
+      <h1>Learn. Grow.<br><span>Succeed.</span></h1>
+
+      <p class="hero-sub">Join our interactive online workshops led by expert instructors. Real-time sessions, live Q&amp;A, hands-on learning — completely free for registered students.</p>
+
+      <div class="hero-actions">
+        <a href="registeration.html" class="btn-hero-primary">Register Free →</a>
+        <a href="#workshops-section" class="btn-hero-outline">View Workshops</a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="h-stat"><div class="h-val" id="heroTotal">—</div><div class="h-lbl">Workshops</div></div>
+        <div class="h-stat"><div class="h-val" id="heroLive" style="color:#ef4444">—</div><div class="h-lbl">Live Now</div></div>
+        <div class="h-stat"><div class="h-val" style="color:var(--green)">Free</div><div class="h-lbl">For Students</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FILTER BAR -->
+<div class="filter-section">
+  <div class="filter-inner">
+    <button class="filter-btn" data-filter="all" onclick="filterCards('all',this)">All Workshops</button>
+    <button class="filter-btn live-filter" id="filterLiveBtn" data-filter="live" onclick="filterCards('live',this)">
+      <span style="width:8px;height:8px;background:#ef4444;border-radius:50%;animation:blink 1s ease infinite"></span>
+      Live Now
+    </button>
+    <button class="filter-btn active" data-filter="upcoming" onclick="filterCards('upcoming',this)">Upcoming</button>
+    <button class="filter-btn" data-filter="completed" onclick="filterCards('completed',this)">Completed</button>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-wrap" id="workshops-section">
+  <div class="sec-hdr">
+    <div>
+      <h2 id="secTitle">Upcoming Workshops <span class="count-badge" id="countBadge">0</span></h2>
+      <p id="secDesc">Register now and join the upcoming sessions</p>
+    </div>
+    <p style="font-size:.82rem;color:var(--muted)">Auto-updates every 30s</p>
+  </div>
+  <div class="card-grid" id="cardGrid">
+    <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted)">
+      <div style="font-size:2rem;margin-bottom:12px">⏳</div>
+      Loading workshops...
+    </div>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div id="wsToast"></div>
+
+<!-- Footer -->
+<div id="footer-placeholder"></div>
+<script src="/config.js"></script>
+<script src="shared.js"></script>
+
+<script>
+const API = window.VED_API_BASE;
+let allWorkshops = [];
+let currentFilter = 'upcoming';
+
+const PLATFORM_ICONS = { google_meet:'🟢', zoom:'🔵', teams:'🟣', youtube:'🔴', other:'🌐' };
+
+/* ── Load all workshops ───────────────────────────────── */
+async function loadPage() {
+  try {
+    const res = await fetch(`${API}/workshops`);
+    if (!res.ok) throw new Error('not ok');
+    const data = await res.json();
+    allWorkshops = (data.workshops && data.workshops.length > 0)
+      ? data.workshops
+      : getDemoWorkshops();  // show demo if backend returned empty
+  } catch(_) {
+    allWorkshops = getDemoWorkshops();  // show demo if backend offline
+  }
+
+  updateHeroStats();
+  updateLiveBar();
+  // Activate the "Upcoming" filter button on load
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  const upcomingBtn = document.querySelector('.filter-btn[data-filter="upcoming"]');
+  if (upcomingBtn) upcomingBtn.classList.add('active');
+  renderCards(currentFilter);
+  setInterval(refreshLive, 30000);
+}
+
+function getDemoWorkshops() {
+  return [
+    { _id:'d1', name:'CyberSafe India Workshop',           shortName:'CyberSafe',     code:'CSR/QS1001', icon:'🛡️', color:'#7c3aed', status:'upcoming', isLive:false, description:'Learn to protect yourself from cyber threats, phishing & online fraud.', highlights:['Ethical Hacking basics','Phishing awareness','Data Privacy laws','Cyber crime reporting'], duration:90  },
+    { _id:'d2', name:'LinkedIn Leverage Workshop',          shortName:'LinkedIn',       code:'CSR/CS1002', icon:'💼', color:'#0b63ce', status:'upcoming', isLive:false, description:'Build a powerful LinkedIn profile and attract career opportunities.', highlights:['Profile optimization','Content strategy','Job search tactics','Personal branding'], duration:60 },
+    { _id:'d3', name:'Digital Edge Workshop',               shortName:'Digital Edge',   code:'CSR/DM1003', icon:'📱', color:'#f7941d', status:'upcoming', isLive:false, description:'Master digital marketing — SEO, social media, email & analytics.', highlights:['SEO fundamentals','Social media ads','Email marketing','Google Analytics'], duration:75  },
+    { _id:'d4', name:'CodeStart Workshop',                  shortName:'CodeStart',      code:'CSR/WD1004', icon:'💻', color:'#16a34a', status:'upcoming', isLive:false, description:'Start your coding journey — HTML, CSS, JavaScript & web development.', highlights:['HTML & CSS basics','JavaScript intro','Build a website','Career in tech'], duration:120 },
+    { _id:'d5', name:'Confident Communication Workshop',    shortName:'Communication',  code:'CSR/RN1005', icon:'🎤', color:'#dc2626', status:'upcoming', isLive:false, description:'Develop powerful communication for interviews, presentations & leadership.', highlights:['Public speaking','Interview techniques','Body language','Conflict resolution'], duration:60 },
+    { _id:'d6', name:'Engineering Design Workshop',         shortName:'Engineering',    code:'CSR/ED1006', icon:'⚙️', color:'#0891b2', status:'upcoming', isLive:false, description:'Hands-on engineering design thinking, project management & execution.', highlights:['Design thinking','Project planning','Prototyping','Industry case studies'], duration:90  },
+    { _id:'d7', name:'Design Thinking & Innovation',       shortName:'Design Thinking',code:'CSR/DT1007', icon:'🎨', color:'#9333ea', status:'upcoming', isLive:false, description:'Apply design thinking to solve real-world problems creatively.', highlights:['Empathy mapping','Ideation techniques','Prototyping','User testing'], duration:75  },
+  ];
+}
+
+/* ── Hero stats update ────────────────────────────────── */
+function updateHeroStats() {
+  document.getElementById('heroTotal').textContent = allWorkshops.length;
+  const liveCount = allWorkshops.filter(w => w.isLive).length;
+  document.getElementById('heroLive').textContent = liveCount;
+}
+
+/* ── Live alert bar ──────────────────────────────────── */
+function updateLiveBar() {
+  const live = allWorkshops.filter(w => w.isLive && w.meetingLink);
+  const bar  = document.getElementById('liveBar');
+  const filterLiveBtn = document.getElementById('filterLiveBtn');
+
+  if (live.length > 0) {
+    bar.classList.add('show');
+    filterLiveBtn.classList.add('show');
+    document.getElementById('liveBarText').textContent =
+      `🔴 "${live[0].name}" is LIVE right now — Join the session!`;
+    document.getElementById('liveBarBtn').href = live[0].meetingLink;
+    document.getElementById('liveBarBtn').target = '_blank';
+  } else {
+    bar.classList.remove('show');
+    filterLiveBtn.classList.remove('show');
+  }
+}
+
+/* ── Filter ──────────────────────────────────────────── */
+function filterCards(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCards(filter);
+}
+
+/* ── Student auth ────────────────────────────────────── */
+function isStudentLoggedIn() {
+  const token = localStorage.getItem('ved_student_token');
+  if (!token) return false;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    if (payload.exp && Date.now() / 1000 > payload.exp) {
+      localStorage.removeItem('ved_student_token');
+      localStorage.removeItem('ved_student_info');
+      return false;
+    }
+    return payload.type === 'student';
+  } catch { return false; }
+}
+
+function joinWorkshop(meetingLink, workshopName) {
+  if (isStudentLoggedIn()) {
+    if (!meetingLink) {
+      wsToast('⏳ Meeting link will be shared soon. Check back closer to session time.');
+      return;
+    }
+    window.open(meetingLink, '_blank');
+  } else {
+    const returnUrl = encodeURIComponent(window.location.href);
+    window.location.href = `login.html?return=${returnUrl}&msg=login_to_join`;
+  }
+}
+
+function wsToast(msg) {
+  const el = document.getElementById('wsToast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+/* ── Render cards ────────────────────────────────────── */
+function renderCards(filter) {
+  let list = allWorkshops;
+  if (filter === 'live')      list = allWorkshops.filter(w => w.isLive);
+  // Upcoming: only workshops with a scheduled date (admin-published)
+  if (filter === 'upcoming')  list = allWorkshops.filter(w => !w.isLive && w.status === 'upcoming' && w.scheduledAt);
+  if (filter === 'completed') list = allWorkshops.filter(w => w.status === 'completed');
+
+  const titleLabel =
+    filter === 'live'      ? 'Live Workshops'     :
+    filter === 'upcoming'  ? 'Upcoming Workshops' :
+    filter === 'completed' ? 'Completed Workshops':
+    'All Workshops';
+  const titleEl = document.getElementById('secTitle');
+  if (titleEl) titleEl.innerHTML = `${titleLabel} <span class="count-badge" id="countBadge">${list.length}</span>`;
+  else { const cb = document.getElementById('countBadge'); if (cb) cb.textContent = list.length; }
+
+  document.getElementById('secDesc').textContent =
+    filter === 'live'      ? 'Join a live session happening right now' :
+    filter === 'upcoming'  ? 'Register now and join the upcoming sessions' :
+    filter === 'completed' ? 'Past workshops — recordings available'     :
+    'Explore our programs and join the one that fits your goals';
+
+  if (!list.length) {
+    document.getElementById('cardGrid').innerHTML = `
+      <div style="grid-column:1/-1" class="empty">
+        <span class="empty-icon">${filter==='live'?'📡':filter==='completed'?'✅':'📅'}</span>
+        <p style="font-weight:700;font-size:1rem;color:var(--navy);margin-bottom:6px">
+          ${filter==='live'?'No live sessions right now':'No workshops in this category yet'}
+        </p>
+        <p>${filter==='live'?'Follow our social media for live session announcements.':'Check back soon!'}</p>
+      </div>`;
+    return;
+  }
+
+  // Sort: live first, then upcoming, then completed
+  list = [...list].sort((a,b) => {
+    if (a.isLive && !b.isLive) return -1;
+    if (!a.isLive && b.isLive) return  1;
+    return (a.displayOrder||99) - (b.displayOrder||99);
+  });
+
+  document.getElementById('cardGrid').innerHTML = list.map(w => buildCard(w)).join('');
+}
+
+/* ── Build single card ───────────────────────────────── */
+function buildCard(w) {
+  const color = w.color || '#0b63ce';
+  const isLive = w.isLive && w.meetingLink;
+  const pm = PLATFORM_ICONS[w.meetingPlatform] || '🌐';
+
+  let statusClass = 'status-upcoming';
+  let statusLabel = '📅 Upcoming';
+  if (isLive) { statusClass = 'status-live'; statusLabel = '🔴 Live Now'; }
+  else if (w.status === 'completed') { statusClass = 'status-completed'; statusLabel = '✅ Completed'; }
+
+  // Escape for safe use in onclick attribute strings
+  const safeLink = (w.meetingLink||'').replace(/'/g,"\\'");
+  const safeName = (w.name||'').replace(/'/g,"\\'");
+
+  let actionBtn = '';
+  if (isLive) {
+    // Live: registered students join directly, others go to login
+    actionBtn = `<button class="btn-join btn-join-live" onclick="joinWorkshop('${safeLink}','${safeName}')">🚀 Join Now ${pm}</button>`;
+  } else if (w.status === 'completed' && w.recordingLink) {
+    // Recordings: open freely (public)
+    actionBtn = `<a href="${w.recordingLink}" target="_blank"><button class="btn-join btn-join-recording">▶ Watch Recording</button></a>`;
+  } else {
+    // Upcoming: registered → join/notify, unregistered → login page
+    actionBtn = `<button class="btn-join btn-join-register" onclick="joinWorkshop('${safeLink}','${safeName}')">🔗 Join Now →</button>`;
+  }
+
+  const highlights = (w.highlights||[]).slice(0,3).map(h =>
+    `<div class="card-hi"><div class="card-hi-dot" style="background:${color}"></div><span>${h}</span></div>`
+  ).join('');
+
+  const scheduled = w.scheduledAt
+    ? new Date(w.scheduledAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})
+    : null;
+
+  return `
+  <div class="ws-card ${isLive?'is-live':''}" style="--card-color:${color}">
+    <div class="card-banner" style="--card-color:${color}">
+      <div class="card-banner-bg" style="background:linear-gradient(135deg,${color}ee,${color})"></div>
+      <div class="card-icon">${w.icon||'🎓'}</div>
+      ${w.code ? `<div class="card-code">${w.code}</div>` : ''}
+      <div class="live-badge ${isLive?'show':''}">
+        <div class="live-badge-dot"></div> LIVE
+      </div>
+      <div class="card-title">${w.name}</div>
+      <div class="card-sub">${w.instructor?'👨‍🏫 '+w.instructor:''} ${w.duration?'· ⏱ '+w.duration+'m':''}</div>
+    </div>
+    <div class="card-body">
+      ${w.institutionName ? `<div style="display:inline-flex;align-items:center;gap:5px;background:#f3e8ff;color:#7c3aed;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:999px;margin-bottom:10px;letter-spacing:.3px">🏛 ${w.institutionName}</div>` : ''}
+      <p class="card-desc">${w.description||'An interactive online workshop by VED Foundation.'}</p>
+      ${highlights ? `<div class="card-highlights">${highlights}</div>` : ''}
+      ${scheduled && !isLive && w.status!=='completed' ? `<div style="font-size:.78rem;color:var(--blue);font-weight:700;margin-bottom:10px">📅 ${scheduled}</div>` : ''}
+    </div>
+    <div class="card-footer">
+      <span class="card-status ${statusClass}">${statusLabel}</span>
+      ${actionBtn}
+    </div>
+  </div>`;
+}
+
+/* ── Auto-refresh live status ────────────────────────── */
+async function refreshLive() {
+  try {
+    const res  = await fetch(`${API}/workshops/live`);
+    const data = await res.json();
+    const liveIds = new Set((data.live||[]).map(l => l._id));
+    let changed = false;
+    allWorkshops.forEach(w => {
+      const wasLive = w.isLive;
+      const liveData = (data.live||[]).find(l => l._id === w._id);
+      w.isLive = liveIds.has(w._id);
+      if (liveData) { w.meetingLink = liveData.meetingLink; w.meetingPlatform = liveData.meetingPlatform; }
+      if (wasLive !== w.isLive) changed = true;
+    });
+    if (changed) { updateHeroStats(); updateLiveBar(); renderCards(currentFilter); }
+  } catch(_) {}
+}
+
+loadPage();
+</script>
+
+<a href="mobilization-form.html" style="position:fixed;right:18px;bottom:18px;z-index:9999;background:#f7941d;color:#fff;padding:12px 20px;border-radius:999px;font-weight:900;font-size:.88rem;box-shadow:0 16px 34px rgba(247,148,29,.35);text-decoration:none;font-family:Inter,sans-serif;">Mobilization Form</a>
+
+</body>
+</html>

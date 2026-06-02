@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Eimpact Smart Solutions Pvt. Ltd.</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --blue:#0b63ce;
+  --blue-dark:#074a9d;
+  --orange:#f7941d;
+  --orange-dark:#e46f00;
+  --green:#16a34a;
+  --text:#1f2937;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --shadow:0 14px 34px rgba(15,23,42,.10);
+  --shadow-soft:0 8px 22px rgba(15,23,42,.08);
+}
+
+html{scroll-behavior:smooth;overflow-x:hidden}
+
+body{
+  font-family:'Inter',sans-serif;
+  background:#fff;
+  color:var(--text);
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+ul{list-style:none}
+
+.container{
+  width:min(1120px,92%);
+  margin:auto;
+}
+
+.section{
+  padding:58px 0;
+}
+
+.section-light{
+  background:linear-gradient(180deg,#f7fbff 0%,#ffffff 100%);
+}
+
+.section-header{
+  text-align:center;
+  max-width:760px;
+  margin:0 auto 34px;
+}
+
+.eyebrow{
+  display:inline-block;
+  padding:7px 13px;
+  border-radius:999px;
+  background:#fff3df;
+  color:#b45309;
+  border:1px solid #fed7aa;
+  font-size:.78rem;
+  font-weight:900;
+  margin-bottom:10px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+
+.section-title{
+  font-size:clamp(1.75rem,2.6vw,2.55rem);
+  line-height:1.16;
+  margin-bottom:10px;
+  color:#10233f;
+  font-weight:900;
+}
+
+.section-desc{
+  color:var(--muted);
+  font-size:.96rem;
+}
+
+/* Buttons */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px 20px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  font-weight:900;
+  transition:.25s;
+  font-size:.92rem;
+  text-decoration:none;
+  white-space:nowrap;
+}
+
+.btn-primary{
+  background:var(--blue);
+  color:#fff;
+  box-shadow:0 10px 22px rgba(11,99,206,.22);
+}
+
+.btn-primary:hover{
+  background:var(--blue-dark);
+  transform:translateY(-2px);
+}
+
+.btn-outline{
+  background:var(--orange);
+  color:#fff;
+  box-shadow:0 10px 22px rgba(247,148,29,.25);
+}
+
+.btn-outline:hover{
+  background:var(--orange-dark);
+  transform:translateY(-2px);
+}
+
+/* Hero */
+.solution-hero{
+  position:relative;
+  min-height:500px;
+  overflow:hidden;
+  background:#eef8ff;
+  display:flex;
+  align-items:center;
+}
+
+.solution-hero-bg{
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,rgba(5,85,115,.78) 0%,rgba(255,255,255,.82) 42%,rgba(255,255,255,.96) 100%),
+    url("all_doc/solar-bg.jpg") center/cover no-repeat;
+  opacity:.95;
+}
+
+.solution-hero-shape{
+  position:absolute;
+  left:0;
+  top:0;
+  width:42%;
+  height:100%;
+  background:linear-gradient(135deg,#007c89,#074d8f);
+  clip-path:polygon(0 0,100% 0,74% 100%,0 100%);
+  z-index:1;
+}
+
+.solution-hero-wrap{
+  position:relative;
+  z-index:3;
+  display:grid;
+  grid-template-columns:42% 58%;
+  align-items:center;
+  gap:42px;
+  min-height:500px;
+}
+
+.solution-hero-image{
+  height:280px;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 18px 42px rgba(0,0,0,.16);
+  border:6px solid rgba(255,255,255,.8);
+  transform:translateY(45px);
+}
+
+.solution-hero-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.solution-hero-content{
+  padding:42px 0;
+}
+
+.hero-icon{
+  width:60px;
+  height:60px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#007c89,#0b63ce);
+  display:grid;
+  place-items:center;
+  font-size:1.5rem;
+  margin-bottom:14px;
+  color:#fff;
+  box-shadow:0 12px 24px rgba(11,99,206,.20);
+}
+
+.hero-small{
+  color:#0fa66a;
+  font-size:.76rem;
+  font-weight:900;
+  letter-spacing:4px;
+  margin-bottom:16px;
+  text-transform:uppercase;
+}
+
+.solution-hero h1{
+  font-size:clamp(2.1rem,3.7vw,3.75rem);
+  line-height:1.1;
+  color:#172033;
+  font-weight:900;
+  letter-spacing:-1.4px;
+  margin-bottom:16px;
+}
+
+.solution-hero h1 span{
+  color:var(--blue);
+  position:relative;
+}
+
+.solution-hero h1 span::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:4px;
+  width:100%;
+  height:14px;
+  background:rgba(45,212,191,.38);
+  z-index:-1;
+}
+
+.solution-hero p{
+  max-width:680px;
+  color:#475569;
+  font-size:1rem;
+  line-height:1.7;
+  margin-bottom:22px;
+}
+
+.hero-actions{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+}
+
+/* Cards */
+.about-grid{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:22px;
+  align-items:stretch;
+}
+
+.about-card,
+.strength-card,
+.service-card,
+.highlight-card,
+.coverage-card,
+.partner-card{
+  background:#fff;
+  border:1px solid #e7edf6;
+  border-radius:16px;
+  padding:22px;
+  box-shadow:var(--shadow-soft);
+  transition:.25s;
+}
+
+.service-card:hover,
+.highlight-card:hover,
+.coverage-card:hover,
+.partner-card:hover{
+  transform:translateY(-6px);
+  box-shadow:var(--shadow);
+}
+
+.custom-title{
+  font-size:1.35rem;
+  margin-bottom:12px;
+  color:#10233f;
+  font-weight:900;
+}
+
+.about-card p,
+.service-card p,
+.highlight-card p,
+.coverage-card p,
+.partner-card p,
+.strength-card p{
+  color:var(--muted);
+  font-size:.94rem;
+}
+
+.timeline{
+  display:grid;
+  gap:14px;
+  margin-top:20px;
+}
+
+.timeline-item{
+  display:grid;
+  grid-template-columns:50px 1fr;
+  gap:12px;
+  align-items:start;
+}
+
+.timeline-no,
+.icon-box{
+  width:50px;
+  height:50px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  font-weight:900;
+  color:#fff;
+  background:linear-gradient(135deg,#075fc4,#064c9d);
+  box-shadow:0 10px 22px rgba(7,95,196,.18);
+}
+
+.icon-box{
+  font-size:1.15rem;
+  margin-bottom:14px;
+}
+
+.timeline-text h4,
+.service-card h3,
+.highlight-card h3,
+.coverage-card h3,
+.partner-card h3,
+.strength-card h3{
+  color:#10233f;
+  margin-bottom:7px;
+  font-size:1.05rem;
+  font-weight:900;
+}
+
+.strength-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:18px;
+}
+
+.strength-card{
+  border-top:5px solid var(--orange);
+}
+
+.services-grid,
+.highlight-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+
+.service-list,
+.partner-list{
+  display:grid;
+  gap:9px;
+  margin-top:14px;
+}
+
+.service-list li,
+.partner-list li{
+  display:flex;
+  gap:9px;
+  align-items:flex-start;
+  color:#24344d;
+  font-size:.92rem;
+}
+
+.service-list li::before,
+.partner-list li::before{
+  content:"✓";
+  color:var(--orange);
+  font-weight:900;
+}
+
+.highlight-card{
+  border-top:4px solid var(--orange);
+}
+
+.coverage-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:22px;
+  align-items:start;
+}
+
+.states{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin-top:18px;
+}
+
+.state-pill{
+  background:#fff;
+  border:1px solid #e7edf6;
+  border-radius:12px;
+  padding:12px 14px;
+  font-weight:800;
+  color:var(--blue-dark);
+  box-shadow:0 8px 18px rgba(15,23,42,.05);
+  font-size:.92rem;
+}
+
+.partner-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+/* Slider */
+.project-slider-section{
+  background:#fff;
+  padding:58px 0;
+}
+
+.project-slider-wrap{
+  position:relative;
+}
+
+.project-slider{
+  display:flex;
+  gap:22px;
+  overflow-x:auto;
+  scroll-behavior:smooth;
+  scrollbar-width:none;
+  padding:8px 4px 18px;
+}
+
+.project-slider::-webkit-scrollbar{
+  display:none;
+}
+
+.project-card{
+  flex:0 0 calc(33.333% - 15px);
+  background:#fff;
+  border-radius:14px;
+  overflow:hidden;
+  transition:.25s;
+  border:1px solid #e7edf6;
+  box-shadow:var(--shadow-soft);
+  padding-bottom:18px;
+}
+
+.project-card:hover{
+  transform:translateY(-6px);
+  box-shadow:var(--shadow);
+}
+
+.project-card img{
+  width:100%;
+  height:190px;
+  object-fit:cover;
+  background:#dbeafe;
+}
+
+.project-card .date{
+  color:#16a34a;
+  font-size:1rem;
+  font-weight:800;
+  margin:16px 18px 6px;
+}
+
+.project-card h3{
+  font-size:1.12rem;
+  line-height:1.25;
+  color:#10233f;
+  font-weight:900;
+  margin:0 18px 14px;
+}
+
+.project-card a{
+  display:inline-flex;
+  align-items:center;
+  color:var(--blue);
+  font-size:.95rem;
+  font-weight:900;
+  margin-left:18px;
+  border-left:5px solid var(--orange);
+  padding-left:12px;
+}
+
+.slider-btn{
+  position:absolute;
+  top:34%;
+  transform:translateY(-50%);
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:0;
+  background:#24587f;
+  color:#fff;
+  font-size:2rem;
+  line-height:1;
+  cursor:pointer;
+  z-index:5;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 10px 24px rgba(0,0,0,.16);
+}
+
+.slider-btn.prev{left:4px}
+.slider-btn.next{right:4px}
+
+.slider-dots{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:10px;
+}
+
+.slider-dots .dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#d3dde7;
+}
+
+.slider-dots .dot.active{
+  background:#24587f;
+}
+
+.scroll-top{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  width:46px;
+  height:46px;
+  border:0;
+  border-radius:14px;
+  background:var(--blue);
+  color:#fff;
+  font-size:1.1rem;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 12px 24px rgba(11,99,206,.22);
+  z-index:999;
+}
+
+/* Responsive */
+@media(max-width:1024px){
+  .solution-hero{
+    min-height:460px;
+  }
+
+  .solution-hero-wrap{
+    min-height:460px;
+    grid-template-columns:44% 56%;
+    gap:30px;
+  }
+
+  .solution-hero-image{
+    height:250px;
+    transform:translateY(30px);
+  }
+
+  .solution-hero h1{
+    font-size:2.75rem;
+  }
+
+  .about-grid,
+  .coverage-grid{
+    grid-template-columns:1fr;
+  }
+
+  .services-grid,
+  .highlight-grid,
+  .partner-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .project-card{
+    flex:0 0 calc(50% - 12px);
+  }
+}
+
+@media(max-width:820px){
+  .solution-hero{
+    min-height:auto;
+  }
+
+  .solution-hero-wrap{
+    grid-template-columns:1fr;
+    min-height:auto;
+    padding:36px 0;
+    gap:22px;
+  }
+
+  .solution-hero-shape{
+    display:none;
+  }
+
+  .solution-hero-bg{
+    background:
+      linear-gradient(180deg,rgba(5,85,115,.72),rgba(255,255,255,.96)),
+      url("all_doc/solar-bg.jpg") center/cover no-repeat;
+  }
+
+  .solution-hero-image{
+    height:245px;
+    transform:none;
+    max-width:100%;
+  }
+
+  .solution-hero-content{
+    background:rgba(255,255,255,.92);
+    border-radius:18px;
+    padding:24px;
+    box-shadow:0 14px 35px rgba(15,23,42,.08);
+  }
+
+  .solution-hero h1{
+    font-size:2.25rem;
+  }
+
+  .section{
+    padding:48px 0;
+  }
+
+  .states{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:640px){
+  .container{
+    width:min(100% - 24px,480px);
+  }
+
+  .solution-hero-wrap{
+    padding:28px 0;
+  }
+
+  .solution-hero-image{
+    height:210px;
+  }
+
+  .hero-icon{
+    width:52px;
+    height:52px;
+    font-size:1.25rem;
+  }
+
+  .hero-small{
+    font-size:.66rem;
+    letter-spacing:1.5px;
+  }
+
+  .solution-hero h1{
+    font-size:1.78rem;
+    line-height:1.18;
+  }
+
+  .solution-hero p{
+    font-size:.94rem;
+  }
+
+  .hero-actions{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .btn{
+    width:100%;
+    padding:11px 18px;
+  }
+
+  .services-grid,
+  .highlight-grid,
+  .partner-grid,
+  .strength-grid{
+    grid-template-columns:1fr;
+  }
+
+  .about-card,
+  .service-card,
+  .highlight-card,
+  .coverage-card,
+  .partner-card,
+  .strength-card{
+    padding:20px;
+  }
+
+  .timeline-item{
+    grid-template-columns:44px 1fr;
+  }
+
+  .timeline-no,
+  .icon-box{
+    width:44px;
+    height:44px;
+  }
+
+  .project-card{
+    flex:0 0 86%;
+  }
+
+  .project-card img{
+    height:170px;
+  }
+
+  .slider-btn{
+    width:38px;
+    height:38px;
+    font-size:1.7rem;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="header-placeholder"></div>
+
+<main>
+
+<section class="solution-hero" id="home">
+  <div class="solution-hero-bg"></div>
+  <div class="solution-hero-shape"></div>
+
+  <div class="container solution-hero-wrap">
+    <div class="solution-hero-image">
+      <img src="img 11.jpg" alt="Smart rural solution project">
+    </div>
+
+    <div class="solution-hero-content">
+      <div class="hero-icon">☀</div>
+      <div class="hero-small">Smart Rural Solutions</div>
+
+      <h1>
+        Technology-Driven <br>
+        <span>Impact</span> for Communities
+      </h1>
+
+      <p>
+        Eimpact Smart Solutions works with NGOs, foundations and CSR teams to deliver
+        solar, agriculture, education and livelihood solutions across rural India.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#contact" class="btn btn-primary">Get In Touch</a>
+        <a href="#projectSliderSection" class="btn btn-outline">View Highlights</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="about">
+  <div class="container">
+    <div class="section-header">
+      <div class="eyebrow">About The Company</div>
+      <h2 class="section-title">Technical Partner for Social Impact Projects</h2>
+      <p class="section-desc">
+        Founded in September 2023, the organization focuses on maximizing the impact of social projects by combining
+        technology, implementation support and practical field execution.
+      </p>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-card">
+        <h3 class="custom-title">Our Core Process</h3>
+        <p>
+          Every project is designed around real field needs, customized solution development, systematic execution and
+          post-deployment impact tracking.
+        </p>
+
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-no">01</div>
+            <div class="timeline-text">
+              <h4>Need Assessment</h4>
+              <p>Community and project needs are understood before planning the technical intervention.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-no">02</div>
+            <div class="timeline-text">
+              <h4>Solution Development</h4>
+              <p>Solutions are customized according to field realities, budgets and target beneficiaries.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-no">03</div>
+            <div class="timeline-text">
+              <h4>Project Execution</h4>
+              <p>Deployment is handled with regional implementation teams and timely service support.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-no">04</div>
+            <div class="timeline-text">
+              <h4>Impact Assessment</h4>
+              <p>Monitoring and evaluation ensure measurable outcomes for NGOs and CSR stakeholders.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-card">
+        <h3 class="custom-title">Our Strengths</h3>
+        <div class="strength-grid">
+          <article class="strength-card">
+            <div class="icon-box">01</div>
+            <h3>Premium Products</h3>
+            <p>Reliable product quality aligned to field implementation needs.</p>
+
+            <h3>Fast Turnaround</h3>
+            <p>3–5 day service turnaround for faster response and execution.</p>
+
+            <h3>Training Support</h3>
+            <p>Capacity building for NGOs, communities and local stakeholders.</p>
+
+            <h3>Regional Teams</h3>
+            <p>Field-ready project teams for localized implementation support.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-light" id="services">
+  <div class="container">
+    <div class="section-header">
+      <div class="eyebrow">Solution Categories</div>
+      <h2 class="section-title">Smart Solutions for Rural Development</h2>
+      <p class="section-desc">
+        Eimpact delivers specialized interventions across the most important rural and community-focused domains.
+      </p>
+    </div>
+
+    <div class="services-grid">
+      <article class="service-card">
+        <div class="icon-box">☀</div>
+        <h3>Solar Solutions</h3>
+        <p>Scalable renewable energy and field utility systems for villages, institutions and development projects.</p>
+        <ul class="service-list">
+          <li>Solar Street Lights</li>
+          <li>Solar Pumps for Drinking Water & Irrigation</li>
+          <li>Offgrid Solar Systems</li>
+          <li>Home Lighting, Dryer, Cold Storage & Insect Trap</li>
+        </ul>
+      </article>
+
+      <article class="service-card">
+        <div class="icon-box">🌾</div>
+        <h3>Agriculture</h3>
+        <p>Modern farm productivity solutions focused on irrigation, protection and smart monitoring.</p>
+        <ul class="service-list">
+          <li>Sprinkler System</li>
+          <li>Drip Irrigation</li>
+          <li>Polyhouse & Pond Making</li>
+          <li>Weather Monitoring and Agri Inputs</li>
+        </ul>
+      </article>
+
+      <article class="service-card">
+        <div class="icon-box">📘</div>
+        <h3>Education</h3>
+        <p>Technology-enabled learning infrastructure for schools, anganwadis and training programs.</p>
+        <ul class="service-list">
+          <li>Smart School Project</li>
+          <li>Smart Classroom</li>
+          <li>Smart Aganwadi</li>
+          <li>Teachers Training</li>
+        </ul>
+      </article>
+
+      <article class="service-card">
+        <div class="icon-box">🛠</div>
+        <h3>Livelihood</h3>
+        <p>Community empowerment through practical livelihood creation and rural enterprise support.</p>
+        <ul class="service-list">
+          <li>Technical Skill-Based Trainings</li>
+          <li>Market Linkage for Rural Products</li>
+          <li>Mini Udyog Set-Up in Rural Areas</li>
+        </ul>
+      </article>
+
+      <article class="service-card">
+        <div class="icon-box">📊</div>
+        <h3>Research & Assessment</h3>
+        <p>Evidence-based planning and evaluation for stronger project design and accountability.</p>
+        <ul class="service-list">
+          <li>Impact Assessment Studies</li>
+          <li>Feasibility Studies</li>
+          <li>Technical Assessment</li>
+          <li>Need-Based Product Development</li>
+        </ul>
+      </article>
+
+      <article class="service-card">
+        <div class="icon-box">🤝</div>
+        <h3>Implementation Partnership</h3>
+        <p>Trusted execution support for CSR groups, NGOs and foundations across geographies.</p>
+        <ul class="service-list">
+          <li>Project Planning & Deployment</li>
+          <li>Monitoring & Reporting</li>
+          <li>Regional Coordination</li>
+          <li>Community-Focused Field Execution</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="highlights">
+  <div class="container">
+    <div class="section-header">
+      <div class="eyebrow">Project Highlights</div>
+      <h2 class="section-title">Selected Field Implementations</h2>
+      <p class="section-desc">
+        A snapshot of solution deployments delivered across NGOs and partner organizations in different states.
+      </p>
+    </div>
+
+    <div class="highlight-grid">
+      <article class="highlight-card"><div class="icon-box">01</div><h3>Solar Based Drinking Water System</h3><p>Partner: CARD</p><p>Location: Mohla, Chhattisgarh</p></article>
+      <article class="highlight-card"><div class="icon-box">02</div><h3>5HP Solar Irrigation Pumps</h3><p>Partner: WOTR</p><p>Location: Rajasthan</p></article>
+      <article class="highlight-card"><div class="icon-box">03</div><h3>Solar Street Light</h3><p>Partner: Yuva Mitra</p><p>Location: Maharashtra</p></article>
+      <article class="highlight-card"><div class="icon-box">04</div><h3>Solar Lift Irrigation System</h3><p>Partner: Srijan Foundation</p><p>Location: Chhattisgarh</p></article>
+      <article class="highlight-card"><div class="icon-box">05</div><h3>Solar Home Lighting System</h3><p>Partner: BAIF</p><p>Location: Dhar, Madhya Pradesh</p></article>
+      <article class="highlight-card"><div class="icon-box">06</div><h3>Smart Class Project</h3><p>Partner: Srijan</p><p>Location: Jhansi, Uttar Pradesh</p></article>
+      <article class="highlight-card"><div class="icon-box">07</div><h3>Weather Monitoring System</h3><p>Partner: SM Sehgal Foundation</p><p>Location: Dewas, Madhya Pradesh</p></article>
+      <article class="highlight-card"><div class="icon-box">08</div><h3>Solar Insect Trap</h3><p>Partner: Solidaridad</p><p>Location: Bhopal, Madhya Pradesh</p></article>
+      <article class="highlight-card"><div class="icon-box">09</div><h3>Offgrid Solar Systems</h3><p>Partner: Bansidhar and Ila Panda Foundation</p><p>Location: Cuttack, Odisha</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="section section-light" id="coverage">
+  <div class="container">
+    <div class="section-header">
+      <div class="eyebrow">Pan India Presence</div>
+      <h2 class="section-title">Operational Coverage Across Multiple States</h2>
+      <p class="section-desc">
+        Eimpact works across several states with a focus on scalable rural development programs and partner-driven execution.
+      </p>
+    </div>
+
+    <div class="coverage-grid">
+      <article class="coverage-card">
+        <h3>Covered States</h3>
+        <p>Working footprint across north, central, west, east and southern regions of India.</p>
+
+        <div class="states">
+          <div class="state-pill">Andhra Pradesh</div>
+          <div class="state-pill">Assam</div>
+          <div class="state-pill">Chhattisgarh</div>
+          <div class="state-pill">Gujarat</div>
+          <div class="state-pill">Jharkhand</div>
+          <div class="state-pill">Madhya Pradesh</div>
+          <div class="state-pill">Maharashtra</div>
+          <div class="state-pill">Odisha</div>
+          <div class="state-pill">Rajasthan</div>
+          <div class="state-pill">Uttar Pradesh</div>
+        </div>
+      </article>
+
+      <article class="partner-card">
+        <h3>Partner Organizations</h3>
+        <p>Trusted implementation support for foundations, development organizations and NGOs.</p>
+
+        <div class="partner-grid">
+          <ul class="partner-list">
+            <li>CARD</li>
+            <li>WOTR</li>
+            <li>Yuva Mitra</li>
+            <li>Srijan Foundation</li>
+            <li>BAIF</li>
+          </ul>
+
+          <ul class="partner-list">
+            <li>SM Sehgal Foundation</li>
+            <li>Solidaridad</li>
+            <li>Bansidhar and Ila Panda Foundation</li>
+            <li>CSR and NGO Implementation Teams</li>
+            <li>Regional Field Networks</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section project-slider-section" id="projectSliderSection">
+  <div class="container">
+    <div class="section-header">
+      <div class="eyebrow">Project Highlights</div>
+      <h2 class="section-title">Eimpact Creating Big Impact!</h2>
+      <p class="section-desc">Selected field implementations across India.</p>
+    </div>
+
+    <div class="project-slider-wrap">
+      <button class="slider-btn prev" onclick="slideProjects(-1)">‹</button>
+
+      <div class="project-slider" id="projectSlider">
+        <div class="project-card">
+          <img src="https://thumbs.dreamstime.com/b/solar-water-purification-system-sits-desert-harnessing-renewable-energy-clean-access-powered-landscape-sustainable-395186535.jpg" alt="Solar Based Drinking Water System">
+          <p class="date">Chhattisgarh</p>
+          <h3>Solar Based Drinking Water System</h3>
+          <a href="#">Read More ›</a>
+        </div>
+
+        <div class="project-card">
+          <img src="https://icdn.tradew.com/file/202103/1574799/jpg/7697256.jpg?x-oss-process=image/quality,Q_90" alt="5HP Solar Irrigation Pumps">
+          <p class="date">Rajasthan</p>
+          <h3>5HP Solar Irrigation Pumps</h3>
+          <a href="#">Read More ›</a>
+        </div>
+
+        <div class="project-card">
+          <img src="https://www.prolightsystems.in/images/solar-village-light.jpg" alt="Solar Street Light">
+          <p class="date">Maharashtra</p>
+          <h3>Solar Street Light</h3>
+          <a href="#">Read More ›</a>
+        </div>
+
+        <div class="project-card">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSn6R8d0WsQxoGFc3FHtiFgGirCtOB93nU6Yw&s" alt="Solar Lift Irrigation System">
+          <p class="date">Chhattisgarh</p>
+          <h3>Solar Lift Irrigation System</h3>
+          <a href="#">Read More ›</a>
+        </div>
+
+        <div class="project-card">
+          <img src="https://www.solasticerenewables.com/assets/images/solar-irrigation-02.jpg" alt="Solar Home Lighting System">
+          <p class="date">Madhya Pradesh</p>
+          <h3>Solar Home Lighting System</h3>
+          <a href="#">Read More ›</a>
+        </div>
+
+        <div class="project-card">
+          <img src="https://villagesquare.in/wp-content/uploads/2018/10/Saltpan01.jpg" alt="Smart Class Project">
+          <p class="date">Uttar Pradesh</p>
+          <h3>Smart Class Project</h3>
+          <a href="#">Read More ›</a>
+        </div>
+      </div>
+
+      <button class="slider-btn next" onclick="slideProjects(1)">›</button>
+    </div>
+
+    <div class="slider-dots">
+      <span class="dot active"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script src="shared.js"></script>
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+  const slider = document.getElementById("projectSlider");
+  const dots = document.querySelectorAll(".slider-dots .dot");
+
+  if (!slider) return;
+
+  let currentIndex = 0;
+  let autoSlide;
+  const cards = Array.from(slider.querySelectorAll(".project-card"));
+
+  function getVisibleCards() {
+    if (window.innerWidth <= 640) return 1;
+    if (window.innerWidth <= 1024) return 2;
+    return 3;
+  }
+
+  function getMaxIndex() {
+    return Math.max(0, cards.length - getVisibleCards());
+  }
+
+  function updateSlider() {
+    const card = cards[0];
+    const gap = parseInt(window.getComputedStyle(slider).gap) || 22;
+    const cardWidth = card.offsetWidth + gap;
+
+    slider.scrollTo({
+      left: currentIndex * cardWidth,
+      behavior: "smooth"
+    });
+
+    dots.forEach((dot, index) => {
+      dot.classList.toggle("active", index === Math.round(currentIndex / getVisibleCards()));
+    });
+  }
+
+  window.slideProjects = function (direction) {
+    currentIndex += direction;
+
+    if (currentIndex > getMaxIndex()) currentIndex = 0;
+    if (currentIndex < 0) currentIndex = getMaxIndex();
+
+    updateSlider();
+    restartAutoSlide();
+  };
+
+  function startAutoSlide() {
+    autoSlide = setInterval(() => {
+      window.slideProjects(1);
+    }, 3000);
+  }
+
+  function restartAutoSlide() {
+    clearInterval(autoSlide);
+    startAutoSlide();
+  }
+
+  dots.forEach((dot, index) => {
+    dot.addEventListener("click", () => {
+      currentIndex = index * getVisibleCards();
+      if (currentIndex > getMaxIndex()) currentIndex = getMaxIndex();
+      updateSlider();
+      restartAutoSlide();
+    });
+  });
+
+  slider.addEventListener("mouseenter", () => clearInterval(autoSlide));
+  slider.addEventListener("mouseleave", startAutoSlide);
+
+  window.addEventListener("resize", () => {
+    currentIndex = 0;
+    updateSlider();
+  });
+
+  updateSlider();
+  startAutoSlide();
+});
+
+const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+window.addEventListener("scroll", () => {
+  scrollTopBtn.style.display = window.scrollY > 300 ? "block" : "none";
+});
+
+scrollTopBtn.onclick = () => {
+  window.scrollTo({top:0, behavior:"smooth"});
+};
+</script>
+
+<a href="mobilization-form.html" style="position:fixed;right:18px;bottom:18px;z-index:9999;background:#f7941d;color:#fff;padding:12px 20px;border-radius:999px;font-weight:900;font-size:.88rem;box-shadow:0 16px 34px rgba(247,148,29,.35);text-decoration:none;font-family:Inter,sans-serif;">Mobilization Form</a>
+
+</body>
+</html>

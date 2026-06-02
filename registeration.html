@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Registration | VED Foundation</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="/config.js"></script>
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    :root{
+      --blue:#0b63ce;
+      --blue-dark:#074a9d;
+      --orange:#f7941d;
+      --orange-dark:#e46f00;
+      --green:#16a34a;
+      --navy:#08254d;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --light:#f5f8fd;
+      --white:#ffffff;
+      --border:#e5e7eb;
+      --shadow:0 16px 45px rgba(15,23,42,.12);
+      --shadow-lg:0 25px 70px rgba(15,35,70,.13);
+      --danger:#ef4444;
+      --radius:18px;
+    }
+
+    html{scroll-behavior:smooth}
+
+    body{
+      font-family:'Inter',sans-serif;
+      color:var(--text);
+      background:#fff;
+      min-height:100vh;
+      line-height:1.6;
+    }
+
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;display:block}
+    .container{width:min(1180px,92%);margin:auto}
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:12px 22px;
+      border-radius:4px;
+      font-weight:800;
+      font-size:.92rem;
+      border:0;
+      cursor:pointer;
+      transition:.25s;
+      white-space:nowrap;
+      font-family:'Inter',sans-serif;
+    }
+
+    .btn-primary{
+      background:var(--orange);
+      color:#fff;
+      box-shadow:0 10px 22px rgba(247,148,29,.3);
+    }
+    .btn-primary:hover{ background:var(--orange-dark); transform:translateY(-2px); }
+    .btn-primary:disabled{ opacity:.65; cursor:not-allowed; transform:none; }
+
+    .btn-secondary{
+      background:linear-gradient(135deg,var(--blue),var(--blue-dark));
+      color:#fff;
+      box-shadow:0 14px 30px rgba(11,99,206,.22);
+    }
+    .btn-secondary:hover{ transform:translateY(-2px); background:linear-gradient(135deg,var(--blue-dark),#063f86); }
+
+    /* ── REGISTRATION HERO ── */
+    .reg-hero{
+      position:relative;
+      overflow:hidden;
+      background:#eef8ff;
+      padding:52px 0;
+      display:flex;
+      align-items:center;
+    }
+
+    .reg-hero-bg{
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg,rgba(5,85,115,.78) 0%,rgba(255,255,255,.82) 42%,rgba(255,255,255,.96) 100%);
+      opacity:.95;
+      z-index:0;
+    }
+
+    .reg-hero-shape{
+      position:absolute;
+      left:0;top:0;
+      width:42%;height:100%;
+      background:linear-gradient(135deg,#007c89,#074d8f);
+      clip-path:polygon(0 0,100% 0,74% 100%,0 100%);
+      z-index:1;
+    }
+
+    .reg-hero-wrap{
+      position:relative;
+      z-index:3;
+      display:grid;
+      grid-template-columns:42% 58%;
+      align-items:center;
+      gap:40px;
+    }
+
+    .reg-hero-img{
+      height:240px;
+      border-radius:14px;
+      overflow:hidden;
+      box-shadow:0 18px 42px rgba(0,0,0,.18);
+      border:5px solid rgba(255,255,255,.8);
+      transform:translateY(28px);
+    }
+
+    .reg-hero-img img{width:100%;height:100%;object-fit:cover}
+
+    .reg-hero-content .hero-icon{
+      width:54px;height:54px;border-radius:13px;
+      background:linear-gradient(135deg,#007c89,#0b63ce);
+      display:grid;place-items:center;font-size:1.4rem;
+      color:#fff;margin-bottom:12px;
+      box-shadow:0 10px 22px rgba(11,99,206,.22);
+    }
+
+    .reg-hero-content .hero-small{
+      color:#0fa66a;font-size:.76rem;font-weight:900;
+      letter-spacing:4px;text-transform:uppercase;
+      display:block;margin-bottom:14px;
+    }
+
+    .reg-hero-content h1{
+      font-size:clamp(1.9rem,3.5vw,3.2rem);
+      line-height:1.12;font-weight:900;
+      letter-spacing:-1.2px;margin-bottom:12px;
+      color:#172033;
+    }
+
+    .reg-hero-content h1 span{
+      color:var(--blue);position:relative;
+    }
+
+    .reg-hero-content h1 span::after{
+      content:"";position:absolute;left:0;bottom:3px;
+      width:100%;height:12px;
+      background:rgba(45,212,191,.35);z-index:-1;
+    }
+
+    .reg-hero-content p{
+      color:#475569;font-size:.96rem;
+      line-height:1.65;margin-bottom:20px;max-width:460px;
+    }
+
+    .reg-hero-actions{
+      display:flex;gap:12px;flex-wrap:wrap;
+    }
+
+    .btn-hero-p{
+      display:inline-flex;align-items:center;gap:7px;
+      padding:11px 22px;border-radius:8px;
+      background:var(--blue);color:#fff;font-weight:800;
+      font-size:.9rem;text-decoration:none;transition:.22s;
+      box-shadow:0 8px 20px rgba(11,99,206,.25);
+    }
+    .btn-hero-p:hover{background:#074a9d;transform:translateY(-2px)}
+
+    .btn-hero-o{
+      display:inline-flex;align-items:center;gap:7px;
+      padding:11px 22px;border-radius:8px;
+      background:var(--orange);color:#fff;font-weight:800;
+      font-size:.9rem;text-decoration:none;transition:.22s;
+      box-shadow:0 8px 20px rgba(247,148,29,.25);
+    }
+    .btn-hero-o:hover{background:#e46f00;transform:translateY(-2px)}
+
+    @media(max-width:900px){
+      .reg-hero-wrap{grid-template-columns:1fr;gap:0;padding:0}
+      .reg-hero-shape{width:100%;height:220px;clip-path:polygon(0 0,100% 0,100% 74%,0 100%)}
+      .reg-hero-img{transform:translateY(0);max-width:300px;margin:0 auto;height:180px}
+      .reg-hero-content{padding-top:16px}
+      .reg-hero-bg{background:linear-gradient(180deg,rgba(5,85,115,.78) 0%,rgba(255,255,255,.9) 40%)}
+    }
+
+    /* ── REGISTRATION FORM SECTION ── */
+    .registration-section{
+      padding:60px 0;
+      background:#f8fbff;
+      position:relative;
+    }
+
+    .section-head{
+      position:relative; z-index:2;
+      text-align:center; margin-bottom:42px;
+    }
+
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 16px; border-radius:999px;
+      background:#fff3df; color:#b45309;
+      border:1px solid #fed7aa;
+      font-weight:900; font-size:.82rem;
+      margin-bottom:18px; text-transform:uppercase; letter-spacing:.4px;
+    }
+
+    .section-head h2{
+      font-size:clamp(2rem,3.5vw,3.4rem);
+      line-height:1.08; font-weight:900; letter-spacing:-1.2px;
+      margin-bottom:14px; color:#10233f;
+    }
+
+    .section-head p{ color:#526174; font-size:1.05rem; max-width:680px; margin:auto; }
+
+    .registration-layout{
+      position:relative; z-index:2;
+      display:grid; grid-template-columns:1.55fr .95fr;
+      gap:34px; align-items:start;
+    }
+
+    .form-card,.info-card{
+      background:#fff; border-radius:26px; padding:34px;
+      box-shadow:var(--shadow-lg); border:1px solid #e7edf6;
+      position:relative; overflow:hidden;
+    }
+
+    .form-card::before,.info-card::before{
+      content:""; position:absolute; left:0; top:0;
+      width:100%; height:6px;
+      background:linear-gradient(90deg,var(--orange),var(--blue));
+    }
+
+    .form-card h3,.info-card h3{ font-size:1.6rem; font-weight:900; color:#10233f; margin-bottom:8px; }
+    .form-card > p,.info-card > p{ color:var(--muted); margin-bottom:24px; font-size:.96rem; }
+
+    .sorted-note{
+      background:#eaf3ff; border:1px solid #dbeafe;
+      color:#074a9d !important; padding:12px 14px;
+      border-radius:12px; font-weight:700; margin-bottom:24px !important;
+    }
+
+    .form-section{
+      margin-bottom:28px; padding-bottom:24px;
+      border-bottom:1px solid #eef2f7;
+    }
+    .form-section:last-of-type{ border-bottom:none; margin-bottom:0; }
+
+    .form-section h4{
+      font-size:1rem; font-weight:900; color:var(--navy);
+      margin-bottom:16px; display:flex; align-items:center; gap:8px;
+    }
+
+    .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+
+    .form-group{ display:flex; flex-direction:column; gap:7px; }
+    .form-group.full-width{ grid-column:1/-1; }
+
+    .form-group label{ font-size:.92rem; font-weight:800; color:#16325c; }
+    .required{ color:var(--danger); margin-left:4px; }
+
+    .form-group input,.form-group select{
+      width:100%; padding:13px 15px;
+      border:1px solid #dfe8f7; border-radius:10px;
+      outline:none; font-size:.96rem; background:#fff;
+      transition:.25s ease; font-family:'Inter',sans-serif;
+    }
+    .form-group input:focus,.form-group select:focus{
+      border-color:var(--blue); box-shadow:0 0 0 4px rgba(11,99,206,.10);
+    }
+
+    .radio-group{ display:flex; gap:18px; padding-top:7px; flex-wrap:wrap; }
+    .radio-option{
+      display:flex; align-items:center; gap:8px;
+      font-size:.95rem; font-weight:700; cursor:pointer; color:#334155;
+    }
+    .radio-option input{ width:auto; accent-color:var(--blue); }
+
+    .graduation-section{ display:none; }
+    .graduation-section.show{ display:block; }
+
+    .submit-wrap{ display:flex; gap:12px; margin-top:24px; flex-wrap:wrap; }
+
+    #formMessage{
+      font-weight:800; font-size:.95rem;
+      margin-top:12px; min-height:24px;
+    }
+
+    .spinner-inline{
+      display:inline-block; width:14px; height:14px;
+      border:2px solid rgba(255,255,255,.5); border-top-color:#fff;
+      border-radius:50%; animation:spin .7s linear infinite;
+      vertical-align:middle; margin-right:8px;
+    }
+    @keyframes spin{ to{ transform:rotate(360deg) } }
+
+    .info-box{
+      background:#f8faff; border-radius:14px; padding:17px;
+      margin-bottom:14px; border:1px solid #e7edf6;
+      border-left:5px solid var(--blue); transition:.25s;
+    }
+    .info-box:hover{ transform:translateY(-4px); box-shadow:0 12px 28px rgba(15,23,42,.08); }
+    .info-box strong{ display:block; font-size:.96rem; font-weight:900; color:#10233f; margin-bottom:4px; }
+    .info-box span{ font-size:.9rem; color:var(--muted); }
+
+    .certificate-preview{
+      background:linear-gradient(135deg,#f0f7ff,#fff3e0);
+      border-radius:16px; padding:22px; text-align:center;
+      margin-top:22px; border:2px dashed var(--orange);
+    }
+    .certificate-badge{
+      background:var(--orange); color:#fff; font-size:.72rem;
+      font-weight:900; padding:5px 13px; border-radius:999px;
+      display:inline-block; margin-bottom:12px;
+    }
+    .certificate-preview h4{ font-size:1.35rem; font-weight:900; color:var(--navy); word-break:break-word; }
+    .certificate-preview p{ color:var(--muted); font-size:.84rem; margin-top:7px; }
+
+    .success-screen{ display:none; text-align:center; padding:42px 20px; }
+    .success-icon{ font-size:4rem; margin-bottom:16px; }
+    .success-screen h3{ font-size:1.7rem; font-weight:900; color:#10233f; margin-bottom:8px; }
+    .success-screen p{ color:var(--muted); margin-bottom:24px; }
+
+    .scroll-top{
+      position:fixed; right:22px; bottom:22px;
+      width:44px; height:44px; border:none; border-radius:50%;
+      background:var(--orange); color:#fff; font-size:1.3rem;
+      font-weight:900; cursor:pointer;
+      box-shadow:0 12px 28px rgba(247,148,29,.35);
+      display:none; z-index:999;
+    }
+    .scroll-top.show{ display:grid; place-items:center; }
+
+    @media(max-width:980px){
+      .registration-layout{ grid-template-columns:1fr; }
+      .form-card,.info-card{ padding:28px; }
+    }
+    @media(max-width:640px){
+      .registration-section{ padding:48px 0 70px; }
+      .form-grid{ grid-template-columns:1fr; }
+      .form-card,.info-card{ padding:24px 20px; border-radius:22px; }
+      .submit-wrap .btn{ width:100%; }
+      .section-head{ text-align:left; }
+      .section-head p{ margin:0; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="header-placeholder"></div>
+
+  <main>
+
+    <!-- HERO BANNER -->
+    <section class="reg-hero">
+      <div class="reg-hero-bg"></div>
+      <div class="reg-hero-shape"></div>
+      <div class="container reg-hero-wrap">
+        <div class="reg-hero-img">
+          <img src="img 4.jpeg" alt="VED Foundation Student Registration">
+        </div>
+        <div class="reg-hero-content">
+          <div class="hero-icon">📝</div>
+          <span class="hero-small">Student Registration</span>
+          <h1>Join the VED<br><span>Foundation</span> Community</h1>
+          <p>Register as a student to access workshops, skill programs, career guidance, and your official certificate. Completely free for all registered students.</p>
+          <div class="reg-hero-actions">
+            <a href="#register" class="btn-hero-p">Start Registration ↓</a>
+            <a href="login.html" class="btn-hero-o">Already Registered?</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="registration-section" id="register">
+      <div class="container">
+
+        <div class="section-head">
+          <span class="tag">● Registration Form</span>
+          <h2>&nbsp;Student Registration</h2>
+          <p>Fill all required fields carefully to avoid mistakes in registration and certificate.</p>
+        </div>
+
+        <div class="registration-layout">
+
+          <!-- ── FORM CARD ── -->
+          <div class="form-card">
+            <h3>Register Now</h3>
+            <p>Complete all required details below.</p>
+
+            <!-- Success Screen (shown after successful registration) -->
+            <div class="success-screen" id="successScreen">
+              <div class="success-icon">🎉</div>
+              <h3>Registration Successful!</h3>
+              <p id="successMsg">You have been registered successfully.</p>
+              <a href="login.html" class="btn btn-secondary">Login to Your Account</a>
+            </div>
+
+            <form class="registration-form" id="registrationForm">
+              <p class="sorted-note">
+                Required fields are marked with <span style="color:#ef4444">*</span>.
+                Graduation fields will appear only when you select Graduation.
+              </p>
+
+              <!-- Basic Information -->
+              <div class="form-section">
+                <h4>📋 Basic Information</h4>
+                <div class="form-grid">
+
+                  <div class="form-group full-width">
+                    <label for="email">Email <span class="required">*</span></label>
+                    <input type="email" id="email" name="email"
+                           placeholder="Enter your email" required autocomplete="email">
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label for="password">Password <span class="required">*</span></label>
+                    <input type="password" id="password" name="password"
+                           placeholder="Create password (min 6 characters)" required autocomplete="new-password">
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label for="fullName">Full Name <span class="required">*</span></label>
+                    <input type="text" id="fullName" name="fullName"
+                           placeholder="Enter full name as required on certificate" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="mobile">Mobile Number <span class="required">*</span></label>
+                    <input type="tel" id="mobile" name="mobile"
+                           placeholder="10-digit mobile number" maxlength="10" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Gender <span class="required">*</span></label>
+                    <div class="radio-group">
+                      <label class="radio-option">
+                        <input type="radio" name="gender" value="Male" required> Male
+                      </label>
+                      <label class="radio-option">
+                        <input type="radio" name="gender" value="Female"> Female
+                      </label>
+                      <label class="radio-option">
+                        <input type="radio" name="gender" value="Other"> Other
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="city">City <span class="required">*</span></label>
+                    <input type="text" id="city" name="city" placeholder="Enter city" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="state">State <span class="required">*</span></label>
+                    <input type="text" id="state" name="state" placeholder="Enter state" required>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Academic Details -->
+              <div class="form-section">
+                <h4>🎓 Academic Details</h4>
+                <div class="form-grid">
+
+                  <div class="form-group">
+                    <label for="standard">Standard <span class="required">*</span></label>
+                    <select id="standard" name="standard" required>
+                      <option value="">Select standard</option>
+                      <option value="10th">10th</option>
+                      <option value="11th">11th</option>
+                      <option value="12th">12th</option>
+                      <option value="Graduation">Graduation</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="schoolName">School / College Name</label>
+                    <input type="text" id="schoolName" name="schoolName"
+                           placeholder="Enter school or college name">
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label for="percentageCgpa">Percentage / CGPA</label>
+                    <input type="text" id="percentageCgpa" name="percentageCgpa"
+                           placeholder="e.g. 85% or 8.5 CGPA">
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Graduation Details (shown only when Graduation selected) -->
+              <div class="form-section graduation-section" id="graduationSection">
+                <h4>🏛 Graduation Details</h4>
+                <div class="form-grid">
+
+                  <div class="form-group">
+                    <label for="graduationCourse">Graduation Course</label>
+                    <input type="text" id="graduationCourse" name="graduationCourse"
+                           placeholder="e.g. B.Tech / B.Sc / B.Com">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="specialization">Specialization</label>
+                    <input type="text" id="specialization" name="specialization"
+                           placeholder="Enter specialization">
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label for="collegeName">College / University Name</label>
+                    <input type="text" id="collegeName" name="collegeName"
+                           placeholder="Enter college/university name">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="graduationCgpa">Graduation Percentage / CGPA</label>
+                    <input type="text" id="graduationCgpa" name="graduationCgpa"
+                           placeholder="Enter graduation percentage or CGPA">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="passingYear">Passing Year</label>
+                    <input type="number" id="passingYear" name="passingYear"
+                           placeholder="e.g. 2024" min="2000" max="2035">
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="submit-wrap">
+                <button type="submit" class="btn btn-secondary" id="submitBtn">
+                  Submit Registration
+                </button>
+                <button type="reset" class="btn btn-primary">Reset Form</button>
+              </div>
+
+              <p id="formMessage"></p>
+            </form>
+          </div>
+
+          <!-- ── INFO CARD ── -->
+          <div class="info-card">
+            <h3>Important Notes</h3>
+            <p>Please review these points before submitting.</p>
+
+            <div class="info-box">
+              <strong>Certificate Name</strong>
+              <span>Enter your full name exactly as you want it on your certificate.</span>
+            </div>
+            <div class="info-box">
+              <strong>Required Fields</strong>
+              <span>Email, password, full name, mobile, gender, city, state and standard are mandatory.</span>
+            </div>
+            <div class="info-box">
+              <strong>Graduation Students</strong>
+              <span>Graduation details will appear only when you select Graduation.</span>
+            </div>
+            <div class="info-box">
+              <strong>Contact Details</strong>
+              <span>Workshop updates will be shared via your registered email and mobile number.</span>
+            </div>
+
+            <div class="certificate-preview">
+              <span class="certificate-badge">Live Certificate Name Preview</span>
+              <h4 id="previewName">Your Name Here</h4>
+              <p>This preview shows how your name will appear on the certificate.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <button class="scroll-top" id="scrollTopBtn">↑</button>
+
+  <script>
+    /* ── CONFIG ───────────────────────────────────────────────── */
+    const API_BASE = window.VED_API_BASE;
+
+    /* ── DOM refs ─────────────────────────────────────────────── */
+    const registrationForm  = document.getElementById('registrationForm');
+    const fullNameInput     = document.getElementById('fullName');
+    const previewName       = document.getElementById('previewName');
+    const standardInput     = document.getElementById('standard');
+    const graduationSection = document.getElementById('graduationSection');
+    const formMessage       = document.getElementById('formMessage');
+    const submitBtn         = document.getElementById('submitBtn');
+    const successScreen     = document.getElementById('successScreen');
+    const successMsg        = document.getElementById('successMsg');
+    const scrollTopBtn      = document.getElementById('scrollTopBtn');
+
+    // Header/footer loaded by shared.js (included at bottom of page)
+
+    /* ── Live certificate preview ─────────────────────────────── */
+    fullNameInput.addEventListener('input', function () {
+      previewName.textContent = this.value.trim() || 'Your Name Here';
+    });
+
+    /* ── Show / hide graduation section ───────────────────────── */
+    standardInput.addEventListener('change', function () {
+      if (this.value === 'Graduation') {
+        graduationSection.classList.add('show');
+      } else {
+        graduationSection.classList.remove('show');
+        ['graduationCourse','specialization','collegeName','graduationCgpa','passingYear']
+          .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      }
+    });
+
+    /* ── Reset form ───────────────────────────────────────────── */
+    registrationForm.addEventListener('reset', () => {
+      setTimeout(() => {
+        graduationSection.classList.remove('show');
+        previewName.textContent = 'Your Name Here';
+        showMsg('', '');
+      }, 0);
+    });
+
+    /* ── Helpers ──────────────────────────────────────────────── */
+    function showMsg(text, color) {
+      formMessage.textContent = text;
+      formMessage.style.color = color || '';
+    }
+
+    function val(id) {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : '';
+    }
+
+    /* ── Submit ───────────────────────────────────────────────── */
+    registrationForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      showMsg('', '');
+
+      const email      = val('email');
+      const password   = val('password');
+      const fullName   = val('fullName');
+      const mobile     = val('mobile');
+      const city       = val('city');
+      const state      = val('state');
+      const standard   = standardInput.value;
+      const genderEl   = document.querySelector('input[name="gender"]:checked');
+
+      /* Client-side validation */
+      if (!email || !password || !fullName || !mobile || !city || !state || !standard || !genderEl) {
+        showMsg('Please fill all required fields.', '#ef4444');
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showMsg('Please enter a valid email address.', '#ef4444');
+        return;
+      }
+      if (password.length < 6) {
+        showMsg('Password must be at least 6 characters.', '#ef4444');
+        return;
+      }
+      if (!/^[6-9]\d{9}$/.test(mobile)) {
+        showMsg('Please enter a valid 10-digit mobile number starting with 6-9.', '#ef4444');
+        return;
+      }
+
+      const passingYearVal = val('passingYear');
+
+      const payload = {
+        email,
+        password,
+        fullName,
+        mobile,
+        gender:           genderEl.value,
+        city,
+        state,
+        standard,
+        schoolName:       val('schoolName'),
+        percentageCgpa:   val('percentageCgpa'),
+        graduationCourse: val('graduationCourse'),
+        specialization:   val('specialization'),
+        collegeName:      val('collegeName'),
+        graduationCgpa:   val('graduationCgpa'),
+        passingYear:      passingYearVal ? Number(passingYearVal) : null,
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner-inline"></span>Submitting...';
+
+      try {
+        /* ── POST /api/students/register ───────────────────────
+           (backend also accepts POST /api/students as alias)   */
+        const response = await fetch(API_BASE + '/students/register', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(payload),
+        });
+
+        let data;
+        try { data = await response.json(); }
+        catch (_) { data = { success: false, message: 'Invalid server response.' }; }
+
+        if (!response.ok || !data.success) {
+          const errText =
+            (Array.isArray(data.errors) ? data.errors.map(e => e.msg || e.message).join(', ') : null)
+            || data.message
+            || 'Registration failed. Please try again.';
+          showMsg(errText, '#ef4444');
+          return;
+        }
+
+        /* Save token so the student is logged in immediately */
+        if (data.token) {
+          sessionStorage.setItem('ved_student_token', data.token);
+          localStorage.setItem('ved_student_token', data.token);
+        }
+        if (data.student) {
+          sessionStorage.setItem('ved_student_info', JSON.stringify(data.student));
+          localStorage.setItem('ved_student_info', JSON.stringify(data.student));
+        }
+
+        /* Show success screen */
+        registrationForm.style.display = 'none';
+        successMsg.textContent = `Welcome, ${fullName}! Your registration is successful. You can now login to track your status.`;
+        successScreen.style.display = 'block';
+
+      } catch (err) {
+        console.error(err);
+        showMsg('Cannot connect to server. Please start the backend: npm start', '#f59e0b');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Submit Registration';
+      }
+    });
+
+    /* ── Scroll-to-top ────────────────────────────────────────── */
+    window.addEventListener('scroll', () => {
+      scrollTopBtn.classList.toggle('show', window.scrollY > 250);
+    });
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+  <script src="shared.js"></script>
+</body>
+</html>
