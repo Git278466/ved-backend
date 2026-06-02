@@ -101,20 +101,21 @@ app.use(
 // Preflight request support
 app.options("*", cors());
 
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "2mb" }));
+app.use(express.urlencoded({ extended: true, limit: "2mb" }));
 
-// ── Gzip compression (reduces response size by ~70%) ─────────
-app.use(compression());
+// ── Gzip compression — only compress responses > 1KB (saves CPU on tiny payloads) ──
+app.use(compression({ threshold: 1024 }));
 
 // ── HTTP request logging ──────────────────────────────────────
 if (process.env.NODE_ENV !== "test") {
-  app.use(morgan("dev"));
-  // Also log to file in production
   if (process.env.NODE_ENV === "production") {
+    // Production: structured combined log to file only (skip noisy dev colours)
     app.use(morgan("combined", {
       stream: { write: msg => logger.http(msg.trim()) }
     }));
+  } else {
+    app.use(morgan("dev"));
   }
 }
 /* =========================
@@ -196,6 +197,12 @@ servePage("/mobilization-form",       "mobilization-form.html");
 servePage("/mobilization-form.html",  "mobilization-form.html");
 servePage("/institution-dashboard",       "institution-dashboard.html");
 servePage("/institution-dashboard.html",  "institution-dashboard.html");
+servePage("/partner-certificate",             "partner-certificate.html");
+servePage("/partner-certificate.html",        "partner-certificate.html");
+servePage("/admin-certificate-approvals",     "admin-certificate-approvals.html");
+servePage("/admin-certificate-approvals.html","admin-certificate-approvals.html");
+servePage("/verify-cep-certificate",          "verify-cep-certificate.html");
+servePage("/verify-cep-certificate.html",     "verify-cep-certificate.html");
 
 /* =========================
    HEALTH ROUTES
@@ -263,12 +270,39 @@ const counsellingResponseRoutes  = safeRoute("./routes/counsellingResponseRoutes
 const workshopRoutes             = safeRoute("./routes/workshopRoutes");
 const mobilizationRoutes         = safeRoute("./routes/mobilizationRoutes");
 const institutionLeadRoutes      = safeRoute("./routes/institutionLeadRoutes");
+const partnerCertificateRoutes   = safeRoute("./routes/partnerCertificateRoutes");
+const notificationRoutes         = safeRoute("./routes/notificationRoutes");
+const marketingRoutes            = safeRoute("./routes/marketingRoutes");
 
 /* =========================
    ADMIN UTILITIES
 ========================= */
 const { protectAdmin } = require('./middleware/authMiddleware');
 const { isSuperAdmin }  = require('./middleware/roleMiddleware');
+
+/* ── Get or auto-create the Associate Partner role (any admin) ── */
+app.get('/api/admin-utils/associate-partner-role', protectAdmin, async (req, res) => {
+  try {
+    const Role = require('./models/Role');
+    let role = await Role.findOne({ name: 'Associate Partner' }).lean();
+    if (!role) {
+      role = await Role.create({
+        name: 'Associate Partner',
+        description: 'Associate partner — can refer leads and view their assigned data only',
+        permissions: ['dashboard.view', 'associate_partners.view', 'leads.view', 'leads.create'],
+        isSystem: false,
+        status: 'active',
+        icon: 'fa-handshake',
+        color: '#7c3aed'
+      });
+      role = role.toObject ? role.toObject() : role;
+      console.log('[seed] Associate Partner role created:', role._id);
+    }
+    res.json({ success: true, data: role });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 
 app.post('/api/admin-utils/backfill-codes', protectAdmin, isSuperAdmin, async (req, res) => {
   try {
@@ -291,33 +325,40 @@ app.post('/api/admin-utils/backfill-codes', protectAdmin, isSuperAdmin, async (r
 
     const { namePrefix } = generateCode;
 
-    // Admins: first 4 letters of firstName + random digits
-    const missingAdmins = await Admin.find({
-      $or: [{ code: null }, { code: { $exists: false } }],
-      ...(superAdminRole ? { role: { $ne: superAdminRole._id } } : {}),
-    }).populate('role', 'name isSystem');
+    // Admins: fix missing codes AND regenerate old 4-letter prefix codes (e.g. FIRO-5558 → FIROJ-5558)
+    const allAdmins = await Admin.find(
+      superAdminRole ? { role: { $ne: superAdminRole._id } } : {}
+    ).populate('role', 'name isSystem');
 
-    for (const admin of missingAdmins) {
+    for (const admin of allAdmins) {
       if (admin.role?.isSystem) continue;
-      const code = await generateCode(Admin, namePrefix(admin.firstName || admin.email || 'ADMI'));
-      await Admin.updateOne({ _id: admin._id }, { code });
-      total++;
+      const prefix = namePrefix(admin.firstName || admin.email || 'ADMIN');
+      const existingPrefix = (admin.code || '').split('-')[0] || '';
+      // Generate if: no code, OR existing prefix is shorter than 5 chars
+      if (!admin.code || existingPrefix.length < 5) {
+        const code = await generateCode(Admin, prefix);
+        await Admin.updateOne({ _id: admin._id }, { code });
+        total++;
+      }
     }
 
-    // Institutions: first 4 letters of institution name
+    // Institutions: fix missing codes
     const missingInst = await Institution.find({ $or: [{ code: null }, { code: { $exists: false } }] });
     for (const doc of missingInst) {
-      const code = await generateCode(Institution, namePrefix(doc.name || 'INST'));
+      const code = await generateCode(Institution, namePrefix(doc.name || 'INSTI'));
       await Institution.updateOne({ _id: doc._id }, { code });
       total++;
     }
 
-    // Partners: first 4 letters of organization name
-    const missingPart = await Partner.find({ $or: [{ code: null }, { code: { $exists: false } }] });
-    for (const doc of missingPart) {
-      const code = await generateCode(Partner, namePrefix(doc.organizationName || 'PART'));
-      await Partner.updateOne({ _id: doc._id }, { code });
-      total++;
+    // Partners: fix missing codes AND regenerate old 4-letter prefix codes
+    const allPartners = await Partner.find({});
+    for (const doc of allPartners) {
+      const existingPrefix = (doc.code || '').split('-')[0] || '';
+      if (!doc.code || existingPrefix.length < 5) {
+        const code = await generateCode(Partner, namePrefix(doc.organizationName || 'PARTN'));
+        await Partner.updateOne({ _id: doc._id }, { code });
+        total++;
+      }
     }
 
     res.json({ success: true, summary: `${total} record(s) updated`, total });
@@ -416,13 +457,30 @@ app.use("/api/workshops",              workshopRoutes);
   app.get("/api/mobilization/stats", mobAuth, async (req, res) => {
     if (!Mob) return res.status(503).json({ success: false, message: "Unavailable.", data: {} });
     try {
-      const [total, newC, contacted, enrolled] = await Promise.all([
-        Mob.countDocuments(),
-        Mob.countDocuments({ status: "new" }),
-        Mob.countDocuments({ status: "contacted" }),
-        Mob.countDocuments({ status: "enrolled" }),
+      // Single $facet aggregation replaces 4 separate countDocuments calls
+      const [result] = await Mob.aggregate([
+        { $facet: {
+          total:     [{ $count: "n" }],
+          new:       [{ $match: { status: "new" }       }, { $count: "n" }],
+          contacted: [{ $match: { status: "contacted" } }, { $count: "n" }],
+          enrolled:  [{ $match: { status: "enrolled" }  }, { $count: "n" }],
+          byGender:  [{ $group: { _id: "$gender", count: { $sum: 1 } } }],
+          byCourse:  [
+            { $group: { _id: "$skillCourse", count: { $sum: 1 } } },
+            { $sort: { count: -1 } },
+            { $limit: 10 },
+          ],
+        }},
       ]);
-      res.json({ success: true, data: { total, newCount: newC, contactedCount: contacted, enrolledCount: enrolled } });
+      const total     = result?.total?.[0]?.n     || 0;
+      const newC      = result?.new?.[0]?.n       || 0;
+      const contacted = result?.contacted?.[0]?.n || 0;
+      const enrolled  = result?.enrolled?.[0]?.n  || 0;
+      res.json({ success: true, data: {
+        total, newCount: newC, contactedCount: contacted, enrolledCount: enrolled,
+        byGender: result?.byGender || [],
+        byCourse: result?.byCourse || [],
+      }});
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
   });
 
@@ -451,6 +509,9 @@ app.use("/api/workshops",              workshopRoutes);
 }());
 
 app.use("/api/institution",            institutionLeadRoutes);
+app.use("/api/cep-certificates",       partnerCertificateRoutes);
+app.use("/api/notifications",          notificationRoutes);
+app.use("/api/marketing-materials",    marketingRoutes);
 
 /* =========================
    AUTH ALIAS ROUTES
@@ -621,6 +682,56 @@ process.on("uncaughtException", (err) => {
 ========================= */
 const PORT = process.env.PORT || 5000;
 
+/* ── Seed default roles on startup ────────────────────────────── */
+async function seedDefaultRoles() {
+  try {
+    const Role        = require('./models/Role');
+    const PERMISSIONS = require('./config/permissions');
+
+    // 1. Admin role — all permissions (editable, not system)
+    const adminRole = await Role.findOne({ name: 'Admin' });
+    if (!adminRole) {
+      await Role.create({
+        name: 'Admin',
+        description: 'Full-access admin — all permissions granted. Restrict via Roles & Permissions.',
+        permissions: [...PERMISSIONS],
+        isSystem: false,
+        status: 'active',
+        icon: 'fa-user-shield',
+        color: '#2563eb'
+      });
+      console.log('[seed] Admin role created with all permissions');
+    } else {
+      // Ensure existing Admin role has ALL permissions (adds any missing ones)
+      const missing = PERMISSIONS.filter(p => !adminRole.permissions.includes(p));
+      if (missing.length) {
+        await Role.updateOne(
+          { _id: adminRole._id },
+          { $addToSet: { permissions: { $each: missing } } }
+        );
+        console.log(`[seed] Admin role updated — added ${missing.length} missing permission(s)`);
+      }
+    }
+
+    // 2. Associate Partner role — limited permissions
+    const apRole = await Role.findOne({ name: 'Associate Partner' });
+    if (!apRole) {
+      await Role.create({
+        name: 'Associate Partner',
+        description: 'Associate partner — can refer leads and view their assigned data only',
+        permissions: ['dashboard.view', 'associate_partners.view', 'leads.view', 'leads.create'],
+        isSystem: false,
+        status: 'active',
+        icon: 'fa-handshake',
+        color: '#7c3aed'
+      });
+      console.log('[seed] Associate Partner role created');
+    }
+  } catch (err) {
+    console.warn('[seed] seedDefaultRoles error:', err.message);
+  }
+}
+
 /* ── Auto-backfill unique codes on startup ─────────────────────── */
 async function autoBackfillCodes() {
   try {
@@ -640,26 +751,22 @@ async function autoBackfillCodes() {
       if (removed.modifiedCount) console.log(`[codes] Removed code from ${removed.modifiedCount} Super Admin(s)`);
     }
 
-    // ── Other admins: assign role-based prefix (first 4 letters of role name) ──
-    const roles = await Role.find({ isSystem: { $ne: true } }).lean();
-    const prefixMap = {};
-    roles.forEach(r => {
-      // First 4 letters of role name, letters only, uppercase
-      const prefix = r.name.replace(/[^A-Za-z]/g, '').substring(0, 4).toUpperCase();
-      prefixMap[r._id.toString()] = prefix || 'ADMI';
-    });
+    // ── Other admins: first 4 letters of firstName + random 4 digits ──
+    const { namePrefix } = generateCode;
 
-    const missingAdmins = await Admin.find({
-      $or: [{ code: null }, { code: { $exists: false } }],
+    const allAdmins = await Admin.find({
       ...(superAdminRole ? { role: { $ne: superAdminRole._id } } : {}),
     }).populate('role', 'name isSystem');
 
-    for (const admin of missingAdmins) {
+    for (const admin of allAdmins) {
       if (admin.role?.isSystem) continue;  // skip Super Admin
-      const prefix = prefixMap[admin.role?._id?.toString()] || 'ADM';
-      admin.code = await generateCode(Admin, prefix);
-      await Admin.updateOne({ _id: admin._id }, { code: admin.code });
-      console.log(`[codes] Admin "${admin.firstName}" → ${admin.code}`);
+      const prefix = namePrefix(admin.firstName || admin.email || 'ADMI');
+      // Regenerate if missing OR if code doesn't start with first-name prefix
+      const needsUpdate = !admin.code || !admin.code.startsWith(prefix);
+      if (!needsUpdate) continue;
+      const newCode = await generateCode(Admin, prefix);
+      await Admin.updateOne({ _id: admin._id }, { code: newCode });
+      console.log(`[codes] Admin "${admin.firstName}" → ${newCode}`);
     }
 
     // ── Institutions & Partners ──────────────────────────────────
@@ -699,6 +806,9 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log("║  the same WiFi / LAN network.                        ║");
   console.log("╚══════════════════════════════════════════════════════╝");
   console.log("");
+
+  // ── Seed default roles (Admin + Associate Partner) ────────────
+  seedDefaultRoles();
 
   // ── Backfill unique codes for any records missing them ────────
   autoBackfillCodes();
