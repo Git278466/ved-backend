@@ -14,60 +14,70 @@ exports.getStats = async (req, res) => {
   try {
     const ownerFilter = req.ownerFilter || {};
 
-    const [
-      totalStudents,
-      pendingStudents,
-      approvedStudents,
-      rejectedStudents,
-      certIssued,
-      totalAdmins,
-      totalRoles,
-      totalInstitutions,
-      totalPartners,
-      donationAgg,
-    ] = await Promise.all([
-      Student.countDocuments(ownerFilter),
-      Student.countDocuments({ ...ownerFilter, status: 'pending' }),
-      Student.countDocuments({ ...ownerFilter, status: 'approved' }),
-      Student.countDocuments({ ...ownerFilter, status: 'rejected' }),
-      Student.countDocuments({ ...ownerFilter, certificateStatus: 'issued' }),
-      Admin.countDocuments({ status: 'active' }),
-      Role.countDocuments({ status: 'active' }),
-      Institution.countDocuments({ status: 'active' }),
-      Partner.countDocuments({ status: 'active' }),
-      Donation.aggregate([
-        { $match: { status: 'confirmed' } },
-        { $group: { _id: null, total: { $sum: '$amount' } } },
-      ]),
-    ]);
+    // Cache-Control: clients may cache this for 60s (avoids redundant calls from
+    // multiple components calling updateOverviewStats() in the same session)
+    res.set('Cache-Control', 'private, max-age=60');
 
-    // Monthly registrations (last 6 months)
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-    const monthlyTrend = await Student.aggregate([
-      { $match: { ...ownerFilter, registrationDate: { $gte: sixMonthsAgo } } },
-      { $group: {
-        _id: { year: { $year: '$registrationDate' }, month: { $month: '$registrationDate' } },
-        count: { $sum: 1 },
-      }},
-      { $sort: { '_id.year': 1, '_id.month': 1 } },
-    ]);
+    // All 5 Student queries + monthly trend in a single aggregation pass
+    const [studentFacets, adminRoleCounts, totalRoles, totalInstitutions, donationAgg] =
+      await Promise.all([
+        Student.aggregate([
+          { $match: ownerFilter },
+          { $facet: {
+            total:    [{ $count: 'n' }],
+            pending:  [{ $match: { status: 'pending'  } }, { $count: 'n' }],
+            approved: [{ $match: { status: 'approved' } }, { $count: 'n' }],
+            rejected: [{ $match: { status: 'rejected' } }, { $count: 'n' }],
+            certs:    [{ $match: { certificateStatus: 'issued' } }, { $count: 'n' }],
+            monthly:  [
+              { $match: { registrationDate: { $gte: sixMonthsAgo } } },
+              { $group: {
+                _id:   { year: { $year: '$registrationDate' }, month: { $month: '$registrationDate' } },
+                count: { $sum: 1 },
+              }},
+              { $sort: { '_id.year': 1, '_id.month': 1 } },
+            ],
+          }},
+        ]),
+        // Count active admins grouped by role name
+        Admin.aggregate([
+          { $match: { status: 'active' } },
+          { $lookup: { from: 'roles', localField: 'role', foreignField: '_id', as: 'roleDoc' } },
+          { $unwind: { path: '$roleDoc', preserveNullAndEmptyArrays: true } },
+          { $group: { _id: '$roleDoc.name', count: { $sum: 1 } } },
+        ]),
+        Role.countDocuments({ status: 'active' }),
+        Institution.countDocuments({ status: 'active' }),
+        Donation.aggregate([
+          { $match: { status: 'confirmed' } },
+          { $group: { _id: null, total: { $sum: '$amount' } } },
+        ]),
+      ]);
 
+    // Build role → count map
+    const roleCountMap = {};
+    adminRoleCounts.forEach(r => { if (r._id) roleCountMap[r._id] = r.count; });
+
+    const sf = studentFacets[0] || {};
     res.json({
       success: true,
       data: {
-        totalStudents,
-        pendingStudents,
-        approvedStudents,
-        rejectedStudents,
-        certificatesIssued: certIssued,
-        totalAdmins,
+        totalStudents:        sf.total?.[0]?.n    || 0,
+        pendingStudents:      sf.pending?.[0]?.n  || 0,
+        approvedStudents:     sf.approved?.[0]?.n || 0,
+        rejectedStudents:     sf.rejected?.[0]?.n || 0,
+        certificatesIssued:   sf.certs?.[0]?.n    || 0,
+        totalAdmins:          roleCountMap['Admin']             || 0,
+        totalPartners:        roleCountMap['Associate Partner'] || 0,
+        totalSuperAdmins:     roleCountMap['Super Admin']       || 0,
         totalRoles,
         totalInstitutions,
-        totalPartners,
         totalDonationsAmount: donationAgg[0]?.total || 0,
-        monthlyTrend,
+        monthlyTrend:         sf.monthly           || [],
+        adminRoleCounts:      roleCountMap,
       },
     });
   } catch (err) {

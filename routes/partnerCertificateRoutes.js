@@ -349,40 +349,30 @@ router.get('/admin/certificates', hasPermission('cep_certificates.view'), async 
   } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
-/* ── Reset approved request: delete cert + set request to rejected ── */
+/* ── Delete cert + hard-delete request so partner can re-apply fresh ── */
 router.delete('/admin/requests/:requestId/certificate', hasPermission('cep_certificates.delete'), async (req, res) => {
   try {
     const reason = req.body?.revokeReason?.trim() || 'Certificate deleted by admin.';
 
-    const updatedReq = await PartnerCertificateRequest.findByIdAndUpdate(
-      req.params.requestId,
-      {
-        $set: {
-          status:          'rejected',
-          rejectionReason: `${reason} You may submit a new request to re-apply.`,
-          certificate:     null,
-          reviewedAt:      new Date(),
-          reviewedBy:      req.admin._id,
-        }
-      },
-      { new: false }
-    ).lean();
+    const request = await PartnerCertificateRequest.findById(req.params.requestId).lean();
+    if (!request) return res.status(404).json({ success: false, message: 'Request not found.' });
 
-    if (!updatedReq) return res.status(404).json({ success: false, message: 'Request not found.' });
-
-    // Hard delete the linked certificate (use original certId before it was nulled)
-    const certToDelete = updatedReq.certificate || req.body?.certId;
+    // Hard delete the linked certificate
+    const certToDelete = request.certificate || req.body?.certId;
     if (certToDelete) {
       await CEPCertificate.findByIdAndDelete(certToDelete);
     }
 
+    // Hard delete the request so it's gone from history
+    await PartnerCertificateRequest.findByIdAndDelete(req.params.requestId);
+
     // Notify partner
-    if (updatedReq.partner) {
-      await bulkNotify([updatedReq.partner], {
+    if (request.partner) {
+      await bulkNotify([request.partner], {
         type:    'cert_deleted',
         title:   'Your CEP Certificate Was Removed',
         message: `${reason} You may submit a new certificate request to re-apply.`,
-        data:    { requestId: updatedReq._id },
+        data:    {},
       });
     }
 

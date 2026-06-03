@@ -58,8 +58,8 @@ const partnerSchema = new mongoose.Schema(
 );
 
 // ── Auto-generate unique code using organization name ────────────
-// Format: first 4 letters of organization name + random 4-digit number
-// e.g. "Youth For India NGO" → YOUT-3842
+// Format: first 5 letters of organization name + random 4-digit number
+// e.g. "Youth For India NGO" → YOUTH-3842
 partnerSchema.pre('save', async function (next) {
   if (this.isNew && !this.code) {
     const { namePrefix } = require('../utils/generateCode');

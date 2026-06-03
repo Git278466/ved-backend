@@ -23,6 +23,7 @@ router.post('/danger/reset-settings',   isSuperAdmin, ctrl.resetToDefault);
 
 // Admin CRUD (permission-gated)
 router.get('/',                     hasPermission('admin_management.view'),   ctrl.getAdmins);
+router.get('/:id/credential',       hasPermission('admin_management.view'),   ctrl.getCredential);
 router.get('/:id',                  hasPermission('admin_management.view'),   ctrl.getAdmin);
 router.post('/',                    hasPermission('admin_management.create'), ctrl.createAdmin);
 router.put('/:id',                  hasPermission('admin_management.update'), ctrl.updateAdmin);

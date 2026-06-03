@@ -155,6 +155,14 @@ const PERMISSIONS = [
   'filter_presets.update',
   'filter_presets.delete',
 
+  // ── CEP Partner Certificates ─────────────────────────────────
+  'cep_certificates.view',
+  'cep_certificates.create',
+  'cep_certificates.update',
+  'cep_certificates.delete',
+  'cep_certificates.export',
+  'cep_certificates.approve',
+
   // ── Audit Log ────────────────────────────────────────────────
   'audit_log.view',
 ];

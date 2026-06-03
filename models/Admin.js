@@ -44,6 +44,9 @@ const adminSchema = new mongoose.Schema(
     mobile:       { type: String, trim: true },
     profileImage: { type: String, trim: true },
 
+    // ── Credential reference (plain, only visible to Admin/Super Admin) ─
+    plainCredential: { type: String, select: false },
+
     // ── Security tracking ────────────────────────────────────────
     lastLogin:        { type: Date },
     passwordChangedAt:{ type: Date },
@@ -69,8 +72,8 @@ async function isSuperAdminRole(roleId) {
 }
 
 // ── Auto-generate unique code using first name ────────────────────
-// Format: first 4 letters of firstName + random 4-digit number
-// e.g.  "Rishav Gupta" → RISH-7423,  "Swayam Sahu" → SWAY-3891
+// Format: first 5 letters of firstName + random 4-digit number
+// e.g.  "Rishav Gupta" → RISHA-7423,  "Swayam Sahu" → SWAYA-3891
 adminSchema.pre('save', async function (next) {
   if (this.isNew && !this.code) {
     const sa = await isSuperAdminRole(this.role);

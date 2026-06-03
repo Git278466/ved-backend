@@ -201,6 +201,32 @@ exports.getAdmins = async (req, res) => {
 };
 
 /* ============================================================
+   GET /api/admins/:id/credential  (Admin/Super Admin only)
+============================================================ */
+exports.getCredential = async (req, res) => {
+  try {
+    const requesterRole = req.admin?.role?.name || '';
+    const isAllowed = ['Admin', 'Super Admin'].includes(requesterRole) || req.admin?.role?.isSystem;
+    if (!isAllowed) {
+      return res.status(403).json({ success: false, message: 'Access denied.' });
+    }
+
+    const admin = await Admin.findById(req.params.id)
+      .select('+plainCredential')
+      .populate('role', 'name');
+
+    if (!admin) return res.status(404).json({ success: false, message: 'Not found.' });
+    if (admin.role?.name !== 'Associate Partner') {
+      return res.status(403).json({ success: false, message: 'Only Associate Partner credentials can be viewed.' });
+    }
+
+    return res.json({ success: true, credential: admin.plainCredential || null });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/* ============================================================
    GET /api/admins/:id
 ============================================================ */
 exports.getAdmin = async (req, res) => {
@@ -266,6 +292,7 @@ exports.createAdmin = async (req, res) => {
       });
     }
 
+    const isAP = roleDoc.name === 'Associate Partner';
     const admin = await Admin.create({
       firstName: finalFirstName,
       lastName: finalLastName,
@@ -275,11 +302,34 @@ exports.createAdmin = async (req, res) => {
       status: status || 'active',
       mobile,
       createdBy: req.admin?._id || null,
+      ...(isAP && { plainCredential: password }),
     });
 
     const populated = await Admin.findById(admin._id)
       .select('-password')
       .populate('role', 'name description permissions isSystem status icon color');
+
+    // Auto-create a Partner record when the role is "Associate Partner"
+    if (roleDoc.name === 'Associate Partner') {
+      try {
+        const Partner = require('../models/Partner');
+        const exists  = await Partner.findOne({ email: email.toLowerCase().trim() });
+        if (!exists) {
+          await Partner.create({
+            organizationName: `${finalFirstName} ${finalLastName}`.trim(),
+            contactPerson:    `${finalFirstName} ${finalLastName}`.trim(),
+            email:            email.toLowerCase().trim(),
+            mobile:           mobile || '',
+            status:           status || 'active',
+            partnerType:      'individual',
+            linkedAdmin:      admin._id,
+            createdBy:        req.admin?._id || null,
+          });
+        }
+      } catch (partnerErr) {
+        console.warn('[createAdmin] Partner record creation failed:', partnerErr.message);
+      }
+    }
 
     return res.status(201).json({
       success: true,
@@ -364,6 +414,11 @@ exports.updateAdmin = async (req, res) => {
 
     if (password) {
       admin.password = password;
+      // Keep plainCredential in sync for Associate Partners
+      const currentRole = await Role.findById(admin.role).select('name').lean();
+      if (currentRole?.name === 'Associate Partner') {
+        admin.plainCredential = password;
+      }
     }
 
     await admin.save();

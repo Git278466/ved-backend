@@ -1,17 +1,17 @@
 'use strict';
 
 /**
- * Generate a unique code like  RISH-7423
+ * Generate a unique code like  RISHA-7423
  * @param {mongoose.Model} Model   - Mongoose model to check uniqueness against
- * @param {string}         prefix  - First 4 letters of name (e.g. 'RISH', 'YOUT')
+ * @param {string}         prefix  - First 5 letters of name (e.g. 'RISHA', 'YOUTH')
  * @param {string}         field   - field name (default 'code')
  */
 async function generateCode(Model, prefix, field = 'code') {
-  const clean = (prefix || 'XXXX')
+  const clean = (prefix || 'XXXXX')
     .replace(/[^A-Za-z]/g, '')   // letters only
-    .substring(0, 4)
+    .substring(0, 5)
     .toUpperCase()
-    .padEnd(4, 'X');              // pad to 4 if name is short
+    .padEnd(5, 'X');              // pad to 5 if name is short
 
   for (let i = 0; i < 50; i++) {
     // Random 4-digit number: 1000–9999
@@ -26,15 +26,15 @@ async function generateCode(Model, prefix, field = 'code') {
 }
 
 /**
- * Get 4-letter prefix from a name string.
- * "Rishav Gupta" → "RISH", "Youth For India" → "YOUT"
+ * Get 5-letter prefix from a name string.
+ * "Rishav Gupta" → "RISHA", "Youth For India" → "YOUTH"
  */
 function namePrefix(name) {
-  return (name || 'UNKN')
+  return (name || 'UNKNX')
     .replace(/[^A-Za-z]/g, '')
-    .substring(0, 4)
+    .substring(0, 5)
     .toUpperCase()
-    .padEnd(4, 'X');
+    .padEnd(5, 'X');
 }
 
 module.exports = generateCode;

@@ -30,6 +30,8 @@
     "nodemailer": "^8.0.7",
     "p-limit": "^7.3.0",
     "pdf-parse": "^2.4.5",
+    "qrcode": "^1.5.4",
+    "whatsapp-web.js": "^1.34.7",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

@@ -4,6 +4,7 @@ const Lead         = require('../models/Lead');
 const LeadActivity = require('../models/LeadActivity');
 const Student      = require('../models/Student');
 const Admin        = require('../models/Admin');
+const LeadImport   = require('../models/LeadImport');
 const XLSX         = require('xlsx');
 let pdfParse;
 try { pdfParse = require('pdf-parse'); } catch (_) { pdfParse = null; }
@@ -33,6 +34,7 @@ const buildLeadFilter = (q) => {
   if (q.source)     f.source     = q.source;
   if (q.priority)   f.priority   = q.priority;
   if (q.assignedTo) f.assignedTo = q.assignedTo === 'unassigned' ? null : q.assignedTo;
+  if (q.importedBy) f.createdBy  = q.importedBy;
   if (q.city)       f.city       = new RegExp(q.city,  'i');
   if (q.state)      f.state      = new RegExp(q.state, 'i');
   if (q.minScore)   f.score      = { ...(f.score||{}), $gte: Number(q.minScore) };
@@ -77,7 +79,7 @@ exports.getLeads = async (req, res) => {
       Lead.find(filter)
         .sort(sort).skip(skip).limit(Number(limit))
         .populate('assignedTo', 'firstName lastName fullName email')
-        .populate('createdBy',  'firstName lastName fullName')
+        .populate('createdBy',  'firstName lastName fullName role')
         .lean(),
       Lead.countDocuments(filter),
     ]);
@@ -177,7 +179,12 @@ exports.getLead = async (req, res) => {
 // ── POST /api/leads ────────────────────────────────────────────
 exports.createLead = async (req, res) => {
   try {
-    const lead = await Lead.create({ ...req.body, createdBy: req.admin._id });
+    const ENUM_FIELDS = ['source', 'stage', 'priority', 'institutionStatus', 'commissionStatus', 'referrerType'];
+    const body = { ...req.body, createdBy: req.admin._id };
+    for (const field of ENUM_FIELDS) {
+      if (body[field] === '' || body[field] === null) delete body[field];
+    }
+    const lead = await Lead.create(body);
     res.status(201).json({ success: true, message: 'Lead created.', data: lead });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -190,7 +197,14 @@ exports.updateLead = async (req, res) => {
     const prev = await Lead.findById(req.params.id).lean();
     if (!prev) return res.status(404).json({ success: false, message: 'Lead not found.' });
 
-    const lead = await Lead.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+    // Strip empty strings for enum fields so MongoDB uses the stored value instead of failing validation
+    const ENUM_FIELDS = ['source', 'stage', 'priority', 'institutionStatus', 'commissionStatus', 'referrerType'];
+    const updateBody = { ...req.body };
+    for (const field of ENUM_FIELDS) {
+      if (updateBody[field] === '' || updateBody[field] === null) delete updateBody[field];
+    }
+
+    const lead = await Lead.findByIdAndUpdate(req.params.id, updateBody, { new: true, runValidators: true })
       .populate('assignedTo', 'firstName lastName fullName email');
 
     // Log stage change as activity
@@ -446,6 +460,7 @@ exports.importLeads = async (req, res) => {
       priority:['priority'],
       score:['score'],
       notes:['notes','note','remarks','comment'],
+      date:['date','lead date','enquiry date','created date','entry date'],
     };
 
     const VALID_SOURCES  = ['website','referral','event','social_media','walk_in','manual','csv_import','other'];
@@ -466,7 +481,7 @@ exports.importLeads = async (req, res) => {
     }
 
     let imported=0, skipped=0;
-    const errors=[], preview=[];
+    const errors=[], preview=[], createdLeadIds=[];
 
     for (let i=0; i<rows.length; i++) {
       const row = rows[i];
@@ -479,6 +494,8 @@ exports.importLeads = async (req, res) => {
       const stage    = VALID_STAGES.includes(get('stage').toLowerCase())     ? get('stage').toLowerCase()   : 'new';
       const priority = VALID_PRIORITY.includes(get('priority').toLowerCase())? get('priority').toLowerCase(): 'medium';
       const score    = Number(get('score')) || 10;
+      const rawDate  = get('date');
+      const leadDate = rawDate ? new Date(rawDate) : undefined;
 
       try {
         const lead = await Lead.create({
@@ -491,9 +508,11 @@ exports.importLeads = async (req, res) => {
           notes:          get('notes')  || undefined,
           source, stage, priority, score,
           createdBy:  req.admin?._id,
-          assignedTo: assignedTo || undefined,   // bulk-assign to selected partner
+          assignedTo: assignedTo || undefined,
+          ...(leadDate && !isNaN(leadDate) && { createdAt: leadDate }),
         });
         imported++;
+        createdLeadIds.push(lead._id);
         if (preview.length < 5) preview.push({ name, email: get('email'), mobile: get('mobile'), stage, source });
       } catch (err) {
         skipped++;
@@ -501,11 +520,131 @@ exports.importLeads = async (req, res) => {
       }
     }
 
+    // ── Save import batch record ─────────────────────────────────
+    const batchStatus = imported === 0 ? 'failed' : skipped > 0 ? 'partial' : 'completed';
+    await LeadImport.create({
+      importedBy: req.admin._id,
+      fileName:   req.file.originalname,
+      totalRows:  rows.length,
+      imported,
+      skipped,
+      importErrors: errors.slice(0, 20),
+      status:       batchStatus,
+      leads:      createdLeadIds,
+    });
+
     res.json({ success:true, imported, skipped, errors: errors.slice(0,20), preview,
       message: 'Imported ' + imported + ' lead(s)' + (skipped ? ', skipped ' + skipped : '') + '.' });
 
   } catch (err) {
     res.status(500).json({ success:false, message: err.message });
+  }
+};
+
+/* ── GET /api/leads/import-history ──────────────────────────────
+   Admin/SuperAdmin: all batches.
+   Associate Partner: only their own batches.
+─────────────────────────────────────────────────────────────── */
+exports.getImportHistory = async (req, res) => {
+  try {
+    const isScoped = req.admin?.role?.name?.toLowerCase() === 'associate partner';
+    const filter   = isScoped ? { importedBy: req.admin._id } : {};
+
+    const page  = Math.max(1, parseInt(req.query.page)  || 1);
+    const limit = Math.min(50, parseInt(req.query.limit) || 20);
+    const skip  = (page - 1) * limit;
+
+    if (req.query.apId && !isScoped) filter.importedBy = req.query.apId;
+    if (req.query.search) filter.fileName = new RegExp(req.query.search, 'i');
+
+    const [batches, total] = await Promise.all([
+      LeadImport.find(filter)
+        .populate('importedBy', 'firstName lastName email code role')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      LeadImport.countDocuments(filter),
+    ]);
+
+    res.json({ success: true, data: batches, total, page, pages: Math.ceil(total / limit) });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/* ── POST /api/leads/export-and-delete ───────────────────────────
+   Admin / Super Admin only.
+   Exports matching leads to XLSX, then permanently deletes them.
+   Body: { stage, startDate, endDate }
+──────────────────────────────────────────────────────────────── */
+exports.exportAndDeleteLeads = async (req, res) => {
+  try {
+    const { stage, startDate, endDate } = req.body;
+    const filter = {};
+
+    if (stage && stage !== 'all') {
+      filter.stage = Array.isArray(stage) ? { $in: stage } : stage;
+    }
+    if (startDate || endDate) {
+      filter.createdAt = {};
+      if (startDate) filter.createdAt.$gte = new Date(startDate);
+      if (endDate)   filter.createdAt.$lte = new Date(new Date(endDate).setHours(23, 59, 59, 999));
+    }
+
+    const leads = await Lead.find(filter)
+      .sort({ createdAt: -1 })
+      .populate('assignedTo', 'firstName lastName email')
+      .lean();
+
+    if (!leads.length) {
+      return res.status(400).json({ success: false, message: 'No leads found matching the criteria.' });
+    }
+
+    const rows = leads.map((l, i) => ({
+      'S.No':           i + 1,
+      'Name':           l.name            || '',
+      'Email':          l.email           || '',
+      'Mobile':         l.mobile          || '',
+      'City':           l.city            || '',
+      'State':          l.state           || '',
+      'Course Interest':l.courseInterest  || '',
+      'Stage':          l.stage           || '',
+      'Source':         l.source          || '',
+      'Priority':       l.priority        || '',
+      'Score':          l.score           ?? '',
+      'Assigned To':    l.assignedTo
+                          ? ((l.assignedTo.firstName||'')+' '+(l.assignedTo.lastName||'')).trim()
+                          : 'Unassigned',
+      'Next Follow-up': l.nextFollowUp
+                          ? new Date(l.nextFollowUp).toLocaleDateString('en-IN')
+                          : '',
+      'Tags':           (l.tags || []).join(', '),
+      'Notes':          l.notes           || '',
+      'Created At':     new Date(l.createdAt).toLocaleDateString('en-IN'),
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+    ws['!cols'] = Object.keys(rows[0] || {}).map(key => ({
+      wch: Math.max(key.length, ...rows.map(r => String(r[key] || '').length)) + 2,
+    }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Leads');
+    const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+
+    const leadIds = leads.map(l => l._id);
+    await Promise.all([
+      Lead.deleteMany({ _id: { $in: leadIds } }),
+      LeadActivity.deleteMany({ lead: { $in: leadIds } }),
+    ]);
+
+    const date = new Date().toISOString().slice(0, 10);
+    res.setHeader('Content-Disposition', 'attachment; filename="leads-archived-' + date + '.xlsx"');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('X-Deleted-Count', String(leads.length));
+    res.send(buf);
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 

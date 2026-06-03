@@ -29,11 +29,11 @@ const generateCode = require('../utils/generateCode');
       if (r.modifiedCount) console.log(`✅  Removed code from ${r.modifiedCount} Super Admin(s)`);
     }
 
-    // ── Admin users: prefix = first 4 letters of role name ────────
+    // ── Admin users: prefix = first 5 letters of role name ────────
     const roles = await Role.find({ isSystem: { $ne: true } }).lean();
     const prefixMap = {};
     roles.forEach(r => {
-      prefixMap[r._id.toString()] = r.name.replace(/[^A-Za-z]/g,'').substring(0,4).toUpperCase() || 'ADMI';
+      prefixMap[r._id.toString()] = r.name.replace(/[^A-Za-z]/g,'').substring(0,5).toUpperCase() || 'ADMIN';
     });
 
     const admins = await Admin.find(
@@ -42,7 +42,7 @@ const generateCode = require('../utils/generateCode');
 
     for (const admin of admins) {
       if (admin.role?.isSystem) continue;
-      const prefix = prefixMap[admin.role?._id?.toString()] || 'ADMI';
+      const prefix = prefixMap[admin.role?._id?.toString()] || 'ADMIN';
       const expectedPattern = new RegExp('^' + prefix + '-\\d+$');
       if (!admin.code || !expectedPattern.test(admin.code)) {
         if (admin.code) await Admin.updateOne({ _id: admin._id }, { $unset: { code: '' } });
@@ -62,12 +62,19 @@ const generateCode = require('../utils/generateCode');
       console.log(`✅  Institution "${doc.name}" → ${doc.code}`);
     }
 
-    // ── Partner records: PART-XXX ────────────────────────────────
-    const partners = await Partner.find({ $or: [{ code: null }, { code: { $exists: false } }] });
+    // ── Partner records: first 5 letters of org name ─────────────
+    const { namePrefix } = generateCode;
+    const partners = await Partner.find({});
     for (const doc of partners) {
-      doc.code = await generateCode(Partner, 'PART');
-      await doc.save();
-      console.log(`✅  Partner "${doc.organizationName}" → ${doc.code}`);
+      const existingPrefix = (doc.code || '').split('-')[0] || '';
+      if (!doc.code || existingPrefix.length < 5) {
+        const prefix = namePrefix(doc.organizationName || 'PARTN');
+        doc.code = await generateCode(Partner, prefix);
+        await doc.save();
+        console.log(`✅  Partner "${doc.organizationName}" → ${doc.code}`);
+      } else {
+        console.log(`✓   Partner "${doc.organizationName}" → ${doc.code} (already correct)`);
+      }
     }
 
     console.log('\n🎉  Backfill complete!');

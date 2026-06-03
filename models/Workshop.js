@@ -13,6 +13,9 @@ const workshopSchema = new mongoose.Schema(
     icon:        { type: String, default: '🎓' },       // emoji icon
     color:       { type: String, default: '#0b63ce' },  // accent color
 
+    // ── Institution ──────────────────────────────────────────
+    institutionName: { type: String, trim: true, default: '' },
+
     // ── Instructor ───────────────────────────────────────────
     instructor:   { type: String, trim: true },
     instructorBio:{ type: String, trim: true },

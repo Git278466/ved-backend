@@ -85,4 +85,20 @@ const scopeToOwn = (req, res, next) => {
   next();
 };
 
-module.exports = { hasPermission, isSuperAdmin, scopeToOwn };
+/**
+ * isAdminOrSuperAdmin
+ * Allows only Admin and Super Admin roles.
+ */
+const isAdminOrSuperAdmin = (req, res, next) => {
+  if (!req.admin) {
+    return res.status(401).json({ success: false, message: 'Not authenticated.' });
+  }
+  const role = req.admin.role;
+  if (!role) {
+    return res.status(403).json({ success: false, message: 'No role assigned.' });
+  }
+  if (checkSuperAdmin(role) || role.name === 'Admin') return next();
+  return res.status(403).json({ success: false, message: 'Admin or Super Admin access required.' });
+};
+
+module.exports = { hasPermission, isSuperAdmin, isAdminOrSuperAdmin, scopeToOwn };

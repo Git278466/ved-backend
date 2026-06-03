@@ -5,7 +5,7 @@ const multer  = require('multer');
 const router  = express.Router();
 const ctrl    = require('../controllers/leadController');
 const { protectAdmin } = require('../middleware/authMiddleware');
-const { hasPermission, scopeToOwn } = require('../middleware/roleMiddleware');
+const { hasPermission, isAdminOrSuperAdmin, scopeToOwn } = require('../middleware/roleMiddleware');
 
 // multer: store file in memory (max 10 MB), accept only spreadsheet/pdf types
 const upload = multer({
@@ -24,8 +24,10 @@ router.get('/funnel',           hasPermission('leads.view'), scopeToOwn, ctrl.ge
 router.get('/analytics',        hasPermission('leads.view'), scopeToOwn, ctrl.getAnalytics);
 router.get('/export',           hasPermission('leads.export'), scopeToOwn, ctrl.exportLeads);
 router.get('/partner-progress', hasPermission('leads.view'), ctrl.getPartnerProgress);
+router.get('/import-history',   hasPermission('leads.view'),  ctrl.getImportHistory);
 router.post('/import',          hasPermission('leads.create'), upload.single('file'), ctrl.importLeads);
-router.post('/bulk-assign', hasPermission('leads.update'), ctrl.bulkAssign);
+router.post('/bulk-assign',        hasPermission('leads.update'), ctrl.bulkAssign);
+router.post('/export-and-delete',  isAdminOrSuperAdmin,           ctrl.exportAndDeleteLeads);
 
 // ── CRUD ──────────────────────────────────────────────────────
 router.get('/',    hasPermission('leads.view'),   scopeToOwn, ctrl.getLeads);
