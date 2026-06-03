@@ -843,8 +843,8 @@ async function doDeleteCert() {
   const reason = document.getElementById('deleteReasonInput').value.trim() || 'Certificate deleted by admin.';
   closeModal('deleteCertModal');
   showLoader();
-  const r = await apiFetch('PUT', `/cep-certificates/admin/requests/${_state.activeRequestId}/reject`, {
-    rejectionReason: reason,
+  const r = await apiFetch('DELETE', `/cep-certificates/admin/requests/${_state.activeRequestId}`, {
+    revokeReason: reason,
   });
   hideLoader();
   if (r.ok) {
