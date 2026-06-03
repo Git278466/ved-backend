@@ -11658,7 +11658,7 @@ function cepRenderActionArea(req) {
   if (req && req.status === 'approved' && req.certificate) {
     area.innerHTML = `
       <div class="cep-cert-btns" style="margin-top:4px">
-        <button class="cep-cert-btn view" onclick="cepViewCertificate('${escHtml(req.certificate._id)}')">
+        <button class="cep-cert-btn view" onclick="window.open('/verify-cep-certificate.html?id=${escHtml(req.certificate.verificationId || req.certificate._id)}','_blank')"  >
           <i class="fa-solid fa-award"></i>
           <strong>View Certificate</strong>
           <span>Open &amp; download your cert</span>
