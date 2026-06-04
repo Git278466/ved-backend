@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
   <meta name="google-site-verification" content="jp3INNMVt0Xynufd1Xn4A2DfXQwR7RWHoXWLv4yRIt4" />
   <style>
     *{
@@ -34,7 +35,7 @@
 
 html{
   scroll-behavior:smooth;
-  overflow-x:hidden;
+  /* overflow-x:hidden removed from html — it breaks position:fixed/sticky */
 }
 
 body{
@@ -43,6 +44,9 @@ body{
   background:#fff;
   line-height:1.6;
   overflow-x:hidden;
+  max-width:100%;
+  width:100%;
+  padding-top:70px;
 }
 
 a{
@@ -52,6 +56,7 @@ a{
 
 img{
   max-width:100%;
+  height:auto;
   display:block;
 }
 
@@ -76,77 +81,109 @@ img{
 /* ================= HEADER ================= */
 
 .navbar{
-  background:#fff;
-  position:sticky;
+  background:#ffffff;
+  position:fixed;
   top:0;
-  z-index:9999;
-  box-shadow:0 8px 22px rgba(15,23,42,.08);
+  left:0;
+  right:0;
+  width:100%;
+  z-index:99999;
+  box-shadow:0 2px 15px rgba(0,0,0,.08);
+}
+
+.nav-container{
+  width:100%;
+  max-width:1350px;
+  margin:0 auto;
+  padding:0 clamp(16px,3vw,28px);
+  /* NO overflow:hidden — prevents cropping */
 }
 
 .nav-inner{
-  min-height:74px;
+  min-height:70px;
+  height:70px;
   display:flex;
-  align-items:center;
+  align-items:center;       /* all elements vertically centered */
   justify-content:space-between;
-  gap:20px;
+  gap:16px;
   position:relative;
 }
 
 .brand{
   display:flex;
   align-items:center;
-  gap:12px;
-  min-width:240px;
+  gap:10px;
+  flex-shrink:0;            /* logo never compresses */
+  min-width:0;
+  text-decoration:none;
 }
 
 .brand img{
-  width:54px;
-  height:54px;
+  width:46px;
+  height:46px;
+  min-width:46px;
+  max-height:46px;          /* never exceeds navbar */
   object-fit:contain;
-  border-radius:12px;
+  border-radius:10px;
   background:#fff;
-  border:1px solid #edf2f7;
-  padding:5px;
+  border:1.5px solid #edf2f7;
+  padding:4px;
+  display:block;
+  flex-shrink:0;
 }
 
 .brand strong{
   display:block;
   color:#0b2b5e;
-  font-size:1rem;
+  font-size:clamp(.82rem,1.8vw,.96rem);
   font-weight:900;
   line-height:1.05;
+  white-space:nowrap;
 }
 
 .brand span{
-  font-size:.72rem;
+  font-size:.65rem;
   color:#64748b;
   font-weight:600;
+  display:block;
+  margin-top:2px;
+  white-space:nowrap;
 }
 
 .nav-links{
   display:flex;
   align-items:center;
-  gap:22px;
+  gap:20px;
   font-weight:800;
   color:#24344d;
-  font-size:.92rem;
+  font-size:.88rem;
+  flex-shrink:1;
+  min-width:0;
+  height:100%;
 }
 
 .nav-links a{
   position:relative;
-  padding:26px 0;
+  padding:16px 0;           /* reduced — safe within 70px */
+  display:flex;
+  align-items:center;
+  height:100%;
+  white-space:nowrap;
+  text-decoration:none;
+  color:#24344d;
+  transition:color .22s;
 }
 
 .nav-links a::after{
   content:"";
   position:absolute;
   left:0;
-  bottom:18px;
+  bottom:12px;
   width:0;
-  height:3px;
+  height:2.5px;
   background:var(--orange);
   border-radius:4px;
-  transition:.25s;
+  transition:width .22s ease;
 }
 
 .nav-links a:hover{
@@ -160,16 +197,85 @@ img{
 .nav-actions{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:8px;
+  flex-shrink:0;
 }
 
 .menu-toggle{
   display:none;
-  background:none;
-  border:0;
-  font-size:2rem;
-  color:var(--blue-dark);
+  border:1.5px solid #e8edf5;
+  background:#fff;
+  border-radius:10px;
   cursor:pointer;
+  padding:9px 10px;
+  width:44px;
+  height:44px;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:5px;
+  flex-shrink:0;
+  transition:border-color .2s, background .2s;
+}
+
+.menu-toggle:hover{
+  border-color:var(--blue);
+  background:#f0f7ff;
+}
+
+.menu-toggle .hbg{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  width:20px;
+}
+
+.menu-toggle .hbg i{
+  display:block;
+  height:2px;
+  background:var(--blue-dark);
+  border-radius:2px;
+  transition:transform .28s cubic-bezier(.4,0,.2,1), opacity .28s ease, width .28s ease;
+  width:100%;
+  font-style:normal;
+}
+
+.menu-toggle .hbg i:last-child{ width:14px; }
+
+.menu-toggle.is-open .hbg i:first-child{
+  transform:translateY(7px) rotate(45deg);
+  width:100%;
+}
+.menu-toggle.is-open .hbg i:nth-child(2){
+  opacity:0;
+  transform:scaleX(0);
+}
+.menu-toggle.is-open .hbg i:last-child{
+  transform:translateY(-7px) rotate(-45deg);
+  width:100%;
+}
+
+/* Nav Backdrop (mobile drawer overlay) */
+.nav-backdrop{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(8,37,77,.5);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+  z-index:9996;
+  opacity:0;
+  transition:opacity .3s ease;
+}
+
+.nav-backdrop.active{ opacity:1; }
+
+/* Drawer-specific elements: hidden on desktop, shown only in mobile drawer */
+.drawer-top,
+.drawer-cta,
+.drawer-brand,
+.drawer-close{
+  display:none;
 }
 
 .nav-links a,
@@ -229,14 +335,18 @@ img{
   align-items:center;
   justify-content:center;
   gap:8px;
-  padding:11px 20px;
+  padding:10px 18px;
   border-radius:8px;
   font-weight:900;
-  font-size:.88rem;
+  font-size:.85rem;
   border:0;
   cursor:pointer;
   transition:.25s;
   white-space:nowrap;
+  min-height:40px;
+  max-height:46px;          /* never overflow the 70px navbar */
+  line-height:1;
+  font-family:inherit;
 }
 
 .btn-orange{
@@ -261,15 +371,6 @@ img{
   transform:translateY(-2px);
 }
 
-.menu-toggle{
-  display:none;
-  background:none;
-  border:0;
-  font-size:2rem;
-  color:var(--blue-dark);
-  cursor:pointer;
-}
-
 /* ================= HERO ================= */
 
 .hero{
@@ -289,7 +390,7 @@ img{
   object-fit:cover;
   object-position:center;
   z-index:0;
-  filter:brightness(.72) saturate(.9);
+  filter:brightness(.48) saturate(.88);
 }
 
 .hero::before{
@@ -324,8 +425,8 @@ img{
   align-items:center;
   justify-content:center;
   position:relative;
-  padding:44px 20px 44px 48px;
-  overflow:visible;
+  padding:44px 20px 44px 40px;
+  overflow:hidden;
 }
 
 .hero-left::before{
@@ -352,7 +453,8 @@ img{
 .hero-img-wrap{
   position:relative;
   z-index:1;
-  width:70%;
+  width:min(70%,320px);
+  max-width:100%;
 }
 
 .student-photo{
@@ -365,6 +467,7 @@ img{
   box-shadow:0 20px 52px rgba(0,0,0,.32), 0 0 0 6px rgba(255,212,42,.18);
   display:block;
   transition:transform .4s ease, box-shadow .4s ease;
+  filter:contrast(1.08) saturate(1.15) brightness(1.06);
 }
 
 .student-photo:hover{
@@ -393,17 +496,17 @@ img{
 .hero-float-badge:hover{transform:scale(1.06)}
 
 .hfb-1{
-  top:10%;right:-36px;
+  top:10%;right:-28px;
   color:#7c3aed;
   animation:floatBob 3.2s ease-in-out infinite;
 }
 .hfb-2{
-  top:46%;left:-40px;
+  top:46%;left:-28px;
   color:#0b63ce;
   animation:floatBob 3.8s ease-in-out infinite .9s;
 }
 .hfb-3{
-  bottom:18%;right:-40px;
+  bottom:18%;right:-28px;
   color:#16a34a;
   animation:floatBob 3.5s ease-in-out infinite 1.6s;
 }
@@ -415,7 +518,7 @@ img{
 
 .hero-impact-badge{
   position:absolute;
-  bottom:-18px;
+  bottom:12px;
   left:50%;
   transform:translateX(-50%);
   background:#fff;
@@ -448,6 +551,8 @@ img{
 .hero-right{
   padding:48px 5% 48px 3%;
   color:#1f2937;
+  min-width:0;
+  overflow:hidden;
 }
 
 .scholarship-mark{
@@ -491,13 +596,14 @@ img{
 }
 
 .hero-main-text{
-  font-size:clamp(1.9rem,3.1vw,3.6rem);
-  line-height:1.1;
+  font-size:clamp(1.55rem,3.1vw,3.6rem);
+  line-height:1.12;
   color:#23313d;
   font-weight:900;
-  letter-spacing:-1px;
+  letter-spacing:-0.5px;
   max-width:720px;
   margin-bottom:8px;
+  word-break:break-word;
 }
 
 .hero-main-text .green-highlight{
@@ -516,9 +622,10 @@ img{
 /* Stats strip */
 .hero-stats{
   display:flex;
-  gap:20px;
+  gap:14px 20px;
   margin:20px 0 28px;
   flex-wrap:wrap;
+  max-width:100%;
 }
 
 .hero-stat{
@@ -549,9 +656,15 @@ img{
 /* CTA buttons row */
 .hero-cta-row{
   display:flex;
-  gap:14px;
+  gap:12px;
   flex-wrap:wrap;
   align-items:center;
+  max-width:100%;
+}
+
+.support-btn,
+.outline-btn{
+  min-height:48px;
 }
 
 .support-btn{
@@ -634,6 +747,251 @@ img{
   50%{opacity:1;transform:scaleY(1.4)}
 }
 
+/* ============================================================
+   HERO REDESIGN — uses existing VED Foundation design system
+   Colors: #0b63ce | #f7941d | #ffd42a | #0fa66a | #23313d
+   Border radii, shadows, fonts: all from existing site
+============================================================ */
+
+/* ── Image frame (replaces old img-wrap) ── */
+.hero-img-frame{
+  position:relative;
+  width:min(74%,340px);
+  max-width:100%;
+  z-index:1;
+}
+
+/* hero-img-frame student-photo inherits from .student-photo base rule */
+
+/* Impact pill on image */
+.hero-impact-pill{
+  position:absolute;
+  bottom:-18px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#fff;
+  border-radius:12px;
+  padding:10px 22px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  box-shadow:0 6px 24px rgba(11,99,206,.18);
+  border-bottom:3px solid var(--blue);
+  white-space:nowrap;
+  justify-content:center;
+}
+
+.hero-impact-num{
+  font-size:1.35rem;
+  font-weight:900;
+  color:var(--blue);
+  line-height:1;
+  font-family:'Inter',sans-serif;
+}
+
+.hero-impact-lbl{
+  font-size:.62rem;
+  font-weight:700;
+  color:#6b7280;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  line-height:1.3;
+}
+
+/* ── NGO Badge ── */
+.h-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:#f0fdf4;
+  border:1.5px solid #bbf7d0;
+  border-radius:999px;
+  padding:5px 14px 5px 5px;
+  margin-bottom:20px;
+  width:fit-content;
+}
+
+.h-badge-icon{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#005ea8,#009a8a);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  flex-shrink:0;
+}
+
+.h-badge-text{
+  font-size:.72rem;
+  font-weight:800;
+  color:#15803d;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+}
+
+/* ── Heading ── */
+.h-heading{
+  font-size:clamp(2rem,2.85vw,3.4rem);
+  font-weight:900;
+  line-height:1.1;
+  color:#0d1f3c;
+  letter-spacing:-.5px;
+  margin-bottom:14px;
+  max-width:580px;
+  word-break:break-word;
+}
+
+.h-heading-blue{
+  display:block;
+  color:var(--blue);
+}
+
+.h-heading-orange{
+  display:block;
+  color:var(--orange);
+  font-size:.62em;
+  font-weight:700;
+  margin-top:10px;
+  letter-spacing:0;
+  min-height:1.2em;
+  transition:opacity .3s ease;
+}
+
+/* ── Description ── */
+.h-desc{
+  font-size:.97rem;
+  color:#4b5563;
+  line-height:1.7;
+  margin-bottom:24px;
+  max-width:460px;
+}
+
+/* ── Statistics strip ── */
+.h-stats{
+  display:inline-flex;
+  align-items:center;
+  background:#f8fafc;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px 0;
+  margin-bottom:28px;
+  width:fit-content;
+  max-width:100%;
+}
+
+.h-stat{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
+  padding:0 22px;
+}
+
+.h-stat strong{
+  font-size:1.6rem;
+  font-weight:900;
+  color:#005ea8;
+  line-height:1;
+  display:block;
+  font-family:'Inter',sans-serif;
+}
+
+.h-stat span{
+  font-size:.68rem;
+  color:var(--muted);
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  display:block;
+  white-space:nowrap;
+}
+
+.h-sep{
+  width:1px;
+  height:38px;
+  background:var(--border);
+  flex-shrink:0;
+}
+
+/* ── CTA Group ── */
+.h-cta{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+/* Primary — matches existing Support Now button exactly */
+.h-btn-primary{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  background:#ffd42a;
+  color:#111827;
+  padding:12px 28px;
+  border-radius:999px;
+  font-family:Georgia,serif;
+  font-size:16px;
+  font-weight:700;
+  text-decoration:none;
+  box-shadow:0 8px 22px rgba(255,212,42,.45);
+  border:none;
+  transition:.25s ease;
+  white-space:nowrap;
+  min-height:48px;
+  position:relative;
+  overflow:hidden;
+}
+
+.h-btn-primary::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:rgba(255,255,255,.18);
+  transform:translateX(-100%);
+  transition:.3s;
+}
+
+.h-btn-primary:hover::before{ transform:translateX(0); }
+.h-btn-primary:hover{
+  background:#ffc400;
+  transform:translateY(-3px);
+  box-shadow:0 14px 32px rgba(255,212,42,.55);
+}
+
+/* Secondary — matches existing outline-btn */
+.h-btn-outline{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  background:transparent;
+  color:#1f2937;
+  padding:11px 24px;
+  border-radius:999px;
+  font-size:15px;
+  font-weight:700;
+  text-decoration:none;
+  border:2px solid #d1d5db;
+  transition:.25s ease;
+  white-space:nowrap;
+  min-height:48px;
+  font-family:'Inter',sans-serif;
+}
+
+.h-btn-outline:hover{
+  border-color:var(--blue);
+  color:var(--blue);
+  transform:translateY(-3px);
+}
+
+/* ============================================================
+   END HERO REDESIGN
+============================================================ */
+
 /* ================= COMMON SECTION ================= */
 
 section{
@@ -674,6 +1032,7 @@ section{
   background:#eaf6ff;
   padding:56px 6%;
   text-align:center;
+  overflow:hidden;
 }
 
 .ved-programs-narrative h2{
@@ -704,7 +1063,7 @@ section{
 
 .program-layout{
   display:grid;
-  grid-template-columns:minmax(0,1fr) 300px minmax(0,1fr);
+  grid-template-columns:minmax(0,1fr) min(300px,100%) minmax(0,1fr);
   gap:30px;
   align-items:center;
   text-align:left;
@@ -753,8 +1112,9 @@ section{
 
 .circle-box{
   position:relative;
-  width:300px;
-  height:300px;
+  width:min(300px,100%);
+  height:min(300px,100%);
+  aspect-ratio:1;
   display:grid;
   place-items:center;
 }
@@ -833,12 +1193,15 @@ section{
   overflow:hidden;
   background:#eef6ff;
   border:1px solid #e6eef7;
+  flex-shrink:0;
 }
 
 .work-icon img{
   width:100%;
   height:100%;
   object-fit:cover;
+  object-position:center;
+  display:block;
 }
 
 .work-card h3{
@@ -948,9 +1311,10 @@ section{
 
 .card-img,
 .campaign-top{
-  height:180px;
+  height:200px;
   background:#dbeafe;
   overflow:hidden;
+  flex-shrink:0;
 }
 
 .card-img img,
@@ -958,7 +1322,9 @@ section{
   width:100%;
   height:100%;
   object-fit:cover;
+  object-position:center;
   transition:.35s;
+  display:block;
 }
 
 .card:hover .card-img img{
@@ -1025,9 +1391,12 @@ section{
 }
 
 .story img{
-  height:160px;
+  height:180px;
   width:100%;
   object-fit:cover;
+  object-position:center;
+  display:block;
+  flex-shrink:0;
 }
 
 .story div{
@@ -1124,8 +1493,10 @@ section{
 
 .cta-students{
   width:96%;
+  max-width:100%;
   max-height:420px;
   object-fit:cover;
+  display:block;
 }
 
 .cta-right{
@@ -1168,13 +1539,14 @@ section{
 }
 
 .cta-title{
-  font-size:clamp(2rem,3.3vw,3.85rem);
-  line-height:1.08;
+  font-size:clamp(1.55rem,3.3vw,3.85rem);
+  line-height:1.1;
   color:#23313d;
   font-weight:900;
-  letter-spacing:-1px;
+  letter-spacing:-0.5px;
   max-width:760px;
   margin-bottom:22px;
+  word-break:break-word;
 }
 
 .cta-title .green-highlight{
@@ -1304,19 +1676,35 @@ footer{
 
 .floating-donate{
   position:fixed;
-  right:18px;
-  bottom:18px;
-  z-index:999;
+  right:20px;
+  bottom:24px;
+  z-index:9990;
   background:var(--orange);
   color:#fff;
-  padding:12px 18px;
+  padding:13px 22px;
   border-radius:999px;
   font-weight:900;
-  box-shadow:0 16px 34px rgba(247,148,29,.35);
+  font-size:.88rem;
+  font-family:'Inter',sans-serif;
+  text-decoration:none;
+  box-shadow:0 8px 28px rgba(247,148,29,.45);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:48px;
+  white-space:nowrap;
+  max-width:calc(100% - 40px);
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+
+.floating-donate:hover{
+  transform:translateY(-3px);
+  box-shadow:0 14px 38px rgba(247,148,29,.55);
 }
 
 /* ================= RESPONSIVE ================= */
 
+/* ---- Large Tablet / Small Laptop ---- */
 @media(max-width:1100px){
   .work-grid{
     grid-template-columns:repeat(3,1fr);
@@ -1335,49 +1723,84 @@ footer{
 
   .program-layout{
     grid-template-columns:1fr;
+    text-align:center;
+  }
+
+  .program-left,
+  .program-right{
+    text-align:left;
   }
 
   .circle-box{
     order:-1;
     margin:auto;
   }
+
+  .hero-float-badge{
+    display:none;
+  }
 }
 
+/* ---- Tablet (900px): top dropdown ---- */
 @media(max-width:900px){
   .menu-toggle{
-    display:block;
+    display:inline-flex;
+  }
+
+  .nav-actions{
+    display:none;
   }
 
   .nav-links{
-    position:absolute;
-    top:100%;
-    left:4%;
-    right:4%;
-    display:none;
+    position:fixed;
+    top:70px;
+    left:0;
+    right:0;
+    width:100%;
+    max-width:100%;
+    display:flex;
     flex-direction:column;
     align-items:flex-start;
     gap:0;
     background:#fff;
-    border:1px solid var(--border);
-    border-radius:16px;
-    padding:12px 18px;
-    box-shadow:var(--shadow);
+    border:none;
+    border-radius:0;
+    padding:0 20px;
+    box-shadow:0 8px 24px rgba(0,0,0,.09);
+    z-index:9997;
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .32s cubic-bezier(.4,0,.2,1), padding .3s ease;
   }
 
   .nav-links.show{
-    display:flex;
+    max-height:600px;
+    padding:6px 20px 14px;
+    overflow-y:auto;
   }
 
   .nav-links a{
     width:100%;
-    padding:12px 0;
+    padding:13px 0;
+    border-bottom:1px solid #f1f5f9;
+    min-height:48px;
+    display:flex;
+    align-items:center;
+    font-size:.92rem;
+    color:#24344d;
+  }
+
+  .nav-links a:last-of-type{
+    border-bottom:none;
   }
 
   .nav-links a::after{
     display:none;
   }
 
-  .nav-actions{
+  /* Drawer elements hidden in tablet top-dropdown */
+  .drawer-top,
+  .drawer-cta{
     display:none;
   }
 
@@ -1388,19 +1811,23 @@ footer{
 
   .hero,
   .hero-banner,
-  .hero-left,
   .cta,
-  .cta-wrap,
-  .cta-left{
+  .cta-wrap{
     min-height:auto;
   }
 
-  .hero-left,
+  .hero-left{
+    min-height:280px;
+    align-items:center;
+    padding:28px 16px;
+    overflow:hidden;
+  }
+
   .cta-left{
-    min-height:300px;
+    min-height:240px;
     align-items:center;
     overflow:hidden;
-    padding:32px 16px;
+    padding:24px 16px;
   }
 
   .hero-left::before{ display:none; }
@@ -1408,29 +1835,31 @@ footer{
   .hero-float-badge{ display:none; }
   .hero-scroll{ display:none; }
 
-  .hero-img-wrap{ width:85%; }
+  .hero-img-wrap{ width:80%; max-width:320px; }
 
   .student-photo,
   .cta-students{
     width:100%;
-    max-height:300px;
+    max-height:280px;
   }
 
   .hero-right,
   .cta-right{
-    padding:42px 6%;
-    background:rgba(255,255,255,.94);
+    padding:36px 6%;
+    background:rgba(255,255,255,.96);
   }
 
   .hero-main-text,
   .cta-title{
-    font-size:clamp(2rem,5vw,3.1rem);
+    font-size:clamp(1.65rem,5vw,2.8rem);
   }
 }
 
+/* ---- Standard Tablet (768px) ---- */
 @media(max-width:768px){
   .container{
-    width:min(100% - 28px,680px);
+    width:calc(100% - 28px);
+    max-width:720px;
   }
 
   .brand{
@@ -1443,11 +1872,11 @@ footer{
   }
 
   .brand strong{
-    font-size:.95rem;
+    font-size:.9rem;
   }
 
   .brand span{
-    font-size:.68rem;
+    font-size:.65rem;
   }
 
   .work-grid,
@@ -1464,110 +1893,153 @@ footer{
   }
 
   .about-img img{
-    height:320px;
+    height:300px;
+  }
+
+  .section-title h2{
+    font-size:clamp(1.5rem,4vw,2.2rem);
   }
 }
 
+/* ---- Mobile (560px) ---- */
 @media(max-width:560px){
-  html{
-    font-size:14px;
-  }
-
   .container{
-    width:min(100% - 24px,480px);
+    width:calc(100% - 24px);
+    max-width:100%;
   }
 
   section,
   #work,
-  .about{
-    padding:44px 0;
+  .about,
+  .programs,
+  .stories,
+  .campaigns{
+    padding:40px 0;
   }
 
   .btn{
     width:100%;
+    min-height:48px;
+    justify-content:center;
   }
 
-  .hero-left,
+  .hero-left{
+    min-height:200px;
+    padding:20px 12px;
+  }
+
   .cta-left{
-    min-height:230px;
+    min-height:180px;
   }
 
   .student-photo,
   .cta-students{
-    max-height:260px;
+    max-height:240px;
   }
 
   .hero-right,
   .cta-right{
-    padding:28px 18px;
+    padding:24px 16px;
   }
 
   .cap-icon,
   .cta-cap{
-    width:50px;
-    height:50px;
-    border-radius:14px;
-    font-size:24px;
+    width:48px;
+    height:48px;
+    border-radius:12px;
+    font-size:22px;
   }
 
   .scholarship-mark,
   .cta-program-logo{
     align-items:flex-start;
     gap:10px;
-    margin-bottom:16px;
+    margin-bottom:14px;
   }
 
   .scholarship-mark span,
   .cta-program-logo span{
     letter-spacing:2px;
-    font-size:.68rem;
+    font-size:.65rem;
   }
 
   .hero-main-text,
   .cta-title{
-    font-size:1.8rem;
+    font-size:clamp(1.45rem,6vw,1.9rem);
     line-height:1.16;
+    letter-spacing:-0.5px;
+  }
+
+  .hero-stats{
+    gap:10px 16px;
+  }
+
+  .hero-stat{
+    font-size:.78rem;
   }
 
   .support-btn,
+  .outline-btn,
   .cta .btn{
     width:100%;
-    font-size:16px;
-    padding:11px 18px;
+    min-height:48px;
+    font-size:15px;
+    padding:12px 18px;
+  }
+
+  .hero-cta-row{
+    flex-direction:column;
+    align-items:stretch;
+    gap:10px;
+  }
+
+  .ved-programs-narrative{
+    padding:40px 4%;
   }
 
   .ved-programs-narrative h2{
-    font-size:1.7rem;
+    font-size:clamp(1.4rem,5vw,1.8rem);
   }
 
   .circle-box{
-    width:240px;
-    height:240px;
+    width:min(240px,80%);
+    height:min(240px,80%);
   }
 
   .ring{
-    width:210px;
-    height:210px;
+    width:calc(100% - 28px);
+    height:calc(100% - 28px);
     border-width:18px;
   }
 
   .center-text{
-    width:150px;
-    height:150px;
-    font-size:16px;
+    width:58%;
+    height:58%;
+    font-size:clamp(13px,3.5vw,16px);
   }
 
-  .work-grid,
+  .work-grid{
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+
   .cards,
   .campaign-grid,
   .story-grid{
     grid-template-columns:1fr;
   }
 
+  .work-icon{
+    height:130px;
+  }
+
   .card-img,
-  .campaign-top,
+  .campaign-top{
+    height:180px;
+  }
+
   .story img{
-    height:190px;
+    height:170px;
   }
 
   .footer-bottom{
@@ -1576,10 +2048,82 @@ footer{
   }
 
   .floating-donate{
-    left:14px;
-    right:14px;
-    bottom:12px;
-    text-align:center;
+    left:12px;
+    right:12px;
+    bottom:16px;
+    max-width:calc(100% - 24px);
+    font-size:.85rem;
+    padding:12px 16px;
+  }
+}
+
+/* ---- Small Mobile (414px) ---- */
+@media(max-width:414px){
+  .hero-main-text,
+  .cta-title{
+    font-size:clamp(1.35rem,7vw,1.7rem);
+  }
+
+  .work-grid{
+    grid-template-columns:1fr;
+  }
+
+  .section-title h2{
+    font-size:clamp(1.3rem,5.5vw,1.7rem);
+  }
+
+  .ved-programs-narrative h2{
+    font-size:1.3rem;
+  }
+
+  .cta-program-logo h2{
+    font-size:clamp(1.3rem,5vw,1.7rem);
+  }
+}
+
+/* ---- Tiny Mobile (375px) ---- */
+@media(max-width:375px){
+  .container{
+    width:calc(100% - 20px);
+  }
+
+  .brand img{
+    width:40px;
+    height:40px;
+  }
+
+  .brand strong{
+    font-size:.82rem;
+  }
+
+  .brand span{
+    display:none;
+  }
+
+  .hero-main-text,
+  .cta-title{
+    font-size:1.35rem;
+  }
+
+  .section-title h2{
+    font-size:1.25rem;
+  }
+}
+
+/* ---- Minimum Mobile (320px) ---- */
+@media(max-width:320px){
+  .container{
+    width:calc(100% - 16px);
+  }
+
+  .hero-main-text,
+  .cta-title{
+    font-size:1.2rem;
+  }
+
+  .floating-donate{
+    font-size:.78rem;
+    padding:10px 12px;
   }
 }
 /* ===== Fully Responsive SDG Section ===== */
@@ -1735,9 +2279,541 @@ footer{
     font-size:14px;
   }
 }
+
+/* ── Mobilization Form hero button: hidden on desktop ── */
+.hero-mob-form-btn{
+  display:none;
+}
+
+/* ================================================================
+   MOBILE FIX  —  max-width 767px
+   Clean, explicit CSS. No CSS variables. Minimal conflicts.
+================================================================ */
+
+/* Nav backdrop — hidden on desktop */
+.nav-backdrop{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(8,37,77,.48);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+  z-index:9996;
+  opacity:0;
+  transition:opacity .3s ease;
+}
+.nav-backdrop.active{ opacity:1; }
+
+/* Drawer elements — hidden on desktop */
+.drawer-top, .drawer-cta{ display:none; }
+
+/* Hamburger bars */
+.menu-toggle .hbg{ display:flex;flex-direction:column;gap:5px;width:20px; }
+.menu-toggle .hbg i{
+  display:block;height:2px;background:#074a9d;border-radius:2px;
+  transition:transform .28s cubic-bezier(.4,0,.2,1),opacity .22s ease,width .22s ease;
+  width:100%;font-style:normal;
+}
+.menu-toggle .hbg i:last-child{ width:14px; }
+.menu-toggle.is-open .hbg i:first-child{ transform:translateY(7px) rotate(45deg);width:100%; }
+.menu-toggle.is-open .hbg i:nth-child(2){ opacity:0;transform:scaleX(0); }
+.menu-toggle.is-open .hbg i:last-child{ transform:translateY(-7px) rotate(-45deg);width:100%; }
+
+@media(max-width:767px){
+
+  /* 1. OVERFLOW GUARD */
+  /* Overflow guard — only on body (not html, which would break fixed/sticky) */
+  body{
+    overflow-x:hidden !important;
+    width:100% !important;
+    max-width:100% !important;
+    padding-top:70px !important;
+    padding-bottom:72px !important;
+  }
+
+  /* 2. HEADER — fixed, always visible */
+  .navbar{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    width:100% !important;
+    height:70px !important;
+    min-height:70px !important;
+    background:#ffffff !important;
+    z-index:99999 !important;
+    box-shadow:0 2px 15px rgba(0,0,0,.08) !important;
+  }
+  .nav-container{
+    height:70px !important; padding:0 14px !important;
+    width:100% !important; max-width:100% !important;
+    overflow:hidden !important;
+  }
+  .nav-inner{
+    height:70px !important; min-height:70px !important;
+    display:flex !important; align-items:center !important;
+    justify-content:space-between !important; gap:10px;
+  }
+  .brand{
+    display:flex !important; align-items:center !important;
+    gap:8px !important; flex-shrink:1; min-width:0; text-decoration:none;
+  }
+  .brand img{
+    width:42px !important; height:42px !important;
+    min-width:42px !important; border-radius:10px !important;
+    object-fit:contain; flex-shrink:0;
+  }
+  .brand-text strong{
+    font-size:.88rem !important; color:#0b2b5e !important;
+    font-weight:900; white-space:nowrap; display:block;
+  }
+  .brand-text span{ font-size:.62rem !important; color:#64748b; display:none; }
+  .menu-toggle{
+    display:inline-flex !important;
+    border:1.5px solid #e2e8f0 !important;
+    background:#fff !important; border-radius:9px !important;
+    width:42px !important; height:42px !important;
+    min-width:42px !important;
+    align-items:center !important; justify-content:center !important;
+    flex-direction:column !important; gap:5px !important;
+    flex-shrink:0 !important; cursor:pointer; padding:0 !important;
+    transition:border-color .2s;
+  }
+  .menu-toggle:hover{ border-color:#0b63ce; }
+  .nav-actions{ display:none !important; }
+
+  /* MOBILE DRAWER */
+  .nav-backdrop{ display:block; }
+  .nav-links{
+    position:fixed !important;
+    top:0 !important; right:0 !important; bottom:0 !important; left:auto !important;
+    width:min(290px,82vw) !important;
+    height:100vh !important; max-height:100vh !important;
+    background:#fff !important;
+    flex-direction:column !important; align-items:stretch !important;
+    gap:0 !important; padding:0 !important;
+    overflow-y:auto !important; -webkit-overflow-scrolling:touch;
+    transform:translateX(105%) !important;
+    transition:transform .32s cubic-bezier(.4,0,.2,1) !important;
+    box-shadow:-12px 0 40px rgba(8,37,77,.16) !important;
+    z-index:9998 !important; display:flex !important;
+  }
+  .nav-links.show{ transform:translateX(0) !important; }
+  .drawer-top{
+    display:flex !important; align-items:center; justify-content:space-between;
+    padding:16px 18px; border-bottom:1px solid #f0f4f8; background:#fafcff;
+    position:sticky; top:0; z-index:1; flex-shrink:0;
+  }
+  .drawer-brand{
+    display:flex !important; align-items:center; gap:8px; text-decoration:none;
+  }
+  .drawer-brand img{
+    width:32px; height:32px; border-radius:7px; object-fit:contain;
+    border:1px solid #edf2f7; padding:2px; background:#fff;
+  }
+  .drawer-brand-name{ font-size:.8rem; font-weight:900; color:#0b2b5e; }
+  .drawer-close{
+    width:32px; height:32px; border-radius:7px; background:#f0f4f8;
+    border:none; display:flex; align-items:center; justify-content:center;
+    font-size:.9rem; color:#374151; cursor:pointer; font-family:inherit;
+  }
+  .nav-links a{
+    width:100% !important; padding:0 18px !important;
+    border-bottom:1px solid #f5f8fb !important;
+    font-size:.94rem !important; font-weight:700 !important;
+    color:#1e293b !important; min-height:50px !important;
+    display:flex !important; align-items:center !important;
+    text-decoration:none; transition:background .15s,color .15s;
+  }
+  .nav-links a:hover{ background:#f0f7ff !important; color:#0b63ce !important; }
+  .nav-links a::after{ display:none !important; }
+  .drawer-cta{
+    display:flex !important; flex-direction:column; gap:10px;
+    padding:16px 18px 28px; border-top:1px solid #f0f4f8;
+    margin-top:auto; flex-shrink:0;
+  }
+  .drawer-cta .btn{
+    width:100% !important; min-height:46px !important;
+    border-radius:9px !important; font-size:.88rem !important;
+    justify-content:center !important; display:flex !important;
+  }
+
+  /* ─── HERO MOBILE: unified white, content first, image last ─── */
+
+  .hero,section.hero,section#home.hero{
+    padding:0 !important;
+    background:#ffffff !important;
+    min-height:auto !important;
+    overflow:hidden !important;
+  }
+  .hero-bg-img{ display:none !important; }
+  .hero::before,.hero::after{ display:none !important; }
+
+  .hero-banner{
+    display:flex !important;
+    flex-direction:column !important;
+    min-height:auto !important;
+    width:100% !important;
+  }
+
+  /* Content first on mobile */
+  .hero-right,.hero-banner .hero-right{
+    order:1 !important;
+    width:100% !important;
+    padding:24px 18px 20px !important;
+    background:#ffffff !important;
+    color:#111827 !important;
+    min-height:auto !important;
+    overflow:hidden !important;
+  }
+
+  /* Image second on mobile */
+  .hero-left{
+    order:2 !important;
+    width:100% !important;
+    padding:0 18px 24px !important;
+    background:#eef6ff !important;
+    min-height:auto !important;
+    overflow:hidden !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+  }
+  .hero-left::before{ display:none !important; }
+  .hero-float-badge,.hero-impact-badge,.hero-scroll{ display:none !important; }
+
+  /* NGO Badge */
+  .scholarship-mark{
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:8px !important;
+    margin-bottom:12px !important;
+    background:#f0fdf4 !important;
+    border:1px solid #bbf7d0 !important;
+    border-radius:999px !important;
+    padding:5px 12px 5px 5px !important;
+  }
+  .cap-icon{
+    width:30px !important; height:30px !important;
+    border-radius:50% !important; font-size:14px !important;
+    flex-shrink:0 !important;
+    background:linear-gradient(135deg,#005ea8,#009a8a) !important;
+    display:grid !important; place-items:center !important;
+    animation:none !important;
+  }
+  .cap-icon::after{ display:none !important; }
+  .scholarship-mark > div > span{
+    font-size:.68rem !important; letter-spacing:1.5px !important;
+    color:#15803d !important; font-weight:800 !important;
+    text-transform:uppercase !important; display:block !important;
+  }
+
+  /* Heading */
+  .hero-main-text,
+  .hero-right .hero-main-text,
+  .hero-banner .hero-right h1{
+    font-size:28px !important;
+    line-height:1.2 !important;
+    color:#111827 !important;
+    font-weight:900 !important;
+    margin-bottom:8px !important;
+    max-width:100% !important;
+    letter-spacing:-.3px !important;
+    text-shadow:none !important;
+  }
+  .hero-main-text .green-highlight{ color:#111827 !important; background:none !important; }
+  .hero-main-text .orange-text{
+    color:#d97706 !important; font-size:20px !important;
+    margin-top:4px !important; display:block !important;
+    text-shadow:none !important;
+  }
+
+  /* Description */
+  .h-desc{
+    font-size:.88rem !important;
+    color:#4b5563 !important;
+    line-height:1.62 !important;
+    margin-bottom:16px !important;
+    max-width:100% !important;
+  }
+
+  /* Stats row */
+  .hero-stats{
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:center !important;
+    gap:0 !important;
+    margin:0 0 18px !important;
+    background:#f8fafc !important;
+    border:1px solid #e5e7eb !important;
+    border-radius:10px !important;
+    padding:10px 0 !important;
+    width:100% !important;
+  }
+  .hero-stat{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+    flex:1 !important;
+    gap:2px !important;
+    padding:0 !important;
+  }
+  .hero-stat-icon{
+    width:26px !important; height:26px !important;
+    border-radius:6px !important; font-size:12px !important;
+    display:grid !important; place-items:center !important;
+    margin:0 auto 2px !important;
+  }
+  .hero-stat-num{
+    font-size:1rem !important; font-weight:900 !important;
+    color:#005ea8 !important; display:block !important;
+  }
+
+  /* CTA buttons */
+  .hero-cta-row{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:10px !important;
+    margin:0 !important;
+    width:100% !important;
+  }
+  .support-btn{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:100% !important;
+    min-height:50px !important;
+    font-size:16px !important;
+    border-radius:999px !important;
+    padding:0 20px !important;
+    background:#ffd42a !important;
+    color:#111827 !important;
+    font-family:Georgia,serif !important;
+    font-weight:700 !important;
+    box-shadow:0 8px 22px rgba(255,212,42,.45) !important;
+    text-decoration:none !important;
+  }
+  .outline-btn{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:100% !important;
+    min-height:48px !important;
+    font-size:15px !important;
+    border-radius:999px !important;
+    padding:0 20px !important;
+    background:transparent !important;
+    color:#1f2937 !important;
+    border:2px solid #d1d5db !important;
+    text-decoration:none !important;
+    font-weight:700 !important;
+  }
+
+  /* Hero image mobile */
+  .hero-img-wrap{
+    width:100% !important;
+    max-width:100% !important;
+  }
+  .student-photo{
+    width:100% !important;
+    height:210px !important;
+    max-height:210px !important;
+    object-fit:cover !important;
+    object-position:center 15% !important;
+    border-radius:14px !important;
+    border:none !important;
+    box-shadow:0 8px 28px rgba(0,0,0,.14) !important;
+    display:block !important;
+    filter:contrast(1.08) saturate(1.15) brightness(1.06) !important;
+  }
+
+  /* 9. SECTION SPACING — exclude .hero (has its own padding:0) */
+  #work, .about, .programs, .stories, .campaigns, #register,
+  .ved-programs-narrative, .sdg-section, .cta, .campaigns{
+    padding:36px 0 !important;
+  }
+  .container{ width:calc(100% - 28px) !important; max-width:100% !important; }
+  .section-title{ margin-bottom:20px; }
+  .section-title h2{ font-size:1.45rem !important; font-weight:900; color:#10233f; }
+  .section-title p{ font-size:.9rem; }
+
+  /* 10. WORK CARDS — 2-col */
+  .work-grid{ grid-template-columns:1fr 1fr !important; gap:12px !important; }
+  .work-card{ padding:12px 10px 16px !important; border-radius:14px !important; }
+  .work-icon{ height:110px !important; border-radius:10px !important; }
+  .work-card h3{ font-size:.85rem !important; font-weight:900; margin-bottom:4px; }
+  .work-card p{ font-size:.76rem !important; color:#6b7c93; }
+
+  /* 11. CARDS / STORIES / CAMPAIGNS — 1-col */
+  .cards,.story-grid,.campaign-grid{ grid-template-columns:1fr !important; gap:14px !important; }
+  .card{ border-radius:14px !important; }
+  .card-img,.campaign-top{ height:175px !important; }
+  .card-body,.campaign-body{ padding:14px 16px !important; }
+  .card h3,.campaign h3{ font-size:.95rem !important; }
+  .card p,.campaign p{ font-size:.87rem !important; }
+  .story img{ height:170px !important; }
+  .story div{ padding:14px 16px !important; }
+  .story h3{ font-size:.92rem !important; }
+
+  /* 12. ABOUT */
+  .about-grid{ grid-template-columns:1fr !important; gap:18px !important; }
+  .about-img img{ height:220px !important; border-radius:14px !important; }
+  .about-content h2{ font-size:1.4rem !important; font-weight:900; color:#10233f; }
+  .about-content p{ font-size:.9rem !important; }
+  .vision-box{ grid-template-columns:1fr !important; gap:10px !important; }
+  .vision-box div{ padding:14px 16px !important; border-radius:10px !important; }
+
+  /* 13. REGISTER */
+  #register .campaign-grid{ grid-template-columns:1fr !important; gap:12px !important; }
+  #register .campaign-body{ padding:18px 16px !important; }
+  #register .btn{ width:100% !important; min-height:46px !important; justify-content:center !important; }
+
+  /* 14. CTA SECTION — white background, dark text on mobile */
+  .cta{
+    min-height:auto !important;
+    overflow:hidden !important;
+    background:#ffffff !important;
+    border-top:2px solid #e5e7eb !important;
+  }
+  .cta-bg{ display:none !important; }
+  .cta::before,.cta::after{ display:none !important; }
+  .cta-wrap{
+    display:flex !important; flex-direction:column !important; min-height:auto !important;
+  }
+  .cta-right{
+    order:1 !important;
+    padding:28px 16px 20px !important;
+    color:#111827 !important;
+    background:#ffffff !important;
+  }
+  .cta-left{
+    order:2 !important; min-height:auto !important; padding:0 16px 28px !important;
+    display:flex !important; justify-content:center; background:#ffffff !important;
+  }
+  .cta-students{ max-height:180px !important; border-radius:14px !important; opacity:1; }
+  .cta-cap{
+    width:46px !important; height:46px !important; font-size:21px !important;
+    background:linear-gradient(135deg,#005ea8,#009a8a) !important;
+  }
+  .cta-program-logo span{ color:#0fa66a !important; font-size:.68rem !important; letter-spacing:2px !important; }
+  .cta-title{
+    font-size:1.55rem !important;
+    line-height:1.18 !important;
+    color:#111827 !important;
+    margin-bottom:16px !important;
+    font-weight:900 !important;
+  }
+  .cta-title .green-highlight{ color:#111827 !important; background:none !important; }
+  .cta-title .orange-text{ color:#d97706 !important; }
+  .cta .btn.btn-orange{
+    display:flex !important; width:100% !important; min-height:50px !important;
+    justify-content:center !important; border-radius:12px !important;
+    font-size:15px !important; font-weight:800;
+  }
+
+  /* 15. PROGRAMS NARRATIVE */
+  .ved-programs-narrative{ padding:36px 16px !important; }
+  .ved-programs-narrative h2{ font-size:1.4rem !important; }
+  .program-layout{ grid-template-columns:1fr !important; gap:20px !important; text-align:left; }
+  .circle-box{
+    width:min(220px,78%) !important; height:min(220px,78%) !important;
+    margin:0 auto !important;
+  }
+
+  /* 16. FLOATING BUTTON */
+  .floating-donate,.mob-fab,.floating-donate.mob-fab{
+    left:12px !important; right:12px !important; bottom:14px !important;
+    width:auto !important; max-width:calc(100% - 24px) !important;
+    min-height:48px !important; border-radius:12px !important;
+    font-size:.86rem !important; padding:12px 16px !important;
+    justify-content:center !important; display:inline-flex !important;
+    text-align:center;
+  }
+
+  /* 17. FOOTER */
+  footer{ padding:40px 0 68px !important; }
+
+} /* end @media(max-width:767px) */
+
+/* ── 480px ── */
+@media(max-width:480px){
+  .hero-main-text{ font-size:26px !important; }
+  .hero-stat-num{ font-size:.92rem !important; }
+  .section-title h2{ font-size:1.3rem !important; }
+  .work-icon{ height:95px !important; }
+}
+
+/* ── 414px ── */
+@media(max-width:414px){
+  .hero-right,.hero-banner .hero-right{ padding:20px 16px 16px !important; }
+  .hero-left{ padding:0 16px 22px !important; }
+  .hero-main-text{ font-size:24px !important; }
+  .hero-main-text .orange-text{ font-size:18px !important; }
+  .support-btn{ font-size:15px !important; }
+  .section-title h2{ font-size:1.25rem !important; }
+}
+
+/* ── 390px ── */
+@media(max-width:390px){
+  .hero-main-text{ font-size:23px !important; }
+  .hero-main-text .orange-text{ font-size:17px !important; }
+  .hero-stats{ padding:8px 0 !important; }
+  .hero-stat-num{ font-size:.88rem !important; }
+}
+
+/* ── 375px ── */
+@media(max-width:375px){
+  .hero-right,.hero-banner .hero-right{ padding:18px 14px 14px !important; }
+  .hero-left{ padding:0 14px 20px !important; }
+  .container{ width:calc(100% - 22px) !important; }
+  .hero-main-text{ font-size:22px !important; }
+  .hero-main-text .orange-text{ font-size:17px !important; }
+  .hero-stat-num{ font-size:.85rem !important; }
+  .brand img{ width:38px !important; height:38px !important; min-width:38px !important; }
+  .section-title h2{ font-size:1.2rem !important; }
+  .student-photo{ height:185px !important; max-height:185px !important; }
+}
+
+/* ── 360px ── */
+@media(max-width:360px){
+  .hero-right,.hero-banner .hero-right{ padding:16px 12px 12px !important; }
+  .hero-left{ padding:0 12px 18px !important; }
+  .hero-main-text{ font-size:21px !important; }
+  .hero-main-text .orange-text{ font-size:16px !important; }
+  .h-desc{ font-size:.84rem !important; }
+  .hero-stat-num{ font-size:.82rem !important; }
+  .brand-text strong{ font-size:.8rem !important; }
+  .support-btn{ font-size:14px !important; min-height:46px !important; }
+  .outline-btn{ font-size:14px !important; min-height:46px !important; }
+}
+
+/* ── 320px ── */
+@media(max-width:320px){
+  .container{ width:calc(100% - 18px) !important; }
+  .hero-right,.hero-banner .hero-right{ padding:14px 12px 12px !important; }
+  .hero-left{ padding:0 12px 18px !important; }
+  .hero-main-text{ font-size:19px !important; line-height:1.25 !important; }
+  .hero-main-text .orange-text{ font-size:15px !important; }
+  .h-desc{ font-size:.82rem !important; margin-bottom:12px !important; }
+  .hero-stat-num{ font-size:.78rem !important; }
+  .support-btn{ font-size:13px !important; }
+  .outline-btn{ font-size:13px !important; }
+  .work-grid{ grid-template-columns:1fr !important; }
+  .cards,.story-grid,.campaign-grid{ grid-template-columns:1fr !important; }
+  .student-photo{ height:170px !important; max-height:170px !important; }
+  .floating-donate,.mob-fab{
+    left:8px !important; right:8px !important;
+    font-size:.8rem !important; padding:10px 12px !important; min-height:44px !important;
+  }
+}
 </style>
 </head>
 <body>
+  <!-- Mobile nav backdrop overlay -->
+  <div class="nav-backdrop" id="navBackdrop"></div>
+
   <header class="navbar">
     <div class="nav-container">
       <div class="nav-inner">
@@ -1752,24 +2828,45 @@ footer{
         </a>
 
         <nav class="nav-links" id="navLinks">
+
+          <!-- Drawer Top Header (mobile only — hidden on desktop via CSS) -->
+          <div class="drawer-top">
+            <a href="index.html" class="drawer-brand">
+              <img src="vedlogo.jpeg" alt="VED Foundation">
+              <span class="drawer-brand-name">VED FOUNDATION</span>
+            </a>
+            <button class="drawer-close" id="drawerClose" aria-label="Close navigation">✕</button>
+          </div>
+
           <a href="index.html">Home</a>
           <a href="smartclasses.html">Smart Classes</a>
           <a href="agriculture.html">Agriculture</a>
           <a href="solarpanel.html">Solar Panel</a>
           <a href="workshops.html" id="navWorkshopsLink" style="position:relative">
             Workshop Center
-            <span id="navLiveDot" style="display:none;position:absolute;top:18px;right:-8px;width:7px;height:7px;background:#ef4444;border-radius:50%;animation:navBlink 1s ease infinite"></span>
+            <span id="navLiveDot" style="display:none;position:absolute;right:16px;width:7px;height:7px;background:#ef4444;border-radius:50%;animation:navBlink 1s ease infinite"></span>
           </a>
           <a href="registeration.html">Register</a>
           <a href="login.html">Login</a>
           <a href="donation.html">Donation</a>
+
+          <!-- Drawer Bottom CTA (mobile only — hidden on desktop) -->
+          <div class="drawer-cta">
+            <a href="donation.html" class="btn btn-orange">🤝 Donate Now</a>
+            <a href="registeration.html" class="btn btn-blue">📚 Enroll Today</a>
+          </div>
+
         </nav>
         <style>@keyframes navBlink{0%,100%{opacity:1}50%{opacity:.1}}</style>
         <script>
-          fetch((window.VED_API_BASE || 'http://localhost:5000/api') + '/workshops/live')
-            .then(r=>r.json())
-            .then(d=>{ if((d.live||[]).length>0){ const dot=document.getElementById('navLiveDot'); if(dot) dot.style.display='block'; } })
-            .catch(()=>{});
+          (function(){
+            var base = window.VED_API_BASE || '';
+            if(!base) return; /* skip if no API base set — avoids localhost 503 */
+            fetch(base + '/workshops/live')
+              .then(function(r){ return r.ok ? r.json() : null; })
+              .then(function(d){ if(d && (d.live||[]).length>0){ var dot=document.getElementById('navLiveDot'); if(dot) dot.style.display='block'; } })
+              .catch(function(){});
+          })();
         </script>
 
         <div class="nav-actions">
@@ -1777,7 +2874,9 @@ footer{
           <a href="registeration.html" class="btn btn-blue">Enroll</a>
         </div>
 
-        <button class="menu-toggle" id="menuToggle" aria-label="Open navigation menu">☰</button>
+        <button class="menu-toggle" id="menuToggle" aria-label="Open navigation" aria-expanded="false">
+          <span class="hbg"><i></i><i></i><i></i></span>
+        </button>
 
       </div>
     </div>
@@ -1786,25 +2885,25 @@ footer{
   <main>
     <section class="hero" id="home">
 
-  <img class="hero-bg-img" src="WhatsApp Image 2026-03-18 at 1.03.20 PM.jpeg" alt="VED Foundation banner">
-
-  <!-- Arrows -->
-  <span class="hero-arrow left"></span>
-  <span class="hero-arrow right"></span>
+  <img class="hero-bg-img"
+       src="WhatsApp%20Image%202026-03-18%20at%201.03.20%20PM.jpeg"
+       alt="VED Foundation banner" loading="eager" decoding="async">
 
   <div class="hero-banner">
 
-    <!-- LEFT IMAGE -->
+    <!-- LEFT: Image with floating badges -->
     <div class="hero-left">
       <div class="hero-img-wrap">
-        <img class="student-photo" src="children-art.jpeg" alt="VED students">
+        <img class="student-photo"
+             src="children-art.jpeg"
+             alt="VED students" loading="eager" decoding="async">
 
         <!-- Floating workshop badges -->
         <div class="hero-float-badge hfb-1">🛡️ CyberSafe</div>
         <div class="hero-float-badge hfb-2">💼 LinkedIn</div>
         <div class="hero-float-badge hfb-3">💻 CodeStart</div>
 
-        <!-- Impact badge anchored below image -->
+        <!-- Impact card -->
         <div class="hero-impact-badge">
           <div>
             <div class="badge-num" id="heroBadgeCount">500+</div>
@@ -1814,23 +2913,28 @@ footer{
       </div>
     </div>
 
-    <!-- RIGHT CONTENT -->
+    <!-- RIGHT: Content -->
     <div class="hero-right">
 
+      <!-- NGO Badge -->
       <div class="scholarship-mark">
         <div class="cap-icon">🎓</div>
-        <div>
-          <span>Empowering Futures</span>
-        </div>
+        <div><span>Empowering Futures</span></div>
       </div>
 
-      <h1 class="hero-main-text">
+      <!-- Heading -->
+      <h1 class="hero-main-text" style="color:#111827">
         Make Higher Education
-        <span class="green-highlight">Possible for a Child</span>
-        <span class="orange-text" id="heroCycleText">Be a Sponsor</span>
+        <span class="green-highlight" style="color:#111827;background:none">Possible for a Child</span>
+        <span class="orange-text" id="heroCycleText" style="color:#d97706">Be a Sponsor</span>
       </h1>
 
-      <!-- Stats strip -->
+      <!-- Description -->
+      <p class="h-desc">
+        VED Foundation equips students with workshops, digital skills and career guidance — bridging education and opportunity across India.
+      </p>
+
+      <!-- Stats with icons -->
       <div class="hero-stats">
         <div class="hero-stat">
           <div class="hero-stat-icon" style="background:#eff6ff">📚</div>
@@ -1865,7 +2969,8 @@ footer{
   </div>
 
   <!-- Scroll indicator -->
-  <div class="hero-scroll" role="button" tabindex="0" aria-label="Scroll to programs" onclick="document.querySelector('.ved-programs-narrative').scrollIntoView({behavior:'smooth'})">
+  <div class="hero-scroll" role="button" tabindex="0" aria-label="Scroll to programs"
+       onclick="document.querySelector('.ved-programs-narrative').scrollIntoView({behavior:'smooth'})">
     <div class="hero-scroll-dot"></div>
     <div class="hero-scroll-dot"></div>
     <div class="hero-scroll-dot"></div>
@@ -1929,7 +3034,7 @@ footer{
     </div>
 
     <div class="sdg-image-card">
-      <img src="https://img.freepik.com/free-vector/sustainable-development-goals-collection-global-goals-targets-improve-health-education_88138-1384.jpg?semt=ais_hybrid&w=740&q=80" alt="Sustainable Development Goals">
+      <img src="https://img.freepik.com/free-vector/sustainable-development-goals-collection-global-goals-targets-improve-health-education_88138-1384.jpg?semt=ais_hybrid&w=740&q=80" alt="Sustainable Development Goals" loading="lazy" decoding="async" style="width:100%;height:auto;">
     </div>
   </div>
 </section>
@@ -1946,7 +3051,7 @@ footer{
 
   <div class="work-card">
     <div class="work-icon">
-      <img src="img 7.jpg" alt="Education Support">
+      <img src="img%207.jpg" alt="Education Support" loading="lazy" decoding="async" onerror="this.style.display='none'">
     </div>
     <h3>Education Support</h3>
     <p>Learning assistance for school and college students.</p>
@@ -1954,7 +3059,7 @@ footer{
 
   <div class="work-card">
     <div class="work-icon">
-      <img src="img 8.jpg" alt="Smart Classes">
+      <img src="img%208.jpg" alt="Smart Classes" loading="lazy" decoding="async" onerror="this.style.display='none'">
     </div>
     <h3>Smart Classes</h3>
     <p>Digital classroom solutions for modern education.</p>
@@ -1962,7 +3067,7 @@ footer{
 
   <div class="work-card">
     <div class="work-icon">
-      <img src="img 9.jpg" alt="Workshops">
+      <img src="img%209.jpg" alt="Workshops" loading="lazy" decoding="async" onerror="this.style.display='none'">
     </div>
     <h3>Workshops</h3>
     <p>Career-oriented skill development sessions.</p>
@@ -1970,7 +3075,7 @@ footer{
 
   <div class="work-card">
     <div class="work-icon">
-      <img src="img 10.jpg" alt="Agriculture">
+      <img src="img%2010.jpg" alt="Agriculture" loading="lazy" decoding="async" onerror="this.style.display='none'">
     </div>
     <h3>Agriculture</h3>
     <p>Community awareness and rural development support.</p>
@@ -1978,7 +3083,7 @@ footer{
 
   <div class="work-card">
     <div class="work-icon">
-      <img src="img 11.jpg" alt="Solar Awareness">
+      <img src="img%2011.jpg" alt="Solar Awareness" loading="lazy" decoding="async" onerror="this.style.display='none'">
     </div>
     <h3>Solar Awareness</h3>
     <p>Sustainable Energy Awareness and learning Programs.</p>
@@ -1992,7 +3097,7 @@ footer{
     <section class="about" id="about">
       <div class="container about-grid">
         <div class="about-img">
-          <img src="WhatsApp Image 2023-02-25 at 8.02.37 PM.jpeg" alt="VED Foundation student program">
+          <img src="WhatsApp%20Image%202023-02-25%20at%208.02.37%20PM.jpeg" alt="VED Foundation student program" loading="lazy" decoding="async">
         </div>
         <div class="about-content">
           <span class="small">The VED Foundation</span>
@@ -2033,72 +3138,74 @@ footer{
         </div>
 
         <div class="cards">
-          <a href="CodeStart Workshop (1).pdf" target="_blank" class="card">
-            <div class="card-img"><img src="img 1.jpeg" alt="CodeStart Workshop"></div>
+          <a href="CodeStart%20Workshop%20(1).pdf" target="_blank" class="card" rel="noopener">
+            <div class="card-img"><img src="img%201.jpeg" alt="CodeStart Workshop" loading="lazy" decoding="async"></div>
             <div class="card-body">
               <span class="badge">Free Workshop</span>
               <h3>CodeStart Workshop</h3>
               <p>Beginner-friendly coding workshop for students starting their technology journey.</p>
               <ul class="card-meta">
-                <li> 20 March</li>
-                <li> 2 PM - 6 PM</li>
-                <li> 4 Hours</li>
+                <li>📅 20 March</li>
+                <li>🕑 2 PM – 6 PM</li>
+                <li>⏱ 4 Hours</li>
               </ul>
               <span class="btn btn-orange">View Details</span>
             </div>
           </a>
 
-          <a href="CyberSafe India Workshop.pdf" target="_blank" class="card">
-            <div class="card-img"><img src="WhatsApp Image 2026-03-18 at 1.03.20 PM (1).jpeg" alt="CyberSafe Workshop"></div>
+          <a href="CyberSafe%20India%20Workshop.pdf" target="_blank" class="card" rel="noopener">
+            <div class="card-img"><img src="WhatsApp%20Image%202026-03-18%20at%201.03.20%20PM%20(1).jpeg" alt="CyberSafe Workshop" loading="lazy" decoding="async"></div>
             <div class="card-body">
               <span class="badge">Free Workshop</span>
               <h3>CyberSafe India Workshop</h3>
               <p>Digital safety and cybersecurity awareness program for students and youth.</p>
               <ul class="card-meta">
-                <li> 20 March</li>
-                <li> 2 PM - 6 PM</li>
-                <li> 4 Hours</li>
+                <li>📅 20 March</li>
+                <li>🕑 2 PM – 6 PM</li>
+                <li>⏱ 4 Hours</li>
               </ul>
-               <span class="btn btn-orange">View Details</span>
+              <span class="btn btn-orange">View Details</span>
             </div>
           </a>
 
-          <a href="Digital Edge Certification Program.pdf" target="_blank" class="card">
-            <div class="card-img"><img src="img 2.jpeg" alt="Digital Edge Program"></div>
+          <a href="Digital%20Edge%20Certification%20Program.pdf" target="_blank" class="card" rel="noopener">
+            <div class="card-img"><img src="img%202.jpeg" alt="Digital Edge Program" loading="lazy" decoding="async"></div>
             <div class="card-body">
               <span class="badge">Free Workshop</span>
               <h3>Digital Edge Certification</h3>
               <p>Digital Marketing, online Earning and Practical Technology Skills Program.</p>
               <ul class="card-meta">
-                <li> 20 March</li>
-                <li> 2 PM - 6 PM</li>
-                <li> 4 Hours</li>
+                <li>📅 20 March</li>
+                <li>🕑 2 PM – 6 PM</li>
+                <li>⏱ 4 Hours</li>
               </ul>
               <span class="btn btn-orange">View Details</span>
             </div>
           </a>
-          <a href="Digital Edge Certification Program.pdf" target="_blank" class="card">
-            <div class="card-img"><img src="img 3.jpeg" alt="Digital Edge Program"></div>
+
+          <a href="LinkedIn%20Leverage%20Certification%20Program.pdf" target="_blank" class="card" rel="noopener">
+            <div class="card-img"><img src="img%203.jpeg" alt="LinkedIn Leverage Program" loading="lazy" decoding="async"></div>
             <div class="card-body">
-              <span class="badge">Free Workshop</span>
-              <h3>LinkedIn Laverage</h3>
-              <p>Digital Marketing, online Earning and Practical Technology Skills Program.</p>
+              <span class="badge">Certification</span>
+              <h3>LinkedIn Leverage</h3>
+              <p>Digital marketing, personal branding and career growth on LinkedIn.</p>
               <ul class="card-meta">
-                <li> Duration: 40 Hours</li>
-                <li> Certificate Included</li>
+                <li>⏱ Duration: 40 Hours</li>
+                <li>🏆 Certificate Included</li>
               </ul>
               <span class="btn btn-orange">View Details</span>
             </div>
           </a>
-          <a href="Digital Edge Certification Program.pdf" target="_blank" class="card">
-            <div class="card-img"><img src="img 4.jpeg" alt="Digital Edge Program"></div>
+
+          <a href="Confident%20Communication%20Certification%20Program.pdf" target="_blank" class="card" rel="noopener">
+            <div class="card-img"><img src="img%204.jpeg" alt="Art of Communication" loading="lazy" decoding="async"></div>
             <div class="card-body">
-              <span class="badge">Free Workshop</span>
+              <span class="badge">Certification</span>
               <h3>Art of Communication</h3>
-              <p>Digital marketing, online earning and practical technology skills program.</p>
+              <p>Public speaking, confident communication and presentation skills program.</p>
               <ul class="card-meta">
-                <li> Duration: 40 Hours</li>
-                <li> Certificate Included</li>
+                <li>⏱ Duration: 40 Hours</li>
+                <li>🏆 Certificate Included</li>
               </ul>
               <span class="btn btn-orange">View Details</span>
             </div>
@@ -2119,16 +3226,16 @@ footer{
 
         <div class="story-grid">
           <div class="story">
-            <img src="WhatsApp Image 2023-02-25 at 8.02.37 PM.jpeg" alt="Student story">
+            <img src="WhatsApp%20Image%202023-02-25%20at%208.02.37%20PM.jpeg" alt="Student story" loading="lazy" decoding="async">
             <div>
               <h3>From Curiosity to Coding Confidence</h3>
-              <p>A beginner Student learns the Basics of Web Development through CodeStart.</p>
+              <p>A beginner student learns the basics of web development through CodeStart.</p>
               <a href="#" class="read">Read more...</a>
             </div>
           </div>
 
           <div class="story">
-            <img src="WhatsApp Image 2023-04-15 at 10.15.45 PM.jpeg" alt="Workshop story">
+            <img src="WhatsApp%20Image%202023-04-15%20at%2010.15.45%20PM.jpeg" alt="Workshop story" loading="lazy" decoding="async">
             <div>
               <h3>Building Safer Digital Habits</h3>
               <p>CyberSafe India helps students understand online threats and safe usage.</p>
@@ -2137,7 +3244,7 @@ footer{
           </div>
 
           <div class="story">
-            <img src="WhatsApp Image 2026-03-18 at 1.03.20 PM.jpeg" alt="Communication story">
+            <img src="WhatsApp%20Image%202026-03-18%20at%201.03.20%20PM.jpeg" alt="Communication story" loading="lazy" decoding="async">
             <div>
               <h3>Learning to Speak with Confidence</h3>
               <p>Students improve communication, public speaking and presentation skills.</p>
@@ -2146,9 +3253,9 @@ footer{
           </div>
 
           <div class="story">
-            <img src="WhatsApp Image 2026-03-18 at 1.03.20 PM (1).jpeg" alt="Digital skills story">
+            <img src="WhatsApp%20Image%202026-03-18%20at%201.03.20%20PM%20(1).jpeg" alt="Digital skills story" loading="lazy" decoding="async">
             <div>
-              <h3>Career awareness for the future</h3>
+              <h3>Career Awareness for the Future</h3>
               <p>Digital Edge introduces students to tools, branding and career opportunities.</p>
               <a href="#" class="read">Read more...</a>
             </div>
@@ -2167,7 +3274,7 @@ footer{
 
         <div class="campaign-grid">
           <div class="campaign">
-            <div class="campaign-top"><img src="WhatsApp Image 2023-04-15 at 10.15.45 PM.jpeg" alt="Sponsor workshop"></div>
+            <div class="campaign-top"><img src="WhatsApp%20Image%202023-04-15%20at%2010.15.45%20PM.jpeg" alt="Sponsor workshop" loading="lazy" decoding="async"></div>
             <div class="campaign-body">
               <h3>Sponsor a Student Workshop</h3>
               <p>Help us organise free workshops for students.</p>
@@ -2176,7 +3283,7 @@ footer{
           </div>
 
           <div class="campaign">
-            <div class="campaign-top"><img src="img 5.jpeg" alt="Learning kit"></div>
+            <div class="campaign-top"><img src="img%205.jpeg" alt="Learning kit" loading="lazy" decoding="async"></div>
             <div class="campaign-body">
               <h3>Digital Learning Kit</h3>
               <p>Support Digital learning Tools for School Students.</p>
@@ -2186,7 +3293,7 @@ footer{
           </div>
 
           <div class="campaign">
-            <div class="campaign-top"><img src="img 6.jpeg" alt="Certificate support"></div>
+            <div class="campaign-top"><img src="img%206.jpeg" alt="Certificate support" loading="lazy" decoding="async"></div>
             <div class="campaign-body">
               <h3>Certificate Support Fund</h3>
               <p>Help Deserving Students Access Certification Programs.</p>
@@ -2238,11 +3345,11 @@ footer{
     </section>
 
     <section class="cta">
-      <img class="cta-bg" src="WhatsApp Image 2023-04-15 at 10.15.45 PM.jpeg" alt="VED Foundation scholarship programme">
+      <img class="cta-bg" src="WhatsApp%20Image%202023-04-15%20at%2010.15.45%20PM.jpeg" alt="VED Foundation scholarship programme" loading="lazy" decoding="async">
 
       <div class="cta-wrap">
         <div class="cta-left">
-          <img class="cta-students" src="image12.jpeg" alt="VED Foundation students">
+          <img class="cta-students" src="image12.jpeg" alt="VED Foundation students" loading="lazy" decoding="async">
         </div>
 
         <div class="cta-right">
@@ -2256,10 +3363,10 @@ footer{
             </div>
           </div>
 
-          <h2 class="cta-title">
+          <h2 class="cta-title" style="color:#111827">
             Make Higher Education
-            <span class="green-highlight">Possible for a Child</span>
-            <span class="orange-text">Be a sponsor</span>
+            <span class="green-highlight" style="color:#111827;background:none">Possible for a Child</span>
+            <span class="orange-text" style="color:#d97706">Be a sponsor</span>
           </h2>
 
           <a href="donation.html" class="btn btn-orange">Support Now</a>
@@ -2271,7 +3378,7 @@ footer{
 
 
  
-  <a href="mobilization-form.html" class="floating-donate">Mobilization Form</a>
+  <a href="mobilization-form.html" class="floating-donate mob-fab" aria-label="Open Mobilization Form">Mobilization Form</a>
 
   <script src="/config.js"></script>
   <script src="shared.js"></script>
@@ -2333,6 +3440,8 @@ footer{
       }
     });
   })();
+
+  /* Mobile menu wiring + header offsets handled by shared.js */
   </script>
 </body>
 </html>

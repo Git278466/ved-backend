@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Blog &amp; Insights — VED Foundation | Education, Skills &amp; Student Empowerment</title>
+<meta name="description" content="Explore insights, success stories, and educational resources from VED Foundation. Stay updated on digital skills, career guidance, coding workshops, and student empowerment programs across India.">
+<meta name="keywords" content="VED Foundation blog, education NGO India, student empowerment, digital skills, coding workshops, career guidance, cyber security awareness, IBM SkillsBuild">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://vededufoundation.in/blog.html">
+<!-- Open Graph -->
+<meta property="og:title" content="Blog &amp; Insights — VED Foundation">
+<meta property="og:description" content="Insights, stories and impact from VED Foundation's education and empowerment programs across India.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://vededufoundation.in/blog.html">
+<meta property="og:image" content="https://vededufoundation.in/vedlogo.jpeg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Blog &amp; Insights — VED Foundation">
+<!-- Schema -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Blog","name":"VED Foundation Blog","description":"Insights, Stories & Impact from VED Foundation","url":"https://vededufoundation.in/blog.html","publisher":{"@type":"Organization","name":"VED Foundation","url":"https://vededufoundation.in","logo":{"@type":"ImageObject","url":"https://vededufoundation.in/vedlogo.jpeg"}}}
+</script>
+<link rel="icon" type="image/jpeg" href="vedlogo.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="blog.css">
+<link rel="stylesheet" href="global.css">
+</head>
+<body>
+
+<!-- Reading Progress -->
+<div id="readingProgress"></div>
+
+<!-- ======================== NAVBAR ======================== -->
+<style>
+.navbar{background:#fff;position:sticky;top:0;z-index:9999;box-shadow:0 4px 18px rgba(15,23,42,.07)}
+.nav-container{width:100%;max-width:1350px;margin:auto;padding:0 20px}
+.nav-inner{min-height:74px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;min-width:220px}
+.brand img{width:50px;height:50px;object-fit:contain;border-radius:10px;background:#fff;border:1px solid #edf2f7;padding:4px}
+.brand-text strong{display:block;color:#0b2b5e;font-size:.95rem;font-weight:900;line-height:1.05}
+.brand-text span{font-size:.68rem;color:#64748b;font-weight:600;margin-top:3px;display:block}
+.nav-links{display:flex;align-items:center;gap:22px}
+.nav-links a{position:relative;color:#24344d;font-size:.88rem;font-weight:700;padding:26px 0;transition:.22s;text-decoration:none}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:18px;width:0;height:2.5px;background:#f7941d;border-radius:3px;transition:.22s}
+.nav-links a:hover{color:#0b63ce}
+.nav-links a:hover::after,.nav-links a.active-nav::after{width:100%}
+.nav-links a.active-nav{color:#0b63ce}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.nb{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;padding:10px 19px;border-radius:6px;font-size:.84rem;font-weight:800;transition:.22s;white-space:nowrap}
+.nb-orange{background:#f7941d;color:#fff;box-shadow:0 8px 20px rgba(247,148,29,.28)}
+.nb-orange:hover{background:#e46f00;transform:translateY(-2px)}
+.nb-blue{background:#0b63ce;color:#fff;box-shadow:0 8px 20px rgba(11,99,206,.24)}
+.nb-blue:hover{background:#074a9d;transform:translateY(-2px)}
+.menu-toggle{display:none;border:none;background:none;font-size:1.7rem;color:#0b63ce;cursor:pointer;line-height:1;padding:4px}
+@media(max-width:1100px){
+  .menu-toggle{display:block}
+  .nav-actions{display:none}
+  .nav-links{position:fixed;left:0;top:70px;width:100%;background:#fff;flex-direction:column;align-items:flex-start;gap:0;max-height:0;overflow:hidden;transition:.3s ease;box-shadow:0 12px 24px rgba(0,0,0,.07);z-index:9998}
+  .nav-links.show{max-height:560px;padding:10px 24px 20px}
+  .nav-links a{width:100%;padding:14px 0;border-bottom:1px solid #eef2f7;font-size:.9rem}
+  .nav-links a::after{display:none}
+}
+</style>
+
+<header class="navbar">
+  <div class="nav-container">
+  <div class="nav-inner">
+    <a href="index.html" class="brand">
+      <img src="vedlogo.jpeg" alt="VED Foundation">
+      <div class="brand-text">
+        <strong>VED FOUNDATION</strong>
+        <span>Education • Skills • Empowerment</span>
+      </div>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="smartclasses.html">Smart Classes</a>
+      <a href="workshops.html">Workshops</a>
+      <a href="blog.html" class="active-nav">Blog</a>
+      <a href="registeration.html">Register</a>
+      <a href="donation.html">Donate</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="donation.html" class="nb nb-orange">Donate Now</a>
+      <a href="registeration.html" class="nb nb-blue">Enroll Free</a>
+    </div>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">&#9776;</button>
+  </div>
+  </div>
+</header>
+
+<script>
+document.getElementById('menuToggle').addEventListener('click',function(){
+  document.getElementById('navLinks').classList.toggle('show');
+});
+</script>
+
+<!-- ======================== HERO ======================== -->
+<section class="blog-hero" aria-label="Blog Hero">
+  <div class="hero-bg"></div>
+  <div class="hero-dots"></div>
+  <div class="hero-photo"></div>
+
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="live-dot"></span>
+        VED Foundation &mdash; Official Blog
+      </div>
+      <h1 class="hero-title">
+        Insights, Stories &amp; <em>Impact</em><br>from VED Foundation
+      </h1>
+      <p class="hero-sub">
+        Empowering students through education, digital skills, innovation and career
+        readiness. Explore real stories, expert guides and workshop recaps.
+      </p>
+      <div class="hero-search" role="search">
+        <input type="search" id="heroSearch" placeholder="Search articles, topics, stories…" aria-label="Search blog">
+        <button type="button" onclick="runSearch()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Search
+        </button>
+      </div>
+      <div class="hero-actions">
+        <a href="#featured" class="btn btn-orange btn-lg">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Featured Article
+        </a>
+        <a href="#categories-bar" class="btn btn-outline-white btn-lg">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Explore Categories
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-stats" aria-hidden="true">
+      <div class="hero-stat">
+        <div class="num">50<span style="color:var(--orange)">+</span></div>
+        <div class="lbl">Articles Published</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">12<span style="color:var(--orange)">K</span></div>
+        <div class="lbl">Monthly Readers</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">10</div>
+        <div class="lbl">Topic Categories</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== CATEGORIES BAR ======================== -->
+<div class="cats-bar" id="categories-bar" role="navigation" aria-label="Blog categories">
+  <div class="container">
+  <div class="cats-inner" id="catBar">
+    <button class="cat-pill active" data-cat="all">All Posts <span class="cnt">50</span></button>
+    <button class="cat-pill" data-cat="student">Student Success <span class="cnt">9</span></button>
+    <button class="cat-pill" data-cat="career">Career Guidance <span class="cnt">8</span></button>
+    <button class="cat-pill" data-cat="digital">Digital Skills <span class="cnt">7</span></button>
+    <button class="cat-pill" data-cat="coding">Coding &amp; Tech <span class="cnt">8</span></button>
+    <button class="cat-pill" data-cat="cyber">Cyber Security <span class="cnt">5</span></button>
+    <button class="cat-pill" data-cat="workshop">Workshops <span class="cnt">6</span></button>
+    <button class="cat-pill" data-cat="comm">Communication <span class="cnt">4</span></button>
+    <button class="cat-pill" data-cat="ibm">IBM SkillsBuild <span class="cnt">3</span></button>
+    <button class="cat-pill" data-cat="impact">NGO Impact <span class="cnt">6</span></button>
+    <button class="cat-pill" data-cat="volunteer">Volunteers <span class="cnt">4</span></button>
+  </div>
+  </div>
+</div>
+
+<!-- ======================== FEATURED ARTICLE ======================== -->
+<section class="featured-section" id="featured" aria-label="Featured article">
+  <div class="container">
+    <div class="featured-label">
+      <div class="section-label"><span class="dot"></span> Featured Article</div>
+    </div>
+    <a href="blog-post.html" class="featured-card" aria-label="Read featured article">
+      <div class="featured-img-wrap">
+        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&q=80&auto=format&fit=crop"
+             alt="Students learning digital skills together" loading="lazy">
+        <div class="feat-img-overlay"></div>
+        <span class="feat-flag">&#11088; Editor's Pick</span>
+      </div>
+      <div class="featured-body">
+        <div class="section-label" style="background:#fffbeb;color:#b45309">
+          <span class="dot" style="background:#b45309"></span> Digital Skills
+        </div>
+        <h2 class="feat-title">
+          How Digital Skills Are Transforming Student Careers in India
+        </h2>
+        <p class="feat-excerpt">
+          Across tier-2 and tier-3 cities, a quiet revolution is underway. Students who
+          once had limited exposure to technology are now building websites, creating
+          digital businesses, and landing jobs at leading companies — all thanks to
+          focused, accessible digital skill programs like those run by VED Foundation.
+        </p>
+        <div class="read-meta">
+          <span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            18 May 2026
+          </span>
+          <span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            8 min read
+          </span>
+        </div>
+        <div class="feat-footer">
+          <div class="feat-author">
+            <div class="av av-blue" aria-hidden="true">PK</div>
+            <div>
+              <strong>Priya Kumari</strong>
+              <span style="display:block;font-size:.75rem">Program Director, VED Foundation</span>
+            </div>
+          </div>
+          <span class="btn btn-primary btn-sm">
+            Read Article
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ======================== LATEST ARTICLES ======================== -->
+<section class="articles-section" aria-label="Latest articles">
+  <div class="container">
+    <div class="articles-header">
+      <div>
+        <div class="section-label"><span class="dot"></span> Latest Articles</div>
+        <h2 class="section-title">Stories, Guides &amp; Insights</h2>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <select id="sortSelect" style="padding:8px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:.82rem;font-weight:600;color:var(--text);background:#fff;outline:none;cursor:pointer">
+          <option value="newest">Newest First</option>
+          <option value="popular">Most Popular</option>
+          <option value="read">Quick Reads</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="noResults">
+      <h3>No articles found</h3>
+      <p>Try a different search term or category.</p>
+    </div>
+
+    <div class="articles-grid" id="articlesGrid">
+
+      <!-- 1 -->
+      <article class="article-card reveal" data-cat="coding" data-title="codestart workshop 200 students learn to code" data-read="6">
+        <div class="a-img">
+          <div class="a-img-g g-blue">&#128187;</div>
+        </div>
+        <div class="a-body">
+          <div class="a-top">
+            <span class="cat-badge cat-coding">Coding &amp; Tech</span>
+            <span class="read-meta"><span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              6 min
+            </span></span>
+          </div>
+          <h3 class="a-title">
+            <a href="blog-post.html">CodeStart Workshop: 200 Students Learn to Code in 30 Days</a>
+          </h3>
+          <p class="a-excerpt">
+            Our flagship CodeStart program just wrapped its most successful edition yet.
+            From HTML basics to building real projects — here's how we did it and what
+            students walked away with.
+          </p>
+          <div class="a-footer">
+            <div class="a-author">
+              <div class="av av-blue">RG</div>
+              <div><strong>Rahul Gupta</strong> &nbsp;&bull;&nbsp; 12 May 2026</div>
+            </div>
+            <a href="blog-post.html" class="a-more">
+              Read
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2 -->
+      <article class="article-card reveal rd-1" data-cat="cyber" data-title="cybersafe india protecting students in the digital age" data-read="5">
+        <div class="a-img">
+          <div class="a-img-g g-red">&#128274;</div>
+        </div>
+        <div class="a-body">
+          <div class="a-top">
+            <span class="cat-badge cat-cyber">Cyber Security</span>
+            <span class="read-meta"><span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              5 min
+            </span></span>
+          </div>
+          <h3 class="a-title">
+            <a href="blog-post.html">CyberSafe India: Protecting Students in the Digital Age</a>
+          </h3>
+          <p class="a-excerpt">
+            Phishing, identity theft, and social engineering aren't just corporate problems
+            — they target students every day. Our CyberSafe initiative is closing that
+            awareness gap, one workshop at a time.
+          </p>
+          <div class="a-footer">
+            <div class="a-author">
+              <div class="av av-orange">AM</div>
+              <div><strong>Ananya Mishra</strong> &nbsp;&bull;&nbsp; 8 May 2026</div>
+            </div>
+            <a href="blog-post.html" class="a-more">
+              Read
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- 3 -->
+      <article class="article-card reveal rd-2" data-cat="career" data-title="career roadmap class 10 to dream job" data-read="7">
+        <div class="a-img">
+          <div class="a-img-g g-green">&#127919;</div>
+        </div>
+        <div class="a-body">
+          <div class="a-top">
+            <span class="cat-badge cat-career">Career Guidance</span>
+            <span class="read-meta"><span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              7 min
+            </span></span>
+          </div>
+          <h3 class="a-title">
+            <a href="blog-post.html">Career Roadmap: From Class 10 to Your Dream Job</a>
+          </h3>
+          <p class="a-excerpt">
+            Feeling lost about what comes after school? This comprehensive guide walks
+            you through every step — streams, entrance exams, skill-building, and how to
+            stand out before you even graduate.
+          </p>
+          <div class="a-footer">
+            <div class="a-author">
+              <div class="av av-green">SK</div>
+              <div><strong>Sneha Kaur</strong> &nbsp;&bull;&nbsp; 3 May 2026</div>
+            </div>
+            <a href="blog-post.html" class="a-more">
+              Read
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- 4 -->
+      <article class="article-card reveal" data-cat="ibm" data-title="ibm skillsbuild bridging the skills gap india" data-read="6">
+        <div class="a-img">
+          <div class="a-img-g g-navy">&#127981;</div>
+        </div>
+        <div class="a-body">
+          <div class="a-top">
+            <span class="cat-badge cat-ibm">IBM SkillsBuild</span>
+            <span class="read-meta"><span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              6 min
+            </span></span>
+          </div>
+          <h3 class="a-title">
+            <a href="blog-post.html">IBM SkillsBuild: How We're Bridging India's Skills Gap</a>
+          </h3>
+          <p class="a-excerpt">
+            Through our partnership with IBM SkillsBuild, hundreds of students have earned
+            globally recognized credentials — for free. Here's what the program covers and
+            how you can enrol today.
+          </p>
+          <div class="a-footer">
+            <div class="a-author">
+              <div class="av av-purple">VN</div>
+              <div><strong>Vikram Nair</strong> &nbsp;&bull;&nbsp; 28 Apr 2026</div>
+            </div>
+            <a href="blog-post.html" class="a-more">
+              Read
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- 5 -->
+      <article class="article-card reveal rd-1" data-cat="student" data-title="student success story riya journey developer" data-read="5">
+        <div class="a-img">
+          <div class="a-img-g g-purple">&#127775;</div>
+        </div>
+        <div class="a-body">
+          <div class="a-top">
+            <span class="cat-badge cat-student">Student Success</span>
+            <span class="read-meta"><span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              5 min
+            </span></span>
+          </div>
+          <h3 class="a-title">
+            <a href="blog-post.html">Riya's Journey: From Self-Doubt to Junior Developer at 19</a>
+          </h3>
+          <p class="a-excerpt">
+            Riya didn't own a laptop when she joined our bootcamp. Eight months later, she
+            had a job offer. This is her story — and proof that determination is the only
+            prerequisite.
+          </p>
+          <div class="a-footer">
+            <div class="a-author">
+              <div class="av av-orange">RV</div>
+              <div><strong>Riya Verma</strong> &nbsp;&bull;&nbsp; 22 Apr 2026</div>
+            </div>
+            <a href="blog-post.html" class="a-more">
+              Read
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- 6 -->
+      <article class="article-card reveal rd-2" data-cat="workshop" data-title="digital edge workshop 500 students recap" data-read="4">
+        <div class="a-img">
+          <div class="a-img-g g-amber">&#128218;</div>
+        </div>
+        <div class="a-body">
+          <div class="a-top">
+            <span class="cat-badge cat-workshop">Workshops</span>
+            <span class="read-meta"><span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              4 min
+            </span></span>
+          </div>
+          <h3 class="a-title">
+            <a href="blog-post.html">Digital Edge Workshop Recap: 500 Students, One Day, Real Change</a>
+          </h3>
+          <p class="a-excerpt">
+            Our biggest workshop yet brought together 500 students from 12 schools.
+            Here's everything that happened — the sessions, the breakthroughs, the feedback,
+            and what's coming next.
+          </p>
+          <div class="a-footer">
+            <div class="a-author">
+              <div class="av av-green">AJ</div>
+              <div><strong>Arjun Joshi</strong> &nbsp;&bull;&nbsp; 15 Apr 2026</div>
+            </div>
+            <a href="blog-post.html" class="a-more">
+              Read
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- 7 -->
+      <article class="article-card reveal" data-cat="comm" data-title="communication skills changed my life speak confidence" data-read="5">
+        <div class="a-img">
+          <div class="a-img-g g-teal">&#128483;</div>
+        </div>
+        <div class="a-body">
+          <div class="a-top">
+            <span class="cat-badge cat-comm">Communication</span>
+            <span class="read-meta"><span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              5 min
+            </span></span>
+          </div>
+          <h3 class="a-title">
+            <a href="blog-post.html">5 Communication Skills That Will Change Your Career Forever</a>
+          </h3>
+          <p class="a-excerpt">
+            Technical skills get you in the door. Communication skills keep you there —
+            and take you to the top. These are the five we teach every student and why
+            each one matters for your future.
+          </p>
+          <div class="a-footer">
+            <div class="a-author">
+              <div class="av av-purple">MT</div>
+              <div><strong>Meera Tiwari</strong> &nbsp;&bull;&nbsp; 9 Apr 2026</div>
+            </div>
+            <a href="blog-post.html" class="a-more">
+              Read
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- 8 -->
+      <article class="article-card reveal rd-1" data-cat="impact" data-title="smart classes rural schools technology" data-read="6">
+        <div class="a-img">
+          <div class="a-img-g g-cyan">&#127979;</div>
+        </div>
+        <div class="a-body">
+          <div class="a-top">
+            <span class="cat-badge cat-impact">NGO Impact</span>
+            <span class="read-meta"><span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              6 min
+            </span></span>
+          </div>
+          <h3 class="a-title">
+            <a href="blog-post.html">Smart Classes Initiative: Technology Reaches 40 Rural Schools</a>
+          </h3>
+          <p class="a-excerpt">
+            When students in Chhattisgarh saw a projector for the first time, they thought
+            it was magic. It was really just a smarter way to learn. Our Smart Classes
+            project is transforming rural education — here's the impact so far.
+          </p>
+          <div class="a-footer">
+            <div class="a-author">
+              <div class="av av-blue">DS</div>
+              <div><strong>Dev Sharma</strong> &nbsp;&bull;&nbsp; 2 Apr 2026</div>
+            </div>
+            <a href="blog-post.html" class="a-more">
+              Read
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- 9 -->
+      <article class="article-card reveal rd-2" data-cat="career" data-title="linkedin profile students professional 16 18" data-read="4">
+        <div class="a-img">
+          <div class="a-img-g g-navy">&#128101;</div>
+        </div>
+        <div class="a-body">
+          <div class="a-top">
+            <span class="cat-badge cat-career">Career Guidance</span>
+            <span class="read-meta"><span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              4 min
+            </span></span>
+          </div>
+          <h3 class="a-title">
+            <a href="blog-post.html">LinkedIn for Students: Build Your Professional Profile at 16</a>
+          </h3>
+          <p class="a-excerpt">
+            You don't need a job to start building your professional brand. A strong
+            LinkedIn profile opens internship doors, connects you with mentors, and shows
+            recruiters you're serious — years before you graduate.
+          </p>
+          <div class="a-footer">
+            <div class="a-author">
+              <div class="av av-green">NK</div>
+              <div><strong>Nidhi Kapoor</strong> &nbsp;&bull;&nbsp; 26 Mar 2026</div>
+            </div>
+            <a href="blog-post.html" class="a-more">
+              Read
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- 10 -->
+      <article class="article-card reveal" data-cat="cyber" data-title="introduction cybersecurity every student must know" data-read="7">
+        <div class="a-img">
+          <div class="a-img-g g-red">&#128421;</div>
+        </div>
+        <div class="a-body">
+          <div class="a-top">
+            <span class="cat-badge cat-cyber">Cyber Security</span>
+            <span class="read-meta"><span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              7 min
+            </span></span>
+          </div>
+          <h3 class="a-title">
+            <a href="blog-post.html">Introduction to Cybersecurity: What Every Student Must Know in 2026</a>
+          </h3>
+          <p class="a-excerpt">
+            Cyber threats are evolving faster than awareness. From password hygiene to
+            recognising deepfakes, this guide covers the ten most important concepts
+            every student needs to understand right now.
+          </p>
+          <div class="a-footer">
+            <div class="a-author">
+              <div class="av av-orange">PP</div>
+              <div><strong>Pratik Pandey</strong> &nbsp;&bull;&nbsp; 20 Mar 2026</div>
+            </div>
+            <a href="blog-post.html" class="a-more">
+              Read
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- 11 -->
+      <article class="article-card reveal rd-1" data-cat="digital" data-title="digital literacy first steps internet beginners" data-read="4">
+        <div class="a-img">
+          <div class="a-img-g g-teal">&#127760;</div>
+        </div>
+        <div class="a-body">
+          <div class="a-top">
+            <span class="cat-badge cat-digital">Digital Skills</span>
+            <span class="read-meta"><span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              4 min
+            </span></span>
+          </div>
+          <h3 class="a-title">
+            <a href="blog-post.html">Digital Literacy First Steps: A Beginner's Guide for Students</a>
+          </h3>
+          <p class="a-excerpt">
+            You don't need to be a tech wizard. Digital literacy is about using tools
+            confidently, safely, and creatively. This no-jargon guide is designed for
+            students taking their first steps online.
+          </p>
+          <div class="a-footer">
+            <div class="a-author">
+              <div class="av av-blue">LS</div>
+              <div><strong>Lalita Singh</strong> &nbsp;&bull;&nbsp; 14 Mar 2026</div>
+            </div>
+            <a href="blog-post.html" class="a-more">
+              Read
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- 12 -->
+      <article class="article-card reveal rd-2" data-cat="volunteer" data-title="volunteer voices why we teach inspire students" data-read="5">
+        <div class="a-img">
+          <div class="a-img-g g-orange">&#10084;</div>
+        </div>
+        <div class="a-body">
+          <div class="a-top">
+            <span class="cat-badge cat-volunteer">Volunteer Stories</span>
+            <span class="read-meta"><span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              5 min
+            </span></span>
+          </div>
+          <h3 class="a-title">
+            <a href="blog-post.html">Volunteer Voices: Why We Left Comfort Zones to Teach</a>
+          </h3>
+          <p class="a-excerpt">
+            They gave up weekends, commuted hours, and refused stipends. Why? Because
+            they believe every student deserves a chance. Five volunteers share the moment
+            they decided to show up — and never stopped.
+          </p>
+          <div class="a-footer">
+            <div class="a-author">
+              <div class="av av-purple">Team</div>
+              <div><strong>VED Team</strong> &nbsp;&bull;&nbsp; 8 Mar 2026</div>
+            </div>
+            <a href="blog-post.html" class="a-more">
+              Read
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+    </div><!-- /articles-grid -->
+
+    <div class="load-more-wrap">
+      <button class="btn btn-outline-blue btn-lg" id="loadMoreBtn">
+        Load More Articles
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== IMPACT STORIES ======================== -->
+<section class="impact-section" aria-label="Impact stories">
+  <div class="container">
+    <div class="impact-header reveal">
+      <div class="section-label"><span class="dot"></span> Real Impact</div>
+      <h2 class="section-title">Stories That Inspire Change</h2>
+      <p class="section-subtitle">
+        Behind every statistic is a student whose life changed direction. Here are just
+        a few of the thousands of stories we're proud to share.
+      </p>
+    </div>
+    <div class="impact-grid">
+
+      <div class="impact-card reveal">
+        <div class="impact-img">
+          <div class="a-img-g g-blue" style="height:200px">&#127891;</div>
+        </div>
+        <div class="impact-body">
+          <p class="impact-quote">
+            "I had never touched a computer before joining VED Foundation's workshop.
+            Three months later I built my first website and earned my first freelance
+            project. This programme changed everything for me."
+          </p>
+          <div class="impact-person">
+            <div class="av av-blue">KS</div>
+            <div class="info">
+              <strong>Kartik Sahu</strong>
+              <span>Class 12 Student, Raipur</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="impact-card reveal rd-1">
+        <div class="impact-img">
+          <div class="a-img-g g-green" style="height:200px">&#127760;</div>
+        </div>
+        <div class="impact-body">
+          <p class="impact-quote">
+            "The career counselling session helped me realise I didn't have to choose
+            between science and my love for design. VED's mentors showed me pathways
+            I never knew existed — I'm now studying UI/UX."
+          </p>
+          <div class="impact-person">
+            <div class="av av-green">PM</div>
+            <div class="info">
+              <strong>Pooja Malviya</strong>
+              <span>Undergraduate Student, Bhopal</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="impact-card reveal rd-2">
+        <div class="impact-img">
+          <div class="a-img-g g-purple" style="height:200px">&#128105;&#8205;&#128187;</div>
+        </div>
+        <div class="impact-body">
+          <p class="impact-quote">
+            "I came to the cyber security workshop thinking I already knew enough.
+            By lunch I realised how vulnerable I was. By the end I knew how to protect
+            myself — and how to teach my family to do the same."
+          </p>
+          <div class="impact-person">
+            <div class="av av-purple">AT</div>
+            <div class="info">
+              <strong>Aman Tripathi</strong>
+              <span>First-Year Engineering, Nagpur</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /impact-grid -->
+
+    <!-- Stats Banner -->
+    <div class="impact-stats reveal">
+      <div class="i-stat">
+        <div class="num">5,200<sup>+</sup></div>
+        <div class="lbl">Students Empowered</div>
+      </div>
+      <div class="i-stat">
+        <div class="num">120<sup>+</sup></div>
+        <div class="lbl">Workshops Conducted</div>
+      </div>
+      <div class="i-stat">
+        <div class="num">40<sup>+</sup></div>
+        <div class="lbl">Schools Reached</div>
+      </div>
+      <div class="i-stat">
+        <div class="num">92<sup>%</sup></div>
+        <div class="lbl">Satisfaction Rate</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== EDUCATION RESOURCES ======================== -->
+<section class="resources-section" aria-label="Education resources">
+  <div class="container">
+    <div class="resources-header reveal">
+      <div class="section-label"><span class="dot"></span> Free Resources</div>
+      <h2 class="section-title">Download &amp; Learn</h2>
+      <p class="section-subtitle" style="max-width:500px">
+        Practical guides, roadmaps and kits created by our experts — free for every student.
+      </p>
+    </div>
+    <div class="resources-grid">
+
+      <div class="res-card reveal" onclick="window.location='registeration.html'" role="button" tabindex="0">
+        <div class="res-icon ri-blue">&#128736;</div>
+        <div class="res-body">
+          <h4>Career Roadmap 2026</h4>
+          <p>Step-by-step paths for 15+ popular career streams with skill milestones and timelines.</p>
+          <span class="res-link">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download Free PDF
+          </span>
+        </div>
+      </div>
+
+      <div class="res-card reveal rd-1" onclick="window.location='registeration.html'" role="button" tabindex="0">
+        <div class="res-icon ri-green">&#128203;</div>
+        <div class="res-body">
+          <h4>Resume Guide for Freshers</h4>
+          <p>Templates + writing tips to create a resume that gets you shortlisted even without experience.</p>
+          <span class="res-link">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download Free PDF
+          </span>
+        </div>
+      </div>
+
+      <div class="res-card reveal rd-2" onclick="window.location='registeration.html'" role="button" tabindex="0">
+        <div class="res-icon ri-purple">&#128172;</div>
+        <div class="res-body">
+          <h4>Interview Preparation Kit</h4>
+          <p>100+ common interview questions, STAR answers, body-language tips and mock interview script.</p>
+          <span class="res-link">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download Free PDF
+          </span>
+        </div>
+      </div>
+
+      <div class="res-card reveal" onclick="window.location='registeration.html'" role="button" tabindex="0">
+        <div class="res-icon ri-orange">&#128187;</div>
+        <div class="res-body">
+          <h4>Coding Learning Roadmap</h4>
+          <p>From zero to first project: HTML → CSS → JavaScript → Python with free resources at every step.</p>
+          <span class="res-link">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download Free PDF
+          </span>
+        </div>
+      </div>
+
+      <div class="res-card reveal rd-1" onclick="window.location='registeration.html'" role="button" tabindex="0">
+        <div class="res-icon ri-red">&#128274;</div>
+        <div class="res-body">
+          <h4>Cyber Security Awareness Kit</h4>
+          <p>Checklists, threat guides and family safety posters to protect yourself and your loved ones online.</p>
+          <span class="res-link">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download Free PDF
+          </span>
+        </div>
+      </div>
+
+      <div class="res-card reveal rd-2" onclick="window.location='registeration.html'" role="button" tabindex="0">
+        <div class="res-icon ri-cyan">&#127760;</div>
+        <div class="res-body">
+          <h4>Digital Literacy Starter Pack</h4>
+          <p>Beginner-friendly guide to email, cloud storage, spreadsheets, and online safety — in simple language.</p>
+          <span class="res-link">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download Free PDF
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ======================== POPULAR TOPICS ======================== -->
+<section class="topics-section" aria-label="Popular topics">
+  <div class="container">
+    <div class="topics-header reveal">
+      <div class="section-label"><span class="dot"></span> Trending Now</div>
+      <h2 class="section-title">Popular Topics</h2>
+    </div>
+    <div class="topics-cloud" id="topicsCloud">
+      <button class="topic-tag" data-cat="coding">#Coding <span class="cnt">18</span></button>
+      <button class="topic-tag" data-cat="career">#CareerGrowth <span class="cnt">14</span></button>
+      <button class="topic-tag" data-cat="cyber">#CyberSecurity <span class="cnt">9</span></button>
+      <button class="topic-tag" data-cat="digital">#DigitalSkills <span class="cnt">12</span></button>
+      <button class="topic-tag" data-cat="student">#StudentEmpowerment <span class="cnt">11</span></button>
+      <button class="topic-tag" data-cat="workshop">#Workshops <span class="cnt">8</span></button>
+      <button class="topic-tag" data-cat="comm">#CommunicationSkills <span class="cnt">7</span></button>
+      <button class="topic-tag" data-cat="ibm">#IBMSkillsBuild <span class="cnt">5</span></button>
+      <button class="topic-tag" data-cat="impact">#NGOImpact <span class="cnt">10</span></button>
+      <button class="topic-tag" data-cat="coding">#Technology <span class="cnt">15</span></button>
+      <button class="topic-tag" data-cat="student">#YouthEmpowerment <span class="cnt">13</span></button>
+      <button class="topic-tag" data-cat="career">#FutureReady <span class="cnt">9</span></button>
+      <button class="topic-tag" data-cat="digital">#SmartLearning <span class="cnt">8</span></button>
+      <button class="topic-tag" data-cat="volunteer">#Volunteers <span class="cnt">6</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== NEWSLETTER ======================== -->
+<section class="newsletter-section" aria-label="Newsletter subscription">
+  <div class="container">
+  <div class="nl-inner reveal">
+    <div class="nl-dots"></div>
+    <div class="nl-glow"></div>
+    <div class="nl-content">
+      <div class="nl-left">
+        <div class="nl-eyebrow">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Join Our Community
+        </div>
+        <h2 class="nl-title">Stay Connected With Educational Opportunities</h2>
+        <p class="nl-sub">
+          Get the latest articles, workshop announcements, career opportunities and
+          free resources delivered straight to your inbox. No spam, ever.
+        </p>
+        <div class="nl-trust">
+          <span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            No Spam
+          </span>
+          <span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Monthly Updates
+          </span>
+          <span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Free Resources
+          </span>
+          <span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Unsubscribe Anytime
+          </span>
+        </div>
+      </div>
+      <form class="nl-form" id="nlForm" onsubmit="submitNewsletter(event)">
+        <div>
+          <label for="nlName">Your Name</label>
+          <input type="text" id="nlName" placeholder="Rahul Kumar" required autocomplete="name">
+        </div>
+        <div>
+          <label for="nlEmail">Email Address</label>
+          <input type="email" id="nlEmail" placeholder="you@example.com" required autocomplete="email">
+        </div>
+        <button type="submit" class="nl-submit">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Subscribe Free
+        </button>
+        <div id="nl-msg">&#10003; Welcome aboard! Check your inbox for a confirmation.</div>
+      </form>
+    </div>
+  </div>
+  </div>
+</section>
+
+<!-- ======================== VOLUNTEER STORIES ======================== -->
+<section class="volunteers-section" aria-label="Volunteer stories">
+  <div class="container">
+    <div class="volunteers-header reveal">
+      <div class="section-label"><span class="dot"></span> Our People</div>
+      <h2 class="section-title">Volunteers Who Make It Happen</h2>
+      <p class="section-subtitle">
+        Every lesson, workshop and mentoring session happens because of our extraordinary volunteers.
+      </p>
+    </div>
+    <div class="volunteers-grid">
+
+      <div class="vol-card reveal">
+        <div class="vol-photo" style="background:linear-gradient(135deg,#0b63ce,#20c997)">
+          <span style="color:#fff;font-weight:800">RA</span>
+        </div>
+        <div class="vol-info">
+          <h4>Rohit Awasthi</h4>
+          <div class="role">Lead Coding Instructor &bull; 2 years</div>
+          <p>
+            "Teaching students who've never coded before and watching them build something
+            real in 30 days is one of the most rewarding experiences of my professional
+            life. VED gives me a purpose beyond my 9-to-5."
+          </p>
+          <a href="blog-post.html" class="btn btn-outline-blue btn-sm">Read Rohit's Story</a>
+        </div>
+      </div>
+
+      <div class="vol-card reveal rd-1">
+        <div class="vol-photo" style="background:linear-gradient(135deg,#16a34a,#20c997)">
+          <span style="color:#fff;font-weight:800">SB</span>
+        </div>
+        <div class="vol-info">
+          <h4>Simran Batra</h4>
+          <div class="role">Career Counsellor &bull; 3 years</div>
+          <p>
+            "Many of my students had never spoken to anyone about their career ambitions
+            before. Helping them articulate their dreams and then build a plan to achieve
+            them — that's why I wake up on Saturday mornings."
+          </p>
+          <a href="blog-post.html" class="btn btn-outline-blue btn-sm">Read Simran's Story</a>
+        </div>
+      </div>
+
+      <div class="vol-card reveal rd-2">
+        <div class="vol-photo" style="background:linear-gradient(135deg,#7c3aed,#0b63ce)">
+          <span style="color:#fff;font-weight:800">KP</span>
+        </div>
+        <div class="vol-info">
+          <h4>Kiran Patel</h4>
+          <div class="role">Cyber Security Trainer &bull; 1 year</div>
+          <p>
+            "After seeing how easily my own cousin fell for a phishing scam, I knew I had
+            to do something. VED gave me the platform to reach thousands of students with
+            knowledge that could protect them and their families."
+          </p>
+          <a href="blog-post.html" class="btn btn-outline-blue btn-sm">Read Kiran's Story</a>
+        </div>
+      </div>
+
+      <div class="vol-card reveal rd-3">
+        <div class="vol-photo" style="background:linear-gradient(135deg,#f7941d,#e63946)">
+          <span style="color:#fff;font-weight:800">NR</span>
+        </div>
+        <div class="vol-info">
+          <h4>Neha Rathore</h4>
+          <div class="role">Communication Skills Coach &bull; 2 years</div>
+          <p>
+            "A student who once couldn't say a sentence in English without freezing
+            gave a full five-minute presentation in our last workshop. I cried. This is
+            what education is supposed to feel like."
+          </p>
+          <a href="blog-post.html" class="btn btn-outline-blue btn-sm">Read Neha's Story</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ======================== CTA SECTION ======================== -->
+<section class="cta-section" aria-label="Call to action">
+  <div class="cta-glow"></div>
+  <div class="container">
+    <div class="cta-tag">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      Join the Movement
+    </div>
+    <h2 class="cta-title">
+      Help Us <em>Empower</em> More Students Across India
+    </h2>
+    <p class="cta-sub">
+      Whether you volunteer, donate, or simply share our stories —
+      every action creates ripples that change futures.
+    </p>
+    <div class="cta-actions">
+      <a href="registeration.html" class="btn btn-white btn-lg">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/></svg>
+        Become a Volunteer
+      </a>
+      <a href="workshops.html" class="btn btn-teal btn-lg">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+        Join a Workshop
+      </a>
+      <a href="donation.html" class="btn btn-orange btn-lg">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        Support Education
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== FOOTER ======================== -->
+<footer style="background:#f1f5f9;color:#4b5563;padding:70px 0 28px;border-top:1px solid #e2e8f0;font-family:'Inter',sans-serif">
+  <style>
+    .fl-grid{display:grid;grid-template-columns:1.4fr .9fr .9fr .9fr 1fr;gap:44px;max-width:1180px;margin:0 auto 44px;padding:0 20px;align-items:start}
+    .fl-col h4{color:#374151;font-size:.84rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px}
+    .fl-col h4::after{content:"";display:block;width:36px;height:2.5px;background:#0b63ce;margin-top:7px;border-radius:4px}
+    .fl-col p{color:#4b5563;font-size:.88rem;line-height:1.72;max-width:260px}
+    .fl-col ul{padding:0;display:grid;gap:9px}
+    .fl-col a{color:#4b5563;font-size:.86rem;text-decoration:none;transition:.2s}
+    .fl-col a:hover{color:#0b63ce}
+    .fl-social{display:flex;gap:10px;margin-top:18px}
+    .fl-social a{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;background:#fff;border:1px solid #e2e8f0;color:#0b63ce;font-size:.75rem;font-weight:700;text-decoration:none;transition:.2s}
+    .fl-social a:hover{background:#0b63ce;color:#fff;border-color:#0b63ce}
+    .fl-bottom{max-width:1180px;margin:0 auto;padding:18px 20px 0;border-top:1px solid #dde2ea;display:flex;justify-content:space-between;font-size:.8rem;color:#64748b;flex-wrap:wrap;gap:10px}
+    .fl-blog-recent .rbi{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #e2e8f0}
+    .fl-blog-recent .rbi:last-child{border-bottom:none}
+    .fl-blog-recent .rbi .rbt{font-size:.8rem;font-weight:600;color:#374151;line-height:1.38;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+    .fl-blog-recent .rbi .rbd{font-size:.72rem;color:#94a3b8;margin-top:3px}
+    @media(max-width:1024px){.fl-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:640px){.fl-grid{grid-template-columns:1fr;gap:28px}.fl-bottom{flex-direction:column;text-align:center}}
+  </style>
+  <div class="fl-grid">
+    <div class="fl-col">
+      <a href="index.html" style="display:block;margin-bottom:14px">
+        <img src="vedlogo.jpeg" alt="VED Foundation" style="width:120px;height:auto;object-fit:contain">
+      </a>
+      <p>VED Foundation is a non-profit working for education, skills, smart learning
+      and student empowerment through workshops, digital learning and community development.</p>
+      <div class="fl-social">
+        <a href="#" title="Instagram">In</a>
+        <a href="#" title="LinkedIn">Li</a>
+        <a href="#" title="Facebook">Fb</a>
+        <a href="#" title="YouTube">Yt</a>
+      </div>
+    </div>
+    <div class="fl-col">
+      <h4>Blog Topics</h4>
+      <ul>
+        <li><a href="blog.html">All Articles</a></li>
+        <li><a href="blog.html">Student Success Stories</a></li>
+        <li><a href="blog.html">Career Guidance</a></li>
+        <li><a href="blog.html">Digital Skills</a></li>
+        <li><a href="blog.html">Cyber Security</a></li>
+        <li><a href="blog.html">Coding &amp; Technology</a></li>
+      </ul>
+    </div>
+    <div class="fl-col">
+      <h4>Our Work</h4>
+      <ul>
+        <li><a href="smartclasses.html">Smart Classes</a></li>
+        <li><a href="workshops.html">Workshop Center</a></li>
+        <li><a href="agriculture.html">Agriculture</a></li>
+        <li><a href="solarpanel.html">Solar Awareness</a></li>
+        <li><a href="donation.html">Donate Now</a></li>
+      </ul>
+    </div>
+    <div class="fl-col">
+      <h4>Recent Posts</h4>
+      <div class="fl-blog-recent">
+        <div class="rbi">
+          <div>
+            <a href="blog-post.html" class="rbt">How Digital Skills Are Transforming Student Careers</a>
+            <div class="rbd">18 May 2026</div>
+          </div>
+        </div>
+        <div class="rbi">
+          <div>
+            <a href="blog-post.html" class="rbt">CyberSafe India: Protecting Students Online</a>
+            <div class="rbd">8 May 2026</div>
+          </div>
+        </div>
+        <div class="rbi">
+          <div>
+            <a href="blog-post.html" class="rbt">Career Roadmap: Class 10 to Dream Job</a>
+            <div class="rbd">3 May 2026</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fl-col">
+      <h4>Contact</h4>
+      <div style="background:#fff;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <p style="margin-bottom:10px"><b>Email:</b><br>vededufoundation@gmail.com</p>
+        <p style="margin-bottom:10px"><b>Phone:</b><br>+91 9009015026</p>
+        <p><b>Location:</b><br>India</p>
+      </div>
+    </div>
+  </div>
+  <div class="fl-bottom">
+    <span>&copy; 2026 VED Foundation. All Rights Reserved.</span>
+    <span>Designed for Education &bull; Skills &bull; Empowerment</span>
+  </div>
+</footer>
+
+<!-- Back to top -->
+<button id="backToTop" aria-label="Back to top" title="Back to top">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<script src="blog.js"></script>
+</body>
+</html>

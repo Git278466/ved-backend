@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
   <script src="/config.js"></script>
 
   <style>
@@ -36,6 +37,8 @@
 
     html{
       scroll-behavior:smooth;
+      overflow-x:hidden;
+      max-width:100%;
     }
 
     body{
@@ -43,6 +46,10 @@
       background:#fff;
       color:var(--text);
       line-height:1.6;
+      overflow-x:hidden;
+      max-width:100%;
+      width:100%;
+      padding-top:70px;
     }
 
     a{
@@ -52,6 +59,7 @@
 
     img{
       max-width:100%;
+      height:auto;
       display:block;
     }
 
@@ -112,17 +120,18 @@
 
     .hero{
       position:relative;
-      min-height:500px;
+      min-height:480px;
       overflow:hidden;
       background:#eef8ff;
       display:flex;
       align-items:center;
       padding:0;
+      contain:paint;
     }
 
     .hero-bg{
       position:absolute;
-      inset:0;
+      top:0;left:0;right:0;bottom:0;
       background:linear-gradient(90deg,rgba(5,85,115,.88) 0%,rgba(5,85,115,.72) 48%,rgba(238,248,255,.95) 54%,rgba(238,248,255,1) 100%);
       z-index:0;
     }
@@ -130,9 +139,9 @@
     .hero-shape{
       position:absolute;
       left:0;top:0;
-      width:52%;height:100%;
+      width:55%;height:100%;
       background:linear-gradient(135deg,#007c89,#074d8f);
-      clip-path:polygon(0 0,100% 0,84% 100%,0 100%);
+      clip-path:polygon(0 0,100% 0,82% 100%,0 100%);
       z-index:1;
     }
 
@@ -140,10 +149,11 @@
       position:relative;
       z-index:3;
       display:grid;
-      grid-template-columns:1.05fr .95fr;
-      gap:42px;
+      grid-template-columns:1fr 1fr;
+      gap:36px;
       align-items:center;
-      padding:60px 0;
+      padding:56px 0;
+      min-width:0;
     }
 
     .eyebrow{
@@ -229,9 +239,9 @@
 
     .hero-points{
       display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-      max-width:440px;
+      grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
+      gap:10px;
+      max-width:100%;
     }
 
     .point-card,
@@ -278,11 +288,13 @@
     .hero-card{
       background:#fff;
       border:1px solid #e7edf6;
-      border-radius:28px;
+      border-radius:24px;
       box-shadow:var(--shadow-lg);
-      padding:18px;
+      padding:16px;
       position:relative;
       overflow:hidden;
+      min-width:0;
+      max-width:100%;
     }
 
     .hero-card::before{
@@ -547,20 +559,23 @@
     .donation-layout{
       display:grid;
       grid-template-columns:1fr 1fr;
-      gap:28px;
-      align-items:stretch;
+      gap:24px;
+      align-items:start;
+      min-width:0;
     }
 
     .donation-card,
     .qr-card{
-      border-radius:28px;
-      padding:34px;
+      border-radius:24px;
+      padding:28px;
       box-shadow:var(--shadow-lg);
       position:relative;
       overflow:hidden;
       transition:.25s ease;
       background:#fff;
       border:1px solid #e6edf7;
+      min-width:0;
+      max-width:100%;
     }
 
     .donation-card h3,
@@ -743,6 +758,35 @@
       text-align:center;
     }
 
+    /* Floating button */
+    .floating-mob-btn{
+      position:fixed;
+      right:20px;
+      bottom:24px;
+      z-index:9990;
+      background:#f7941d;
+      color:#fff;
+      padding:13px 22px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:.88rem;
+      font-family:'Inter',sans-serif;
+      text-decoration:none;
+      box-shadow:0 8px 28px rgba(247,148,29,.45);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:48px;
+      white-space:nowrap;
+      max-width:calc(100% - 40px);
+      transition:transform .2s ease,box-shadow .2s ease;
+    }
+
+    .floating-mob-btn:hover{
+      transform:translateY(-3px);
+      box-shadow:0 14px 38px rgba(247,148,29,.55);
+    }
+
     .final-cta h2{
       font-size:clamp(2rem,3vw,3.2rem);
       line-height:1.14;
@@ -763,10 +807,12 @@
       padding:62px 0 24px;
     }
 
+    /* 1100px - large tablet */
     @media(max-width:1100px){
       .hero-wrap,
       .donation-layout{
         grid-template-columns:1fr;
+        gap:28px;
       }
 
       .impact-grid,
@@ -777,22 +823,155 @@
       .mini-impact-grid{
         grid-template-columns:1fr 1fr;
       }
+
+      .hero{
+        min-height:auto;
+      }
+
+      .hero-shape{
+        display:none;
+      }
+
+      .hero-bg{
+        background:linear-gradient(135deg,rgba(5,85,115,.95),rgba(7,77,143,.85));
+      }
     }
 
+    /* 768px - tablet */
+    @media(max-width:768px){
+      section{
+        padding:64px 0;
+      }
+
+      .impact-grid{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .steps-grid{
+        grid-template-columns:1fr;
+      }
+
+      .section-head h2{
+        font-size:clamp(1.5rem,5vw,2.2rem);
+        letter-spacing:-0.5px;
+      }
+    }
+
+    /* 640px - small tablet / large mobile */
+    @media(max-width:640px){
+      .impact-grid,
+      .mini-impact-grid{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .hero h1{
+        font-size:clamp(1.65rem,6vw,2.4rem);
+        letter-spacing:-0.5px;
+        max-width:100%;
+      }
+
+      .hero p{
+        max-width:100%;
+        font-size:.96rem;
+      }
+    }
+
+    /* 480px - mobile */
+    @media(max-width:480px){
+      section{
+        padding:48px 0;
+      }
+
+      .mini-impact-grid{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .mini-impact-card strong{
+        font-size:1.6rem;
+      }
+    }
+
+    /* 400px - small mobile */
+    @media(max-width:400px){
+      .amount-grid{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .impact-grid{
+        grid-template-columns:1fr;
+      }
+
+      .mini-impact-grid{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
+    /* 360px and below - very small mobile */
+    @media(max-width:360px){
+      .amount-grid{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .hero-actions{
+        flex-direction:column;
+        align-items:stretch;
+      }
+
+      .btn{
+        width:100%;
+        min-height:48px;
+        justify-content:center;
+      }
+
+      .donation-card,
+      .qr-card,
+      .hero-card{
+        padding:16px;
+        border-radius:18px;
+      }
+
+      .donation-panel{
+        padding:16px;
+      }
+
+      .payment-actions{
+        grid-template-columns:1fr;
+      }
+
+      .upi-app{
+        width:58px;
+        height:58px;
+        padding:10px;
+        border-radius:16px;
+      }
+
+      .upi-app img{
+        max-width:38px;
+        max-height:38px;
+      }
+
+      .floating-mob-btn{
+        left:12px;
+        right:12px;
+        bottom:16px;
+        max-width:calc(100% - 24px);
+        font-size:.82rem;
+      }
+    }
+
+    /* Combined mobile (700px original) */
     @media(max-width:700px){
       section{
-        padding:60px 0;
+        padding:52px 0;
       }
 
       .hero{
-        padding:66px 0 58px;
+        padding:52px 0 44px;
       }
 
       .impact-grid,
       .steps-grid,
-      .amount-grid,
       .hero-points,
-      .mini-impact-grid,
       .form-row{
         grid-template-columns:1fr;
       }
@@ -804,17 +983,19 @@
 
       .btn{
         width:100%;
+        min-height:48px;
+        justify-content:center;
       }
 
       .donation-card,
       .qr-card,
       .hero-card{
         padding:20px;
-        border-radius:22px;
+        border-radius:20px;
       }
 
       .donation-panel{
-        padding:22px;
+        padding:20px;
       }
 
       .payment-actions{
@@ -834,7 +1015,24 @@
       }
 
       .hero h1{
-        letter-spacing:-1px;
+        letter-spacing:-0.5px;
+        max-width:100%;
+      }
+
+      .section-head h2{
+        font-size:clamp(1.5rem,5.5vw,2.4rem);
+        letter-spacing:-0.5px;
+      }
+
+      .mini-impact-grid{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .floating-mob-btn{
+        left:12px;
+        right:12px;
+        bottom:16px;
+        max-width:calc(100% - 24px);
       }
     }
   </style>
@@ -851,7 +1049,7 @@
       <div class="hero-shape"></div>
       <div class="container hero-wrap">
 
-        <div>
+        <div style="min-width:0;overflow:hidden;">
           <div class="eyebrow">Support education, skills and student growth</div>
 
           <h1>Give a Little Today, Create a <span>Better Future</span></h1>
@@ -1281,7 +1479,7 @@
   </script>
   <script src="shared.js"></script>
 
-  <a href="mobilization-form.html" style="position:fixed;right:18px;bottom:18px;z-index:9999;background:#f7941d;color:#fff;padding:12px 20px;border-radius:999px;font-weight:900;font-size:.88rem;box-shadow:0 16px 34px rgba(247,148,29,.35);text-decoration:none;font-family:Inter,sans-serif;">Mobilization Form</a>
+  <a href="mobilization-form.html" class="floating-mob-btn" aria-label="Open Mobilization Form">Mobilization Form</a>
 
 </body>
 </html>

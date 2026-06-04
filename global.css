@@ -1,0 +1,73 @@
+/* global.css — site-wide utility styles shared across all VED Foundation pages */
+
+/* ===== OVERFLOW GUARD =====
+   overflow-x:hidden ONLY on body, never on html.
+   Setting it on html creates a new scroll container
+   which breaks position:sticky (and can affect fixed). */
+body{
+  overflow-x:hidden;
+  max-width:100%;
+}
+
+/* ===== BASE IMAGE RULE ===== */
+img{
+  max-width:100%;
+  height:auto;
+  display:block;
+}
+
+/* ===== FLOATING ACTION BUTTON (Mobilization Form) ===== */
+.mob-fab{
+  position:fixed;
+  right:20px;
+  bottom:24px;
+  z-index:9990;
+  background:#f7941d;
+  color:#fff;
+  padding:13px 22px;
+  border-radius:999px;
+  font-family:'Inter',Arial,sans-serif;
+  font-size:.88rem;
+  font-weight:900;
+  text-decoration:none;
+  box-shadow:0 8px 28px rgba(247,148,29,.45);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-height:48px;
+  white-space:nowrap;
+  max-width:calc(100% - 40px);
+  transition:transform .2s ease, box-shadow .2s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.mob-fab:hover{
+  transform:translateY(-3px);
+  box-shadow:0 14px 38px rgba(247,148,29,.55);
+}
+
+.mob-fab:focus-visible{
+  outline:3px solid rgba(247,148,29,.6);
+  outline-offset:3px;
+}
+
+/* Responsive: full-width pill on small phones */
+@media(max-width:480px){
+  .mob-fab{
+    left:12px;
+    right:12px;
+    bottom:16px;
+    max-width:calc(100% - 24px);
+    font-size:.84rem;
+    padding:12px 18px;
+  }
+}
+
+@media(max-width:360px){
+  .mob-fab{
+    font-size:.78rem;
+    padding:10px 14px;
+    min-height:44px;
+  }
+}

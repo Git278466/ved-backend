@@ -1409,12 +1409,17 @@ button:focus-visible,
 
 /* Stage badge */
 .stage-badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
-.stage-new{background:rgba(37,99,235,0.1);color:var(--royal);}
-.stage-contacted{background:rgba(56,189,248,0.12);color:#0284C7;}
+.stage-not-answering{background:rgba(220,38,38,0.1);color:#DC2626;}
+.stage-not-reachable{background:rgba(234,88,12,0.1);color:#EA580C;}
+.stage-call-back{background:rgba(2,132,199,0.1);color:#0284C7;}
 .stage-interested{background:rgba(249,115,22,0.12);color:var(--orange);}
-.stage-applied{background:rgba(139,92,246,0.12);color:#7C3AED;}
 .stage-enrolled{background:rgba(20,184,166,0.12);color:#0D9488;}
-.stage-converted{background:rgba(34,197,94,0.12);color:#16A34A;}
+.stage-not-interested{background:rgba(107,114,128,0.12);color:#4B5563;}
+/* legacy aliases */
+.stage-new{background:rgba(220,38,38,0.1);color:#DC2626;}
+.stage-contacted{background:rgba(2,132,199,0.1);color:#0284C7;}
+.stage-applied{background:rgba(249,115,22,0.12);color:var(--orange);}
+.stage-converted{background:rgba(20,184,166,0.12);color:#0D9488;}
 .stage-lost{background:rgba(107,114,128,0.12);color:#4B5563;}
 
 /* Priority dot */
@@ -2173,12 +2178,12 @@ button:focus-visible,
             <div class="form-group">
               <label class="form-label">Stage</label>
               <select class="form-select" id="leadStage">
-                <option value="new">New</option>
-                <option value="contacted">Contacted</option>
+                <option value="not_answering">Not Answering</option>
+                <option value="not_reachable">Not Reachable</option>
+                <option value="call_back">Call Back</option>
                 <option value="interested">Interested</option>
-                <option value="applied">Applied</option>
                 <option value="enrolled">Enrolled</option>
-                <option value="lost">Lost</option>
+                <option value="not_interested">Not Interested</option>
               </select>
             </div>
           </div>
@@ -3060,13 +3065,12 @@ button:focus-visible,
             </div>
             <select class="form-select" id="crmFilterStage" onchange="crmApplyFilters()">
               <option value="">All Stages</option>
-              <option value="new">New</option>
-              <option value="contacted">Contacted</option>
+              <option value="not_answering">Not Answering</option>
+              <option value="not_reachable">Not Reachable</option>
+              <option value="call_back">Call Back</option>
               <option value="interested">Interested</option>
-              <option value="applied">Applied</option>
               <option value="enrolled">Enrolled</option>
-              <option value="converted">Converted</option>
-              <option value="lost">Lost</option>
+              <option value="not_interested">Not Interested</option>
             </select>
             <select class="form-select" id="crmFilterSource" onchange="crmApplyFilters()">
               <option value="">All Sources</option>
@@ -9997,13 +10001,18 @@ const CRM = {
 };
 
 const STAGE_CFG = {
-  new:        { label:'New',        cls:'stage-new',        icon:'fa-star',          color:'#2563EB' },
-  contacted:  { label:'Contacted',  cls:'stage-contacted',  icon:'fa-phone',         color:'#0284C7' },
-  interested: { label:'Interested', cls:'stage-interested', icon:'fa-fire',          color:'#F97316' },
-  applied:    { label:'Applied',    cls:'stage-applied',    icon:'fa-file-pen',      color:'#7C3AED' },
-  enrolled:   { label:'Enrolled',   cls:'stage-enrolled',   icon:'fa-graduation-cap',color:'#0D9488' },
-  converted:  { label:'Converted',  cls:'stage-converted',  icon:'fa-circle-check',  color:'#16A34A' },
-  lost:       { label:'Lost',       cls:'stage-lost',       icon:'fa-ban',           color:'#6B7280' },
+  not_answering:  { label:'Not Answering',  cls:'stage-not-answering',  icon:'fa-phone-slash',   color:'#DC2626' },
+  not_reachable:  { label:'Not Reachable',  cls:'stage-not-reachable',  icon:'fa-signal',        color:'#EA580C' },
+  call_back:      { label:'Call Back',      cls:'stage-call-back',      icon:'fa-phone-arrow-down-left', color:'#0284C7' },
+  interested:     { label:'Interested',     cls:'stage-interested',     icon:'fa-fire',          color:'#F97316' },
+  enrolled:       { label:'Enrolled',       cls:'stage-enrolled',       icon:'fa-graduation-cap',color:'#0D9488' },
+  not_interested: { label:'Not Interested', cls:'stage-not-interested', icon:'fa-thumbs-down',   color:'#6B7280' },
+  /* legacy aliases so old records still display cleanly */
+  new:        { label:'Not Answering',  cls:'stage-not-answering',  icon:'fa-phone-slash',   color:'#DC2626' },
+  contacted:  { label:'Call Back',      cls:'stage-call-back',      icon:'fa-phone',         color:'#0284C7' },
+  applied:    { label:'Interested',     cls:'stage-interested',     icon:'fa-fire',          color:'#F97316' },
+  converted:  { label:'Enrolled',       cls:'stage-enrolled',       icon:'fa-graduation-cap',color:'#0D9488' },
+  lost:       { label:'Not Interested', cls:'stage-not-interested', icon:'fa-ban',           color:'#6B7280' },
 };
 
 const SOURCE_LABELS = { website:'Website', referral:'Referral', event:'Event',

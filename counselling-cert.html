@@ -8,6 +8,7 @@
 <link rel="icon" href="vedlogo.jpeg"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="global.css">
 
 <style>
 /* ── Base (matches website) ───────────────────────────────── */
@@ -28,7 +29,7 @@
   --shadow:0 16px 45px rgba(15,23,42,.12);
 }
 html{scroll-behavior:smooth;overflow-x:hidden}
-body{font-family:'Inter',sans-serif;color:var(--text);background:#fff;line-height:1.6;overflow-x:hidden}
+body{font-family:'Inter',sans-serif;color:var(--text);background:#fff;line-height:1.6;overflow-x:hidden;padding-top:70px}
 a{text-decoration:none;color:inherit}
 img{max-width:100%;display:block}
 
@@ -56,7 +57,7 @@ img{max-width:100%;display:block}
 /* ── PROGRESS STRIP ── */
 .prog-strip{
   background:#fff;border-bottom:2px solid var(--border);
-  position:sticky;top:74px;z-index:900;box-shadow:0 4px 14px rgba(15,23,42,.07);
+  position:sticky;top:70px;z-index:900;box-shadow:0 4px 14px rgba(15,23,42,.07);
 }
 .prog-inner{width:min(1140px,92%);margin:auto}
 .steps-row{display:flex;align-items:center;padding:16px 0}
@@ -574,7 +575,7 @@ async function submitAndRedirect() {
 }
 </script>
 
-<a href="mobilization-form.html" style="position:fixed;right:18px;bottom:18px;z-index:9999;background:#f7941d;color:#fff;padding:12px 20px;border-radius:999px;font-weight:900;font-size:.88rem;box-shadow:0 16px 34px rgba(247,148,29,.35);text-decoration:none;font-family:Inter,sans-serif;">Mobilization Form</a>
+<a href="mobilization-form.html" class="mob-fab" aria-label="Open Mobilization Form">Mobilization Form</a>
 
 </body>
 </html>

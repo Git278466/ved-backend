@@ -1,112 +1,160 @@
-﻿<!-- header.html -->
+<!-- header.html -->
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
+/* ============================================================
+   VED FOUNDATION — NAVBAR
+   Scoped to navbar elements only. No global resets.
+============================================================ */
 
+/* ── Navbar container ── */
 .navbar{
   background:#ffffff;
-  position:sticky;
+  position:fixed;
   top:0;
-  z-index:9999;
-  box-shadow:0 8px 22px rgba(15,23,42,.08);
+  left:0;
+  right:0;
+  width:100%;
+  z-index:99999;
+  box-shadow:0 2px 15px rgba(0,0,0,.08);
 }
 
+/* ── Nav container — NO overflow:hidden (prevents cropping) ── */
 .nav-container{
   width:100%;
   max-width:1350px;
-  margin:auto;
-  padding:0 20px;
+  margin:0 auto;
+  padding:0 clamp(16px,3vw,28px);
+  /* overflow intentionally NOT set — clipping causes layout issues */
 }
 
+/* ── Nav inner row — flex, vertically centered, auto-height ── */
 .nav-inner{
-  min-height:74px;
+  min-height:70px;          /* minimum height, auto-grows if needed */
+  height:70px;              /* consistent 70px across all pages     */
   display:flex;
-  align-items:center;
+  align-items:center;       /* all children vertically centered     */
   justify-content:space-between;
-  gap:20px;
+  gap:16px;
+  position:relative;
 }
 
+/* ============================================================
+   BRAND LOGO
+============================================================ */
 .brand{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:10px;
   text-decoration:none;
-  min-width:240px;
+  flex-shrink:0;            /* never compress the logo             */
+  min-width:0;
 }
 
 .brand img{
-  width:54px;
-  height:54px;
-  object-fit:contain;
-  border-radius:12px;
-  background:#fff;
-  border:1px solid #edf2f7;
-  padding:5px;
+  width:46px;
+  height:46px;
+  min-width:46px;           /* prevent logo shrinking              */
+  max-height:46px;          /* never overflow navbar height        */
+  object-fit:contain;       /* preserve aspect ratio               */
+  border-radius:10px;
+  background:#ffffff;
+  border:1.5px solid #edf2f7;
+  padding:4px;
+  display:block;
+  flex-shrink:0;
 }
 
 .brand-text{
   display:flex;
   flex-direction:column;
-  line-height:1.05;
+  line-height:1.1;
+  min-width:0;              /* allow text to shrink                */
 }
 
 .brand-text strong{
   color:#0b2b5e;
-  font-size:1rem;
+  font-size:clamp(.82rem,1.8vw,.96rem);
   font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  letter-spacing:-.01em;
+  display:block;
 }
 
 .brand-text span{
-  font-size:.72rem;
+  font-size:.65rem;
   color:#64748b;
   font-weight:600;
-  margin-top:4px;
+  margin-top:2px;
+  white-space:nowrap;
+  display:block;
 }
 
+/* ============================================================
+   DESKTOP NAV LINKS
+   padding:16px 0 creates a 48px-tall anchor inside a 70px
+   navbar — safe gap of 11px above and below with align-items:center
+============================================================ */
 .nav-links{
   display:flex;
   align-items:center;
-  gap:22px;
+  gap:20px;
+  flex-shrink:1;
+  min-width:0;
+  height:100%;              /* fill nav-inner height               */
 }
 
 .nav-links a{
   position:relative;
   text-decoration:none;
   color:#24344d;
-  font-size:.92rem;
+  font-size:.88rem;
   font-weight:800;
-  padding:26px 0;
-  transition:.25s;
+  padding:16px 0;           /* reduced from 24px — safe in 70px   */
+  display:flex;
+  align-items:center;
+  white-space:nowrap;
+  transition:color .22s;
+  height:100%;              /* fill the nav-inner height           */
 }
 
+/* Animated underline — positioned at bottom of navbar */
 .nav-links a::after{
   content:"";
   position:absolute;
   left:0;
-  bottom:18px;
+  bottom:12px;              /* sits 12px from anchor bottom        */
   width:0;
-  height:3px;
+  height:2.5px;
   background:#f7941d;
   border-radius:3px;
-  transition:.25s;
+  transition:width .22s ease;
 }
 
 .nav-links a:hover{
   color:#0b63ce;
 }
 
-.nav-links a:hover::after{
+.nav-links a:hover::after,
+.nav-links a.active::after{
   width:100%;
 }
 
+.nav-links a:focus-visible{
+  outline:3px solid rgba(11,99,206,.4);
+  outline-offset:4px;
+  border-radius:3px;
+}
+
+/* ============================================================
+   DESKTOP CTA BUTTONS
+============================================================ */
 .nav-actions{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:8px;
+  flex-shrink:0;
 }
 
 .btn{
@@ -114,159 +162,442 @@
   align-items:center;
   justify-content:center;
   text-decoration:none;
-  padding:11px 20px;
-  border-radius:6px;
-  font-size:.88rem;
+  padding:10px 18px;
+  border-radius:8px;
+  font-size:.85rem;
   font-weight:900;
-  transition:.25s;
+  transition:.22s;
   white-space:nowrap;
+  min-height:40px;
+  max-height:46px;          /* never taller than navbar            */
+  border:none;
+  cursor:pointer;
+  font-family:inherit;
+  letter-spacing:.01em;
+  line-height:1;
 }
 
 .btn-orange{
   background:#f7941d;
-  color:#fff;
-  box-shadow:0 10px 22px rgba(247,148,29,.30);
+  color:#ffffff;
+  box-shadow:0 6px 18px rgba(247,148,29,.3);
 }
-
 .btn-orange:hover{
   background:#e57900;
   transform:translateY(-2px);
+  box-shadow:0 10px 24px rgba(247,148,29,.38);
 }
 
 .btn-blue{
   background:#0b63ce;
-  color:#fff;
-  box-shadow:0 10px 22px rgba(11,99,206,.25);
+  color:#ffffff;
+  box-shadow:0 6px 18px rgba(11,99,206,.24);
 }
-
 .btn-blue:hover{
   background:#084da4;
   transform:translateY(-2px);
 }
 
+/* ============================================================
+   HAMBURGER BUTTON
+============================================================ */
 .menu-toggle{
   display:none;
-  border:none;
-  background:none;
-  font-size:2rem;
-  color:#0b63ce;
+  border:1.5px solid #e2e8f0;
+  background:#ffffff;
+  border-radius:9px;
   cursor:pointer;
+  padding:0;
+  width:42px;
+  height:42px;
+  max-height:46px;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:5px;
+  flex-shrink:0;
+  transition:border-color .2s, background .2s;
+}
+.menu-toggle:hover{
+  border-color:#0b63ce;
+  background:#f0f7ff;
+}
+.menu-toggle:focus-visible{
+  outline:3px solid rgba(11,99,206,.4);
+  outline-offset:2px;
 }
 
-/* MOBILE */
+/* CSS hamburger bars */
+.menu-toggle .hbg{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  width:20px;
+}
+.menu-toggle .hbg i{
+  display:block;
+  height:2px;
+  background:#0b63ce;
+  border-radius:2px;
+  transition:transform .28s cubic-bezier(.4,0,.2,1),
+             opacity .28s ease,
+             width .28s ease;
+  width:100%;
+  font-style:normal;
+}
+.menu-toggle .hbg i:last-child{ width:14px; }
 
+.menu-toggle.is-open .hbg i:first-child{
+  transform:translateY(7px) rotate(45deg); width:100%;
+}
+.menu-toggle.is-open .hbg i:nth-child(2){
+  opacity:0; transform:scaleX(0);
+}
+.menu-toggle.is-open .hbg i:last-child{
+  transform:translateY(-7px) rotate(-45deg); width:100%;
+}
+
+/* ============================================================
+   DRAWER ELEMENTS — hidden on desktop, shown only in mobile drawer
+   This rule MUST stay in base CSS so it applies at all widths > 767px
+============================================================ */
+.drawer-top,
+.drawer-cta,
+.drawer-brand,
+.drawer-close{
+  display:none;
+}
+
+/* ============================================================
+   MOBILE OVERLAY BACKDROP
+============================================================ */
+.nav-backdrop{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(8,37,77,.48);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+  z-index:9996;
+  opacity:0;
+  transition:opacity .3s ease;
+}
+.nav-backdrop.active{ opacity:1; }
+
+/* ============================================================
+   TABLET (≤1100px) — hamburger + top dropdown
+============================================================ */
 @media(max-width:1100px){
 
   .menu-toggle{
-    display:block;
+    display:inline-flex;
   }
 
   .nav-actions{
-    display:none;
+    display:none;           /* hidden on tablet — in drawer on mobile */
   }
 
+  /* Top dropdown drawer */
   .nav-links{
     position:fixed;
+    top:70px;               /* exactly below navbar                */
     left:0;
-    top:74px;
+    right:0;
     width:100%;
-    background:#fff;
+    height:auto;            /* auto height, not full viewport      */
+    max-height:0;
+    background:#ffffff;
     flex-direction:column;
     align-items:flex-start;
     gap:0;
-    max-height:0;
     overflow:hidden;
-    transition:.35s ease;
-    box-shadow:0 12px 24px rgba(0,0,0,.08);
-    z-index:9998;
+    transition:max-height .32s cubic-bezier(.4,0,.2,1);
+    box-shadow:0 8px 24px rgba(0,0,0,.1);
+    z-index:9997;
+    padding:0 24px;
   }
 
   .nav-links.show{
-    max-height:520px;
-    padding:10px 25px 20px;
+    max-height:560px;
+    padding:6px 24px 14px;
+    overflow-y:auto;
   }
 
   .nav-links a{
     width:100%;
-    padding:14px 0;
-    border-bottom:1px solid #eef2f7;
+    height:auto;
+    padding:13px 0;
+    border-bottom:1px solid #f1f5f9;
+    font-size:.93rem;
+    min-height:48px;
+    display:flex;
+    align-items:center;
   }
+  .nav-links a:last-of-type{ border-bottom:none; }
+  .nav-links a::after{ display:none; }
 
-  .nav-links a::after{
+  /* Drawer-only elements hidden at tablet */
+  .drawer-top,
+  .drawer-cta,
+  .nav-backdrop{
     display:none;
   }
-
 }
 
-@media(max-width:640px){
+/* ============================================================
+   MOBILE (≤767px) — right-side slide drawer
+============================================================ */
+@media(max-width:767px){
 
-  .brand{
-    min-width:auto;
+  .nav-inner{
+    height:64px;
+    min-height:64px;
   }
 
+  .nav-backdrop{ display:block; }
+
+  /* Right-side drawer */
+  .nav-links{
+    position:fixed;
+    top:0 !important;
+    right:0;
+    bottom:0;
+    left:auto;
+    width:min(290px,82vw);
+    max-width:290px;
+    height:100vh;
+    max-height:100vh !important;
+    background:#ffffff;
+    flex-direction:column;
+    align-items:stretch;
+    gap:0;
+    padding:0;
+    overflow-x:hidden;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    transform:translateX(105%);
+    transition:transform .32s cubic-bezier(.4,0,.2,1);
+    box-shadow:-12px 0 40px rgba(8,37,77,.16);
+    z-index:9998;
+    display:flex !important;
+  }
+
+  .nav-links.show{
+    transform:translateX(0);
+    max-height:100vh !important;
+  }
+
+  /* Drawer header */
+  .drawer-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 16px;
+    border-bottom:1px solid #f0f4f8;
+    background:#fafcff;
+    position:sticky;
+    top:0;
+    z-index:2;
+    flex-shrink:0;
+  }
+  .drawer-brand{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    text-decoration:none;
+  }
+  .drawer-brand img{
+    width:32px;
+    height:32px;
+    border-radius:7px;
+    object-fit:contain;
+    border:1.5px solid #edf2f7;
+    padding:2px;
+    background:#fff;
+  }
+  .drawer-brand-name{
+    font-size:.8rem;
+    font-weight:900;
+    color:#0b2b5e;
+    letter-spacing:.01em;
+  }
+  .drawer-close{
+    width:32px;
+    height:32px;
+    border-radius:7px;
+    background:#f0f4f8;
+    border:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:.9rem;
+    color:#374151;
+    cursor:pointer;
+    transition:.18s;
+    font-family:inherit;
+    flex-shrink:0;
+  }
+  .drawer-close:hover{
+    background:#dde4ee;
+    color:#0b63ce;
+  }
+
+  /* Drawer nav links */
+  .nav-links a{
+    width:100%;
+    height:auto;
+    padding:0 18px;
+    border-bottom:1px solid #f5f8fb;
+    font-size:.94rem;
+    font-weight:700;
+    color:#1e293b;
+    min-height:50px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    transition:background .15s, color .15s;
+  }
+  .nav-links a:hover,
+  .nav-links a:active{
+    background:#f0f7ff;
+    color:#0b63ce;
+  }
+  .nav-links a:last-of-type{ border-bottom:none; }
+  .nav-links a::after{ display:none; }
+
+  /* Drawer CTA buttons */
+  .drawer-cta{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    padding:16px 16px 24px;
+    border-top:1px solid #f0f4f8;
+    margin-top:auto;
+    flex-shrink:0;
+  }
+  .drawer-cta .btn{
+    width:100%;
+    min-height:46px;
+    max-height:none;
+    border-radius:9px;
+    font-size:.9rem;
+    font-weight:900;
+    justify-content:center;
+    display:flex;
+    letter-spacing:.01em;
+  }
+}
+
+/* ============================================================
+   SMALL MOBILE (≤480px)
+============================================================ */
+@media(max-width:480px){
+  .nav-container{
+    padding:0 14px;
+  }
   .brand img{
-    width:46px;
-    height:46px;
+    width:40px;
+    height:40px;
+    min-width:40px;
+    max-height:40px;
+    border-radius:9px;
   }
-
   .brand-text strong{
-    font-size:.85rem;
+    font-size:.82rem;
   }
-
   .brand-text span{
-    font-size:.63rem;
+    display:none;
   }
+}
 
+/* ============================================================
+   TINY MOBILE (≤360px)
+============================================================ */
+@media(max-width:360px){
+  .brand img{
+    width:36px;
+    height:36px;
+    min-width:36px;
+    max-height:36px;
+  }
+  .brand-text strong{
+    font-size:.78rem;
+  }
 }
 </style>
 
+<!-- Backdrop overlay for mobile drawer -->
+<div class="nav-backdrop" id="navBackdrop"></div>
+
 <header class="navbar">
   <div class="nav-container">
-  <div class="nav-inner">
+    <div class="nav-inner">
 
-    <a href="index.html" class="brand">
-      <img src="vedlogo.jpeg" alt="VED Foundation Logo">
-
-      <div class="brand-text">
-        <strong>VED FOUNDATION</strong>
-        <span>Education • Skills • Empowerment</span>
-      </div>
-    </a>
-
-    <nav class="nav-links" id="navLinks">
-      <a href="index.html">Home</a>
-      <a href="smartclasses.html">Smart Classes</a>
-      <a href="agriculture.html">Agriculture</a>
-      <a href="solarpanel.html">Solar Panel</a>
-      <a href="workshops.html" id="navWorkshopsLink" style="position:relative">
-        Workshop Center
-        <span id="navLiveDot" style="display:none;position:absolute;top:18px;right:-8px;width:7px;height:7px;background:#ef4444;border-radius:50%;animation:navBlink 1s ease infinite"></span>
+      <!-- LOGO -->
+      <a href="index.html" class="brand">
+        <img src="vedlogo.jpeg" alt="VED Foundation Logo" loading="eager" decoding="async">
+        <div class="brand-text">
+          <strong>VED FOUNDATION</strong>
+          <span>Education • Skills • Empowerment</span>
+        </div>
       </a>
-      <a href="registeration.html">Register</a>
-      <a href="login.html">Login</a>
-      <a href="donation.html">Donation</a>
-    </nav>
-    <style>@keyframes navBlink{0%,100%{opacity:1}50%{opacity:.1}}</style>
-    <script>
-      // Check if any workshop is live and show dot on nav
-      fetch((window.VED_API_BASE || 'http://localhost:5000/api') + '/workshops/live')
-        .then(r=>r.json())
-        .then(d=>{ if((d.live||[]).length>0){ const dot=document.getElementById('navLiveDot'); if(dot) dot.style.display='block'; } })
-        .catch(()=>{});
-    </script>
 
-    <div class="nav-actions">
-      <a href="donation.html" class="btn btn-orange">Donate Now</a>
-      <a href="registeration.html" class="btn btn-blue">Enroll</a>
+      <!-- NAV LINKS (desktop inline | tablet dropdown | mobile drawer) -->
+      <nav class="nav-links" id="navLinks">
+
+        <!-- Drawer header — mobile only -->
+        <div class="drawer-top">
+          <a href="index.html" class="drawer-brand">
+            <img src="vedlogo.jpeg" alt="VED Foundation">
+            <span class="drawer-brand-name">VED FOUNDATION</span>
+          </a>
+          <button class="drawer-close" id="drawerClose" aria-label="Close navigation">✕</button>
+        </div>
+
+        <!-- Links -->
+        <a href="index.html">Home</a>
+        <a href="smartclasses.html">Smart Classes</a>
+        <a href="agriculture.html">Agriculture</a>
+        <a href="solarpanel.html">Solar Panel</a>
+        <a href="workshops.html" id="navWorkshopsLink" style="position:relative">
+          Workshop Center
+          <span id="navLiveDot" style="display:none;position:absolute;right:12px;width:7px;height:7px;background:#ef4444;border-radius:50%;animation:navBlink 1s ease infinite"></span>
+        </a>
+        <a href="registeration.html">Register</a>
+        <a href="login.html">Login</a>
+        <a href="donation.html">Donation</a>
+
+        <!-- Drawer CTA — mobile only -->
+        <div class="drawer-cta">
+          <a href="donation.html" class="btn btn-orange">🤝 Donate Now</a>
+          <a href="registeration.html" class="btn btn-blue">📚 Enroll Today</a>
+        </div>
+
+      </nav>
+
+      <style>@keyframes navBlink{0%,100%{opacity:1}50%{opacity:.1}}</style>
+      <script>
+        (function(){
+          var base = window.VED_API_BASE || '';
+          if(!base) return;
+          fetch(base + '/workshops/live')
+            .then(function(r){ return r.ok ? r.json() : null; })
+            .then(function(d){ if(d && (d.live||[]).length>0){ var dot=document.getElementById('navLiveDot'); if(dot) dot.style.display='block'; } })
+            .catch(function(){});
+        })();
+      </script>
+
+      <!-- Desktop CTA buttons -->
+      <div class="nav-actions">
+        <a href="donation.html" class="btn btn-orange">Donate Now</a>
+        <a href="registeration.html" class="btn btn-blue">Enroll</a>
+      </div>
+
+      <!-- Hamburger -->
+      <button class="menu-toggle" id="menuToggle" aria-label="Open navigation" aria-expanded="false">
+        <span class="hbg"><i></i><i></i><i></i></span>
+      </button>
+
     </div>
-
-    <button class="menu-toggle" id="menuToggle">☰</button>
-
-  </div>
   </div>
 </header>
-
-<script>
-// Mobile menu wiring is handled by shared.js wireMobileMenu()
-// This script is a no-op placeholder (shared.js runs after partial loads)
-</script>

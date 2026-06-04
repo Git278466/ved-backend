@@ -29,8 +29,12 @@
   var isAuthPage       = isLoginPage || isRegisterPage;
 
   /* ── NAVBAR HEIGHT CONSTANT ─────────────────────────────── */
-  var NAV_H  = 74;   // px  — matches .navbar min-height in header.html
+  /* Read actual navbar height dynamically instead of fixed constant */
   var BAR_H  = 44;   // px  — student welcome bar height
+  var NAV_H  = (function(){
+    var nb = document.querySelector('.navbar');
+    return nb ? nb.offsetHeight : 74;
+  }());
 
   /* ── Apply offset so fixed/sticky elements don't overlap ─── */
   function applyOffsets(hasStudentBar) {
@@ -39,15 +43,20 @@
     /* Make navbar fixed so it always stays visible */
     var navbar = document.querySelector('.navbar');
     if (navbar) {
-      navbar.style.position = 'fixed';
-      navbar.style.top      = topOffset + 'px';
-      navbar.style.left     = '0';
-      navbar.style.right    = '0';
-      navbar.style.zIndex   = '9000';
-      navbar.style.width    = '100%';
+      navbar.style.position   = 'fixed';
+      navbar.style.top        = topOffset + 'px';
+      navbar.style.left       = '0';
+      navbar.style.right      = '0';
+      navbar.style.zIndex     = '99999';
+      navbar.style.width      = '100%';
+      navbar.style.maxWidth   = '100%';
+      navbar.style.background = '#ffffff';
     }
 
-    /* Push body content below both student bar + navbar */
+    /* Navbar height is set to 70px in CSS for all pages — use directly.
+       Do NOT use getBoundingClientRect/offsetHeight here: the navbar may
+       not be painted yet and would return 0, overriding the correct value. */
+    var NAV_H = 70;
     document.body.style.paddingTop = (topOffset + NAV_H) + 'px';
   }
 
@@ -75,28 +84,103 @@
 
   /* ── Wire up mobile hamburger menu ──────────────────────── */
   function wireMobileMenu() {
-    var toggle = document.getElementById('menuToggle');
-    var links  = document.getElementById('navLinks');
+    var toggle   = document.getElementById('menuToggle');
+    var links    = document.getElementById('navLinks');
+    var backdrop = document.getElementById('navBackdrop');
+    var closeBtn = document.getElementById('drawerClose');
     if (!toggle || !links) return;
 
-    toggle.onclick = function () {
-      links.classList.toggle('show');
-      toggle.innerHTML = links.classList.contains('show') ? '&#x2715;' : '&#x2630;';
-      // Position dropdown directly below navbar (accounts for student bar offset)
-      if (links.classList.contains('show')) {
-        var navbar = document.querySelector('.navbar');
-        if (navbar) {
-          var rect = navbar.getBoundingClientRect();
-          links.style.top = (rect.top + rect.height) + 'px';
-        }
+    /* Is this a mobile (drawer) viewport? */
+    function isMobile() { return window.innerWidth <= 767; }
+
+    /* Update top position for tablet dropdown only */
+    function updateMenuTop() {
+      if (isMobile()) return; /* Drawer mode — top is always 0 */
+      var navbar = document.querySelector('.navbar');
+      if (navbar) {
+        var rect = navbar.getBoundingClientRect();
+        links.style.top = Math.round(rect.top + rect.height) + 'px';
       }
+    }
+
+    function openMenu() {
+      links.classList.add('show');
+      toggle.classList.add('is-open');
+      toggle.setAttribute('aria-expanded', 'true');
+
+      if (isMobile()) {
+        /* Drawer mode: show backdrop + lock scroll */
+        if (backdrop) {
+          backdrop.style.display = 'block';
+          /* Force reflow before adding class for transition */
+          void backdrop.offsetWidth;
+          backdrop.classList.add('active');
+        }
+        document.body.style.overflow = 'hidden';
+      } else {
+        updateMenuTop();
+      }
+    }
+
+    function closeMenu() {
+      links.classList.remove('show');
+      toggle.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+
+      if (backdrop) {
+        backdrop.classList.remove('active');
+        /* Hide after fade-out transition */
+        setTimeout(function () {
+          if (!backdrop.classList.contains('active')) {
+            backdrop.style.display = 'none';
+          }
+        }, 320);
+      }
+      document.body.style.overflow = '';
+    }
+
+    /* Toggle on hamburger click */
+    toggle.onclick = function (e) {
+      e.stopPropagation();
+      links.classList.contains('show') ? closeMenu() : openMenu();
     };
 
+    /* Close button inside drawer */
+    if (closeBtn) {
+      closeBtn.onclick = function () { closeMenu(); };
+    }
+
+    /* Close when backdrop clicked */
+    if (backdrop) {
+      backdrop.onclick = function () { closeMenu(); };
+    }
+
+    /* Close on nav link click */
     links.querySelectorAll('a').forEach(function (a) {
-      a.onclick = function () {
-        links.classList.remove('show');
-        toggle.innerHTML = '&#x2630;';
-      };
+      a.addEventListener('click', function () { closeMenu(); });
+    });
+
+    /* Close on outside click (keyboard/pointer for tablet) */
+    document.addEventListener('click', function (e) {
+      if (
+        links.classList.contains('show') &&
+        !toggle.contains(e.target) &&
+        !links.contains(e.target)
+      ) {
+        closeMenu();
+      }
+    });
+
+    /* Close on Escape key */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && links.classList.contains('show')) closeMenu();
+    });
+
+    /* On resize: close menu and reset body scroll */
+    window.addEventListener('resize', function () {
+      if (links.classList.contains('show')) {
+        closeMenu();
+      }
     });
   }
 
@@ -168,10 +252,19 @@
   }
 
   /* Load header → fix offsets → wire menu */
-  loadPartial('header.html', 'header-placeholder', function () {
+  var headerPlaceholder = document.getElementById('header-placeholder');
+
+  if (headerPlaceholder) {
+    /* Pages that load header.html dynamically */
+    loadPartial('header.html', 'header-placeholder', function () {
+      applyOffsets(hasStudent);
+      wireMobileMenu();
+    });
+  } else {
+    /* Pages with an inline header (e.g. index.html) — still need offsets + menu wiring */
     applyOffsets(hasStudent);
     wireMobileMenu();
-  });
+  }
 
   /* Load footer */
   loadPartial('footer.html', 'footer-placeholder');
