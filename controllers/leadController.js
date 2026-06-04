@@ -96,7 +96,7 @@ exports.getFunnelStats = async (req, res) => {
     const matchScope = req.scopedAdminId
       ? { $or: [{ createdBy: req.scopedAdminId }, { assignedTo: req.scopedAdminId }] }
       : {};
-    const stages = ['new', 'contacted', 'interested', 'applied', 'enrolled', 'converted', 'lost'];
+    const stages = ['not_answering', 'not_reachable', 'call_back', 'interested', 'enrolled', 'not_interested'];
     const counts = await Lead.aggregate([
       ...(Object.keys(matchScope).length ? [{ $match: matchScope }] : []),
       { $group: { _id: '$stage', count: { $sum: 1 }, avgScore: { $avg: '$score' } } },
@@ -143,7 +143,7 @@ exports.getAnalytics = async (req, res) => {
         { $lookup: { from: 'admins', localField: '_id', foreignField: '_id', as: 'admin' } },
         { $unwind: { path: '$admin', preserveNullAndEmptyArrays: true } },
       ]),
-      Lead.countDocuments({ nextFollowUp: { $lt: new Date() }, stage: { $nin: ['converted', 'lost'] } }),
+      Lead.countDocuments({ nextFollowUp: { $lt: new Date() }, stage: { $nin: ['enrolled', 'not_interested', 'converted', 'lost'] } }),
     ]);
 
     const [total, hot, warm] = await Promise.all([
@@ -464,7 +464,7 @@ exports.importLeads = async (req, res) => {
     };
 
     const VALID_SOURCES  = ['website','referral','event','social_media','walk_in','manual','csv_import','other'];
-    const VALID_STAGES   = ['new','contacted','interested','applied','enrolled','converted','lost'];
+    const VALID_STAGES   = ['not_answering','not_reachable','call_back','interested','enrolled','not_interested','new','contacted','applied','converted','lost'];
     const VALID_PRIORITY = ['low','medium','high'];
 
     const normalize = (key) => String(key||'').toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -491,7 +491,7 @@ exports.importLeads = async (req, res) => {
       if (!name) { skipped++; errors.push('Row ' + (i+2) + ': Name is required — skipped.'); continue; }
 
       const source   = VALID_SOURCES.includes(get('source').toLowerCase())  ? get('source').toLowerCase()  : 'csv_import';
-      const stage    = VALID_STAGES.includes(get('stage').toLowerCase())     ? get('stage').toLowerCase()   : 'new';
+      const stage    = VALID_STAGES.includes(get('stage').toLowerCase())     ? get('stage').toLowerCase()   : 'not_answering';
       const priority = VALID_PRIORITY.includes(get('priority').toLowerCase())? get('priority').toLowerCase(): 'medium';
       const score    = Number(get('score')) || 10;
       const rawDate  = get('date');
@@ -681,7 +681,7 @@ exports.getPartnerProgress = async (req, res) => {
 
     if (!partners.length) return res.json({ success: true, data: [] });
 
-    const stages = ['new', 'contacted', 'interested', 'applied', 'enrolled', 'converted', 'lost'];
+    const stages = ['not_answering', 'not_reachable', 'call_back', 'interested', 'enrolled', 'not_interested'];
 
     // 3. For each partner aggregate their lead counts by stage
     const data = await Promise.all(partners.map(async (p) => {

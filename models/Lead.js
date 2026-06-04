@@ -19,8 +19,13 @@ const leadSchema = new mongoose.Schema({
   },
   stage: {
     type: String,
-    enum: ['new', 'contacted', 'interested', 'applied', 'enrolled', 'converted', 'lost'],
-    default: 'new',
+    enum: [
+      'not_answering', 'not_reachable', 'call_back',
+      'interested', 'enrolled', 'not_interested',
+      /* legacy values kept for backward compatibility */
+      'new', 'contacted', 'applied', 'converted', 'lost',
+    ],
+    default: 'not_answering',
   },
   priority: {
     type: String,
