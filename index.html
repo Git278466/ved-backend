@@ -390,14 +390,14 @@ img{
   object-fit:cover;
   object-position:center;
   z-index:0;
-  filter:brightness(.48) saturate(.88);
+  filter:brightness(1) saturate(1.1) contrast(1.05);
 }
 
 .hero::before{
   content:"";
   position:absolute;
   inset:0;
-  background:linear-gradient(105deg,rgba(0,55,78,.82) 0%,rgba(0,55,78,.68) 28%,rgba(0,55,78,.18) 54%,transparent 100%);
+  background:linear-gradient(105deg,rgba(0,40,60,.32) 0%,rgba(0,50,72,.20) 35%,transparent 60%);
   z-index:1;
 }
 
@@ -449,103 +449,132 @@ img{
   50%{transform:translate(-50%,-50%) scale(1.12);opacity:1}
 }
 
-/* Image wrapper for floating badges */
+/* ── Hero image wrapper ── */
 .hero-img-wrap{
   position:relative;
   z-index:1;
-  width:min(70%,320px);
+  width:min(72%,340px);
   max-width:100%;
 }
+/* decorative gradient frame behind image */
+.hero-img-wrap::before{
+  content:'';
+  position:absolute;
+  inset:-10px;
+  background:linear-gradient(145deg,#0b3d91 0%,#1e5eff 55%,#f59e0b 100%);
+  border-radius:28px;
+  z-index:-1;
+  opacity:.14;
+}
 
+/* Main photo card */
 .student-photo{
   width:100%;
-  max-height:360px;
+  max-height:400px;
   object-fit:cover;
   object-position:center top;
-  border-radius:20px;
-  border:3px solid rgba(255,255,255,.9);
-  box-shadow:0 20px 52px rgba(0,0,0,.32), 0 0 0 6px rgba(255,212,42,.18);
+  border-radius:22px;
+  border:4px solid #fff;
+  box-shadow:0 18px 48px rgba(0,0,0,.18);
   display:block;
   transition:transform .4s ease, box-shadow .4s ease;
-  filter:contrast(1.08) saturate(1.15) brightness(1.06);
+  filter:contrast(1.05) saturate(1.12) brightness(1.04);
+  position:relative;
+  z-index:1;
 }
-
 .student-photo:hover{
-  transform:translateY(-5px) scale(1.015);
-  box-shadow:0 30px 70px rgba(0,0,0,.4), 0 0 0 8px rgba(255,212,42,.32);
+  transform:translateY(-4px);
+  box-shadow:0 28px 64px rgba(0,0,0,.22);
 }
 
-/* Floating workshop badges */
+/* ── Floating workshop badges ── */
 .hero-float-badge{
   position:absolute;
-  background:#fff;
-  border-radius:999px;
-  padding:7px 14px;
-  font-size:.74rem;
-  font-weight:800;
-  box-shadow:0 6px 20px rgba(0,0,0,.14);
-  display:flex;
-  align-items:center;
-  gap:6px;
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-radius:100px;
+  padding:9px 16px 9px 10px;
+  font-size:.76rem;
+  font-weight:700;
+  box-shadow:0 8px 28px rgba(0,0,0,.13),0 1px 3px rgba(0,0,0,.08);
+  display:flex;align-items:center;gap:7px;
   white-space:nowrap;
-  z-index:4;
-  border:1.5px solid rgba(0,0,0,.06);
+  z-index:5;
+  border:1px solid rgba(255,255,255,.85);
   cursor:default;
-  transition:transform .2s;
+  transition:transform .2s,box-shadow .2s;
 }
-.hero-float-badge:hover{transform:scale(1.06)}
+.hero-float-badge:hover{
+  transform:translateY(-3px) scale(1.03);
+  box-shadow:0 14px 36px rgba(0,0,0,.16);
+}
+/* badge icon circles */
+.hero-float-badge span.badge-icon{
+  width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;flex-shrink:0;
+}
 
 .hfb-1{
-  top:10%;right:-28px;
-  color:#7c3aed;
+  top:9%;right:-20px;
+  color:#6d28d9;
   animation:floatBob 3.2s ease-in-out infinite;
 }
+.hfb-1 span.badge-icon{background:#f3f0ff}
 .hfb-2{
-  top:46%;left:-28px;
+  top:46%;left:-20px;
   color:#0b63ce;
   animation:floatBob 3.8s ease-in-out infinite .9s;
 }
+.hfb-2 span.badge-icon{background:#eff6ff}
 .hfb-3{
-  bottom:18%;right:-28px;
+  bottom:19%;right:-20px;
   color:#16a34a;
   animation:floatBob 3.5s ease-in-out infinite 1.6s;
 }
+.hfb-3 span.badge-icon{background:#f0fdf4}
 
 @keyframes floatBob{
   0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-9px)}
+  50%{transform:translateY(-8px)}
 }
 
+/* ── Impact stats card ── */
 .hero-impact-badge{
   position:absolute;
-  bottom:12px;
-  left:50%;
-  transform:translateX(-50%);
+  bottom:-18px;
+  left:18px;
   background:#fff;
-  border-radius:14px;
-  padding:10px 18px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  box-shadow:0 8px 28px rgba(0,0,0,.18);
-  z-index:4;
-  border-bottom:3px solid #ffd42a;
-  white-space:nowrap;
+  border-radius:16px;
+  padding:12px 18px;
+  display:flex;align-items:center;gap:13px;
+  box-shadow:0 12px 36px rgba(0,0,0,.14),0 2px 6px rgba(0,0,0,.06);
+  z-index:5;
+  border-left:4px solid #0b3d91;
+  animation:floatBob 4s ease-in-out infinite .4s;
 }
-
+.badge-icon-wrap{
+  width:38px;height:38px;border-radius:10px;
+  background:linear-gradient(135deg,#0b3d91,#1e5eff);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;flex-shrink:0;
+}
 .badge-num{
-  font-size:1.5rem;
+  font-size:1.55rem;
   font-weight:900;
-  color:#005ea8;
+  color:#0b3d91;
+  line-height:1;
+  letter-spacing:-.02em;
 }
-
 .badge-label{
-  font-size:.68rem;
-  color:#555;
+  font-size:.66rem;
+  color:#6b7280;
   font-weight:700;
   text-transform:uppercase;
-  letter-spacing:1px;
-  white-space:nowrap;
+  letter-spacing:.07em;
+  margin-top:2px;
+  line-height:1.2;
 }
 
 .hero-right{
@@ -2846,6 +2875,7 @@ footer{
             Workshop Center
             <span id="navLiveDot" style="display:none;position:absolute;right:16px;width:7px;height:7px;background:#ef4444;border-radius:50%;animation:navBlink 1s ease infinite"></span>
           </a>
+          <a href="blog.html">Blog</a>
           <a href="registeration.html">Register</a>
           <a href="login.html">Login</a>
           <a href="donation.html">Donation</a>
@@ -2899,12 +2929,19 @@ footer{
              alt="VED students" loading="eager" decoding="async">
 
         <!-- Floating workshop badges -->
-        <div class="hero-float-badge hfb-1">🛡️ CyberSafe</div>
-        <div class="hero-float-badge hfb-2">💼 LinkedIn</div>
-        <div class="hero-float-badge hfb-3">💻 CodeStart</div>
+        <div class="hero-float-badge hfb-1">
+          <span class="badge-icon">🛡️</span>CyberSafe
+        </div>
+        <div class="hero-float-badge hfb-2">
+          <span class="badge-icon">💼</span>LinkedIn
+        </div>
+        <div class="hero-float-badge hfb-3">
+          <span class="badge-icon">💻</span>CodeStart
+        </div>
 
-        <!-- Impact card -->
+        <!-- Impact stats card -->
         <div class="hero-impact-badge">
+          <div class="badge-icon-wrap">🎓</div>
           <div>
             <div class="badge-num" id="heroBadgeCount">500+</div>
             <div class="badge-label">Students Impacted</div>

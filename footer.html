@@ -10,8 +10,8 @@
 
     .footer-grid{
       display:grid;
-      grid-template-columns:1.4fr .85fr .85fr .85fr 1fr;
-      gap:clamp(20px,3vw,42px);
+      grid-template-columns:1.2fr .85fr .85fr .85fr 1.1fr;
+      gap:clamp(18px,2.5vw,38px);
       align-items:start;
       margin-bottom:40px;
     }
@@ -20,13 +20,24 @@
       display:block;
       margin-bottom:16px;
     }
+    /* hard-guard against any page-level img resets */
+    .footer-brand img,
+    footer .footer-brand img{
+      width:96px !important;
+      height:96px !important;
+      max-width:96px !important;
+      min-width:unset !important;
+      object-fit:contain !important;
+    }
 
     .footer-brand img{
-      width:clamp(110px,12vw,145px);
-      height:auto;
+      width:96px;
+      height:96px;
+      max-width:96px;
       object-fit:contain;
       background:transparent;
       display:block;
+      border-radius:10px;
     }
 
     .footer-col{
@@ -117,13 +128,21 @@
     .footer-contact-box{
       background:#fff;
       border-radius:12px;
-      padding:16px;
+      padding:14px 14px 10px;
       border:1px solid #e5e7eb;
-      word-break:break-word;
     }
-
     .footer-contact-box p{
       max-width:100% !important;
+      font-size:13px !important;
+      line-height:1.55 !important;
+      overflow-wrap:anywhere;
+      word-break:break-all;
+    }
+    .footer-contact-box b{
+      font-size:12.5px;
+      color:#374151;
+      display:block;
+      margin-bottom:1px;
     }
 
     .footer-bottom{
@@ -174,7 +193,9 @@
       }
 
       .footer-brand img{
-        width:120px;
+        width:80px;
+        height:80px;
+        max-width:80px;
       }
     }
 
@@ -253,9 +274,24 @@
         <h4>Get In Touch</h4>
 
         <div class="footer-contact-box">
-          <p><b>Email:</b><br> vededufoundation@gmail.com</p>
-          <p style="margin-top:12px;"><b>Phone:</b><br> +91 9009015026</p>
-          <p style="margin-top:12px;"><b>Location:</b><br> India</p>
+          <p style="margin-bottom:10px">
+            <b>Email:</b>
+            <a href="mailto:vededufoundation@gmail.com"
+               style="color:#0b63ce;word-break:break-all;display:block;margin-top:1px">
+              vededufoundation@gmail.com
+            </a>
+          </p>
+          <p style="margin-bottom:10px">
+            <b>Phone:</b>
+            <a href="tel:+919009015026"
+               style="color:#4b5563;display:block;margin-top:1px">
+              +91 9009015026
+            </a>
+          </p>
+          <p>
+            <b>Location:</b>
+            <span style="display:block;margin-top:1px">India</span>
+          </p>
         </div>
       </div>
 

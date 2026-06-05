@@ -3,1149 +3,891 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Blog &amp; Insights — VED Foundation | Education, Skills &amp; Student Empowerment</title>
-<meta name="description" content="Explore insights, success stories, and educational resources from VED Foundation. Stay updated on digital skills, career guidance, coding workshops, and student empowerment programs across India.">
-<meta name="keywords" content="VED Foundation blog, education NGO India, student empowerment, digital skills, coding workshops, career guidance, cyber security awareness, IBM SkillsBuild">
-<meta name="robots" content="index, follow">
+<title>Blog &amp; Insights — VED Foundation</title>
+<meta name="description" content="Stories, guides and impact from VED Foundation — digital skills, career guidance, coding workshops and student success stories across India.">
+<meta name="robots" content="index,follow">
 <link rel="canonical" href="https://vededufoundation.in/blog.html">
-<!-- Open Graph -->
 <meta property="og:title" content="Blog &amp; Insights — VED Foundation">
-<meta property="og:description" content="Insights, stories and impact from VED Foundation's education and empowerment programs across India.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://vededufoundation.in/blog.html">
 <meta property="og:image" content="https://vededufoundation.in/vedlogo.jpeg">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Blog &amp; Insights — VED Foundation">
-<!-- Schema -->
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Blog","name":"VED Foundation Blog","description":"Insights, Stories & Impact from VED Foundation","url":"https://vededufoundation.in/blog.html","publisher":{"@type":"Organization","name":"VED Foundation","url":"https://vededufoundation.in","logo":{"@type":"ImageObject","url":"https://vededufoundation.in/vedlogo.jpeg"}}}
-</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"VED Foundation Blog","url":"https://vededufoundation.in/blog.html","publisher":{"@type":"Organization","name":"VED Foundation"}}</script>
 <link rel="icon" type="image/jpeg" href="vedlogo.jpeg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="blog.css">
-<link rel="stylesheet" href="global.css">
+
+<style>
+/* ═══════════════════════════════════════════════
+   VED FOUNDATION BLOG — Inline Styles
+   Primary: #0B3D91 | Accent: #F59E0B
+═══════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;color:#1F2937;background:#F8FAFC;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+ul,ol{list-style:none;padding:0;margin:0}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+input,textarea,select{font-family:inherit}
+.blog-container{width:min(1180px,94%);margin:0 auto}
+
+/* ─── HERO SLIDER ─── */
+.bslider{
+  position:relative;
+  width:100%;
+  height:560px;
+  overflow:hidden;
+  background:#0b3d91;
+}
+.bslide{
+  position:absolute;
+  top:0;left:0;right:0;bottom:0;
+  background-size:cover;
+  background-position:center;
+  opacity:0;
+  transition:opacity .8s ease;
+  display:flex;
+  align-items:center;
+  padding:0 0 60px;
+}
+.bslide.bs-on{opacity:1;z-index:2}
+.bslide::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;bottom:0;
+  background:linear-gradient(
+    105deg,
+    rgba(8,35,100,.78) 0%,
+    rgba(11,61,145,.65) 55%,
+    rgba(30,94,255,.40) 100%
+  );
+  z-index:1;
+}
+.bslide::after{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;z-index:1;
+  background-image:radial-gradient(circle,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+.bslide-inner{
+  position:relative;z-index:3;
+  width:min(1180px,94%);
+  margin:0 auto;
+  max-width:660px;
+  padding:0 20px;
+  animation:bsFadeIn .65s .1s ease both;
+}
+.bslide.bs-on .bslide-inner{animation:bsFadeIn .65s .1s ease both}
+@keyframes bsFadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.bs-tag{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(245,158,11,.18);
+  border:1px solid rgba(245,158,11,.35);
+  color:#F59E0B;
+  font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  padding:5px 14px;border-radius:100px;margin-bottom:18px;
+}
+.bs-h{
+  font-size:clamp(1.7rem,3.8vw,2.65rem);
+  font-weight:900;color:#fff;
+  line-height:1.16;letter-spacing:-.03em;
+  margin-bottom:14px;
+}
+.bs-p{
+  font-size:.97rem;color:rgba(255,255,255,.72);
+  line-height:1.7;margin-bottom:26px;max-width:520px;
+}
+.bs-btns{display:flex;gap:12px;flex-wrap:wrap}
+.bs-btn1{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#F59E0B;color:#fff;
+  padding:12px 22px;border-radius:8px;
+  font-weight:700;font-size:.88rem;
+  box-shadow:0 8px 22px rgba(245,158,11,.35);
+  transition:background .2s,transform .2s;
+}
+.bs-btn1:hover{background:#D97706;transform:translateY(-2px)}
+.bs-btn2{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.1);
+  border:1.5px solid rgba(255,255,255,.3);
+  color:#fff;padding:12px 20px;border-radius:8px;
+  font-weight:700;font-size:.88rem;
+  backdrop-filter:blur(8px);
+  transition:background .2s;
+}
+.bs-btn2:hover{background:rgba(255,255,255,.18)}
+.bs-arr{
+  position:absolute;top:50%;z-index:10;
+  transform:translateY(-65%);
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.1);
+  border:1.5px solid rgba(255,255,255,.25);
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;line-height:1;
+  backdrop-filter:blur(8px);
+  transition:background .2s;
+}
+.bs-arr:hover{background:#F59E0B;border-color:#F59E0B}
+#bsPrev{left:20px}#bsNext{right:20px}
+.bs-dots{
+  position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+  z-index:10;display:flex;gap:8px;align-items:center;
+}
+.bs-dot{
+  width:8px;height:8px;border-radius:50%;padding:0;
+  background:rgba(255,255,255,.35);transition:background .25s,width .25s;
+}
+.bs-dot.bs-on{background:#F59E0B;width:24px;border-radius:4px}
+.bs-prog{position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.12);z-index:10}
+.bs-prog-fill{height:100%;width:0%;background:#F59E0B;transition:width .1s linear}
+
+/* ─── CATEGORY BAR ─── */
+.cat-bar{
+  background:#fff;
+  border-bottom:1px solid #E5E7EB;
+  position:sticky;top:74px;z-index:90;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+.cat-bar-wrap{
+  display:flex;gap:6px;
+  padding:11px 0;
+  overflow-x:auto;scrollbar-width:none;
+}
+.cat-bar-wrap::-webkit-scrollbar{display:none}
+.cf-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:7px 16px;border-radius:100px;
+  font-size:.79rem;font-weight:600;
+  color:#6B7280;background:#F8FAFC;
+  border:1.5px solid #E5E7EB;
+  white-space:nowrap;
+  transition:color .2s,background .2s,border-color .2s;
+  cursor:pointer;
+}
+.cf-btn:hover{color:#0B3D91;border-color:#0B3D91;background:#e8f0fc}
+.cf-btn.cf-on{color:#fff;background:#0B3D91;border-color:#0B3D91}
+.cf-cnt{background:rgba(0,0,0,.12);padding:1px 5px;border-radius:100px;font-size:.66rem}
+.cf-btn.cf-on .cf-cnt{background:rgba(255,255,255,.25)}
+
+/* ─── BLOG MAIN LAYOUT ─── */
+.blog-section{padding:48px 0 72px;background:#F8FAFC}
+.blog-layout{
+  display:grid;
+  grid-template-columns:1fr 320px;
+  gap:32px;
+  align-items:start;
+}
+.blog-main-head{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:28px;flex-wrap:wrap;gap:12px;
+}
+.blog-main-head h1{font-size:1.4rem;font-weight:800;color:#111827;letter-spacing:-.02em}
+.blog-main-head p{font-size:.82rem;color:#6B7280;margin-top:4px}
+.sort-sel{
+  padding:8px 14px;border:1.5px solid #E5E7EB;
+  border-radius:8px;font-size:.8rem;font-weight:600;
+  color:#1F2937;background:#fff;outline:none;cursor:pointer;
+}
+
+/* ─── BLOG CARDS ─── */
+.blog-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:22px;
+}
+.blog-card{
+  background:#fff;
+  border-radius:14px;
+  border:1px solid #E5E7EB;
+  overflow:hidden;
+  display:flex;flex-direction:column;
+  transition:transform .25s,box-shadow .25s,border-color .25s;
+}
+.blog-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 8px 12px rgba(0,0,0,.06),0 20px 40px rgba(0,0,0,.12);
+  border-color:rgba(11,61,145,.2);
+}
+.blog-card[data-hidden]{display:none}
+/* card image area */
+.bc-img{
+  width:100%;
+  height:185px;
+  overflow:hidden;
+  position:relative;
+  flex-shrink:0;
+  background:linear-gradient(135deg,#0b3d91,#1e5eff); /* graceful fallback */
+}
+.bc-img img{
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  object-fit:cover;
+  transition:transform .55s ease;
+  display:block;
+}
+.blog-card:hover .bc-img img{transform:scale(1.07)}
+/* bottom scrim so badge stays readable */
+.bc-img::after{
+  content:'';
+  position:absolute;
+  left:0;right:0;bottom:0;
+  height:70px;
+  background:linear-gradient(to top,rgba(0,0,0,.52) 0%,transparent 100%);
+  z-index:1;
+  pointer-events:none;
+}
+.bc-badge{
+  position:absolute;bottom:10px;left:10px;z-index:3;
+  display:inline-flex;align-items:center;
+  padding:3px 10px;border-radius:100px;
+  font-size:.65rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+}
+/* card body */
+.bc-body{
+  padding:18px 20px 20px;
+  display:flex;flex-direction:column;gap:9px;flex:1;
+}
+.bc-cat{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.bc-title{
+  font-size:.98rem;font-weight:700;color:#111827;
+  line-height:1.42;letter-spacing:-.01em;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  transition:color .2s;
+}
+.bc-title a:hover,.bc-title:hover{color:#0B3D91}
+.bc-excerpt{
+  font-size:.84rem;color:#4B5563;line-height:1.68;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+  flex:1;
+}
+.bc-meta-row{
+  display:flex;align-items:center;gap:12px;
+  padding-top:10px;border-top:1px solid #F3F4F6;
+}
+.bc-meta-row span{
+  display:flex;align-items:center;gap:4px;
+  font-size:.75rem;color:#9CA3AF;font-weight:500;
+}
+.bc-foot{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:2px;
+}
+.bc-author{display:flex;align-items:center;gap:8px;font-size:.78rem;color:#6B7280}
+.bc-av{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.62rem;font-weight:700;color:#fff;
+}
+.bc-read{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:.79rem;font-weight:700;color:#0B3D91;
+  transition:gap .2s;
+}
+.bc-read:hover{gap:8px}
+
+/* gradient image backgrounds */
+.g-blu{background:linear-gradient(135deg,#0B3D91,#1E5EFF)}
+.g-grn{background:linear-gradient(135deg,#16a34a,#0891b2)}
+.g-pur{background:linear-gradient(135deg,#7c3aed,#0B3D91)}
+.g-cyn{background:linear-gradient(135deg,#0891b2,#7c3aed)}
+.g-red{background:linear-gradient(135deg,#dc2626,#7c3aed)}
+.g-amb{background:linear-gradient(135deg,#d97706,#16a34a)}
+.g-nav{background:linear-gradient(135deg,#1e3a5f,#0B3D91)}
+.g-tel{background:linear-gradient(135deg,#0891b2,#16a34a)}
+
+/* category badge colours */
+.bdg-s{background:#eff6ff;color:#1d4ed8}
+.bdg-c{background:#f0fdf4;color:#15803d}
+.bdg-d{background:#faf5ff;color:#6d28d9}
+.bdg-t{background:#ecfeff;color:#0e7490}
+.bdg-x{background:#fff1f2;color:#be123c}
+.bdg-w{background:#fffbeb;color:#b45309}
+.bdg-i{background:#f0fdf4;color:#15803d}
+
+.load-more-wrap{text-align:center;margin-top:32px;padding-top:24px;border-top:1px solid #E5E7EB}
+.btn-lm{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:11px 24px;border-radius:8px;
+  font-weight:700;font-size:.88rem;color:#0B3D91;
+  border:2px solid #0B3D91;background:#fff;
+  transition:background .2s,color .2s;cursor:pointer;
+}
+.btn-lm:hover{background:#0B3D91;color:#fff}
+.no-results{display:none;text-align:center;padding:52px 20px;color:#6B7280;grid-column:1/-1}
+.no-results h3{font-size:1rem;color:#1F2937;margin-bottom:6px}
+
+/* ─── SIDEBAR ─── */
+.blog-sidebar{
+  position:sticky;
+  top:calc(74px + 18px);
+  display:flex;flex-direction:column;gap:20px;
+}
+.sw-widget{
+  background:#fff;
+  border-radius:14px;
+  border:1px solid #E5E7EB;
+  padding:20px;
+}
+.sw-hd{
+  font-size:.78rem;font-weight:800;color:#1F2937;
+  text-transform:uppercase;letter-spacing:.07em;
+  margin-bottom:14px;padding-bottom:12px;
+  border-bottom:2px solid #F3F4F6;
+  position:relative;
+}
+.sw-hd::after{
+  content:'';position:absolute;left:0;bottom:-2px;
+  width:32px;height:2px;background:#0B3D91;border-radius:2px;
+}
+/* search */
+.sw-srch{display:flex;border:1.5px solid #E5E7EB;border-radius:8px;overflow:hidden}
+.sw-srch input{flex:1;border:none;outline:none;padding:9px 12px;font-size:.86rem;color:#1F2937;min-width:0}
+.sw-srch input::placeholder{color:#9CA3AF}
+.sw-srch button{background:#0B3D91;color:#fff;padding:9px 13px;display:flex;align-items:center;transition:background .2s}
+.sw-srch button:hover{background:#082d6e}
+/* mini posts */
+.sw-post{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid #F3F4F6}
+.sw-post:last-child{border-bottom:none;padding-bottom:0}
+.sw-post-img{width:60px;height:60px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#e8f0fc}
+.sw-post-img img{width:100%;height:100%;object-fit:cover;display:block}
+.sw-post-ttl{font-size:.8rem;font-weight:600;color:#1F2937;line-height:1.38;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:3px;transition:color .2s}
+.sw-post-ttl:hover{color:#0B3D91}
+.sw-post-dt{font-size:.7rem;color:#9CA3AF}
+/* categories */
+.sw-cat-list li{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #F3F4F6;font-size:.84rem}
+.sw-cat-list li:last-child{border-bottom:none}
+.sw-cat-list a{color:#4B5563;font-weight:500;display:flex;align-items:center;gap:8px;transition:color .2s}
+.sw-cat-list a:hover{color:#0B3D91}
+.sw-cnt{background:#F8FAFC;color:#9CA3AF;font-size:.7rem;padding:2px 7px;border-radius:100px;font-weight:600}
+.sw-cdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+/* newsletter widget */
+.sw-nl{background:linear-gradient(135deg,#0B3D91,#1E5EFF);border-color:transparent}
+.sw-nl .sw-hd{color:#fff;border-color:rgba(255,255,255,.18)}
+.sw-nl .sw-hd::after{background:#F59E0B}
+.sw-nl p{font-size:.82rem;color:rgba(255,255,255,.75);line-height:1.58;margin-bottom:13px}
+.sw-nl input{width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:.86rem;outline:none;margin-bottom:9px;display:block}
+.sw-nl input::placeholder{color:rgba(255,255,255,.42)}
+.sw-nl input:focus{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.16)}
+.sw-nl-btn{width:100%;background:#F59E0B;color:#fff;border-radius:8px;padding:10px;font-weight:700;font-size:.86rem;transition:background .2s;cursor:pointer;font-family:inherit;border:none}
+.sw-nl-btn:hover{background:#D97706}
+.sw-nl-ok{display:none;font-size:.76rem;color:#F59E0B;text-align:center;margin-top:5px;font-weight:600}
+/* tags */
+.sw-tags{display:flex;flex-wrap:wrap;gap:7px}
+.sw-tag{padding:5px 12px;border-radius:100px;font-size:.74rem;font-weight:600;color:#4B5563;background:#F8FAFC;border:1.5px solid #E5E7EB;transition:.2s;cursor:pointer}
+.sw-tag:hover{background:#0B3D91;color:#fff;border-color:#0B3D91}
+/* workshop item */
+.sw-ws{display:flex;gap:10px;padding:10px;border-radius:8px;border:1px solid #E5E7EB;transition:border-color .2s;background:#fff;margin-bottom:8px}
+.sw-ws:last-child{margin-bottom:0}
+.sw-ws:hover{border-color:#0B3D91}
+.sw-ws-bar{width:4px;border-radius:4px;flex-shrink:0}
+.sw-ws-ttl{font-size:.8rem;font-weight:700;color:#111827}
+.sw-ws-dt{font-size:.7rem;color:#9CA3AF;margin-top:2px}
+
+/* ─── CTA ─── */
+.blog-cta{
+  background:linear-gradient(135deg,#1565d8 0%,#0b3d91 50%,#093186 100%);
+  padding:72px 0;position:relative;overflow:hidden;text-align:center;
+}
+.blog-cta::before{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:
+    radial-gradient(ellipse 70% 60% at 15% 50%,rgba(255,255,255,.07) 0%,transparent 55%),
+    radial-gradient(ellipse 50% 70% at 85% 40%,rgba(30,94,255,.18) 0%,transparent 55%),
+    radial-gradient(circle,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:auto,auto,28px 28px;
+}
+.blog-cta .blog-container{position:relative;z-index:2}
+.blog-cta h2{font-size:clamp(1.75rem,3.5vw,2.4rem);font-weight:900;color:#fff;line-height:1.2;letter-spacing:-.025em;margin-bottom:12px}
+.blog-cta h2 span{color:#F59E0B}
+.blog-cta p{font-size:.97rem;color:rgba(255,255,255,.72);max-width:460px;margin:0 auto 30px;line-height:1.7}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.cta-btn1{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 30px;border-radius:8px;font-weight:700;font-size:.92rem;
+  background:#fff;color:#0B3D91;border:2px solid #fff;transition:.22s;
+  box-shadow:0 8px 24px rgba(0,0,0,.15);
+}
+.cta-btn1:hover{background:#e8f0fc;border-color:#e8f0fc;transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.2)}
+.cta-btn2{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 30px;border-radius:8px;font-weight:700;font-size:.92rem;
+  background:#F59E0B;color:#fff;border:2px solid #F59E0B;
+  box-shadow:0 8px 24px rgba(245,158,11,.45);transition:.22s;
+}
+.cta-btn2:hover{background:#D97706;border-color:#D97706;transform:translateY(-2px);box-shadow:0 12px 32px rgba(245,158,11,.5)}
+
+/* ─── BACK TO TOP ─── */
+#bttBtn{
+  position:fixed;bottom:24px;right:24px;
+  width:44px;height:44px;border-radius:50%;
+  background:#0B3D91;color:#fff;border:none;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 20px rgba(11,61,145,.38);
+  opacity:0;pointer-events:none;
+  transition:opacity .25s,transform .25s,background .25s;
+  z-index:400;font-size:1.15rem;cursor:pointer;
+}
+#bttBtn.show{opacity:1;pointer-events:all}
+#bttBtn:hover{background:#082d6e;transform:translateY(-3px)}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:1024px){
+  .blog-layout{grid-template-columns:1fr}
+  .blog-sidebar{position:static;top:auto}
+}
+@media(max-width:768px){
+  .bslider{height:420px}
+  .bs-h{font-size:1.55rem}
+  .bs-p{font-size:.88rem}
+  .blog-grid{grid-template-columns:1fr}
+  .blog-cta{padding:52px 0}
+  .cta-btns{flex-direction:column;align-items:center}
+  .bs-arr{width:36px;height:36px;font-size:1.1rem}
+}
+@media(max-width:480px){
+  .bslider{height:360px}
+  .bs-h{font-size:1.32rem}
+  .bs-p{display:none}
+  .bs-btns{flex-direction:column}
+  .bs-btn1,.bs-btn2{justify-content:center}
+}
+</style>
 </head>
 <body>
 
-<!-- Reading Progress -->
-<div id="readingProgress"></div>
+<!-- GLOBAL HEADER via shared.js -->
+<div id="header-placeholder"></div>
 
-<!-- ======================== NAVBAR ======================== -->
-<style>
-.navbar{background:#fff;position:sticky;top:0;z-index:9999;box-shadow:0 4px 18px rgba(15,23,42,.07)}
-.nav-container{width:100%;max-width:1350px;margin:auto;padding:0 20px}
-.nav-inner{min-height:74px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.brand{display:flex;align-items:center;gap:12px;text-decoration:none;min-width:220px}
-.brand img{width:50px;height:50px;object-fit:contain;border-radius:10px;background:#fff;border:1px solid #edf2f7;padding:4px}
-.brand-text strong{display:block;color:#0b2b5e;font-size:.95rem;font-weight:900;line-height:1.05}
-.brand-text span{font-size:.68rem;color:#64748b;font-weight:600;margin-top:3px;display:block}
-.nav-links{display:flex;align-items:center;gap:22px}
-.nav-links a{position:relative;color:#24344d;font-size:.88rem;font-weight:700;padding:26px 0;transition:.22s;text-decoration:none}
-.nav-links a::after{content:"";position:absolute;left:0;bottom:18px;width:0;height:2.5px;background:#f7941d;border-radius:3px;transition:.22s}
-.nav-links a:hover{color:#0b63ce}
-.nav-links a:hover::after,.nav-links a.active-nav::after{width:100%}
-.nav-links a.active-nav{color:#0b63ce}
-.nav-actions{display:flex;align-items:center;gap:10px}
-.nb{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;padding:10px 19px;border-radius:6px;font-size:.84rem;font-weight:800;transition:.22s;white-space:nowrap}
-.nb-orange{background:#f7941d;color:#fff;box-shadow:0 8px 20px rgba(247,148,29,.28)}
-.nb-orange:hover{background:#e46f00;transform:translateY(-2px)}
-.nb-blue{background:#0b63ce;color:#fff;box-shadow:0 8px 20px rgba(11,99,206,.24)}
-.nb-blue:hover{background:#074a9d;transform:translateY(-2px)}
-.menu-toggle{display:none;border:none;background:none;font-size:1.7rem;color:#0b63ce;cursor:pointer;line-height:1;padding:4px}
-@media(max-width:1100px){
-  .menu-toggle{display:block}
-  .nav-actions{display:none}
-  .nav-links{position:fixed;left:0;top:70px;width:100%;background:#fff;flex-direction:column;align-items:flex-start;gap:0;max-height:0;overflow:hidden;transition:.3s ease;box-shadow:0 12px 24px rgba(0,0,0,.07);z-index:9998}
-  .nav-links.show{max-height:560px;padding:10px 24px 20px}
-  .nav-links a{width:100%;padding:14px 0;border-bottom:1px solid #eef2f7;font-size:.9rem}
-  .nav-links a::after{display:none}
-}
-</style>
+<!-- ══════════════════════════════════════
+     HERO SLIDER
+══════════════════════════════════════ -->
+<section class="bslider" id="blogSlider" aria-label="Featured Stories" aria-roledescription="carousel">
 
-<header class="navbar">
-  <div class="nav-container">
-  <div class="nav-inner">
-    <a href="index.html" class="brand">
-      <img src="vedlogo.jpeg" alt="VED Foundation">
-      <div class="brand-text">
-        <strong>VED FOUNDATION</strong>
-        <span>Education • Skills • Empowerment</span>
-      </div>
-    </a>
-    <nav class="nav-links" id="navLinks">
-      <a href="index.html">Home</a>
-      <a href="smartclasses.html">Smart Classes</a>
-      <a href="workshops.html">Workshops</a>
-      <a href="blog.html" class="active-nav">Blog</a>
-      <a href="registeration.html">Register</a>
-      <a href="donation.html">Donate</a>
-    </nav>
-    <div class="nav-actions">
-      <a href="donation.html" class="nb nb-orange">Donate Now</a>
-      <a href="registeration.html" class="nb nb-blue">Enroll Free</a>
-    </div>
-    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">&#9776;</button>
-  </div>
-  </div>
-</header>
-
-<script>
-document.getElementById('menuToggle').addEventListener('click',function(){
-  document.getElementById('navLinks').classList.toggle('show');
-});
-</script>
-
-<!-- ======================== HERO ======================== -->
-<section class="blog-hero" aria-label="Blog Hero">
-  <div class="hero-bg"></div>
-  <div class="hero-dots"></div>
-  <div class="hero-photo"></div>
-
-  <div class="container">
-    <div class="hero-content">
-      <div class="hero-eyebrow">
-        <span class="live-dot"></span>
-        VED Foundation &mdash; Official Blog
-      </div>
-      <h1 class="hero-title">
-        Insights, Stories &amp; <em>Impact</em><br>from VED Foundation
-      </h1>
-      <p class="hero-sub">
-        Empowering students through education, digital skills, innovation and career
-        readiness. Explore real stories, expert guides and workshop recaps.
-      </p>
-      <div class="hero-search" role="search">
-        <input type="search" id="heroSearch" placeholder="Search articles, topics, stories…" aria-label="Search blog">
-        <button type="button" onclick="runSearch()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          Search
-        </button>
-      </div>
-      <div class="hero-actions">
-        <a href="#featured" class="btn btn-orange btn-lg">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          Featured Article
-        </a>
-        <a href="#categories-bar" class="btn btn-outline-white btn-lg">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-          Explore Categories
-        </a>
-      </div>
-    </div>
-
-    <div class="hero-stats" aria-hidden="true">
-      <div class="hero-stat">
-        <div class="num">50<span style="color:var(--orange)">+</span></div>
-        <div class="lbl">Articles Published</div>
-      </div>
-      <div class="hero-stat">
-        <div class="num">12<span style="color:var(--orange)">K</span></div>
-        <div class="lbl">Monthly Readers</div>
-      </div>
-      <div class="hero-stat">
-        <div class="num">10</div>
-        <div class="lbl">Topic Categories</div>
+  <div class="bslide bs-on" role="group" aria-label="1 of 4"
+    style="background-image:url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1600&q=80&auto=format&fit=crop')">
+    <div class="bslide-inner" style="max-width:unset;padding:0">
+      <div class="blog-container" style="max-width:1180px;margin:0 auto;padding:0 20px">
+        <div style="max-width:620px">
+          <span class="bs-tag">🎓 Student Success</span>
+          <h2 class="bs-h">Empowering Students<br>Across India</h2>
+          <p class="bs-p">VED Foundation is transforming lives through accessible education, digital literacy and career guidance — one student at a time.</p>
+          <div class="bs-btns">
+            <a href="blog-post.html" class="bs-btn1">Read Story →</a>
+            <a href="registeration.html" class="bs-btn2">Join a Workshop</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
+  <div class="bslide" role="group" aria-label="2 of 4"
+    style="background-image:url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1600&q=80&auto=format&fit=crop')">
+    <div class="bslide-inner" style="max-width:unset;padding:0">
+      <div class="blog-container" style="max-width:1180px;margin:0 auto;padding:0 20px">
+        <div style="max-width:620px">
+          <span class="bs-tag">💻 Digital Skills</span>
+          <h2 class="bs-h">Building Skills for<br>the Modern World</h2>
+          <p class="bs-p">From HTML basics to full-stack development — our CodeStart program equips youth with the tools to thrive in the digital economy.</p>
+          <div class="bs-btns">
+            <a href="workshops.html" class="bs-btn1">View Workshops →</a>
+            <a href="registeration.html" class="bs-btn2">Enroll Free</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bslide" role="group" aria-label="3 of 4"
+    style="background-image:url('https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600&q=80&auto=format&fit=crop')">
+    <div class="bslide-inner" style="max-width:unset;padding:0">
+      <div class="blog-container" style="max-width:1180px;margin:0 auto;padding:0 20px">
+        <div style="max-width:620px">
+          <span class="bs-tag">📚 Workshops</span>
+          <h2 class="bs-h">Community Workshops<br>Making a Difference</h2>
+          <p class="bs-p">Over 120 workshops conducted across India — bringing together students, educators and volunteers to create lasting change.</p>
+          <div class="bs-btns">
+            <a href="workshops.html" class="bs-btn1">Join Next Workshop →</a>
+            <a href="blog-post.html" class="bs-btn2">Read Recap</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bslide" role="group" aria-label="4 of 4"
+    style="background-image:url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600&q=80&auto=format&fit=crop')">
+    <div class="bslide-inner" style="max-width:unset;padding:0">
+      <div class="blog-container" style="max-width:1180px;margin:0 auto;padding:0 20px">
+        <div style="max-width:620px">
+          <span class="bs-tag">🏆 Real Impact</span>
+          <h2 class="bs-h">Real Stories.<br>Real Impact.</h2>
+          <p class="bs-p">Discover inspiring success stories from students whose lives have been transformed through education and skill development.</p>
+          <div class="bs-btns">
+            <a href="blog-post.html" class="bs-btn1">Success Stories →</a>
+            <a href="#blog-listing" class="bs-btn2">Browse Blog</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="bs-arr" id="bsPrev" aria-label="Previous" type="button">&#8249;</button>
+  <button class="bs-arr" id="bsNext" aria-label="Next" type="button">&#8250;</button>
+  <nav class="bs-dots" id="bsDots" aria-label="Slides">
+    <button class="bs-dot bs-on" data-idx="0" type="button" aria-label="Slide 1"></button>
+    <button class="bs-dot" data-idx="1" type="button" aria-label="Slide 2"></button>
+    <button class="bs-dot" data-idx="2" type="button" aria-label="Slide 3"></button>
+    <button class="bs-dot" data-idx="3" type="button" aria-label="Slide 4"></button>
+  </nav>
+  <div class="bs-prog" aria-hidden="true"><div class="bs-prog-fill" id="bsProgFill"></div></div>
 </section>
 
-<!-- ======================== CATEGORIES BAR ======================== -->
-<div class="cats-bar" id="categories-bar" role="navigation" aria-label="Blog categories">
-  <div class="container">
-  <div class="cats-inner" id="catBar">
-    <button class="cat-pill active" data-cat="all">All Posts <span class="cnt">50</span></button>
-    <button class="cat-pill" data-cat="student">Student Success <span class="cnt">9</span></button>
-    <button class="cat-pill" data-cat="career">Career Guidance <span class="cnt">8</span></button>
-    <button class="cat-pill" data-cat="digital">Digital Skills <span class="cnt">7</span></button>
-    <button class="cat-pill" data-cat="coding">Coding &amp; Tech <span class="cnt">8</span></button>
-    <button class="cat-pill" data-cat="cyber">Cyber Security <span class="cnt">5</span></button>
-    <button class="cat-pill" data-cat="workshop">Workshops <span class="cnt">6</span></button>
-    <button class="cat-pill" data-cat="comm">Communication <span class="cnt">4</span></button>
-    <button class="cat-pill" data-cat="ibm">IBM SkillsBuild <span class="cnt">3</span></button>
-    <button class="cat-pill" data-cat="impact">NGO Impact <span class="cnt">6</span></button>
-    <button class="cat-pill" data-cat="volunteer">Volunteers <span class="cnt">4</span></button>
+<!-- ══════════════════════════════════════
+     CATEGORY FILTER
+══════════════════════════════════════ -->
+<div class="cat-bar" id="catBar" role="navigation" aria-label="Filter">
+  <div class="blog-container">
+  <div class="cat-bar-wrap">
+    <button class="cf-btn cf-on" data-cat="all">All Posts <span class="cf-cnt">50</span></button>
+    <button class="cf-btn" data-cat="student">Student Success <span class="cf-cnt">9</span></button>
+    <button class="cf-btn" data-cat="career">Career Guidance <span class="cf-cnt">8</span></button>
+    <button class="cf-btn" data-cat="digital">Digital Skills <span class="cf-cnt">7</span></button>
+    <button class="cf-btn" data-cat="coding">Coding &amp; Tech <span class="cf-cnt">8</span></button>
+    <button class="cf-btn" data-cat="cyber">Cyber Security <span class="cf-cnt">5</span></button>
+    <button class="cf-btn" data-cat="workshop">Workshops <span class="cf-cnt">6</span></button>
+    <button class="cf-btn" data-cat="impact">NGO Impact <span class="cf-cnt">7</span></button>
   </div>
   </div>
 </div>
 
-<!-- ======================== FEATURED ARTICLE ======================== -->
-<section class="featured-section" id="featured" aria-label="Featured article">
-  <div class="container">
-    <div class="featured-label">
-      <div class="section-label"><span class="dot"></span> Featured Article</div>
-    </div>
-    <a href="blog-post.html" class="featured-card" aria-label="Read featured article">
-      <div class="featured-img-wrap">
-        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&q=80&auto=format&fit=crop"
-             alt="Students learning digital skills together" loading="lazy">
-        <div class="feat-img-overlay"></div>
-        <span class="feat-flag">&#11088; Editor's Pick</span>
-      </div>
-      <div class="featured-body">
-        <div class="section-label" style="background:#fffbeb;color:#b45309">
-          <span class="dot" style="background:#b45309"></span> Digital Skills
-        </div>
-        <h2 class="feat-title">
-          How Digital Skills Are Transforming Student Careers in India
-        </h2>
-        <p class="feat-excerpt">
-          Across tier-2 and tier-3 cities, a quiet revolution is underway. Students who
-          once had limited exposure to technology are now building websites, creating
-          digital businesses, and landing jobs at leading companies — all thanks to
-          focused, accessible digital skill programs like those run by VED Foundation.
-        </p>
-        <div class="read-meta">
-          <span>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            18 May 2026
-          </span>
-          <span>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            8 min read
-          </span>
-        </div>
-        <div class="feat-footer">
-          <div class="feat-author">
-            <div class="av av-blue" aria-hidden="true">PK</div>
-            <div>
-              <strong>Priya Kumari</strong>
-              <span style="display:block;font-size:.75rem">Program Director, VED Foundation</span>
-            </div>
-          </div>
-          <span class="btn btn-primary btn-sm">
-            Read Article
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </span>
-        </div>
-      </div>
-    </a>
-  </div>
-</section>
+<!-- ══════════════════════════════════════
+     BLOG MAIN — 70 / 30
+══════════════════════════════════════ -->
+<section class="blog-section" id="blog-listing" aria-label="Blog articles">
+<div class="blog-container">
+<div class="blog-layout">
 
-<!-- ======================== LATEST ARTICLES ======================== -->
-<section class="articles-section" aria-label="Latest articles">
-  <div class="container">
-    <div class="articles-header">
+  <!-- LEFT: Articles -->
+  <div>
+    <div class="blog-main-head">
       <div>
-        <div class="section-label"><span class="dot"></span> Latest Articles</div>
-        <h2 class="section-title">Stories, Guides &amp; Insights</h2>
+        <h1>Latest Articles</h1>
+        <p>Stories, guides &amp; insights from VED Foundation</p>
       </div>
-      <div style="display:flex;gap:10px;align-items:center">
-        <select id="sortSelect" style="padding:8px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:.82rem;font-weight:600;color:var(--text);background:#fff;outline:none;cursor:pointer">
-          <option value="newest">Newest First</option>
-          <option value="popular">Most Popular</option>
-          <option value="read">Quick Reads</option>
-        </select>
-      </div>
+      <select class="sort-sel" id="sortSelect" aria-label="Sort articles">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="quick">Quick Reads</option>
+      </select>
     </div>
 
-    <div id="noResults">
+    <div id="noResults" class="no-results">
       <h3>No articles found</h3>
-      <p>Try a different search term or category.</p>
+      <p>Try a different keyword or select a different category.</p>
     </div>
 
-    <div class="articles-grid" id="articlesGrid">
+    <div class="blog-grid" id="blogGrid">
 
-      <!-- 1 -->
-      <article class="article-card reveal" data-cat="coding" data-title="codestart workshop 200 students learn to code" data-read="6">
-        <div class="a-img">
-          <div class="a-img-g g-blue">&#128187;</div>
+      <article class="blog-card" data-cat="digital" data-title="how digital skills transforming student careers india" data-read="8">
+        <div class="bc-img">
+          <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=80&auto=format&fit=crop" alt="Student learning digital skills" loading="lazy">
+          <span class="bc-badge bdg-d">Digital Skills</span>
         </div>
-        <div class="a-body">
-          <div class="a-top">
-            <span class="cat-badge cat-coding">Coding &amp; Tech</span>
-            <span class="read-meta"><span>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              6 min
-            </span></span>
+        <div class="bc-body">
+          <div class="bc-cat" style="color:#6d28d9">Digital Skills</div>
+          <div class="bc-title"><a href="blog-post.html">How Digital Skills Are Transforming Student Careers in India</a></div>
+          <p class="bc-excerpt">Across tier-2 and tier-3 cities, students who once had no computer access are now building websites and landing real jobs.</p>
+          <div class="bc-meta-row">
+            <span>📅 18 May 2026</span>
+            <span>⏱ 8 min read</span>
           </div>
-          <h3 class="a-title">
-            <a href="blog-post.html">CodeStart Workshop: 200 Students Learn to Code in 30 Days</a>
-          </h3>
-          <p class="a-excerpt">
-            Our flagship CodeStart program just wrapped its most successful edition yet.
-            From HTML basics to building real projects — here's how we did it and what
-            students walked away with.
-          </p>
-          <div class="a-footer">
-            <div class="a-author">
-              <div class="av av-blue">RG</div>
-              <div><strong>Rahul Gupta</strong> &nbsp;&bull;&nbsp; 12 May 2026</div>
-            </div>
-            <a href="blog-post.html" class="a-more">
-              Read
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
+          <div class="bc-foot">
+            <div class="bc-author"><div class="bc-av" style="background:linear-gradient(135deg,#0B3D91,#1E5EFF)">PK</div><span><strong>Priya Kumari</strong></span></div>
+            <a href="blog-post.html" class="bc-read">Read More →</a>
           </div>
         </div>
       </article>
 
-      <!-- 2 -->
-      <article class="article-card reveal rd-1" data-cat="cyber" data-title="cybersafe india protecting students in the digital age" data-read="5">
-        <div class="a-img">
-          <div class="a-img-g g-red">&#128274;</div>
+      <article class="blog-card" data-cat="coding" data-title="codestart workshop 200 students learn code 30 days" data-read="6">
+        <div class="bc-img">
+          <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&q=80&auto=format&fit=crop" alt="Student coding on laptop" loading="lazy">
+          <span class="bc-badge bdg-t">Coding &amp; Tech</span>
         </div>
-        <div class="a-body">
-          <div class="a-top">
-            <span class="cat-badge cat-cyber">Cyber Security</span>
-            <span class="read-meta"><span>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              5 min
-            </span></span>
+        <div class="bc-body">
+          <div class="bc-cat" style="color:#0e7490">Coding &amp; Tech</div>
+          <div class="bc-title"><a href="blog-post.html">CodeStart Workshop: 200 Students Learn to Code in 30 Days</a></div>
+          <p class="bc-excerpt">Our flagship CodeStart program wrapped its most successful edition yet — from HTML basics to building real projects.</p>
+          <div class="bc-meta-row">
+            <span>📅 12 May 2026</span>
+            <span>⏱ 6 min read</span>
           </div>
-          <h3 class="a-title">
-            <a href="blog-post.html">CyberSafe India: Protecting Students in the Digital Age</a>
-          </h3>
-          <p class="a-excerpt">
-            Phishing, identity theft, and social engineering aren't just corporate problems
-            — they target students every day. Our CyberSafe initiative is closing that
-            awareness gap, one workshop at a time.
-          </p>
-          <div class="a-footer">
-            <div class="a-author">
-              <div class="av av-orange">AM</div>
-              <div><strong>Ananya Mishra</strong> &nbsp;&bull;&nbsp; 8 May 2026</div>
-            </div>
-            <a href="blog-post.html" class="a-more">
-              Read
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
+          <div class="bc-foot">
+            <div class="bc-author"><div class="bc-av" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">RG</div><span><strong>Rahul Gupta</strong></span></div>
+            <a href="blog-post.html" class="bc-read">Read More →</a>
           </div>
         </div>
       </article>
 
-      <!-- 3 -->
-      <article class="article-card reveal rd-2" data-cat="career" data-title="career roadmap class 10 to dream job" data-read="7">
-        <div class="a-img">
-          <div class="a-img-g g-green">&#127919;</div>
+      <article class="blog-card" data-cat="cyber" data-title="cybersafe india protecting students digital age" data-read="5">
+        <div class="bc-img">
+          <img src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&q=80&auto=format&fit=crop" alt="Cyber security awareness" loading="lazy">
+          <span class="bc-badge bdg-x">Cyber Security</span>
         </div>
-        <div class="a-body">
-          <div class="a-top">
-            <span class="cat-badge cat-career">Career Guidance</span>
-            <span class="read-meta"><span>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              7 min
-            </span></span>
+        <div class="bc-body">
+          <div class="bc-cat" style="color:#be123c">Cyber Security</div>
+          <div class="bc-title"><a href="blog-post.html">CyberSafe India: Protecting Students in the Digital Age</a></div>
+          <p class="bc-excerpt">Phishing, identity theft and social engineering target students daily. Our initiative is closing that awareness gap.</p>
+          <div class="bc-meta-row">
+            <span>📅 8 May 2026</span>
+            <span>⏱ 5 min read</span>
           </div>
-          <h3 class="a-title">
-            <a href="blog-post.html">Career Roadmap: From Class 10 to Your Dream Job</a>
-          </h3>
-          <p class="a-excerpt">
-            Feeling lost about what comes after school? This comprehensive guide walks
-            you through every step — streams, entrance exams, skill-building, and how to
-            stand out before you even graduate.
-          </p>
-          <div class="a-footer">
-            <div class="a-author">
-              <div class="av av-green">SK</div>
-              <div><strong>Sneha Kaur</strong> &nbsp;&bull;&nbsp; 3 May 2026</div>
-            </div>
-            <a href="blog-post.html" class="a-more">
-              Read
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
+          <div class="bc-foot">
+            <div class="bc-author"><div class="bc-av" style="background:linear-gradient(135deg,#7c3aed,#0B3D91)">AM</div><span><strong>Ananya Mishra</strong></span></div>
+            <a href="blog-post.html" class="bc-read">Read More →</a>
           </div>
         </div>
       </article>
 
-      <!-- 4 -->
-      <article class="article-card reveal" data-cat="ibm" data-title="ibm skillsbuild bridging the skills gap india" data-read="6">
-        <div class="a-img">
-          <div class="a-img-g g-navy">&#127981;</div>
+      <article class="blog-card" data-cat="career" data-title="career roadmap class 10 dream job" data-read="7">
+        <div class="bc-img">
+          <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&q=80&auto=format&fit=crop" alt="Career guidance and planning" loading="lazy">
+          <span class="bc-badge bdg-c">Career Guidance</span>
         </div>
-        <div class="a-body">
-          <div class="a-top">
-            <span class="cat-badge cat-ibm">IBM SkillsBuild</span>
-            <span class="read-meta"><span>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              6 min
-            </span></span>
+        <div class="bc-body">
+          <div class="bc-cat" style="color:#15803d">Career Guidance</div>
+          <div class="bc-title"><a href="blog-post.html">Career Roadmap: From Class 10 to Your Dream Job</a></div>
+          <p class="bc-excerpt">Streams, entrance exams, skill-building and how to stand out — this comprehensive guide covers every step after school.</p>
+          <div class="bc-meta-row">
+            <span>📅 3 May 2026</span>
+            <span>⏱ 7 min read</span>
           </div>
-          <h3 class="a-title">
-            <a href="blog-post.html">IBM SkillsBuild: How We're Bridging India's Skills Gap</a>
-          </h3>
-          <p class="a-excerpt">
-            Through our partnership with IBM SkillsBuild, hundreds of students have earned
-            globally recognized credentials — for free. Here's what the program covers and
-            how you can enrol today.
-          </p>
-          <div class="a-footer">
-            <div class="a-author">
-              <div class="av av-purple">VN</div>
-              <div><strong>Vikram Nair</strong> &nbsp;&bull;&nbsp; 28 Apr 2026</div>
-            </div>
-            <a href="blog-post.html" class="a-more">
-              Read
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
+          <div class="bc-foot">
+            <div class="bc-author"><div class="bc-av" style="background:linear-gradient(135deg,#16a34a,#0891b2)">SK</div><span><strong>Sneha Kaur</strong></span></div>
+            <a href="blog-post.html" class="bc-read">Read More →</a>
           </div>
         </div>
       </article>
 
-      <!-- 5 -->
-      <article class="article-card reveal rd-1" data-cat="student" data-title="student success story riya journey developer" data-read="5">
-        <div class="a-img">
-          <div class="a-img-g g-purple">&#127775;</div>
+      <article class="blog-card" data-cat="student" data-title="riya journey self doubt developer 19" data-read="5">
+        <div class="bc-img">
+          <img src="https://images.unsplash.com/photo-1529390079861-591de354faf5?w=600&q=80&auto=format&fit=crop" alt="Students group learning success" loading="lazy">
+          <span class="bc-badge bdg-s">Student Success</span>
         </div>
-        <div class="a-body">
-          <div class="a-top">
-            <span class="cat-badge cat-student">Student Success</span>
-            <span class="read-meta"><span>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              5 min
-            </span></span>
+        <div class="bc-body">
+          <div class="bc-cat" style="color:#1d4ed8">Student Success</div>
+          <div class="bc-title"><a href="blog-post.html">Riya's Journey: From Self-Doubt to Junior Developer at 19</a></div>
+          <p class="bc-excerpt">Riya didn't own a laptop when she joined our bootcamp. Eight months later, she had a job offer.</p>
+          <div class="bc-meta-row">
+            <span>📅 22 Apr 2026</span>
+            <span>⏱ 5 min read</span>
           </div>
-          <h3 class="a-title">
-            <a href="blog-post.html">Riya's Journey: From Self-Doubt to Junior Developer at 19</a>
-          </h3>
-          <p class="a-excerpt">
-            Riya didn't own a laptop when she joined our bootcamp. Eight months later, she
-            had a job offer. This is her story — and proof that determination is the only
-            prerequisite.
-          </p>
-          <div class="a-footer">
-            <div class="a-author">
-              <div class="av av-orange">RV</div>
-              <div><strong>Riya Verma</strong> &nbsp;&bull;&nbsp; 22 Apr 2026</div>
-            </div>
-            <a href="blog-post.html" class="a-more">
-              Read
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
+          <div class="bc-foot">
+            <div class="bc-author"><div class="bc-av" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">RV</div><span><strong>Riya Verma</strong></span></div>
+            <a href="blog-post.html" class="bc-read">Read More →</a>
           </div>
         </div>
       </article>
 
-      <!-- 6 -->
-      <article class="article-card reveal rd-2" data-cat="workshop" data-title="digital edge workshop 500 students recap" data-read="4">
-        <div class="a-img">
-          <div class="a-img-g g-amber">&#128218;</div>
+      <article class="blog-card" data-cat="workshop" data-title="digital edge workshop 500 students recap" data-read="4">
+        <div class="bc-img">
+          <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80&auto=format&fit=crop" alt="Community workshop empowerment" loading="lazy">
+          <span class="bc-badge bdg-w">Workshop</span>
         </div>
-        <div class="a-body">
-          <div class="a-top">
-            <span class="cat-badge cat-workshop">Workshops</span>
-            <span class="read-meta"><span>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              4 min
-            </span></span>
+        <div class="bc-body">
+          <div class="bc-cat" style="color:#b45309">Workshop</div>
+          <div class="bc-title"><a href="blog-post.html">Digital Edge Workshop Recap: 500 Students, One Day</a></div>
+          <p class="bc-excerpt">Our biggest workshop yet brought together 500 students from 12 schools. Sessions, breakthroughs and what's coming next.</p>
+          <div class="bc-meta-row">
+            <span>📅 15 Apr 2026</span>
+            <span>⏱ 4 min read</span>
           </div>
-          <h3 class="a-title">
-            <a href="blog-post.html">Digital Edge Workshop Recap: 500 Students, One Day, Real Change</a>
-          </h3>
-          <p class="a-excerpt">
-            Our biggest workshop yet brought together 500 students from 12 schools.
-            Here's everything that happened — the sessions, the breakthroughs, the feedback,
-            and what's coming next.
-          </p>
-          <div class="a-footer">
-            <div class="a-author">
-              <div class="av av-green">AJ</div>
-              <div><strong>Arjun Joshi</strong> &nbsp;&bull;&nbsp; 15 Apr 2026</div>
-            </div>
-            <a href="blog-post.html" class="a-more">
-              Read
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
+          <div class="bc-foot">
+            <div class="bc-author"><div class="bc-av" style="background:linear-gradient(135deg,#16a34a,#0891b2)">AJ</div><span><strong>Arjun Joshi</strong></span></div>
+            <a href="blog-post.html" class="bc-read">Read More →</a>
           </div>
         </div>
       </article>
 
-      <!-- 7 -->
-      <article class="article-card reveal" data-cat="comm" data-title="communication skills changed my life speak confidence" data-read="5">
-        <div class="a-img">
-          <div class="a-img-g g-teal">&#128483;</div>
+      <article class="blog-card" data-cat="impact" data-title="smart classes rural schools technology 40" data-read="6">
+        <div class="bc-img">
+          <img src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=600&q=80&auto=format&fit=crop" alt="Students in smart classroom" loading="lazy">
+          <span class="bc-badge bdg-i">NGO Impact</span>
         </div>
-        <div class="a-body">
-          <div class="a-top">
-            <span class="cat-badge cat-comm">Communication</span>
-            <span class="read-meta"><span>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              5 min
-            </span></span>
+        <div class="bc-body">
+          <div class="bc-cat" style="color:#15803d">NGO Impact</div>
+          <div class="bc-title"><a href="blog-post.html">Smart Classes: Technology Reaches 40 Rural Schools</a></div>
+          <p class="bc-excerpt">When students in Chhattisgarh saw a projector for the first time, they thought it was magic — it was really just smarter learning.</p>
+          <div class="bc-meta-row">
+            <span>📅 2 Apr 2026</span>
+            <span>⏱ 6 min read</span>
           </div>
-          <h3 class="a-title">
-            <a href="blog-post.html">5 Communication Skills That Will Change Your Career Forever</a>
-          </h3>
-          <p class="a-excerpt">
-            Technical skills get you in the door. Communication skills keep you there —
-            and take you to the top. These are the five we teach every student and why
-            each one matters for your future.
-          </p>
-          <div class="a-footer">
-            <div class="a-author">
-              <div class="av av-purple">MT</div>
-              <div><strong>Meera Tiwari</strong> &nbsp;&bull;&nbsp; 9 Apr 2026</div>
-            </div>
-            <a href="blog-post.html" class="a-more">
-              Read
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
+          <div class="bc-foot">
+            <div class="bc-author"><div class="bc-av" style="background:linear-gradient(135deg,#0B3D91,#1E5EFF)">DS</div><span><strong>Dev Sharma</strong></span></div>
+            <a href="blog-post.html" class="bc-read">Read More →</a>
           </div>
         </div>
       </article>
 
-      <!-- 8 -->
-      <article class="article-card reveal rd-1" data-cat="impact" data-title="smart classes rural schools technology" data-read="6">
-        <div class="a-img">
-          <div class="a-img-g g-cyan">&#127979;</div>
+      <article class="blog-card" data-cat="career" data-title="linkedin profile students professional" data-read="4">
+        <div class="bc-img">
+          <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&q=80&auto=format&fit=crop" alt="Student professional development" loading="lazy">
+          <span class="bc-badge bdg-c">Career</span>
         </div>
-        <div class="a-body">
-          <div class="a-top">
-            <span class="cat-badge cat-impact">NGO Impact</span>
-            <span class="read-meta"><span>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              6 min
-            </span></span>
+        <div class="bc-body">
+          <div class="bc-cat" style="color:#15803d">Career Guidance</div>
+          <div class="bc-title"><a href="blog-post.html">LinkedIn for Students: Build Your Professional Profile at 16</a></div>
+          <p class="bc-excerpt">You don't need a job to start building your brand. A strong LinkedIn profile opens internship doors years before you graduate.</p>
+          <div class="bc-meta-row">
+            <span>📅 26 Mar 2026</span>
+            <span>⏱ 4 min read</span>
           </div>
-          <h3 class="a-title">
-            <a href="blog-post.html">Smart Classes Initiative: Technology Reaches 40 Rural Schools</a>
-          </h3>
-          <p class="a-excerpt">
-            When students in Chhattisgarh saw a projector for the first time, they thought
-            it was magic. It was really just a smarter way to learn. Our Smart Classes
-            project is transforming rural education — here's the impact so far.
-          </p>
-          <div class="a-footer">
-            <div class="a-author">
-              <div class="av av-blue">DS</div>
-              <div><strong>Dev Sharma</strong> &nbsp;&bull;&nbsp; 2 Apr 2026</div>
-            </div>
-            <a href="blog-post.html" class="a-more">
-              Read
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
+          <div class="bc-foot">
+            <div class="bc-author"><div class="bc-av" style="background:linear-gradient(135deg,#16a34a,#0891b2)">NK</div><span><strong>Nidhi Kapoor</strong></span></div>
+            <a href="blog-post.html" class="bc-read">Read More →</a>
           </div>
         </div>
       </article>
 
-      <!-- 9 -->
-      <article class="article-card reveal rd-2" data-cat="career" data-title="linkedin profile students professional 16 18" data-read="4">
-        <div class="a-img">
-          <div class="a-img-g g-navy">&#128101;</div>
-        </div>
-        <div class="a-body">
-          <div class="a-top">
-            <span class="cat-badge cat-career">Career Guidance</span>
-            <span class="read-meta"><span>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              4 min
-            </span></span>
-          </div>
-          <h3 class="a-title">
-            <a href="blog-post.html">LinkedIn for Students: Build Your Professional Profile at 16</a>
-          </h3>
-          <p class="a-excerpt">
-            You don't need a job to start building your professional brand. A strong
-            LinkedIn profile opens internship doors, connects you with mentors, and shows
-            recruiters you're serious — years before you graduate.
-          </p>
-          <div class="a-footer">
-            <div class="a-author">
-              <div class="av av-green">NK</div>
-              <div><strong>Nidhi Kapoor</strong> &nbsp;&bull;&nbsp; 26 Mar 2026</div>
-            </div>
-            <a href="blog-post.html" class="a-more">
-              Read
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
-          </div>
-        </div>
-      </article>
-
-      <!-- 10 -->
-      <article class="article-card reveal" data-cat="cyber" data-title="introduction cybersecurity every student must know" data-read="7">
-        <div class="a-img">
-          <div class="a-img-g g-red">&#128421;</div>
-        </div>
-        <div class="a-body">
-          <div class="a-top">
-            <span class="cat-badge cat-cyber">Cyber Security</span>
-            <span class="read-meta"><span>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              7 min
-            </span></span>
-          </div>
-          <h3 class="a-title">
-            <a href="blog-post.html">Introduction to Cybersecurity: What Every Student Must Know in 2026</a>
-          </h3>
-          <p class="a-excerpt">
-            Cyber threats are evolving faster than awareness. From password hygiene to
-            recognising deepfakes, this guide covers the ten most important concepts
-            every student needs to understand right now.
-          </p>
-          <div class="a-footer">
-            <div class="a-author">
-              <div class="av av-orange">PP</div>
-              <div><strong>Pratik Pandey</strong> &nbsp;&bull;&nbsp; 20 Mar 2026</div>
-            </div>
-            <a href="blog-post.html" class="a-more">
-              Read
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
-          </div>
-        </div>
-      </article>
-
-      <!-- 11 -->
-      <article class="article-card reveal rd-1" data-cat="digital" data-title="digital literacy first steps internet beginners" data-read="4">
-        <div class="a-img">
-          <div class="a-img-g g-teal">&#127760;</div>
-        </div>
-        <div class="a-body">
-          <div class="a-top">
-            <span class="cat-badge cat-digital">Digital Skills</span>
-            <span class="read-meta"><span>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              4 min
-            </span></span>
-          </div>
-          <h3 class="a-title">
-            <a href="blog-post.html">Digital Literacy First Steps: A Beginner's Guide for Students</a>
-          </h3>
-          <p class="a-excerpt">
-            You don't need to be a tech wizard. Digital literacy is about using tools
-            confidently, safely, and creatively. This no-jargon guide is designed for
-            students taking their first steps online.
-          </p>
-          <div class="a-footer">
-            <div class="a-author">
-              <div class="av av-blue">LS</div>
-              <div><strong>Lalita Singh</strong> &nbsp;&bull;&nbsp; 14 Mar 2026</div>
-            </div>
-            <a href="blog-post.html" class="a-more">
-              Read
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
-          </div>
-        </div>
-      </article>
-
-      <!-- 12 -->
-      <article class="article-card reveal rd-2" data-cat="volunteer" data-title="volunteer voices why we teach inspire students" data-read="5">
-        <div class="a-img">
-          <div class="a-img-g g-orange">&#10084;</div>
-        </div>
-        <div class="a-body">
-          <div class="a-top">
-            <span class="cat-badge cat-volunteer">Volunteer Stories</span>
-            <span class="read-meta"><span>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              5 min
-            </span></span>
-          </div>
-          <h3 class="a-title">
-            <a href="blog-post.html">Volunteer Voices: Why We Left Comfort Zones to Teach</a>
-          </h3>
-          <p class="a-excerpt">
-            They gave up weekends, commuted hours, and refused stipends. Why? Because
-            they believe every student deserves a chance. Five volunteers share the moment
-            they decided to show up — and never stopped.
-          </p>
-          <div class="a-footer">
-            <div class="a-author">
-              <div class="av av-purple">Team</div>
-              <div><strong>VED Team</strong> &nbsp;&bull;&nbsp; 8 Mar 2026</div>
-            </div>
-            <a href="blog-post.html" class="a-more">
-              Read
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
-          </div>
-        </div>
-      </article>
-
-    </div><!-- /articles-grid -->
+    </div><!-- /blog-grid -->
 
     <div class="load-more-wrap">
-      <button class="btn btn-outline-blue btn-lg" id="loadMoreBtn">
+      <button class="btn-lm" id="loadMoreBtn" type="button">
         Load More Articles
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
     </div>
-  </div>
-</section>
+  </div><!-- /left -->
 
-<!-- ======================== IMPACT STORIES ======================== -->
-<section class="impact-section" aria-label="Impact stories">
-  <div class="container">
-    <div class="impact-header reveal">
-      <div class="section-label"><span class="dot"></span> Real Impact</div>
-      <h2 class="section-title">Stories That Inspire Change</h2>
-      <p class="section-subtitle">
-        Behind every statistic is a student whose life changed direction. Here are just
-        a few of the thousands of stories we're proud to share.
-      </p>
-    </div>
-    <div class="impact-grid">
+  <!-- RIGHT: Sidebar -->
+  <aside class="blog-sidebar" aria-label="Sidebar">
 
-      <div class="impact-card reveal">
-        <div class="impact-img">
-          <div class="a-img-g g-blue" style="height:200px">&#127891;</div>
-        </div>
-        <div class="impact-body">
-          <p class="impact-quote">
-            "I had never touched a computer before joining VED Foundation's workshop.
-            Three months later I built my first website and earned my first freelance
-            project. This programme changed everything for me."
-          </p>
-          <div class="impact-person">
-            <div class="av av-blue">KS</div>
-            <div class="info">
-              <strong>Kartik Sahu</strong>
-              <span>Class 12 Student, Raipur</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="impact-card reveal rd-1">
-        <div class="impact-img">
-          <div class="a-img-g g-green" style="height:200px">&#127760;</div>
-        </div>
-        <div class="impact-body">
-          <p class="impact-quote">
-            "The career counselling session helped me realise I didn't have to choose
-            between science and my love for design. VED's mentors showed me pathways
-            I never knew existed — I'm now studying UI/UX."
-          </p>
-          <div class="impact-person">
-            <div class="av av-green">PM</div>
-            <div class="info">
-              <strong>Pooja Malviya</strong>
-              <span>Undergraduate Student, Bhopal</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="impact-card reveal rd-2">
-        <div class="impact-img">
-          <div class="a-img-g g-purple" style="height:200px">&#128105;&#8205;&#128187;</div>
-        </div>
-        <div class="impact-body">
-          <p class="impact-quote">
-            "I came to the cyber security workshop thinking I already knew enough.
-            By lunch I realised how vulnerable I was. By the end I knew how to protect
-            myself — and how to teach my family to do the same."
-          </p>
-          <div class="impact-person">
-            <div class="av av-purple">AT</div>
-            <div class="info">
-              <strong>Aman Tripathi</strong>
-              <span>First-Year Engineering, Nagpur</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /impact-grid -->
-
-    <!-- Stats Banner -->
-    <div class="impact-stats reveal">
-      <div class="i-stat">
-        <div class="num">5,200<sup>+</sup></div>
-        <div class="lbl">Students Empowered</div>
-      </div>
-      <div class="i-stat">
-        <div class="num">120<sup>+</sup></div>
-        <div class="lbl">Workshops Conducted</div>
-      </div>
-      <div class="i-stat">
-        <div class="num">40<sup>+</sup></div>
-        <div class="lbl">Schools Reached</div>
-      </div>
-      <div class="i-stat">
-        <div class="num">92<sup>%</sup></div>
-        <div class="lbl">Satisfaction Rate</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ======================== EDUCATION RESOURCES ======================== -->
-<section class="resources-section" aria-label="Education resources">
-  <div class="container">
-    <div class="resources-header reveal">
-      <div class="section-label"><span class="dot"></span> Free Resources</div>
-      <h2 class="section-title">Download &amp; Learn</h2>
-      <p class="section-subtitle" style="max-width:500px">
-        Practical guides, roadmaps and kits created by our experts — free for every student.
-      </p>
-    </div>
-    <div class="resources-grid">
-
-      <div class="res-card reveal" onclick="window.location='registeration.html'" role="button" tabindex="0">
-        <div class="res-icon ri-blue">&#128736;</div>
-        <div class="res-body">
-          <h4>Career Roadmap 2026</h4>
-          <p>Step-by-step paths for 15+ popular career streams with skill milestones and timelines.</p>
-          <span class="res-link">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download Free PDF
-          </span>
-        </div>
-      </div>
-
-      <div class="res-card reveal rd-1" onclick="window.location='registeration.html'" role="button" tabindex="0">
-        <div class="res-icon ri-green">&#128203;</div>
-        <div class="res-body">
-          <h4>Resume Guide for Freshers</h4>
-          <p>Templates + writing tips to create a resume that gets you shortlisted even without experience.</p>
-          <span class="res-link">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download Free PDF
-          </span>
-        </div>
-      </div>
-
-      <div class="res-card reveal rd-2" onclick="window.location='registeration.html'" role="button" tabindex="0">
-        <div class="res-icon ri-purple">&#128172;</div>
-        <div class="res-body">
-          <h4>Interview Preparation Kit</h4>
-          <p>100+ common interview questions, STAR answers, body-language tips and mock interview script.</p>
-          <span class="res-link">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download Free PDF
-          </span>
-        </div>
-      </div>
-
-      <div class="res-card reveal" onclick="window.location='registeration.html'" role="button" tabindex="0">
-        <div class="res-icon ri-orange">&#128187;</div>
-        <div class="res-body">
-          <h4>Coding Learning Roadmap</h4>
-          <p>From zero to first project: HTML → CSS → JavaScript → Python with free resources at every step.</p>
-          <span class="res-link">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download Free PDF
-          </span>
-        </div>
-      </div>
-
-      <div class="res-card reveal rd-1" onclick="window.location='registeration.html'" role="button" tabindex="0">
-        <div class="res-icon ri-red">&#128274;</div>
-        <div class="res-body">
-          <h4>Cyber Security Awareness Kit</h4>
-          <p>Checklists, threat guides and family safety posters to protect yourself and your loved ones online.</p>
-          <span class="res-link">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download Free PDF
-          </span>
-        </div>
-      </div>
-
-      <div class="res-card reveal rd-2" onclick="window.location='registeration.html'" role="button" tabindex="0">
-        <div class="res-icon ri-cyan">&#127760;</div>
-        <div class="res-body">
-          <h4>Digital Literacy Starter Pack</h4>
-          <p>Beginner-friendly guide to email, cloud storage, spreadsheets, and online safety — in simple language.</p>
-          <span class="res-link">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download Free PDF
-          </span>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ======================== POPULAR TOPICS ======================== -->
-<section class="topics-section" aria-label="Popular topics">
-  <div class="container">
-    <div class="topics-header reveal">
-      <div class="section-label"><span class="dot"></span> Trending Now</div>
-      <h2 class="section-title">Popular Topics</h2>
-    </div>
-    <div class="topics-cloud" id="topicsCloud">
-      <button class="topic-tag" data-cat="coding">#Coding <span class="cnt">18</span></button>
-      <button class="topic-tag" data-cat="career">#CareerGrowth <span class="cnt">14</span></button>
-      <button class="topic-tag" data-cat="cyber">#CyberSecurity <span class="cnt">9</span></button>
-      <button class="topic-tag" data-cat="digital">#DigitalSkills <span class="cnt">12</span></button>
-      <button class="topic-tag" data-cat="student">#StudentEmpowerment <span class="cnt">11</span></button>
-      <button class="topic-tag" data-cat="workshop">#Workshops <span class="cnt">8</span></button>
-      <button class="topic-tag" data-cat="comm">#CommunicationSkills <span class="cnt">7</span></button>
-      <button class="topic-tag" data-cat="ibm">#IBMSkillsBuild <span class="cnt">5</span></button>
-      <button class="topic-tag" data-cat="impact">#NGOImpact <span class="cnt">10</span></button>
-      <button class="topic-tag" data-cat="coding">#Technology <span class="cnt">15</span></button>
-      <button class="topic-tag" data-cat="student">#YouthEmpowerment <span class="cnt">13</span></button>
-      <button class="topic-tag" data-cat="career">#FutureReady <span class="cnt">9</span></button>
-      <button class="topic-tag" data-cat="digital">#SmartLearning <span class="cnt">8</span></button>
-      <button class="topic-tag" data-cat="volunteer">#Volunteers <span class="cnt">6</span></button>
-    </div>
-  </div>
-</section>
-
-<!-- ======================== NEWSLETTER ======================== -->
-<section class="newsletter-section" aria-label="Newsletter subscription">
-  <div class="container">
-  <div class="nl-inner reveal">
-    <div class="nl-dots"></div>
-    <div class="nl-glow"></div>
-    <div class="nl-content">
-      <div class="nl-left">
-        <div class="nl-eyebrow">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          Join Our Community
-        </div>
-        <h2 class="nl-title">Stay Connected With Educational Opportunities</h2>
-        <p class="nl-sub">
-          Get the latest articles, workshop announcements, career opportunities and
-          free resources delivered straight to your inbox. No spam, ever.
-        </p>
-        <div class="nl-trust">
-          <span>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            No Spam
-          </span>
-          <span>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Monthly Updates
-          </span>
-          <span>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Free Resources
-          </span>
-          <span>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Unsubscribe Anytime
-          </span>
-        </div>
-      </div>
-      <form class="nl-form" id="nlForm" onsubmit="submitNewsletter(event)">
-        <div>
-          <label for="nlName">Your Name</label>
-          <input type="text" id="nlName" placeholder="Rahul Kumar" required autocomplete="name">
-        </div>
-        <div>
-          <label for="nlEmail">Email Address</label>
-          <input type="email" id="nlEmail" placeholder="you@example.com" required autocomplete="email">
-        </div>
-        <button type="submit" class="nl-submit">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          Subscribe Free
+    <!-- Search -->
+    <div class="sw-widget">
+      <h2 class="sw-hd">Search</h2>
+      <div class="sw-srch">
+        <input type="search" id="sideSearch" placeholder="Search articles…" aria-label="Search"
+               onkeydown="if(event.key==='Enter')runSearch(this.value)">
+        <button type="button" onclick="runSearch(document.getElementById('sideSearch').value)" aria-label="Go">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         </button>
-        <div id="nl-msg">&#10003; Welcome aboard! Check your inbox for a confirmation.</div>
+      </div>
+    </div>
+
+    <!-- Latest Posts -->
+    <div class="sw-widget">
+      <h2 class="sw-hd">Latest Posts</h2>
+      <div class="sw-post">
+        <div class="sw-post-img"><img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=120&q=70&auto=format&fit=crop" alt="" loading="lazy"></div>
+        <div><a href="blog-post.html" class="sw-post-ttl">How Digital Skills Are Transforming Student Careers</a><div class="sw-post-dt">18 May 2026 · 8 min</div></div>
+      </div>
+      <div class="sw-post">
+        <div class="sw-post-img"><img src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=120&q=70&auto=format&fit=crop" alt="" loading="lazy"></div>
+        <div><a href="blog-post.html" class="sw-post-ttl">CyberSafe India: Protecting Students Online</a><div class="sw-post-dt">8 May 2026 · 5 min</div></div>
+      </div>
+      <div class="sw-post">
+        <div class="sw-post-img"><img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=120&q=70&auto=format&fit=crop" alt="" loading="lazy"></div>
+        <div><a href="blog-post.html" class="sw-post-ttl">Career Roadmap: Class 10 to Dream Job</a><div class="sw-post-dt">3 May 2026 · 7 min</div></div>
+      </div>
+      <div class="sw-post">
+        <div class="sw-post-img"><img src="https://images.unsplash.com/photo-1529390079861-591de354faf5?w=120&q=70&auto=format&fit=crop" alt="" loading="lazy"></div>
+        <div><a href="blog-post.html" class="sw-post-ttl">Riya's Journey: From Doubt to Developer</a><div class="sw-post-dt">22 Apr 2026 · 5 min</div></div>
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="sw-widget">
+      <h2 class="sw-hd">Categories</h2>
+      <ul class="sw-cat-list">
+        <li><a href="#" onclick="filterCat('digital');return false"><span class="sw-cdot" style="background:#7c3aed"></span>Digital Skills</a><span class="sw-cnt">12</span></li>
+        <li><a href="#" onclick="filterCat('coding');return false"><span class="sw-cdot" style="background:#0891b2"></span>Coding &amp; Tech</a><span class="sw-cnt">10</span></li>
+        <li><a href="#" onclick="filterCat('career');return false"><span class="sw-cdot" style="background:#16a34a"></span>Career Guidance</a><span class="sw-cnt">8</span></li>
+        <li><a href="#" onclick="filterCat('student');return false"><span class="sw-cdot" style="background:#1d4ed8"></span>Student Success</a><span class="sw-cnt">9</span></li>
+        <li><a href="#" onclick="filterCat('cyber');return false"><span class="sw-cdot" style="background:#dc2626"></span>Cyber Security</a><span class="sw-cnt">5</span></li>
+        <li><a href="#" onclick="filterCat('workshop');return false"><span class="sw-cdot" style="background:#d97706"></span>Workshops</a><span class="sw-cnt">6</span></li>
+        <li><a href="#" onclick="filterCat('impact');return false"><span class="sw-cdot" style="background:#059669"></span>NGO Impact</a><span class="sw-cnt">7</span></li>
+      </ul>
+    </div>
+
+    <!-- Upcoming Workshops -->
+    <div class="sw-widget">
+      <h2 class="sw-hd">Upcoming Workshops</h2>
+      <a href="workshops.html" class="sw-ws">
+        <div class="sw-ws-bar" style="background:#0B3D91"></div>
+        <div><div class="sw-ws-ttl">CodeStart Bootcamp</div><div class="sw-ws-dt">Jun 15 · Online · Free</div></div>
+      </a>
+      <a href="workshops.html" class="sw-ws">
+        <div class="sw-ws-bar" style="background:#F59E0B"></div>
+        <div><div class="sw-ws-ttl">CyberSafe Workshop</div><div class="sw-ws-dt">Jun 22 · Hybrid · Free</div></div>
+      </a>
+      <a href="workshops.html" class="sw-ws">
+        <div class="sw-ws-bar" style="background:#16a34a"></div>
+        <div><div class="sw-ws-ttl">Career Counselling Day</div><div class="sw-ws-dt">Jul 5 · In-person · Free</div></div>
+      </a>
+    </div>
+
+    <!-- Newsletter -->
+    <div class="sw-widget sw-nl">
+      <h2 class="sw-hd">Stay Updated</h2>
+      <p>Join 3,200+ readers. Get articles, workshops &amp; free resources in your inbox.</p>
+      <form onsubmit="sbNl(event)">
+        <input type="email" placeholder="your@email.com" required aria-label="Email">
+        <button type="submit" class="sw-nl-btn">Subscribe Free ✓</button>
       </form>
+      <div class="sw-nl-ok" id="nlSideOk">✓ You're subscribed!</div>
     </div>
-  </div>
-  </div>
+
+    <!-- Tags -->
+    <div class="sw-widget">
+      <h2 class="sw-hd">Popular Tags</h2>
+      <div class="sw-tags">
+        <button class="sw-tag" onclick="filterCat('coding')">#Coding</button>
+        <button class="sw-tag" onclick="filterCat('career')">#CareerGrowth</button>
+        <button class="sw-tag" onclick="filterCat('cyber')">#CyberSecurity</button>
+        <button class="sw-tag" onclick="filterCat('digital')">#DigitalSkills</button>
+        <button class="sw-tag" onclick="filterCat('student')">#Students</button>
+        <button class="sw-tag" onclick="filterCat('workshop')">#Workshops</button>
+        <button class="sw-tag" onclick="filterCat('impact')">#NGOImpact</button>
+        <button class="sw-tag">#IBMSkillsBuild</button>
+        <button class="sw-tag">#FutureReady</button>
+      </div>
+    </div>
+
+  </aside>
+
+</div><!-- /blog-layout -->
+</div><!-- /blog-container -->
 </section>
 
-<!-- ======================== VOLUNTEER STORIES ======================== -->
-<section class="volunteers-section" aria-label="Volunteer stories">
-  <div class="container">
-    <div class="volunteers-header reveal">
-      <div class="section-label"><span class="dot"></span> Our People</div>
-      <h2 class="section-title">Volunteers Who Make It Happen</h2>
-      <p class="section-subtitle">
-        Every lesson, workshop and mentoring session happens because of our extraordinary volunteers.
-      </p>
-    </div>
-    <div class="volunteers-grid">
-
-      <div class="vol-card reveal">
-        <div class="vol-photo" style="background:linear-gradient(135deg,#0b63ce,#20c997)">
-          <span style="color:#fff;font-weight:800">RA</span>
-        </div>
-        <div class="vol-info">
-          <h4>Rohit Awasthi</h4>
-          <div class="role">Lead Coding Instructor &bull; 2 years</div>
-          <p>
-            "Teaching students who've never coded before and watching them build something
-            real in 30 days is one of the most rewarding experiences of my professional
-            life. VED gives me a purpose beyond my 9-to-5."
-          </p>
-          <a href="blog-post.html" class="btn btn-outline-blue btn-sm">Read Rohit's Story</a>
-        </div>
-      </div>
-
-      <div class="vol-card reveal rd-1">
-        <div class="vol-photo" style="background:linear-gradient(135deg,#16a34a,#20c997)">
-          <span style="color:#fff;font-weight:800">SB</span>
-        </div>
-        <div class="vol-info">
-          <h4>Simran Batra</h4>
-          <div class="role">Career Counsellor &bull; 3 years</div>
-          <p>
-            "Many of my students had never spoken to anyone about their career ambitions
-            before. Helping them articulate their dreams and then build a plan to achieve
-            them — that's why I wake up on Saturday mornings."
-          </p>
-          <a href="blog-post.html" class="btn btn-outline-blue btn-sm">Read Simran's Story</a>
-        </div>
-      </div>
-
-      <div class="vol-card reveal rd-2">
-        <div class="vol-photo" style="background:linear-gradient(135deg,#7c3aed,#0b63ce)">
-          <span style="color:#fff;font-weight:800">KP</span>
-        </div>
-        <div class="vol-info">
-          <h4>Kiran Patel</h4>
-          <div class="role">Cyber Security Trainer &bull; 1 year</div>
-          <p>
-            "After seeing how easily my own cousin fell for a phishing scam, I knew I had
-            to do something. VED gave me the platform to reach thousands of students with
-            knowledge that could protect them and their families."
-          </p>
-          <a href="blog-post.html" class="btn btn-outline-blue btn-sm">Read Kiran's Story</a>
-        </div>
-      </div>
-
-      <div class="vol-card reveal rd-3">
-        <div class="vol-photo" style="background:linear-gradient(135deg,#f7941d,#e63946)">
-          <span style="color:#fff;font-weight:800">NR</span>
-        </div>
-        <div class="vol-info">
-          <h4>Neha Rathore</h4>
-          <div class="role">Communication Skills Coach &bull; 2 years</div>
-          <p>
-            "A student who once couldn't say a sentence in English without freezing
-            gave a full five-minute presentation in our last workshop. I cried. This is
-            what education is supposed to feel like."
-          </p>
-          <a href="blog-post.html" class="btn btn-outline-blue btn-sm">Read Neha's Story</a>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ======================== CTA SECTION ======================== -->
-<section class="cta-section" aria-label="Call to action">
-  <div class="cta-glow"></div>
-  <div class="container">
-    <div class="cta-tag">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-      Join the Movement
-    </div>
-    <h2 class="cta-title">
-      Help Us <em>Empower</em> More Students Across India
-    </h2>
-    <p class="cta-sub">
-      Whether you volunteer, donate, or simply share our stories —
-      every action creates ripples that change futures.
-    </p>
-    <div class="cta-actions">
-      <a href="registeration.html" class="btn btn-white btn-lg">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/></svg>
-        Become a Volunteer
+<!-- ══════════════════════════════════════
+     CALL TO ACTION
+══════════════════════════════════════ -->
+<section class="blog-cta" aria-label="Call to action">
+  <div class="blog-container">
+    <h2>Join Us in <span>Empowering</span> Future Generations</h2>
+    <p>Every workshop you join, every rupee you donate, and every story you share creates a ripple that changes a student's life.</p>
+    <div class="cta-btns">
+      <a href="registeration.html" class="cta-btn1">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Enroll Free
       </a>
-      <a href="workshops.html" class="btn btn-teal btn-lg">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
-        Join a Workshop
-      </a>
-      <a href="donation.html" class="btn btn-orange btn-lg">
+      <a href="donation.html" class="cta-btn2">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-        Support Education
+        Donate Now
       </a>
     </div>
   </div>
 </section>
 
-<!-- ======================== FOOTER ======================== -->
-<footer style="background:#f1f5f9;color:#4b5563;padding:70px 0 28px;border-top:1px solid #e2e8f0;font-family:'Inter',sans-serif">
-  <style>
-    .fl-grid{display:grid;grid-template-columns:1.4fr .9fr .9fr .9fr 1fr;gap:44px;max-width:1180px;margin:0 auto 44px;padding:0 20px;align-items:start}
-    .fl-col h4{color:#374151;font-size:.84rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px}
-    .fl-col h4::after{content:"";display:block;width:36px;height:2.5px;background:#0b63ce;margin-top:7px;border-radius:4px}
-    .fl-col p{color:#4b5563;font-size:.88rem;line-height:1.72;max-width:260px}
-    .fl-col ul{padding:0;display:grid;gap:9px}
-    .fl-col a{color:#4b5563;font-size:.86rem;text-decoration:none;transition:.2s}
-    .fl-col a:hover{color:#0b63ce}
-    .fl-social{display:flex;gap:10px;margin-top:18px}
-    .fl-social a{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;background:#fff;border:1px solid #e2e8f0;color:#0b63ce;font-size:.75rem;font-weight:700;text-decoration:none;transition:.2s}
-    .fl-social a:hover{background:#0b63ce;color:#fff;border-color:#0b63ce}
-    .fl-bottom{max-width:1180px;margin:0 auto;padding:18px 20px 0;border-top:1px solid #dde2ea;display:flex;justify-content:space-between;font-size:.8rem;color:#64748b;flex-wrap:wrap;gap:10px}
-    .fl-blog-recent .rbi{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #e2e8f0}
-    .fl-blog-recent .rbi:last-child{border-bottom:none}
-    .fl-blog-recent .rbi .rbt{font-size:.8rem;font-weight:600;color:#374151;line-height:1.38;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
-    .fl-blog-recent .rbi .rbd{font-size:.72rem;color:#94a3b8;margin-top:3px}
-    @media(max-width:1024px){.fl-grid{grid-template-columns:1fr 1fr}}
-    @media(max-width:640px){.fl-grid{grid-template-columns:1fr;gap:28px}.fl-bottom{flex-direction:column;text-align:center}}
-  </style>
-  <div class="fl-grid">
-    <div class="fl-col">
-      <a href="index.html" style="display:block;margin-bottom:14px">
-        <img src="vedlogo.jpeg" alt="VED Foundation" style="width:120px;height:auto;object-fit:contain">
-      </a>
-      <p>VED Foundation is a non-profit working for education, skills, smart learning
-      and student empowerment through workshops, digital learning and community development.</p>
-      <div class="fl-social">
-        <a href="#" title="Instagram">In</a>
-        <a href="#" title="LinkedIn">Li</a>
-        <a href="#" title="Facebook">Fb</a>
-        <a href="#" title="YouTube">Yt</a>
-      </div>
-    </div>
-    <div class="fl-col">
-      <h4>Blog Topics</h4>
-      <ul>
-        <li><a href="blog.html">All Articles</a></li>
-        <li><a href="blog.html">Student Success Stories</a></li>
-        <li><a href="blog.html">Career Guidance</a></li>
-        <li><a href="blog.html">Digital Skills</a></li>
-        <li><a href="blog.html">Cyber Security</a></li>
-        <li><a href="blog.html">Coding &amp; Technology</a></li>
-      </ul>
-    </div>
-    <div class="fl-col">
-      <h4>Our Work</h4>
-      <ul>
-        <li><a href="smartclasses.html">Smart Classes</a></li>
-        <li><a href="workshops.html">Workshop Center</a></li>
-        <li><a href="agriculture.html">Agriculture</a></li>
-        <li><a href="solarpanel.html">Solar Awareness</a></li>
-        <li><a href="donation.html">Donate Now</a></li>
-      </ul>
-    </div>
-    <div class="fl-col">
-      <h4>Recent Posts</h4>
-      <div class="fl-blog-recent">
-        <div class="rbi">
-          <div>
-            <a href="blog-post.html" class="rbt">How Digital Skills Are Transforming Student Careers</a>
-            <div class="rbd">18 May 2026</div>
-          </div>
-        </div>
-        <div class="rbi">
-          <div>
-            <a href="blog-post.html" class="rbt">CyberSafe India: Protecting Students Online</a>
-            <div class="rbd">8 May 2026</div>
-          </div>
-        </div>
-        <div class="rbi">
-          <div>
-            <a href="blog-post.html" class="rbt">Career Roadmap: Class 10 to Dream Job</a>
-            <div class="rbd">3 May 2026</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="fl-col">
-      <h4>Contact</h4>
-      <div style="background:#fff;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
-        <p style="margin-bottom:10px"><b>Email:</b><br>vededufoundation@gmail.com</p>
-        <p style="margin-bottom:10px"><b>Phone:</b><br>+91 9009015026</p>
-        <p><b>Location:</b><br>India</p>
-      </div>
-    </div>
-  </div>
-  <div class="fl-bottom">
-    <span>&copy; 2026 VED Foundation. All Rights Reserved.</span>
-    <span>Designed for Education &bull; Skills &bull; Empowerment</span>
-  </div>
-</footer>
+<!-- GLOBAL FOOTER via shared.js -->
+<div id="footer-placeholder"></div>
 
-<!-- Back to top -->
-<button id="backToTop" aria-label="Back to top" title="Back to top">
+<button id="bttBtn" aria-label="Back to top" type="button">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
 </button>
 
+<script src="shared.js"></script>
 <script src="blog.js"></script>
 </body>
 </html>

@@ -321,7 +321,7 @@ img{max-width:100%;}
   flex:1;overflow-y:auto;
   padding:24px;
 }
-.page{display:none;contain:layout paint;}
+.page{display:none;}
 .page.active{display:block;animation:fadeIn 0.28s ease;}
 
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
@@ -1110,8 +1110,11 @@ button:focus-visible,
 .filter-sidebar{
   background:#fff;border-radius:var(--radius-lg);
   border:1px solid var(--gray-200);box-shadow:var(--shadow-sm);
-  overflow:hidden;position:sticky;top:0;
+  overflow:visible;position:sticky;top:24px;
+  /* overflow:visible so rounded corners clip via border-radius only */
 }
+/* Keep rounded corners by clipping only the border-radius area */
+.filter-sidebar > *:first-child{border-radius:var(--radius-lg) var(--radius-lg) 0 0;overflow:hidden;}
 .filter-sidebar-head{
   padding:16px 18px 14px;
   background:linear-gradient(135deg,var(--navy),var(--navy-mid));
@@ -1126,7 +1129,7 @@ button:focus-visible,
   padding:2px 8px;border-radius:20px;min-width:22px;text-align:center;display:none;
 }
 .filter-count-badge.visible{display:inline-block;}
-.filter-sidebar-body{max-height:calc(100vh - 280px);overflow-y:auto;padding:0 0 12px;}
+.filter-sidebar-body{max-height:calc(100vh - 220px);overflow-y:auto;padding:0 0 12px;border-radius:0 0 var(--radius-lg) var(--radius-lg);}
 
 .filter-section{border-bottom:1px solid var(--gray-100);}
 .filter-section-toggle{
@@ -1907,9 +1910,6 @@ button:focus-visible,
       <div class="nav-item" onclick="navTo('attendance')" data-page="attendance" data-perm="attendance.view">
         <i class="fa-solid fa-calendar-check"></i><span>Attendance</span>
       </div>
-      <div class="nav-item" onclick="navTo('certificates')" data-page="certificates" data-perm="certificates.view">
-        <i class="fa-solid fa-certificate"></i><span>Certificates</span>
-      </div>
       <div class="nav-item" id="navCepAdmin" onclick="window.location.href='admin-certificate-approvals.html'" data-page="cep_certs" data-perm="cep_certificates.view" style="position:relative">
         <i class="fa-solid fa-id-card" style="color:#F0C040"></i><span>CEP Certificates</span>
         <span class="nav-badge" id="cepCertBadge" style="display:none">0</span>
@@ -2176,7 +2176,7 @@ button:focus-visible,
               </select>
             </div>
             <div class="form-group">
-              <label class="form-label">Stage</label>
+              <label class="form-label">Response Stage</label>
               <select class="form-select" id="leadStage">
                 <option value="not_answering">Not Answering</option>
                 <option value="not_reachable">Not Reachable</option>
@@ -2698,17 +2698,6 @@ button:focus-visible,
         <div class="table-wrap"><table class="data-table"><thead><tr><th>#</th><th>Student</th><th>Date</th><th>Status</th><th>Program</th><th>Remarks</th><th>Actions</th></tr></thead><tbody id="attendanceTableBody"></tbody></table></div>
       </div>
 
-      <div class="page" id="page-certificates">
-        <div class="section-hdr">
-          <div><h3>Certificates</h3><p>Issued and pending certificates.</p></div>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-outline btn-sm" onclick="loadCertificates(true)"><i class="fa-solid fa-rotate"></i> Refresh</button>
-            <button class="btn btn-primary btn-sm" id="issueCertBtn" onclick="openIssueCertModal()"><i class="fa-solid fa-plus"></i> Issue Certificate</button>
-          </div>
-        </div>
-        <div class="filter-bar"><div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="certificatesSearch" placeholder="Search certificates..." oninput="filterLiveTable('certificates')"></div></div>
-        <div class="table-wrap"><table class="data-table"><thead><tr><th>#</th><th>Certificate No.</th><th>Student</th><th>Program</th><th>Status</th><th>Issue Date</th><th>Actions</th></tr></thead><tbody id="certificatesTableBody"></tbody></table></div>
-      </div>
 
       <div class="page" id="page-institutions">
         <div class="section-hdr"><div><h3>Institutions</h3><p>Manage partner institutions and track their referral performance.</p></div><button class="btn btn-primary btn-sm" onclick="openAddInstitutionModal()"><i class="fa-solid fa-plus"></i> Add Institution</button></div>
@@ -12401,11 +12390,44 @@ function _renderSegTable(students) {
         <td>${att}</td>
         <td><span class="badge badge-${certCls}">${s.certificateStatus||'pending'}</span></td>
         <td>${regDate}</td>
-        <td>
-          <button class="btn btn-ghost btn-sm" onclick="navTo('students')" title="Go to Students"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+        <td style="white-space:nowrap">
+          <button class="btn btn-ghost btn-sm" onclick="navTo('students')" title="Go to Students" style="margin-right:4px"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+          <button class="btn btn-sm" onclick="segDeleteStudent('${s._id}','${(s.fullName||'').replace(/'/g,'\\\'')}')" title="Delete Student" style="background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.2)"><i class="fa-solid fa-trash"></i></button>
         </td>
       </tr>`;
   }).join('');
+}
+
+/* ── Delete student from segmentation view ── */
+function segDeleteStudent(id, name) {
+  document.getElementById('deleteModalBody').textContent =
+    `Are you sure you want to permanently delete "${name}"? This action cannot be undone.`;
+  document.getElementById('deleteModalSub').textContent = 'This will remove the student and all their data.';
+
+  document.getElementById('confirmDeleteBtn').onclick = async () => {
+    closeModal('deleteModal');
+    const btn = document.querySelector(`tr[data-id="${id}"] button[title="Delete Student"]`);
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; }
+
+    const r = await apiFetch('DELETE', `/students/${id}`);
+    if (r.ok) {
+      showToast('success', `"${name}" deleted successfully.`);
+      /* Remove row from table */
+      const row = document.querySelector(`tr[data-id="${id}"]`);
+      if (row) row.remove();
+      /* Update count */
+      SEG.total = Math.max(0, SEG.total - 1);
+      document.getElementById('segTotalCount').textContent = SEG.total.toLocaleString();
+      /* If page is now empty, reload */
+      const remaining = document.querySelectorAll('#segTableBody tr[data-id]').length;
+      if (remaining === 0) _fetchSegData();
+    } else {
+      showToast('error', r.data?.message || r.error || 'Failed to delete student.');
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-trash"></i>'; }
+    }
+  };
+
+  openModal('deleteModal');
 }
 
 /* ── Pagination ─────────────────────────────────────────────── */
