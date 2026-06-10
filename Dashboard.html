@@ -2178,6 +2178,8 @@ button:focus-visible,
             <div class="form-group">
               <label class="form-label">Response Stage</label>
               <select class="form-select" id="leadStage">
+                <option value="" disabled selected>-- Select Stage --</option>
+                <option value="new">New</option>
                 <option value="not_answering">Not Answering</option>
                 <option value="not_reachable">Not Reachable</option>
                 <option value="call_back">Call Back</option>
@@ -2276,7 +2278,7 @@ button:focus-visible,
           <!-- Template tip -->
           <div style="margin-top:12px;padding:10px 14px;background:#eff6ff;border-radius:8px;font-size:12px;color:#1e40af">
             <i class="fa-solid fa-circle-info" style="margin-right:5px"></i>
-            <strong>Columns:</strong> Name · Email · Mobile · City · State · Course · Source · Stage · Priority · Notes · Date
+            <strong>Columns:</strong> Name · Email · Mobile · City · State · Course · Source · Response · Priority · Notes · Date
             <button onclick="downloadImportTemplate()" style="margin-left:8px;background:#2563eb;color:#fff;border:none;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer">
               <i class="fa-solid fa-download"></i> Template
             </button>
@@ -3053,7 +3055,7 @@ button:focus-visible,
               <input type="text" id="crmSearch" placeholder="Search name, email, mobile…" oninput="debouncedCrmSearch()"/>
             </div>
             <select class="form-select" id="crmFilterStage" onchange="crmApplyFilters()">
-              <option value="">All Stages</option>
+              <option value="">All Responses</option>
               <option value="not_answering">Not Answering</option>
               <option value="not_reachable">Not Reachable</option>
               <option value="call_back">Call Back</option>
@@ -3116,7 +3118,7 @@ button:focus-visible,
                     <th>Name</th>
                     <th>Contact</th>
                     <th>Source</th>
-                    <th>Stage</th>
+                    <th>Response</th>
                     <th>Priority</th>
                     <th>Assigned To</th>
                     <th>Imported From</th>
@@ -5159,9 +5161,9 @@ button:focus-visible,
       </div>
 
       <div class="form-group">
-        <label class="form-label">Stage</label>
+        <label class="form-label">Response</label>
         <select id="edStage" class="form-select">
-          <option value="all">All Stages</option>
+          <option value="all">All Responses</option>
           <option value="lost">Lost</option>
           <option value="converted">Converted</option>
           <option value="new">New</option>
@@ -5269,7 +5271,7 @@ button:focus-visible,
       <div style="margin-top:14px;padding:12px 16px;background:#eff6ff;border-radius:8px;font-size:13px;color:#1e40af">
         <i class="fa-solid fa-circle-info" style="margin-right:6px"></i>
         <strong>Columns needed:</strong>
-        Name · Email · Mobile · City · State · Course · Source · Stage · Priority · Notes · Date
+        Name · Email · Mobile · City · State · Course · Source · Response · Priority · Notes · Date
         <button onclick="downloadImportTemplate()" style="margin-left:8px;background:#2563eb;color:#fff;border:none;padding:4px 10px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer">
           <i class="fa-solid fa-download"></i> Template
         </button>
@@ -9997,12 +9999,18 @@ const STAGE_CFG = {
   enrolled:       { label:'Enrolled',       cls:'stage-enrolled',       icon:'fa-graduation-cap',color:'#0D9488' },
   not_interested: { label:'Not Interested', cls:'stage-not-interested', icon:'fa-thumbs-down',   color:'#6B7280' },
   /* legacy aliases so old records still display cleanly */
-  new:        { label:'Not Answering',  cls:'stage-not-answering',  icon:'fa-phone-slash',   color:'#DC2626' },
+  new:        { label:'New',            cls:'stage-new',            icon:'fa-star',          color:'#DC2626' },
   contacted:  { label:'Call Back',      cls:'stage-call-back',      icon:'fa-phone',         color:'#0284C7' },
   applied:    { label:'Interested',     cls:'stage-interested',     icon:'fa-fire',          color:'#F97316' },
   converted:  { label:'Enrolled',       cls:'stage-enrolled',       icon:'fa-graduation-cap',color:'#0D9488' },
   lost:       { label:'Not Interested', cls:'stage-not-interested', icon:'fa-ban',           color:'#6B7280' },
 };
+
+function crmStageBadgeHtml(stage) {
+  if (!stage || stage === 'new') return '';
+  const stg = STAGE_CFG[stage];
+  return stg ? `<span class="stage-badge ${stg.cls}">${stg.label}</span>` : '';
+}
 
 const SOURCE_LABELS = { website:'Website', referral:'Referral', event:'Event',
   social_media:'Social Media', walk_in:'Walk-in', manual:'Manual', csv_import:'CSV', other:'Other' };
@@ -10718,7 +10726,7 @@ function _renderCrmTable() {
     return;
   }
   tbody.innerHTML = CRM.leads.map(l => {
-    const stg  = STAGE_CFG[l.stage] || STAGE_CFG.new;
+    const stageHtml = crmStageBadgeHtml(l.stage);
     const assigned = l.assignedTo ? escHtml(l.assignedTo.fullName || l.assignedTo.firstName || '—') : '<span style="color:var(--gray-400)">Unassigned</span>';
     const fu   = l.nextFollowUp ? new Date(l.nextFollowUp).toLocaleDateString('en-IN') : '—';
     const overdue = l.nextFollowUp && new Date(l.nextFollowUp) < new Date() && !['converted','lost'].includes(l.stage);
@@ -10730,7 +10738,7 @@ function _renderCrmTable() {
         <td><strong style="cursor:pointer;color:var(--royal)" onclick="openLeadDetail('${l._id}')">${escHtml(l.name)}</strong><div style="font-size:11px;color:var(--gray-400)">${escHtml(l.courseInterest||'')}</div></td>
         <td><div style="font-size:12px">${escHtml(l.mobile||'—')}</div><div style="font-size:11px;color:var(--gray-400)">${escHtml(l.email||'')}</div></td>
         <td><span class="badge badge-blue" style="font-size:10px">${SOURCE_LABELS[l.source]||l.source}</span></td>
-        <td><span class="stage-badge ${stg.cls}">${stg.label}</span></td>
+        <td>${stageHtml}</td>
         <td><span class="prio-dot ${prioCls}"></span> <span style="font-size:12px;text-transform:capitalize">${l.priority}</span></td>
         <td style="font-size:12px">${assigned}</td>
         <td style="font-size:12px">${escHtml(l.createdBy ? (l.createdBy.fullName || l.createdBy.firstName || l.createdBy.email || '—') : '—')}</td>
@@ -10962,7 +10970,7 @@ function openAddLeadModal() {
     const el = document.getElementById(id); if (el) el.value = '';
   });
   document.getElementById('leadSource').value   = 'manual';
-  document.getElementById('leadStage').value    = 'new';
+  document.getElementById('leadStage').value    = '';
   document.getElementById('leadPriority').value = 'medium';
   _assignPick('', '', '');
   document.getElementById('leadFollowUp').value = '';
@@ -10989,7 +10997,7 @@ async function openEditLead(id) {
   document.getElementById('leadCourse').value      = l.courseInterest || '';
   document.getElementById('leadNotes').value       = l.notes       || '';
   document.getElementById('leadSource').value      = l.source      || 'manual';
-  document.getElementById('leadStage').value       = l.stage       || 'new';
+  document.getElementById('leadStage').value       = l.stage       || '';
   document.getElementById('leadPriority').value    = l.priority    || 'medium';
   const _assignId = l.assignedTo?._id || l.assignedTo || '';
   const _assignAdmin = CRM.admins.find(a => a._id === _assignId);
@@ -11011,6 +11019,8 @@ function openEditCurrentLead() {
 async function saveLead() {
   const name = document.getElementById('leadName').value.trim();
   if (!name) { showToast('error', 'Name is required.'); return; }
+  const stage = document.getElementById('leadStage').value;
+  if (!stage) { showToast('error', 'Please select a stage.'); return; }
   const btn = document.getElementById('saveLeadBtn');
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…'; }
 
@@ -11064,10 +11074,9 @@ async function openLeadDetail(id) {
   const acts = actRes.ok ? (actRes.data.data || []) : [];
 
   document.getElementById('leadDetailName').textContent = l.name;
-  const stg   = STAGE_CFG[l.stage] || STAGE_CFG.new;
 
   document.getElementById('leadDetailSub').innerHTML =
-    `<span class="stage-badge ${stg.cls}">${stg.label}</span>`;
+    crmStageBadgeHtml(l.stage);
 
   document.getElementById('leadDetailInfo').innerHTML = `
     <div class="lead-info-row"><span class="lead-info-lbl">Mobile</span><span class="lead-info-val">${escHtml(l.mobile||'—')}</span></div>
