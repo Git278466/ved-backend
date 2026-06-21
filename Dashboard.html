@@ -1419,7 +1419,7 @@ button:focus-visible,
 .stage-enrolled{background:rgba(20,184,166,0.12);color:#0D9488;}
 .stage-not-interested{background:rgba(107,114,128,0.12);color:#4B5563;}
 /* legacy aliases */
-.stage-new{background:rgba(220,38,38,0.1);color:#DC2626;}
+.stage-new{background:rgba(59,130,246,0.1);color:#3B82F6;}
 .stage-contacted{background:rgba(2,132,199,0.1);color:#0284C7;}
 .stage-applied{background:rgba(249,115,22,0.12);color:var(--orange);}
 .stage-converted{background:rgba(20,184,166,0.12);color:#0D9488;}
@@ -3056,6 +3056,7 @@ button:focus-visible,
             </div>
             <select class="form-select" id="crmFilterStage" onchange="crmApplyFilters()">
               <option value="">All Responses</option>
+              <option value="new">New</option>
               <option value="not_answering">Not Answering</option>
               <option value="not_reachable">Not Reachable</option>
               <option value="call_back">Call Back</option>
@@ -3278,7 +3279,9 @@ button:focus-visible,
         <div class="section-hdr">
           <div><h3>Mobilization Registrations</h3><p>Skilling Project — student registration submissions.</p></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-outline btn-sm" onclick="exportMobCSV()"><i class="fa-solid fa-download"></i> Export CSV</button>
+            <button class="btn btn-outline btn-sm" onclick="exportMobExcel('NESCOM')" id="btnMobNescom"><i class="fa-solid fa-file-excel"></i> NESCOM Excel</button>
+            <button class="btn btn-outline btn-sm" onclick="exportMobExcel('IBM')" id="btnMobIbm"><i class="fa-solid fa-file-excel"></i> IBM Excel</button>
+            <button class="btn btn-outline btn-sm" onclick="exportMobCSV()"><i class="fa-solid fa-download"></i> Export All CSV</button>
             <button class="btn btn-outline btn-sm" onclick="loadMobilization(true)"><i class="fa-solid fa-rotate"></i> Refresh</button>
             <a href="/mobilization-form" target="_blank" class="btn btn-primary btn-sm"><i class="fa-solid fa-arrow-up-right-from-square"></i> View Form</a>
           </div>
@@ -3360,6 +3363,7 @@ button:focus-visible,
                 <th>Organization</th>
                 <th>Guardian</th>
                 <th>Gender</th>
+                <th>Certificate</th>
                 <th>Skill Course</th>
                 <th>Qualification</th>
                 <th>Dest.</th>
@@ -6998,7 +7002,7 @@ function renderMobilization(list, page, total, pages) {
   const tbody = document.getElementById('mobTableBody');
   if (!tbody) return;
   if (!list.length) {
-    renderEmptyRow('mobTableBody', 12, 'No registrations found', 'Try adjusting your filters or share the mobilization form.');
+    renderEmptyRow('mobTableBody', 13, 'No registrations found', 'Try adjusting your filters or share the mobilization form.');
     _renderMobPagination(0, 0, 0);
     return;
   }
@@ -7026,6 +7030,12 @@ function renderMobilization(list, page, total, pages) {
         ${m.guardianOccupation ? `<div style="font-size:10px;color:var(--gray-400)">${escHtml(m.guardianOccupation)}</div>` : ''}
       </td>
       <td style="font-size:12px">${genderLabel}</td>
+      <td>
+        <span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;
+          ${m.certificateProgram === 'IBM' ? 'background:rgba(22,163,74,.12);color:#16a34a' : m.certificateProgram === 'NESCOM' ? 'background:rgba(11,99,206,.12);color:#0b63ce' : 'background:#f3f4f6;color:#6b7280'}">
+          ${escHtml(m.certificateProgram || '—')}
+        </span>
+      </td>
       <td>
         <span style="display:inline-block;background:#eef2fb;color:var(--navy);padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escHtml(m.skillCourse||'')}">
           ${escHtml(m.skillCourse || '—')}
@@ -7231,6 +7241,37 @@ function exportMobCSV() {
   a.click();
   URL.revokeObjectURL(url);
   showToast('success', `Exported ${_mobCache.length} records to CSV.`);
+}
+
+async function exportMobExcel(program) {
+  const btn = document.getElementById(program === 'IBM' ? 'btnMobIbm' : 'btnMobNescom');
+  const origHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Downloading...`;
+  try {
+    const base = (window.VED_API_BASE || '/api').replace(/\/$/, '');
+    const tk = typeof getToken === 'function' ? getToken() : (localStorage.getItem('ved_admin_token') || '');
+    const res = await fetch(`${base}/mobilization/export/${program}`, {
+      headers: { 'Authorization': `Bearer ${tk}` }
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || `Export failed (${res.status})`);
+    }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `mobilization-${program}-${new Date().toISOString().slice(0,10)}.xlsx`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('success', `${program} Excel downloaded!`);
+  } catch (err) {
+    showToast('error', err.message || `${program} export failed.`);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = origHtml;
+  }
 }
 
 /* ============================================================
@@ -9999,7 +10040,7 @@ const STAGE_CFG = {
   enrolled:       { label:'Enrolled',       cls:'stage-enrolled',       icon:'fa-graduation-cap',color:'#0D9488' },
   not_interested: { label:'Not Interested', cls:'stage-not-interested', icon:'fa-thumbs-down',   color:'#6B7280' },
   /* legacy aliases so old records still display cleanly */
-  new:        { label:'New',            cls:'stage-new',            icon:'fa-star',          color:'#DC2626' },
+  new:        { label:'New',            cls:'stage-new',            icon:'fa-star',          color:'#3B82F6' },
   contacted:  { label:'Call Back',      cls:'stage-call-back',      icon:'fa-phone',         color:'#0284C7' },
   applied:    { label:'Interested',     cls:'stage-interested',     icon:'fa-fire',          color:'#F97316' },
   converted:  { label:'Enrolled',       cls:'stage-enrolled',       icon:'fa-graduation-cap',color:'#0D9488' },
@@ -10007,7 +10048,7 @@ const STAGE_CFG = {
 };
 
 function crmStageBadgeHtml(stage) {
-  if (!stage || stage === 'new') return '';
+  if (!stage) stage = 'new';
   const stg = STAGE_CFG[stage];
   return stg ? `<span class="stage-badge ${stg.cls}">${stg.label}</span>` : '';
 }
@@ -10738,7 +10779,17 @@ function _renderCrmTable() {
         <td><strong style="cursor:pointer;color:var(--royal)" onclick="openLeadDetail('${l._id}')">${escHtml(l.name)}</strong><div style="font-size:11px;color:var(--gray-400)">${escHtml(l.courseInterest||'')}</div></td>
         <td><div style="font-size:12px">${escHtml(l.mobile||'—')}</div><div style="font-size:11px;color:var(--gray-400)">${escHtml(l.email||'')}</div></td>
         <td><span class="badge badge-blue" style="font-size:10px">${SOURCE_LABELS[l.source]||l.source}</span></td>
-        <td>${stageHtml}</td>
+        <td>
+          <select style="font-size:11px;padding:4px 8px;border-radius:20px;border:1px solid #e5e7eb;
+                         color:${(STAGE_CFG[l.stage||'new']||{}).color||'#3B82F6'};
+                         background:${l.stage && STAGE_CFG[l.stage] ? STAGE_CFG[l.stage].cls.replace('stage-','') : ''};
+                         font-weight:700;cursor:pointer;min-width:110px;appearance:auto"
+                  onchange="crmInlineStageUpdate('${l._id}', this.value, this)">
+            ${Object.entries(STAGE_CFG).filter(([k]) => !['contacted','applied','converted','lost'].includes(k)).map(([val, meta]) =>
+              `<option value="${val}" ${(l.stage||'new') === val ? 'selected' : ''} style="color:${meta.color}">${meta.label}</option>`
+            ).join('')}
+          </select>
+        </td>
         <td><span class="prio-dot ${prioCls}"></span> <span style="font-size:12px;text-transform:capitalize">${l.priority}</span></td>
         <td style="font-size:12px">${assigned}</td>
         <td style="font-size:12px">${escHtml(l.createdBy ? (l.createdBy.fullName || l.createdBy.firstName || l.createdBy.email || '—') : '—')}</td>
@@ -11055,6 +11106,22 @@ async function deleteLead(id) {
   const r = await apiFetch('DELETE', `/leads/${id}`);
   if (r.ok) { showToast('success', 'Lead deleted.'); crmRefresh(); }
   else showToast('error', 'Delete failed', r.error);
+}
+
+async function crmInlineStageUpdate(id, newStage, selectEl) {
+  const stg = STAGE_CFG[newStage];
+  if (stg) {
+    selectEl.style.color = stg.color;
+  }
+  const r = await apiFetch('PUT', `/leads/${id}`, { stage: newStage });
+  if (r.ok) {
+    showToast('success', `Stage updated to ${STAGE_CFG[newStage]?.label || newStage}`);
+    const idx = CRM.leads.findIndex(l => l._id === id);
+    if (idx !== -1) CRM.leads[idx].stage = newStage;
+  } else {
+    showToast('error', 'Failed to update stage');
+    crmRefresh();
+  }
 }
 
 /* ── Lead Detail modal ───────────────────────────────────────── */

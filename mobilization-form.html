@@ -344,13 +344,25 @@
                 <option value="Other">Other</option>
               </select>
             </div>
+            <div class="form-group full">
+              <label>12. Preferred Certificate Program <span class="req">*</span></label>
+              <div class="radio-chips" id="certChips">
+                <label class="radio-chip active">
+                  <input type="radio" name="certificateProgram" value="NESCOM" checked> NESCOM
+                </label>
+                <label class="radio-chip">
+                  <input type="radio" name="certificateProgram" value="IBM"> IBM
+                </label>
+              </div>
+              <span class="field-note">Select the certification body for your skill program</span>
+            </div>
           </div>
 
           <!-- SECTION 4: Mobilizer -->
           <div class="form-section-title">Mobilizer</div>
           <div class="form-row">
             <div class="form-group full">
-              <label>12. Mobilizer Name / Code <span class="req">*</span></label>
+              <label>13. Mobilizer Name / Code <span class="req">*</span></label>
               <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
                 <input type="text" id="referralCode" placeholder="Enter mobilizer name or code"
                        style="flex:1;min-width:200px;text-transform:uppercase;letter-spacing:1px"
@@ -368,7 +380,7 @@
           <!-- SECTION 5: Declaration -->
           <div class="form-section-title">Declaration</div>
           <div class="declaration-box">
-            <strong>13. Student Declaration</strong><br>
+            <strong>14. Student Declaration</strong><br>
             I hereby declare that all the information provided above is true and correct to the best of my knowledge. I understand that any false information may lead to disqualification from the program.
             <label class="decl-check-row" id="declLabel">
               <input type="checkbox" id="declaration" required>
@@ -378,7 +390,7 @@
 
           <div class="form-row" style="margin-top:18px">
             <div class="form-group">
-              <label>14. Registration Date</label>
+              <label>15. Registration Date</label>
               <input type="date" id="registrationDate" readonly>
               <span class="field-note">Auto-filled with today's date</span>
             </div>
@@ -480,6 +492,14 @@
       });
     });
 
+    // Certificate chip highlight
+    document.querySelectorAll('#certChips .radio-chip').forEach(function(chip) {
+      chip.addEventListener('click', function() {
+        document.querySelectorAll('#certChips .radio-chip').forEach(function(c){ c.classList.remove('active'); });
+        chip.classList.add('active');
+      });
+    });
+
     // Aadhaar auto-spacing (XXXX XXXX XXXX)
     document.getElementById('aadhaar').addEventListener('input', function() {
       var v = this.value.replace(/\D/g, '').slice(0, 12);
@@ -552,13 +572,14 @@
       if (!declaration)           { showErr('Please accept the declaration to proceed.'); return; }
 
       var gender  = document.querySelector('input[name="gender"]:checked')?.value || 'male';
+      var certificateProgram = document.querySelector('input[name="certificateProgram"]:checked')?.value || 'NESCOM';
       var aadhaar = document.getElementById('aadhaar').value.trim();
       var regDate = document.getElementById('registrationDate').value;
 
       var payload = {
         fullName, guardianName, guardianContact: guardianCont,
         guardianOccupation, institution, mobile, dob, gender, address, aadhaar,
-        education,
+        education, certificateProgram,
         declarationAccepted: true,
         registrationDate: regDate || new Date().toISOString().slice(0,10),
       };
@@ -586,6 +607,7 @@
           _refVerified = false;
           // Reset chips
           document.querySelectorAll('#genderChips .radio-chip').forEach(function(c,i){ c.classList.toggle('active', i===0); });
+          document.querySelectorAll('#certChips .radio-chip').forEach(function(c,i){ c.classList.toggle('active', i===0); });
           // Re-fill date
           var today = new Date();
           document.getElementById('registrationDate').value =
