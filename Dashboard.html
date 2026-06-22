@@ -2758,24 +2758,7 @@ button:focus-visible,
         <div class="section-hdr"><div><h3>Associate Partners</h3><p>Manage partner network and track their referral performance.</p></div><button class="btn btn-primary btn-sm" id="addPartnerBtn" onclick="openAddPartnerModal()"><i class="fa-solid fa-plus"></i> Add Partner</button></div>
         <div id="partRefPerf" style="margin-bottom:18px"></div>
 
-        <!-- ── Partner Lead Performance — visible to Admin / Super Admin only ── -->
-        <div id="partnerProgressSection" style="display:none;margin-bottom:24px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
-            <h3 style="font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:8px">
-              <i class="fa-solid fa-chart-line" style="color:#7c3aed"></i>
-              Partner Lead Performance
-              <span style="font-size:11px;font-weight:500;color:var(--gray-400)">Lead progress per partner</span>
-            </h3>
-            <button class="btn btn-ghost btn-sm" onclick="loadPartnerProgress()">
-              <i class="fa-solid fa-rotate"></i> Refresh
-            </button>
-          </div>
-          <div id="partnerProgressGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px">
-            <div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--gray-400)">
-              <i class="fa-solid fa-spinner fa-spin"></i> Loading…
-            </div>
-          </div>
-        </div>
+        <!-- Partner Lead Performance merged into upper cards -->
 
         <div class="filter-bar"><div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="partnersSearch" placeholder="Search partners..." oninput="filterLiveTable('partners')"></div><button class="btn btn-outline btn-sm" onclick="loadPartners(true)"><i class="fa-solid fa-rotate"></i> Refresh</button></div>
         <div class="table-wrap"><table class="data-table"><thead><tr><th>#</th><th>Code</th><th>Organization</th><th>Contact Person</th><th>Email</th><th>Mobile</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody id="partnersTableBody"></tbody></table></div>
@@ -3097,6 +3080,9 @@ button:focus-visible,
             <select class="form-select" id="crmFilterImportedBy" onchange="crmApplyFilters()" style="display:none;min-width:190px;max-width:240px">
               <option value="">Imported from</option>
             </select>
+            <button class="btn btn-ghost btn-sm" id="crmStaleBtn" onclick="crmToggleStaleFilter()" title="Show only stale leads (7+ days inactive)" style="border:1px solid #f59e0b;color:#b45309;border-radius:6px">
+              <i class="fa-solid fa-clock-rotate-left"></i> Stale
+            </button>
             <button class="btn btn-ghost btn-sm" onclick="crmResetFilters()"><i class="fa-solid fa-rotate"></i> Reset</button>
           </div>
 
@@ -5176,6 +5162,13 @@ button:focus-visible,
         </select>
       </div>
 
+      <div class="form-group">
+        <label class="form-label">Imported From (Associate Partner)</label>
+        <select id="edImportedBy" class="form-select">
+          <option value="">All Partners</option>
+        </select>
+      </div>
+
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="form-group">
           <label class="form-label">From Date</label>
@@ -6238,6 +6231,7 @@ function showError(el, msg) {
 }
 
 async function loadStudents(force = false) {
+  if (!canDo('students', 'view')) return;
   if (LIVE.loaded.students && !force) return;
   if (force) clearApiCache('/students');
   setTableLoading('studentsTableBody', 9, 'Loading students...');
@@ -6254,6 +6248,7 @@ async function loadStudents(force = false) {
 }
 
 async function loadAttendance(force = false) {
+  if (!canDo('attendance', 'view')) return;
   if (LIVE.loaded.attendance && !force) return;
   if (force) clearApiCache('/attendance');
   setTableLoading('attendanceTableBody', 7, 'Loading attendance...');
@@ -6337,6 +6332,7 @@ async function deleteAttendanceRecord(id) {
 }
 
 async function loadCertificates(force = false) {
+  if (!canDo('certificates', 'view')) return;
   if (LIVE.loaded.certificates && !force) return;
   if (force) clearApiCache('/certificates');
   setTableLoading('certificatesTableBody', 7, 'Loading certificates...');
@@ -6419,6 +6415,7 @@ async function revokeCertificate(id) {
    DONATIONS
 ============================================================ */
 async function loadDonations(force = false) {
+  if (!canDo('donations', 'view')) return;
   if (LIVE.loaded.donations && !force) return;
   if (force) clearApiCache('/donations');
   setTableLoading('donationsTableBody', 8, 'Loading donations...');
@@ -6896,6 +6893,7 @@ async function deleteMktMaterial(id) {
 }
 
 async function loadMobilization(force = false) {
+  if (!canDo('mobilization', 'view')) return;
   if (force) { clearApiCache('/mobilization'); }
   const f = _mobGetFilters();
   const params = new URLSearchParams();
@@ -7745,6 +7743,7 @@ async function deletePartner(id) {
 }
 
 async function loadInstitutions(force = false) {
+  if (!canDo('institutions', 'view')) return;
   if (LIVE.loaded.institutions && !force) return;
   setTableLoading('institutionsTableBody', 9, 'Loading institutions...');
 
@@ -7865,6 +7864,7 @@ function viewInstLeads(institutionId, name) {
 }
 
 async function loadPartners(force = false) {
+  if (!canDo('associate_partners', 'view')) return;
   if (LIVE.loaded.partners && !force) return;
   setTableLoading('partnersTableBody', 9, 'Loading partners...');
 
@@ -8106,6 +8106,7 @@ async function fetchCurrentUser() {
 }
 
 async function fetchRoles() {
+  if (!canDo('roles', 'view')) { state.roles = []; return; }
   clearApiCache('/roles');
   showLoading('rolesGrid', 'Loading roles...');
 
@@ -8165,6 +8166,7 @@ async function deleteRole(id) {
 }
 
 async function fetchAdmins() {
+  if (!canDo('admin_management', 'view')) { state.admins = []; return; }
   clearApiCache('/admins');
   const r = await apiFetch('GET', '/admins');
 
@@ -9435,9 +9437,7 @@ function applySidebarPermissions() {
     item.style.display = '';
 
     if (!canDo(module, action)) {
-      item.style.opacity      = '0.4';
-      item.style.pointerEvents = 'none';
-      item.title = 'No access';
+      item.style.display = 'none';
     } else {
       item.style.opacity      = '';
       item.style.pointerEvents = '';
@@ -9577,11 +9577,6 @@ function navTo(page) {
     const role = state.currentUserRole || getSavedUser()?.role;
     const isAdminOrSA = role && (role.isSystem || ['Super Admin','Admin'].includes(role.name));
 
-    const progressSection = document.getElementById('partnerProgressSection');
-    if (progressSection) {
-      progressSection.style.display = isAdminOrSA ? 'block' : 'none';
-      if (isAdminOrSA) loadPartnerProgress();
-    }
 
   }
   if (page === 'donations')         loadDonations(true);
@@ -9765,12 +9760,13 @@ async function init() {
       applySidebarPermissions();
     }
 
-    // Fetch roles + current user + admins IN PARALLEL (3x faster than sequential)
-    const [, freshUser] = await Promise.all([
-      fetchRoles(),
-      fetchCurrentUser(),
-      fetchAdmins(),
-    ]);
+    // Fetch current user first, then conditionally load sensitive data
+    await fetchCurrentUser();
+    applySidebarPermissions();
+    const fetches = [];
+    if (canDo('roles', 'view'))            fetches.push(fetchRoles());
+    if (canDo('admin_management', 'view')) fetches.push(fetchAdmins());
+    if (fetches.length) await Promise.all(fetches);
 
     // Apply permissions with fresh data
     applySidebarPermissions();
@@ -10438,6 +10434,14 @@ function openExportDeleteModal() {
   document.getElementById('edStartDate').value = '';
   document.getElementById('edEndDate').value = '';
   document.getElementById('edCountRow').style.display = 'none';
+  const edSel = document.getElementById('edImportedBy');
+  edSel.innerHTML = '<option value="">All Partners</option>';
+  if (CRM.admins && CRM.admins.length) {
+    CRM.admins.forEach(a => {
+      const name = a.fullName || a.firstName || a.name || a.email || '—';
+      edSel.innerHTML += `<option value="${a._id}">${escHtml(name)}</option>`;
+    });
+  }
   openModal('exportDeleteLeadsModal');
 }
 
@@ -10472,6 +10476,8 @@ function _buildExportDeleteParams() {
   const params = new URLSearchParams();
   const stage = document.getElementById('edStage').value;
   if (stage && stage !== 'all') params.append('stage', stage);
+  const importedBy = document.getElementById('edImportedBy').value;
+  if (importedBy) params.append('importedBy', importedBy);
   const start = document.getElementById('edStartDate').value;
   const end   = document.getElementById('edEndDate').value;
   if (start) params.append('startDate', start);
@@ -10489,8 +10495,10 @@ async function confirmExportAndDelete() {
     const startDate = document.getElementById('edStartDate').value;
     const endDate   = document.getElementById('edEndDate').value;
 
+    const importedBy = document.getElementById('edImportedBy').value;
     const body = {};
     if (stage && stage !== 'all') body.stage = stage;
+    if (importedBy) body.importedBy = importedBy;
     if (startDate) body.startDate = startDate;
     if (endDate)   body.endDate   = endDate;
 
@@ -10692,7 +10700,7 @@ async function crmRefresh() {
   clearApiCache('/leads');
   await _crmFetchStats();
   if (CRM.view === 'list')      await _crmFetchList();
-  if (CRM.view === 'kanban')    await _crmFetchKanban();
+  if (CRM.view === 'kanban')    CRM.view = 'list';
   if (CRM.view === 'analytics') await _crmFetchAnalytics();
 }
 
@@ -10766,17 +10774,40 @@ function _renderCrmTable() {
     tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--gray-400)"><i class="fa-solid fa-bullseye" style="margin-right:8px"></i>No leads found. <button class="btn btn-primary btn-sm" style="margin-left:12px" onclick="openAddLeadModal()">Add First Lead</button></td></tr>`;
     return;
   }
-  tbody.innerHTML = CRM.leads.map(l => {
+  const now = Date.now();
+  const DAY7 = 7 * 24 * 60 * 60 * 1000;
+  const DAY14 = 14 * 24 * 60 * 60 * 1000;
+  const doneStagesGlobal = ['enrolled','converted','lost','not_interested'];
+  let leads = CRM.leads;
+  if (_crmStaleFilter) {
+    leads = leads.filter(l => {
+      if (doneStagesGlobal.includes(l.stage)) return false;
+      const lt = new Date(l.lastContactedAt || l.updatedAt || l.createdAt).getTime();
+      return (now - lt) >= DAY7;
+    });
+    if (!leads.length) {
+      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--gray-400)"><i class="fa-solid fa-check-circle" style="color:var(--success);margin-right:8px"></i>No stale leads! All leads are active.</td></tr>';
+      return;
+    }
+  }
+  tbody.innerHTML = leads.map(l => {
     const stageHtml = crmStageBadgeHtml(l.stage);
     const assigned = l.assignedTo ? escHtml(l.assignedTo.fullName || l.assignedTo.firstName || '—') : '<span style="color:var(--gray-400)">Unassigned</span>';
     const fu   = l.nextFollowUp ? new Date(l.nextFollowUp).toLocaleDateString('en-IN') : '—';
     const overdue = l.nextFollowUp && new Date(l.nextFollowUp) < new Date() && !['converted','lost'].includes(l.stage);
     const checked = CRM.selected.has(l._id) ? 'checked' : '';
     const prioCls = { high:'prio-high', medium:'prio-medium', low:'prio-low' }[l.priority] || 'prio-medium';
+    const doneStages = ['enrolled','converted','lost','not_interested'];
+    const lastTouch = new Date(l.lastContactedAt || l.updatedAt || l.createdAt).getTime();
+    const staleDays = Math.floor((now - lastTouch) / (24*60*60*1000));
+    const isStale = !doneStages.includes(l.stage) && (now - lastTouch) >= DAY7;
+    const isCritical = !doneStages.includes(l.stage) && (now - lastTouch) >= DAY14;
+    const staleBg = isCritical ? 'background:rgba(239,68,68,.06);border-left:3px solid #ef4444' : isStale ? 'background:rgba(234,179,8,.06);border-left:3px solid #f59e0b' : '';
+    const staleTag = isCritical ? `<span style="font-size:9px;background:rgba(239,68,68,.12);color:#dc2626;padding:1px 6px;border-radius:4px;font-weight:700;margin-left:6px">🔴 ${staleDays}d inactive</span>` : isStale ? `<span style="font-size:9px;background:rgba(234,179,8,.12);color:#b45309;padding:1px 6px;border-radius:4px;font-weight:700;margin-left:6px">🟡 ${staleDays}d inactive</span>` : '';
     return `
-      <tr data-id="${l._id}">
+      <tr data-id="${l._id}" style="${staleBg}">
         <td><input type="checkbox" class="crm-row-check" data-id="${l._id}" ${checked} onchange="crmRowCheck(this,'${l._id}')" style="accent-color:var(--orange);width:14px;height:14px"/></td>
-        <td><strong style="cursor:pointer;color:var(--royal)" onclick="openLeadDetail('${l._id}')">${escHtml(l.name)}</strong><div style="font-size:11px;color:var(--gray-400)">${escHtml(l.courseInterest||'')}</div></td>
+        <td><strong style="cursor:pointer;color:var(--royal)" onclick="openLeadDetail('${l._id}')">${escHtml(l.name)}</strong>${staleTag}<div style="font-size:11px;color:var(--gray-400)">${escHtml(l.courseInterest||'')}</div></td>
         <td><div style="font-size:12px">${escHtml(l.mobile||'—')}</div><div style="font-size:11px;color:var(--gray-400)">${escHtml(l.email||'')}</div></td>
         <td><span class="badge badge-blue" style="font-size:10px">${SOURCE_LABELS[l.source]||l.source}</span></td>
         <td>
@@ -10829,12 +10860,27 @@ function crmGoPage(p) {
 }
 
 function crmApplyFilters() { CRM.page = 1; _crmFetchList(); }
+
+let _crmStaleFilter = false;
+function crmToggleStaleFilter() {
+  _crmStaleFilter = !_crmStaleFilter;
+  const btn = document.getElementById('crmStaleBtn');
+  if (btn) {
+    btn.style.background = _crmStaleFilter ? '#f59e0b' : '';
+    btn.style.color = _crmStaleFilter ? '#fff' : '#b45309';
+  }
+  _renderCrmTable();
+}
+
 function crmResetFilters() {
   ['crmSearch','crmFilterStage','crmFilterSource','crmFilterPriority','crmFilterImportedBy'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
   _crmAssignFilterPick('', '');
   document.getElementById('crmFilterAssignedInput') && (document.getElementById('crmFilterAssignedInput').value = '');
+  _crmStaleFilter = false;
+  const staleBtn = document.getElementById('crmStaleBtn');
+  if (staleBtn) { staleBtn.style.background = ''; staleBtn.style.color = '#b45309'; }
   CRM.page = 1; _crmFetchList();
 }
 function debouncedCrmSearch() {
@@ -10845,11 +10891,12 @@ function debouncedCrmSearch() {
 /* ── View switch ─────────────────────────────────────────────── */
 function crmShowView(v) {
   CRM.view = v;
-  ['list','kanban','analytics'].forEach(n => {
-    document.getElementById(`crmView${n.charAt(0).toUpperCase()+n.slice(1)}`).style.display = n === v ? '' : 'none';
-    document.getElementById(`crmTab${n.charAt(0).toUpperCase()+n.slice(1)}`).classList.toggle('active', n === v);
+  ['list','analytics'].forEach(n => {
+    const view = document.getElementById(`crmView${n.charAt(0).toUpperCase()+n.slice(1)}`);
+    const tab = document.getElementById(`crmTab${n.charAt(0).toUpperCase()+n.slice(1)}`);
+    if (view) view.style.display = n === v ? '' : 'none';
+    if (tab) tab.classList.toggle('active', n === v);
   });
-  if (v === 'kanban')    _crmFetchKanban();
   if (v === 'analytics') _crmFetchAnalytics();
 }
 
@@ -10914,8 +10961,8 @@ async function _crmFetchAnalytics() {
   const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
   // Funnel chart
-  const maxF = Math.max(...f.funnel.map(x=>x.count), 1);
-  const funnelHtml = f.funnel.map((x, i) => `
+  const maxF = Math.max(...(f.funnel||[]).map(x=>x.count), 1);
+  const funnelHtml = (f.funnel||[]).map((x, i) => `
     <div class="crm-funnel-row">
       <div class="crm-funnel-label">${STAGE_CFG[x.stage]?.label||x.stage}</div>
       <div class="crm-funnel-track">
@@ -10927,14 +10974,14 @@ async function _crmFetchAnalytics() {
     </div>`).join('');
 
   // Source donut
-  const srcTotal = a.bySource.reduce((s,x) => s+x.count, 0) || 1;
+  const srcTotal = (a.bySource||[]).reduce((s,x) => s+x.count, 0) || 1;
   let srcOffset = 25;
-  const srcCircles = a.bySource.map((x,i) => {
+  const srcCircles = (a.bySource||[]).map((x,i) => {
     const pct = x.count/srcTotal*100;
     const c = `<circle cx="18" cy="18" r="15.9" fill="none" stroke="${CRM_CLR[i%CRM_CLR.length]}" stroke-width="3.6" pathLength="100" stroke-dasharray="${pct.toFixed(2)} ${(100-pct).toFixed(2)}" stroke-dashoffset="${srcOffset}"/>`;
     srcOffset -= pct; return c;
   }).join('');
-  const srcLegend = a.bySource.map((x,i) => `
+  const srcLegend = (a.bySource||[]).map((x,i) => `
     <div class="seg-legend-item">
       <span class="seg-legend-dot" style="background:${CRM_CLR[i%CRM_CLR.length]}"></span>
       <span>${SOURCE_LABELS[x._id]||x._id}</span>
@@ -11116,6 +11163,7 @@ async function crmInlineStageUpdate(id, newStage, selectEl) {
   if (newStage === 'follow_up') {
     const existing = document.getElementById('fuDatePicker_' + id);
     if (existing) existing.remove();
+    const prevStage = CRM.leads.find(l => l._id === id)?.stage || 'new';
     const input = document.createElement('input');
     input.type = 'date';
     input.id = 'fuDatePicker_' + id;
@@ -11126,17 +11174,20 @@ async function crmInlineStageUpdate(id, newStage, selectEl) {
     input.focus();
     input.addEventListener('change', async function() {
       const date = this.value;
-      if (!date) { this.remove(); return; }
+      if (!date) { selectEl.value = prevStage; this.remove(); return; }
       const r = await apiFetch('PUT', `/leads/${id}`, { stage: 'follow_up', nextFollowUp: date });
       if (r.ok) {
         showToast('success', `Follow up set for ${new Date(date).toLocaleDateString('en-IN')}`);
         crmRefresh();
       } else {
         showToast('error', 'Failed to set follow up');
+        selectEl.value = prevStage;
       }
       this.remove();
     });
-    input.addEventListener('blur', function() { setTimeout(() => this.remove(), 200); });
+    input.addEventListener('blur', function() {
+      setTimeout(() => { if (!this.value) { selectEl.value = prevStage; } this.remove(); }, 200);
+    });
     return;
   }
   const r = await apiFetch('PUT', `/leads/${id}`, { stage: newStage });
@@ -11198,7 +11249,7 @@ function _renderTimeline(acts) {
     const scChg = a.scoreChange ? `<span style="color:${a.scoreChange>0?'var(--success)':'var(--danger)'}"> ${a.scoreChange>0?'+':''}${a.scoreChange} pts</span>` : '';
     return `
       <div class="timeline-item">
-        <div class="timeline-dot" style="background:${color}"><i class="fa-brands ${icon} fa-solid ${icon}" style="font-size:10px;color:var(--navy)"></i></div>
+        <div class="timeline-dot" style="background:${color}"><i class="fa-solid ${icon}" style="font-size:10px;color:var(--navy)"></i></div>
         <div class="timeline-body">
           <div class="timeline-type">${a.type.replace('_',' ').replace(/\b\w/g,c=>c.toUpperCase())} ${scChg}</div>
           ${a.note ? `<div class="timeline-note">${escHtml(a.note)}</div>` : ''}
@@ -12893,6 +12944,7 @@ async function savePreset() {
 const WS_STATUS_COLORS = { upcoming:'#2563EB', live:'#dc2626', completed:'#16a34a', cancelled:'#6b7280' };
 
 async function loadWorkshopsAdmin() {
+  if (!canDo('workshops', 'view')) return;
   document.getElementById('wsGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#6b7280"><div class="spinner" style="margin:0 auto 12px"></div>Loading workshops...</div>';
 
   clearApiCache('/workshops');
@@ -13152,6 +13204,7 @@ const CC_STATUS_META = {
 };
 
 async function loadCounsellingCert(force = false) {
+  if (!canDo('counselling_cert', 'view')) return;
   const status   = document.getElementById('ccStatusFilter')?.value || '';
   const userType = document.getElementById('ccTypeFilter')?.value   || '';
   const tbody    = document.getElementById('ccTableBody');
