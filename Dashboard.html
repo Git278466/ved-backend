@@ -2788,70 +2788,6 @@ button:focus-visible,
         </div>
       </div>
 
-      <!-- Teams: Create/Edit Modal -->
-      <div class="modal-backdrop" id="teamModal">
-        <div class="modal" style="max-width:520px">
-          <div class="modal-header">
-            <div>
-              <div class="modal-title" id="teamModalTitle">Create Team</div>
-              <div class="modal-sub">Group admins together for lead assignment</div>
-            </div>
-            <button class="modal-close" onclick="closeModal('teamModal')"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-          <div class="modal-body">
-            <input type="hidden" id="teamId">
-            <div class="form-group" style="margin-bottom:14px">
-              <label class="form-label">Team Name *</label>
-              <input type="text" id="teamName" class="form-input" placeholder="e.g. Sales Team Mumbai">
-            </div>
-            <div class="form-group" style="margin-bottom:14px">
-              <label class="form-label">Description</label>
-              <input type="text" id="teamDesc" class="form-input" placeholder="Brief description (optional)">
-            </div>
-            <div class="form-group" style="margin-bottom:14px">
-              <label class="form-label">Team Leader</label>
-              <select id="teamLeader" class="form-select"><option value="">— Select Leader —</option></select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Members (select multiple)</label>
-              <div id="teamMembersList" style="max-height:200px;overflow-y:auto;border:1px solid var(--gray-200);border-radius:8px;padding:8px"></div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closeModal('teamModal')">Cancel</button>
-            <button class="btn btn-primary" id="saveTeamBtn" onclick="saveTeam()"><i class="fa-solid fa-save"></i> Save Team</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Teams: Assign Leads Modal -->
-      <div class="modal-backdrop" id="teamAssignModal">
-        <div class="modal" style="max-width:480px">
-          <div class="modal-header">
-            <div>
-              <div class="modal-title">Assign Leads to Team</div>
-              <div class="modal-sub" id="teamAssignSub">Leads will be equally distributed among members</div>
-            </div>
-            <button class="modal-close" onclick="closeModal('teamAssignModal')"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-          <div class="modal-body">
-            <input type="hidden" id="teamAssignId">
-            <div class="form-group" style="margin-bottom:14px">
-              <label class="form-label">Assign which leads?</label>
-              <select id="teamAssignFilter" class="form-select">
-                <option value="unassigned">All Unassigned Leads</option>
-                <option value="new">Only "New" Stage Leads</option>
-                <option value="follow_up">Only "Follow Up" Stage Leads</option>
-              </select>
-            </div>
-            <div id="teamAssignPreview" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;font-size:13px;color:#166534;display:none"></div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closeModal('teamAssignModal')">Cancel</button>
-            <button class="btn btn-primary" id="teamAssignBtn" onclick="confirmTeamAssign()"><i class="fa-solid fa-paper-plane"></i> Assign Leads</button>
-          </div>
-        </div>
-      </div>
 
       <!-- ════════════════════════════════════════════════
            PAGE: DONATIONS
@@ -4388,6 +4324,65 @@ button:focus-visible,
 <!-- ============================================================
      MODAL: GO LIVE
      ============================================================ -->
+<!-- Teams: Create/Edit Modal -->
+<div class="modal-overlay" id="teamModal" onclick="if(event.target===this)closeModal('teamModal')">
+  <div class="modal-box" style="max-width:520px">
+    <div class="modal-header">
+      <div><h3 id="teamModalTitle">Create Team</h3><p>Group admins together for lead assignment</p></div>
+      <button class="modal-close" onclick="closeModal('teamModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="teamId">
+      <div class="form-group" style="margin-bottom:14px">
+        <label class="form-label">Team Name *</label>
+        <input type="text" id="teamName" class="form-input" placeholder="e.g. Sales Team Mumbai">
+      </div>
+      <div class="form-group" style="margin-bottom:14px">
+        <label class="form-label">Description</label>
+        <input type="text" id="teamDesc" class="form-input" placeholder="Brief description (optional)">
+      </div>
+      <div class="form-group" style="margin-bottom:14px">
+        <label class="form-label">Team Leader</label>
+        <select id="teamLeader" class="form-select"><option value="">— Select Leader —</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Members (select multiple)</label>
+        <div id="teamMembersList" style="max-height:200px;overflow-y:auto;border:1px solid var(--gray-200);border-radius:8px;padding:8px"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('teamModal')">Cancel</button>
+      <button class="btn btn-primary" id="saveTeamBtn" onclick="saveTeam()"><i class="fa-solid fa-save"></i> Save Team</button>
+    </div>
+  </div>
+</div>
+
+<!-- Teams: Assign Leads Modal -->
+<div class="modal-overlay" id="teamAssignModal" onclick="if(event.target===this)closeModal('teamAssignModal')">
+  <div class="modal-box" style="max-width:480px">
+    <div class="modal-header">
+      <div><h3>Assign Leads to Team</h3><p id="teamAssignSub">Leads will be equally distributed among members</p></div>
+      <button class="modal-close" onclick="closeModal('teamAssignModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="teamAssignId">
+      <div class="form-group" style="margin-bottom:14px">
+        <label class="form-label">Assign which leads?</label>
+        <select id="teamAssignFilter" class="form-select">
+          <option value="unassigned">All Unassigned Leads</option>
+          <option value="new">Only "New" Stage Leads</option>
+          <option value="follow_up">Only "Follow Up" Stage Leads</option>
+        </select>
+      </div>
+      <div id="teamAssignPreview" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;font-size:13px;color:#166534;display:none"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('teamAssignModal')">Cancel</button>
+      <button class="btn btn-primary" id="teamAssignBtn" onclick="confirmTeamAssign()"><i class="fa-solid fa-paper-plane"></i> Assign Leads</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="goLiveModal">
   <div class="modal-box" style="max-width:500px">
     <div class="modal-header">
