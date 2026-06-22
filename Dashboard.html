@@ -1418,6 +1418,7 @@ button:focus-visible,
 .stage-interested{background:rgba(249,115,22,0.12);color:var(--orange);}
 .stage-enrolled{background:rgba(20,184,166,0.12);color:#0D9488;}
 .stage-not-interested{background:rgba(107,114,128,0.12);color:#4B5563;}
+.stage-follow-up{background:rgba(139,92,246,0.1);color:#8B5CF6;}
 /* legacy aliases */
 .stage-new{background:rgba(59,130,246,0.1);color:#3B82F6;}
 .stage-contacted{background:rgba(2,132,199,0.1);color:#0284C7;}
@@ -3042,7 +3043,6 @@ button:focus-visible,
         <!-- View tabs -->
         <div class="crm-tabs">
           <button class="crm-tab active" id="crmTabList"    onclick="crmShowView('list')"><i class="fa-solid fa-list"></i> List</button>
-          <button class="crm-tab"        id="crmTabKanban"  onclick="crmShowView('kanban')"><i class="fa-solid fa-columns-3"></i> Kanban</button>
           <button class="crm-tab"        id="crmTabAnalytics" onclick="crmShowView('analytics')"><i class="fa-solid fa-chart-mixed"></i> Analytics</button>
         </div>
 
@@ -3062,6 +3062,7 @@ button:focus-visible,
               <option value="call_back">Call Back</option>
               <option value="interested">Interested</option>
               <option value="enrolled">Enrolled</option>
+              <option value="follow_up">Follow Up</option>
               <option value="not_interested">Not Interested</option>
             </select>
             <select class="form-select" id="crmFilterSource" onchange="crmApplyFilters()">
@@ -3137,10 +3138,6 @@ button:focus-visible,
           </div>
         </div>
 
-        <!-- ── KANBAN VIEW ── -->
-        <div id="crmViewKanban" style="display:none">
-          <div class="crm-kanban" id="crmKanbanBoard"><!-- JS --></div>
-        </div>
 
         <!-- ── ANALYTICS VIEW ── -->
         <div id="crmViewAnalytics" style="display:none">
@@ -10041,6 +10038,7 @@ const STAGE_CFG = {
   call_back:      { label:'Call Back',      cls:'stage-call-back',      icon:'fa-phone-arrow-down-left', color:'#0284C7' },
   interested:     { label:'Interested',     cls:'stage-interested',     icon:'fa-fire',          color:'#F97316' },
   enrolled:       { label:'Enrolled',       cls:'stage-enrolled',       icon:'fa-graduation-cap',color:'#0D9488' },
+  follow_up:      { label:'Follow Up',     cls:'stage-call-back',      icon:'fa-calendar-check',color:'#8B5CF6' },
   not_interested: { label:'Not Interested', cls:'stage-not-interested', icon:'fa-thumbs-down',   color:'#6B7280' },
   /* legacy aliases so old records still display cleanly */
   contacted:  { label:'Call Back',      cls:'stage-call-back',      icon:'fa-phone',         color:'#0284C7' },
@@ -11114,6 +11112,32 @@ async function crmInlineStageUpdate(id, newStage, selectEl) {
   const stg = STAGE_CFG[newStage];
   if (stg) {
     selectEl.style.color = stg.color;
+  }
+  if (newStage === 'follow_up') {
+    const existing = document.getElementById('fuDatePicker_' + id);
+    if (existing) existing.remove();
+    const input = document.createElement('input');
+    input.type = 'date';
+    input.id = 'fuDatePicker_' + id;
+    input.min = new Date().toISOString().slice(0, 10);
+    input.style.cssText = 'position:absolute;z-index:999;font-size:12px;padding:6px 10px;border:2px solid #8B5CF6;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.15);background:#fff;margin-top:4px';
+    selectEl.parentElement.style.position = 'relative';
+    selectEl.after(input);
+    input.focus();
+    input.addEventListener('change', async function() {
+      const date = this.value;
+      if (!date) { this.remove(); return; }
+      const r = await apiFetch('PUT', `/leads/${id}`, { stage: 'follow_up', nextFollowUp: date });
+      if (r.ok) {
+        showToast('success', `Follow up set for ${new Date(date).toLocaleDateString('en-IN')}`);
+        crmRefresh();
+      } else {
+        showToast('error', 'Failed to set follow up');
+      }
+      this.remove();
+    });
+    input.addEventListener('blur', function() { setTimeout(() => this.remove(), 200); });
+    return;
   }
   const r = await apiFetch('PUT', `/leads/${id}`, { stage: newStage });
   if (r.ok) {
