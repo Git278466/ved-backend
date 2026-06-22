@@ -1933,6 +1933,9 @@ button:focus-visible,
       <div class="nav-item" onclick="navTo('partners')" data-page="partners" data-perm="associate_partners.view">
         <i class="fa-solid fa-handshake"></i><span>Associate Partners</span>
       </div>
+      <div class="nav-item" onclick="navTo('teams')" data-page="teams" data-perm="admin_management.view">
+        <i class="fa-solid fa-people-group"></i><span>Teams</span>
+      </div>
 
       <div class="nav-section-label">INSIGHTS</div>
 
@@ -2764,6 +2767,91 @@ button:focus-visible,
         <div class="table-wrap"><table class="data-table"><thead><tr><th>#</th><th>Code</th><th>Organization</th><th>Contact Person</th><th>Email</th><th>Mobile</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody id="partnersTableBody"></tbody></table></div>
       </div>
 
+
+      <!-- ════════════════════════════════════════════════
+           PAGE: TEAMS
+           ════════════════════════════════════════════════ -->
+      <div class="page" id="page-teams">
+        <div class="section-hdr">
+          <div><h3>Teams</h3><p>Group admins into teams and assign leads for distribution.</p></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline btn-sm" onclick="loadTeams(true)"><i class="fa-solid fa-rotate"></i> Refresh</button>
+            <button class="btn btn-primary btn-sm" onclick="openCreateTeamModal()"><i class="fa-solid fa-plus"></i> Create Team</button>
+          </div>
+        </div>
+
+        <div id="teamsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-top:16px">
+          <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray-400)">
+            <i class="fa-solid fa-people-group" style="font-size:2rem;margin-bottom:12px;display:block;opacity:.3"></i>
+            Click Refresh to load teams
+          </div>
+        </div>
+      </div>
+
+      <!-- Teams: Create/Edit Modal -->
+      <div class="modal-backdrop" id="teamModal">
+        <div class="modal" style="max-width:520px">
+          <div class="modal-header">
+            <div>
+              <div class="modal-title" id="teamModalTitle">Create Team</div>
+              <div class="modal-sub">Group admins together for lead assignment</div>
+            </div>
+            <button class="modal-close" onclick="closeModal('teamModal')"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="teamId">
+            <div class="form-group" style="margin-bottom:14px">
+              <label class="form-label">Team Name *</label>
+              <input type="text" id="teamName" class="form-input" placeholder="e.g. Sales Team Mumbai">
+            </div>
+            <div class="form-group" style="margin-bottom:14px">
+              <label class="form-label">Description</label>
+              <input type="text" id="teamDesc" class="form-input" placeholder="Brief description (optional)">
+            </div>
+            <div class="form-group" style="margin-bottom:14px">
+              <label class="form-label">Team Leader</label>
+              <select id="teamLeader" class="form-select"><option value="">— Select Leader —</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Members (select multiple)</label>
+              <div id="teamMembersList" style="max-height:200px;overflow-y:auto;border:1px solid var(--gray-200);border-radius:8px;padding:8px"></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('teamModal')">Cancel</button>
+            <button class="btn btn-primary" id="saveTeamBtn" onclick="saveTeam()"><i class="fa-solid fa-save"></i> Save Team</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Teams: Assign Leads Modal -->
+      <div class="modal-backdrop" id="teamAssignModal">
+        <div class="modal" style="max-width:480px">
+          <div class="modal-header">
+            <div>
+              <div class="modal-title">Assign Leads to Team</div>
+              <div class="modal-sub" id="teamAssignSub">Leads will be equally distributed among members</div>
+            </div>
+            <button class="modal-close" onclick="closeModal('teamAssignModal')"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="teamAssignId">
+            <div class="form-group" style="margin-bottom:14px">
+              <label class="form-label">Assign which leads?</label>
+              <select id="teamAssignFilter" class="form-select">
+                <option value="unassigned">All Unassigned Leads</option>
+                <option value="new">Only "New" Stage Leads</option>
+                <option value="follow_up">Only "Follow Up" Stage Leads</option>
+              </select>
+            </div>
+            <div id="teamAssignPreview" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;font-size:13px;color:#166534;display:none"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('teamAssignModal')">Cancel</button>
+            <button class="btn btn-primary" id="teamAssignBtn" onclick="confirmTeamAssign()"><i class="fa-solid fa-paper-plane"></i> Assign Leads</button>
+          </div>
+        </div>
+      </div>
 
       <!-- ════════════════════════════════════════════════
            PAGE: DONATIONS
@@ -7272,6 +7360,189 @@ async function exportMobExcel(program) {
 }
 
 /* ============================================================
+   TEAMS
+============================================================ */
+let _teamsCache = [];
+
+async function loadTeams(force = false) {
+  if (!canDo('admin_management', 'view')) return;
+  const grid = document.getElementById('teamsGrid');
+  if (!grid) return;
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray-400)"><i class="fa-solid fa-spinner fa-spin"></i> Loading teams...</div>';
+
+  const r = await apiFetch('GET', '/teams');
+  if (!r.ok) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray-400)">Failed to load teams.</div>'; return; }
+
+  _teamsCache = r.data.data || [];
+  if (!_teamsCache.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray-400)"><i class="fa-solid fa-people-group" style="font-size:2rem;margin-bottom:12px;display:block;opacity:.3"></i>No teams yet. Create your first team!</div>';
+    return;
+  }
+
+  const STAGE_CLR = { new:'#3b82f6', not_answering:'#dc2626', not_reachable:'#ea580c', call_back:'#0284c7', interested:'#f97316', enrolled:'#0d9488', follow_up:'#8b5cf6', not_interested:'#6b7280' };
+  const STAGE_LBL = { new:'New', not_answering:'Not Answering', not_reachable:'Not Reachable', call_back:'Call Back', interested:'Interested', enrolled:'Enrolled', follow_up:'Follow Up', not_interested:'Not Interested' };
+
+  grid.innerHTML = _teamsCache.map(t => {
+    const leaderName = t.leader ? (t.leader.fullName || t.leader.firstName || t.leader.name || '—') : 'No leader';
+    const memberAvatars = (t.members || []).slice(0, 5).map(m => {
+      const init = (m.fullName || m.firstName || m.name || 'U').charAt(0).toUpperCase();
+      return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid #fff;margin-left:-8px" title="${escHtml(m.fullName||m.firstName||m.name||'')}">${init}</div>`;
+    }).join('');
+    const extraMembers = (t.members || []).length > 5 ? `<div style="width:30px;height:30px;border-radius:50%;background:#f1f5f9;color:#64748b;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid #fff;margin-left:-8px">+${t.members.length-5}</div>` : '';
+
+    const stageRows = (t.leadsByStage || []).filter(s => s.count > 0).map(s => {
+      const pct = t.totalLeads ? Math.round(s.count / t.totalLeads * 100) : 0;
+      return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+        <span style="font-size:10px;color:#6b7280;width:65px;flex-shrink:0">${STAGE_LBL[s._id]||s._id}</span>
+        <div style="flex:1;height:5px;background:#f1f5f9;border-radius:3px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${STAGE_CLR[s._id]||'#2563eb'};border-radius:3px"></div></div>
+        <span style="font-size:10px;font-weight:700;color:#374151;width:20px;text-align:right">${s.count}</span>
+      </div>`;
+    }).join('');
+
+    return `
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;box-shadow:0 2px 8px rgba(10,22,40,.06);padding:20px;position:relative">
+      <div style="position:absolute;top:12px;right:12px;display:flex;gap:4px">
+        <button class="btn btn-ghost btn-sm" onclick="openEditTeam('${t._id}')" title="Edit"><i class="fa-solid fa-pen" style="font-size:11px"></i></button>
+        <button class="btn btn-ghost btn-sm" onclick="deleteTeam('${t._id}')" title="Delete" style="color:var(--danger)"><i class="fa-solid fa-trash" style="font-size:11px"></i></button>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;flex-shrink:0"><i class="fa-solid fa-people-group"></i></div>
+        <div>
+          <div style="font-weight:800;color:#0a1628;font-size:15px">${escHtml(t.name)}</div>
+          <div style="font-size:11px;color:#9ca3af">${escHtml(t.description||'')} · Leader: ${escHtml(leaderName)}</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;margin-bottom:14px;padding-left:8px">${memberAvatars}${extraMembers}
+        <span style="font-size:11px;color:#6b7280;margin-left:10px">${(t.members||[]).length} members</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+        <div style="background:#f8fafc;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:20px;font-weight:900;color:#0a1628">${t.totalLeads||0}</div>
+          <div style="font-size:10px;color:#9ca3af">Total Leads</div>
+        </div>
+        <div style="background:#f0fdf4;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:20px;font-weight:900;color:#16a34a">${(t.leadsByStage||[]).find(s=>s._id==='enrolled')?.count||0}</div>
+          <div style="font-size:10px;color:#9ca3af">Enrolled</div>
+        </div>
+      </div>
+
+      ${stageRows || '<div style="font-size:11px;color:#9ca3af;text-align:center;padding:4px 0">No leads assigned yet</div>'}
+
+      <button class="btn btn-primary btn-sm" onclick="openTeamAssign('${t._id}')" style="width:100%;margin-top:12px">
+        <i class="fa-solid fa-paper-plane"></i> Assign Leads
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function openCreateTeamModal() {
+  document.getElementById('teamId').value = '';
+  document.getElementById('teamName').value = '';
+  document.getElementById('teamDesc').value = '';
+  document.getElementById('teamModalTitle').textContent = 'Create Team';
+  _populateTeamAdminDropdowns();
+  openModal('teamModal');
+}
+
+function openEditTeam(id) {
+  const t = _teamsCache.find(x => x._id === id);
+  if (!t) return;
+  document.getElementById('teamId').value = t._id;
+  document.getElementById('teamName').value = t.name || '';
+  document.getElementById('teamDesc').value = t.description || '';
+  document.getElementById('teamModalTitle').textContent = 'Edit Team';
+  _populateTeamAdminDropdowns(t);
+  openModal('teamModal');
+}
+
+function _populateTeamAdminDropdowns(team) {
+  const admins = state.admins || [];
+  const leaderSel = document.getElementById('teamLeader');
+  leaderSel.innerHTML = '<option value="">— Select Leader —</option>' +
+    admins.map(a => {
+      const n = a.fullName || a.firstName || a.name || a.email || '—';
+      const sel = team && team.leader && (team.leader._id || team.leader) === a._id ? 'selected' : '';
+      return `<option value="${a._id}" ${sel}>${escHtml(n)}</option>`;
+    }).join('');
+
+  const memberIds = team ? (team.members || []).map(m => m._id || m) : [];
+  const list = document.getElementById('teamMembersList');
+  list.innerHTML = admins.map(a => {
+    const n = a.fullName || a.firstName || a.name || a.email || '—';
+    const checked = memberIds.includes(a._id) ? 'checked' : '';
+    return `<label style="display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-bottom:1px solid #f1f5f9;font-size:13px">
+      <input type="checkbox" class="team-member-cb" value="${a._id}" ${checked} style="accent-color:var(--royal);width:15px;height:15px">
+      ${escHtml(n)}
+    </label>`;
+  }).join('');
+}
+
+async function saveTeam() {
+  const name = document.getElementById('teamName').value.trim();
+  if (!name) { showToast('error', 'Team name is required.'); return; }
+  const id = document.getElementById('teamId').value;
+  const leader = document.getElementById('teamLeader').value || null;
+  const members = [...document.querySelectorAll('.team-member-cb:checked')].map(cb => cb.value);
+  const description = document.getElementById('teamDesc').value.trim();
+
+  const btn = document.getElementById('saveTeamBtn');
+  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+  const body = { name, description, leader, members };
+  const r = id ? await apiFetch('PUT', `/teams/${id}`, body) : await apiFetch('POST', '/teams', body);
+
+  btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-save"></i> Save Team';
+
+  if (r.ok) {
+    showToast('success', id ? 'Team updated!' : 'Team created!');
+    closeModal('teamModal');
+    loadTeams(true);
+  } else {
+    showToast('error', r.error || 'Failed to save team.');
+  }
+}
+
+async function deleteTeam(id) {
+  if (!await showConfirm('Delete Team', 'Delete this team? Leads will NOT be deleted, only the team grouping.')) return;
+  const r = await apiFetch('DELETE', `/teams/${id}`);
+  if (r.ok) { showToast('success', 'Team deleted.'); loadTeams(true); }
+  else showToast('error', r.error || 'Failed to delete.');
+}
+
+function openTeamAssign(id) {
+  const t = _teamsCache.find(x => x._id === id);
+  if (!t) return;
+  document.getElementById('teamAssignId').value = id;
+  document.getElementById('teamAssignSub').textContent = `${t.name} — ${(t.members||[]).length} members · Leads distributed equally`;
+  document.getElementById('teamAssignPreview').style.display = 'none';
+  openModal('teamAssignModal');
+}
+
+async function confirmTeamAssign() {
+  const id = document.getElementById('teamAssignId').value;
+  const filter = document.getElementById('teamAssignFilter').value;
+  const btn = document.getElementById('teamAssignBtn');
+  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Assigning...';
+
+  const body = {};
+  if (filter === 'new') body.stage = 'new';
+  else if (filter === 'follow_up') body.stage = 'follow_up';
+
+  const r = await apiFetch('POST', `/teams/${id}/assign-leads`, body);
+  btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Assign Leads';
+
+  if (r.ok) {
+    showToast('success', r.data.message || 'Leads assigned!');
+    closeModal('teamAssignModal');
+    loadTeams(true);
+  } else {
+    showToast('error', r.error || 'Failed to assign leads.');
+  }
+}
+
+/* ============================================================
    SETTINGS
 ============================================================ */
 async function changeAdminPassword() {
@@ -9493,6 +9764,7 @@ const PAGE_META = {
   certificates: { title:'Certificates', sub:'Issue & Track' },
   institutions: { title:'Institutions', sub:'Partner Institutions' },
   partners: { title:'Associate Partners', sub:'Partner Network' },
+  teams:    { title:'Teams', sub:'Team Management & Lead Assignment' },
   donations:        { title:'Donations', sub:'Fund Tracking' },
   counselling_cert: { title:'Counselling & Certificates', sub:'Submissions · Reviews · Approvals' },
   content: { title:'Website Content', sub:'CMS' },
@@ -9525,6 +9797,7 @@ function navTo(page) {
     referrals:       'referrals.view',
     workshops:       'workshops.view',
     mobilization:    'mobilization.view',
+    teams:           'admin_management.view',
     counselling_cert:'counselling_cert.view',
   };
 
@@ -9579,6 +9852,7 @@ function navTo(page) {
 
 
   }
+  if (page === 'teams')             loadTeams(true);
   if (page === 'donations')         loadDonations(true);
   if (page === 'counselling_cert')  loadCounsellingCert();
   if (page === 'referrals')   loadReferrals();
