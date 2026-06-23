@@ -3134,6 +3134,7 @@ button:focus-visible,
                     <th>Priority</th>
                     <th>Assigned To</th>
                     <th>Imported From</th>
+                    <th>Import Date</th>
                     <th>Next Follow-up</th>
                     <th>Actions</th>
                   </tr>
@@ -11040,7 +11041,7 @@ function _renderCrmTable() {
   const tbody = document.getElementById('crmTableBody');
   if (!tbody) return;
   if (!CRM.leads.length) {
-    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--gray-400)"><i class="fa-solid fa-bullseye" style="margin-right:8px"></i>No leads found. <button class="btn btn-primary btn-sm" style="margin-left:12px" onclick="openAddLeadModal()">Add First Lead</button></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;padding:40px;color:var(--gray-400)"><i class="fa-solid fa-bullseye" style="margin-right:8px"></i>No leads found. <button class="btn btn-primary btn-sm" style="margin-left:12px" onclick="openAddLeadModal()">Add First Lead</button></td></tr>`;
     return;
   }
   const now = Date.now();
@@ -11055,7 +11056,7 @@ function _renderCrmTable() {
       return (now - lt) >= DAY7;
     });
     if (!leads.length) {
-      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--gray-400)"><i class="fa-solid fa-check-circle" style="color:var(--success);margin-right:8px"></i>No stale leads! All leads are active.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:40px;color:var(--gray-400)"><i class="fa-solid fa-check-circle" style="color:var(--success);margin-right:8px"></i>No stale leads! All leads are active.</td></tr>';
       return;
     }
   }
@@ -11093,6 +11094,7 @@ function _renderCrmTable() {
         <td><span class="prio-dot ${prioCls}"></span> <span style="font-size:12px;text-transform:capitalize">${l.priority}</span></td>
         <td style="font-size:12px">${assigned}</td>
         <td style="font-size:12px">${escHtml(l.createdBy ? (l.createdBy.fullName || l.createdBy.firstName || l.createdBy.email || '—') : '—')}</td>
+        <td style="font-size:11px;color:var(--gray-600);white-space:nowrap">${l.createdAt ? new Date(l.createdAt).toLocaleDateString('en-IN') : '—'}</td>
         <td style="font-size:12px;color:${overdue?'var(--danger)':'inherit'}">${overdue?'⚠️ ':''} ${fu}</td>
         <td>
           <div style="display:flex;gap:5px">
