@@ -2767,7 +2767,9 @@ button:focus-visible,
         <div class="section-hdr"><div><h3>Associate Partners</h3><p>Manage partner network and track their referral performance.</p></div><button class="btn btn-primary btn-sm" id="addPartnerBtn" onclick="openAddPartnerModal()"><i class="fa-solid fa-plus"></i> Add Partner</button></div>
         <div id="partRefPerf" style="margin-bottom:18px"></div>
 
-        <!-- Partner Lead Performance merged into upper cards -->
+        <!-- Partner Lead Performance from CRM -->
+        <div style="font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:8px"><i class="fa-solid fa-chart-bar" style="color:var(--royal)"></i> CRM Lead Performance</div>
+        <div id="partnerProgressGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:20px"></div>
 
         <div class="filter-bar"><div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="partnersSearch" placeholder="Search partners..." oninput="filterLiveTable('partners')"></div><button class="btn btn-outline btn-sm" onclick="loadPartners(true)"><i class="fa-solid fa-rotate"></i> Refresh</button></div>
         <div class="table-wrap"><table class="data-table"><thead><tr><th>#</th><th>Code</th><th>Organization</th><th>Contact Person</th><th>Email</th><th>Mobile</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody id="partnersTableBody"></tbody></table></div>
@@ -8202,6 +8204,7 @@ async function loadPartners(force = false) {
   const refMap = buildRefMap(refRes, 'partner');
   renderRefPerfPanel('partRefPerf', 'partner', refMap);
   renderPartners(LIVE.partners, refMap);
+  loadPartnerProgress();
 }
 
 async function loadReports(force = false) {
@@ -8750,12 +8753,14 @@ async function loadPartnerProgress() {
   }
 
   const STAGE_COLORS = {
-    new:'#2563eb', contacted:'#0284c7', interested:'#f97316',
-    applied:'#7c3aed', enrolled:'#0d9488', converted:'#16a34a', lost:'#6b7280'
+    new:'#2563eb', not_answering:'#DC2626', not_reachable:'#EA580C', call_back:'#0284c7',
+    follow_up:'#8B5CF6', interested:'#f97316', enrolled:'#0d9488', not_interested:'#6b7280',
+    contacted:'#0284c7', applied:'#7c3aed', converted:'#16a34a', lost:'#6b7280'
   };
   const STAGE_LABELS = {
-    new:'New', contacted:'Contacted', interested:'Interested',
-    applied:'Applied', enrolled:'Enrolled', converted:'Converted', lost:'Lost'
+    new:'New', not_answering:'Not Answering', not_reachable:'Not Reachable', call_back:'Call Back',
+    follow_up:'Follow Up', interested:'Interested', enrolled:'Enrolled', not_interested:'Not Interested',
+    contacted:'Contacted', applied:'Applied', converted:'Converted', lost:'Lost'
   };
 
   grid.innerHTML = partners.map(p => {
