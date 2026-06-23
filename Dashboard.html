@@ -10969,7 +10969,7 @@ function _crmAssignFilterPick(id, label) {
   if (clr) clr.style.display = id ? 'inline' : 'none';
   const dd = document.getElementById('crmAssignDropdown');
   if (dd) dd.style.display = 'none';
-  CRM.page = 1; _crmFetchList();
+  CRM.page = 1; _crmFetchList(); _crmRefreshStats();
 }
 
 function _crmAssignFilterClear() {
@@ -11006,19 +11006,34 @@ async function _crmFetchStats() {
   if (hotBadge && a.hot > 0) { hotBadge.textContent = a.hot; hotBadge.style.display = ''; }
 }
 
+async function _crmRefreshStats() {
+  const assignedTo = document.getElementById('crmFilterAssigned')?.value || '';
+  const importedBy = document.getElementById('crmFilterImportedBy')?.value || '';
+  let qs = '';
+  if (assignedTo) qs += '&assignedTo=' + assignedTo;
+  if (importedBy) qs += '&importedBy=' + importedBy;
+  const [funnelRes, analyticsRes] = await Promise.all([
+    apiFetch('GET', '/leads/funnel' + (qs ? '?' + qs.slice(1) : '')),
+    apiFetch('GET', '/leads/analytics' + (qs ? '?' + qs.slice(1) : '')),
+  ]);
+  const f = funnelRes.ok  ? funnelRes.data.data   : {};
+  const a = analyticsRes.ok ? analyticsRes.data.data : {};
+  _renderCrmStats(f, a);
+}
+
 function _renderCrmStats(f, a) {
   const grid = document.getElementById('crmStatRow');
   if (!grid) return;
   const cards = [
-    { lbl:'Total Leads',    val: f.total      || 0, icon:'fa-bullseye',       cls:'blue',   icoBg:'rgba(37,99,235,0.1)',   icoClr:'var(--royal)'   },
-    { lbl:'New',            val: (f.funnel?.find(x=>x.stage==='new')?.count)||0, icon:'fa-star', cls:'orange', icoBg:'rgba(249,115,22,0.1)', icoClr:'var(--orange)' },
-    { lbl:'Interested',     val: (f.funnel?.find(x=>x.stage==='interested')?.count)||0, icon:'fa-fire', cls:'gold', icoBg:'rgba(234,179,8,0.1)', icoClr:'var(--warning)' },
-    { lbl:'Converted',      val: f.converted  || 0, icon:'fa-circle-check',   cls:'green',  icoBg:'rgba(34,197,94,0.1)', icoClr:'var(--success)'  },
-    { lbl:'Conv. Rate',     val:(f.conversionRate||'0.0')+'%', icon:'fa-percent', cls:'purple', icoBg:'rgba(139,92,246,0.1)', icoClr:'#8B5CF6' },
-    { lbl:'Overdue',        val: a.overdueCount||0, icon:'fa-clock',           cls:'red',    icoBg:'rgba(239,68,68,0.1)', icoClr:'var(--danger)'  },
+    { lbl:'Total Leads',    val: f.total      || 0, icon:'fa-bullseye',       cls:'blue',   icoBg:'rgba(37,99,235,0.1)',   icoClr:'var(--royal)',   filter:''            },
+    { lbl:'New',            val: (f.funnel?.find(x=>x.stage==='new')?.count)||0, icon:'fa-star', cls:'orange', icoBg:'rgba(249,115,22,0.1)', icoClr:'var(--orange)', filter:'new' },
+    { lbl:'Interested',     val: (f.funnel?.find(x=>x.stage==='interested')?.count)||0, icon:'fa-fire', cls:'gold', icoBg:'rgba(234,179,8,0.1)', icoClr:'var(--warning)', filter:'interested' },
+    { lbl:'Follow Up',      val: (f.funnel?.find(x=>x.stage==='follow_up')?.count)||0, icon:'fa-calendar-check', cls:'purple', icoBg:'rgba(139,92,246,0.1)', icoClr:'#8B5CF6', filter:'follow_up' },
+    { lbl:'Converted',      val: f.converted  || 0, icon:'fa-circle-check',   cls:'green',  icoBg:'rgba(34,197,94,0.1)', icoClr:'var(--success)', filter:'enrolled' },
+    { lbl:'Overdue',        val: a.overdueCount||0, icon:'fa-clock',           cls:'red',    icoBg:'rgba(239,68,68,0.1)', icoClr:'var(--danger)',  filter:'_overdue' },
   ];
   grid.innerHTML = cards.map(c => `
-    <div class="crm-stat-card ${c.cls}">
+    <div class="crm-stat-card ${c.cls}" style="cursor:pointer;transition:.2s" onclick="crmCardFilter('${c.filter}')" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
       <div class="crm-stat-icon" style="background:${c.icoBg};color:${c.icoClr}"><i class="fa-solid ${c.icon}"></i></div>
       <div class="crm-stat-val">${c.val}</div>
       <div class="crm-stat-lbl">${c.lbl}</div>
@@ -11151,7 +11166,22 @@ function crmGoPage(p) {
   _crmFetchList();
 }
 
-function crmApplyFilters() { CRM.page = 1; _crmFetchList(); }
+function crmCardFilter(stage) {
+  const sel = document.getElementById('crmFilterStage');
+  if (!sel) return;
+  if (stage === '_overdue') {
+    sel.value = '';
+    CRM.sortBy = 'nextFollowUp'; CRM.sortOrder = 'asc';
+  } else {
+    sel.value = stage;
+    CRM.sortBy = 'createdAt'; CRM.sortOrder = 'desc';
+  }
+  CRM.page = 1;
+  _crmFetchList();
+  _crmRefreshStats();
+}
+
+function crmApplyFilters() { CRM.page = 1; _crmFetchList(); _crmRefreshStats(); }
 
 let _crmStaleFilter = false;
 function crmToggleStaleFilter() {
