@@ -2765,8 +2765,6 @@ button:focus-visible,
 
       <div class="page" id="page-partners">
         <div class="section-hdr"><div><h3>Associate Partners</h3><p>Manage partner network and track their referral performance.</p></div><button class="btn btn-primary btn-sm" id="addPartnerBtn" onclick="openAddPartnerModal()"><i class="fa-solid fa-plus"></i> Add Partner</button></div>
-        <div id="partRefPerf" style="margin-bottom:18px"></div>
-
         <!-- Partner Lead Performance from CRM -->
         <div style="font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:8px"><i class="fa-solid fa-chart-bar" style="color:var(--royal)"></i> CRM Lead Performance</div>
         <div id="partnerProgressGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:20px"></div>
@@ -8202,7 +8200,6 @@ async function loadPartners(force = false) {
   LIVE.loaded.partners = true;
 
   const refMap = buildRefMap(refRes, 'partner');
-  renderRefPerfPanel('partRefPerf', 'partner', refMap);
   renderPartners(LIVE.partners, refMap);
   loadPartnerProgress();
 }
