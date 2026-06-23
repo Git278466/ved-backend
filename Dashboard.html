@@ -482,29 +482,31 @@ button:focus-visible,
 .table-wrap{
   background:#fff;
   border-radius:var(--radius-lg);
-  box-shadow:var(--shadow-sm);
+  box-shadow:0 1px 4px rgba(10,22,40,.06),0 4px 16px rgba(10,22,40,.04);
   border:1px solid var(--gray-200);
   overflow-x:auto;
   overflow-y:hidden;
 }
 .data-table{width:100%;border-collapse:collapse;}
 .data-table thead th{
-  background:var(--navy);
-  color:rgba(255,255,255,0.7);
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);
+  color:rgba(255,255,255,0.85);
   font-size:11px;font-weight:700;
   letter-spacing:0.8px;text-transform:uppercase;
-  padding:13px 16px;
+  padding:14px 16px;
   text-align:left;
   white-space:nowrap;
+  position:sticky;top:0;z-index:2;
 }
-.data-table thead th:first-child{padding-left:20px;}
+.data-table thead th:first-child{padding-left:20px;border-radius:var(--radius-lg) 0 0 0;}
+.data-table thead th:last-child{border-radius:0 var(--radius-lg) 0 0;}
 .data-table tbody tr{
   border-bottom:1px solid var(--gray-100);
-  transition:var(--transition);
+  transition:all .18s ease;
 }
 .data-table tbody tr:last-child{border-bottom:none;}
-.data-table tbody tr:hover{background:rgba(37,99,235,0.03);}
-.data-table td{padding:13px 16px;font-size:13px;color:var(--gray-800);vertical-align:middle;}
+.data-table tbody tr:hover{background:rgba(37,99,235,0.04);box-shadow:inset 3px 0 0 var(--royal);}
+.data-table td{padding:14px 16px;font-size:13px;color:var(--gray-800);vertical-align:middle;}
 .data-table td:first-child{padding-left:20px;}
 
 /* =========================================================
@@ -1275,16 +1277,16 @@ button:focus-visible,
 .skel{height:13px;border-radius:6px;background:linear-gradient(90deg,var(--gray-100) 25%,var(--gray-200) 50%,var(--gray-100) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;}
 
 /* Pagination */
-.pagination{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid var(--gray-100);flex-wrap:wrap;gap:12px;}
-.pagination-info{font-size:12px;color:var(--gray-400);}
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-top:1px solid var(--gray-100);flex-wrap:wrap;gap:12px;background:#fafbfe;}
+.pagination-info{font-size:12px;color:var(--gray-600);font-weight:500;}
 .pagination-btns{display:flex;gap:5px;}
-.pg-btn{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:var(--transition);background:var(--gray-100);color:var(--gray-600);}
-.pg-btn:hover{background:var(--royal);color:#fff;}
-.pg-btn.active{background:var(--royal);color:#fff;box-shadow:0 2px 8px rgba(26,79,187,0.3);}
-.pg-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.pg-btn{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;cursor:pointer;border:1px solid transparent;font-family:inherit;transition:all .2s ease;background:var(--gray-100);color:var(--gray-600);}
+.pg-btn:hover{background:var(--royal);color:#fff;border-color:var(--royal);transform:translateY(-1px);}
+.pg-btn.active{background:var(--royal);color:#fff;box-shadow:0 2px 8px rgba(26,79,187,0.3);border-color:var(--royal);}
+.pg-btn:disabled{opacity:0.35;cursor:not-allowed;transform:none;}
 
 /* Bulk bar */
-.bulk-action-bar{background:linear-gradient(135deg,var(--navy),var(--navy-mid));border-radius:var(--radius-md);padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;animation:fadeIn 0.2s ease;}
+.bulk-action-bar{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);border-radius:var(--radius-md);padding:14px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px;animation:fadeIn 0.2s ease;box-shadow:0 4px 16px rgba(10,22,40,.2);}
 .bulk-count{font-size:13px;font-weight:700;color:#fff;display:flex;align-items:center;gap:7px;}
 .bulk-count span{background:var(--orange);color:#fff;padding:2px 8px;border-radius:10px;font-size:12px;}
 .bulk-actions{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;}
@@ -1384,53 +1386,56 @@ button:focus-visible,
 /* =========================================================
    CRM / LEADS
    ========================================================= */
-.crm-stat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
-.crm-stat-card{background:#fff;border-radius:var(--radius-md);border:1px solid var(--gray-200);padding:14px 16px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;}
-.crm-stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 var(--radius-md) var(--radius-md);}
-.crm-stat-card.blue::after{background:var(--royal);}
-.crm-stat-card.orange::after{background:var(--orange);}
-.crm-stat-card.green::after{background:var(--success);}
-.crm-stat-card.red::after{background:var(--danger);}
-.crm-stat-card.purple::after{background:#8B5CF6;}
-.crm-stat-card.gold::after{background:var(--warning);}
-.crm-stat-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;margin-bottom:10px;}
-.crm-stat-val{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:var(--navy);}
-.crm-stat-lbl{font-size:11px;color:var(--gray-400);margin-top:2px;}
+.crm-stat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px;margin-bottom:24px;}
+.crm-stat-card{background:#fff;border-radius:var(--radius-md);border:1px solid var(--gray-200);padding:18px 18px 16px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:all .25s cubic-bezier(.4,0,.2,1);}
+.crm-stat-card:hover{box-shadow:0 8px 24px rgba(10,22,40,.12);transform:translateY(-3px);}
+.crm-stat-card.active-filter{border-color:var(--royal);box-shadow:0 0 0 2px rgba(37,99,235,.18),var(--shadow-md);}
+.crm-stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3.5px;border-radius:0 0 var(--radius-md) var(--radius-md);}
+.crm-stat-card.blue::after{background:linear-gradient(90deg,var(--royal),#60a5fa);}
+.crm-stat-card.orange::after{background:linear-gradient(90deg,var(--orange),#fdba74);}
+.crm-stat-card.green::after{background:linear-gradient(90deg,var(--success),#86efac);}
+.crm-stat-card.red::after{background:linear-gradient(90deg,var(--danger),#fca5a5);}
+.crm-stat-card.purple::after{background:linear-gradient(90deg,#8B5CF6,#c4b5fd);}
+.crm-stat-card.gold::after{background:linear-gradient(90deg,var(--warning),#fde047);}
+.crm-stat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:12px;}
+.crm-stat-val{font-family:'Sora',sans-serif;font-size:26px;font-weight:800;color:var(--navy);line-height:1;}
+.crm-stat-lbl{font-size:11.5px;color:var(--gray-400);margin-top:4px;font-weight:500;letter-spacing:.2px;}
 
 /* Tabs */
-.crm-tabs{display:flex;gap:6px;margin-bottom:18px;background:var(--gray-100);padding:5px;border-radius:var(--radius-sm);width:fit-content;}
-.crm-tab{padding:8px 18px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--gray-600);font-family:inherit;display:flex;align-items:center;gap:7px;transition:var(--transition);}
-.crm-tab.active{background:#fff;color:var(--navy);box-shadow:var(--shadow-sm);}
-.crm-tab:hover:not(.active){color:var(--navy);}
+.crm-tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--gray-100);padding:4px;border-radius:10px;width:fit-content;border:1px solid var(--gray-200);}
+.crm-tab{padding:9px 22px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--gray-600);font-family:inherit;display:flex;align-items:center;gap:7px;transition:all .2s ease;}
+.crm-tab.active{background:#fff;color:var(--royal);box-shadow:0 2px 8px rgba(10,22,40,.08);}
+.crm-tab:hover:not(.active){color:var(--navy);background:rgba(255,255,255,.5);}
 
 /* Filter bar */
-.crm-filter-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
-.crm-filter-bar .form-select{width:auto;min-width:130px;padding:8px 12px;font-size:12px;}
-.crm-filter-bar .search-wrap{flex:1;min-width:180px;max-width:260px;}
+.crm-filter-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;background:#fff;padding:14px 16px;border-radius:var(--radius-md);border:1px solid var(--gray-200);box-shadow:0 1px 3px rgba(10,22,40,.04);}
+.crm-filter-bar .form-select{width:auto;min-width:135px;padding:9px 14px;font-size:12.5px;border-radius:8px;border:1.5px solid var(--gray-200);transition:all .2s;background:#fafbfe;}
+.crm-filter-bar .form-select:focus{border-color:var(--royal);box-shadow:0 0 0 3px rgba(37,99,235,.1);}
+.crm-filter-bar .search-wrap{flex:1;min-width:180px;max-width:280px;}
 
 /* Score system removed */
 
 /* Stage badge */
-.stage-badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
-.stage-not-answering{background:rgba(220,38,38,0.1);color:#DC2626;}
-.stage-not-reachable{background:rgba(234,88,12,0.1);color:#EA580C;}
-.stage-call-back{background:rgba(2,132,199,0.1);color:#0284C7;}
-.stage-interested{background:rgba(249,115,22,0.12);color:var(--orange);}
-.stage-enrolled{background:rgba(20,184,166,0.12);color:#0D9488;}
-.stage-not-interested{background:rgba(107,114,128,0.12);color:#4B5563;}
-.stage-follow-up{background:rgba(139,92,246,0.1);color:#8B5CF6;}
+.stage-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.15px;}
+.stage-not-answering{background:rgba(220,38,38,0.08);color:#DC2626;border:1px solid rgba(220,38,38,.15);}
+.stage-not-reachable{background:rgba(234,88,12,0.08);color:#EA580C;border:1px solid rgba(234,88,12,.15);}
+.stage-call-back{background:rgba(2,132,199,0.08);color:#0284C7;border:1px solid rgba(2,132,199,.15);}
+.stage-interested{background:rgba(249,115,22,0.1);color:var(--orange);border:1px solid rgba(249,115,22,.15);}
+.stage-enrolled{background:rgba(20,184,166,0.1);color:#0D9488;border:1px solid rgba(20,184,166,.15);}
+.stage-not-interested{background:rgba(107,114,128,0.1);color:#4B5563;border:1px solid rgba(107,114,128,.15);}
+.stage-follow-up{background:rgba(139,92,246,0.08);color:#8B5CF6;border:1px solid rgba(139,92,246,.15);}
 /* legacy aliases */
-.stage-new{background:rgba(59,130,246,0.1);color:#3B82F6;}
-.stage-contacted{background:rgba(2,132,199,0.1);color:#0284C7;}
-.stage-applied{background:rgba(249,115,22,0.12);color:var(--orange);}
-.stage-converted{background:rgba(20,184,166,0.12);color:#0D9488;}
-.stage-lost{background:rgba(107,114,128,0.12);color:#4B5563;}
+.stage-new{background:rgba(59,130,246,0.08);color:#3B82F6;border:1px solid rgba(59,130,246,.15);}
+.stage-contacted{background:rgba(2,132,199,0.08);color:#0284C7;border:1px solid rgba(2,132,199,.15);}
+.stage-applied{background:rgba(249,115,22,0.1);color:var(--orange);border:1px solid rgba(249,115,22,.15);}
+.stage-converted{background:rgba(20,184,166,0.1);color:#0D9488;border:1px solid rgba(20,184,166,.15);}
+.stage-lost{background:rgba(107,114,128,0.1);color:#4B5563;border:1px solid rgba(107,114,128,.15);}
 
 /* Priority dot */
-.prio-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0;}
-.prio-high{background:var(--danger);}
-.prio-medium{background:var(--warning);}
-.prio-low{background:var(--gray-400);}
+.prio-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0;box-shadow:0 0 0 2px rgba(0,0,0,.06);}
+.prio-high{background:var(--danger);box-shadow:0 0 0 2px rgba(239,68,68,.2);}
+.prio-medium{background:var(--warning);box-shadow:0 0 0 2px rgba(234,179,8,.2);}
+.prio-low{background:var(--gray-400);box-shadow:0 0 0 2px rgba(148,163,192,.2);}
 
 /* Kanban */
 .crm-kanban{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;align-items:start;}
@@ -1446,16 +1451,17 @@ button:focus-visible,
 
 /* Analytics */
 .crm-analytics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;}
-.crm-chart-card{background:#fff;border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:var(--shadow-sm);padding:18px;}
-.crm-chart-title{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-.crm-chart-title i{color:var(--royal);}
+.crm-chart-card{background:#fff;border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:0 1px 4px rgba(10,22,40,.05);padding:20px;transition:box-shadow .2s;}
+.crm-chart-card:hover{box-shadow:0 4px 16px rgba(10,22,40,.08);}
+.crm-chart-title{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--gray-100);}
+.crm-chart-title i{color:var(--royal);font-size:14px;}
 .crm-funnel-bar{display:flex;flex-direction:column;gap:10px;}
-.crm-funnel-row{display:flex;align-items:center;gap:10px;}
-.crm-funnel-label{width:90px;font-size:11px;color:var(--gray-600);font-weight:600;flex-shrink:0;}
-.crm-funnel-track{flex:1;height:22px;background:var(--gray-100);border-radius:6px;overflow:hidden;position:relative;}
-.crm-funnel-fill{height:100%;border-radius:6px;transition:width 0.6s cubic-bezier(0.4,0,0.2,1);display:flex;align-items:center;padding-left:8px;}
-.crm-funnel-fill span{font-size:10px;font-weight:700;color:#fff;}
-.crm-funnel-count{width:32px;font-size:11px;font-weight:700;color:var(--navy);text-align:right;flex-shrink:0;}
+.crm-funnel-row{display:flex;align-items:center;gap:12px;padding:4px 0;}
+.crm-funnel-label{width:95px;font-size:11.5px;color:var(--gray-600);font-weight:600;flex-shrink:0;}
+.crm-funnel-track{flex:1;height:26px;background:var(--gray-100);border-radius:8px;overflow:hidden;position:relative;}
+.crm-funnel-fill{height:100%;border-radius:8px;transition:width 0.6s cubic-bezier(0.4,0,0.2,1);display:flex;align-items:center;padding-left:10px;min-width:fit-content;}
+.crm-funnel-fill span{font-size:10.5px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.15);}
+.crm-funnel-count{width:36px;font-size:12px;font-weight:800;color:var(--navy);text-align:right;flex-shrink:0;}
 
 /* Activity timeline */
 .timeline-item{display:flex;gap:10px;font-size:12px;}
@@ -3030,17 +3036,17 @@ button:focus-visible,
       <div class="page" id="page-crm">
 
         <!-- Header -->
-        <div class="section-hdr">
+        <div class="section-hdr" style="background:#fff;padding:20px 24px;border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:0 1px 3px rgba(10,22,40,.04);margin-bottom:20px">
           <div>
-            <h3>CRM &amp; Lead Management</h3>
-            <p>Capture, score, track and convert leads into enrolled students.</p>
+            <h3 style="font-size:18px;display:flex;align-items:center;gap:10px"><i class="fa-solid fa-chart-line" style="color:var(--royal);font-size:16px"></i> CRM &amp; Lead Management</h3>
+            <p style="margin-top:4px">Capture, track and convert leads into enrolled students.</p>
           </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-outline btn-sm" onclick="crmRefresh()"><i class="fa-solid fa-rotate"></i> Refresh</button>
-            <button class="btn btn-outline btn-sm" id="exportLeadsBtn" onclick="exportLeadsToExcel()"><i class="fa-solid fa-file-excel" style="color:#16a34a"></i> Export</button>
-            <button class="btn btn-outline btn-sm" id="exportDeleteLeadsBtn" onclick="openExportDeleteModal()" style="display:none"><i class="fa-solid fa-file-export" style="color:#dc2626"></i> Export &amp; Delete</button>
-            <button class="btn btn-outline btn-sm" onclick="openImportLeadsModal()"><i class="fa-solid fa-file-import" style="color:#7c3aed"></i> Import</button>
-            <button class="btn btn-primary btn-sm" onclick="openAddLeadModal()"><i class="fa-solid fa-plus"></i> Add Lead</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <button class="btn btn-ghost btn-sm" onclick="crmRefresh()" style="border-radius:8px"><i class="fa-solid fa-rotate"></i> Refresh</button>
+            <button class="btn btn-outline btn-sm" id="exportLeadsBtn" onclick="exportLeadsToExcel()" style="border-radius:8px"><i class="fa-solid fa-file-excel" style="color:#16a34a"></i> Export</button>
+            <button class="btn btn-outline btn-sm" id="exportDeleteLeadsBtn" onclick="openExportDeleteModal()" style="display:none;border-radius:8px"><i class="fa-solid fa-file-export" style="color:#dc2626"></i> Export &amp; Delete</button>
+            <button class="btn btn-outline btn-sm" onclick="openImportLeadsModal()" style="border-radius:8px"><i class="fa-solid fa-file-import" style="color:#7c3aed"></i> Import</button>
+            <button class="btn btn-primary btn-sm" onclick="openAddLeadModal()" style="border-radius:8px;padding:8px 18px"><i class="fa-solid fa-plus"></i> Add Lead</button>
           </div>
         </div>
 
@@ -3104,10 +3110,10 @@ button:focus-visible,
             <select class="form-select" id="crmFilterImportedBy" onchange="crmApplyFilters()" style="display:none;min-width:190px;max-width:240px">
               <option value="">Imported from</option>
             </select>
-            <button class="btn btn-ghost btn-sm" id="crmStaleBtn" onclick="crmToggleStaleFilter()" title="Show only stale leads (7+ days inactive)" style="border:1px solid #f59e0b;color:#b45309;border-radius:6px">
+            <button class="btn btn-ghost btn-sm" id="crmStaleBtn" onclick="crmToggleStaleFilter()" title="Show only stale leads (7+ days inactive)" style="border:1.5px solid #f59e0b;color:#b45309;border-radius:8px;background:rgba(245,158,11,.06)">
               <i class="fa-solid fa-clock-rotate-left"></i> Stale
             </button>
-            <button class="btn btn-ghost btn-sm" onclick="crmResetFilters()"><i class="fa-solid fa-rotate"></i> Reset</button>
+            <button class="btn btn-ghost btn-sm" onclick="crmResetFilters()" style="border-radius:8px"><i class="fa-solid fa-rotate"></i> Reset</button>
           </div>
 
           <!-- Bulk bar -->
@@ -11033,8 +11039,10 @@ function _renderCrmStats(f, a) {
     { lbl:'Overdue',        val: a.overdueCount||0, icon:'fa-clock',           cls:'red',    icoBg:'rgba(239,68,68,0.1)', icoClr:'var(--danger)',  filter:'_overdue' },
   ];
   grid.innerHTML = cards.map(c => `
-    <div class="crm-stat-card ${c.cls}" style="cursor:pointer;transition:.2s" onclick="crmCardFilter('${c.filter}')" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-      <div class="crm-stat-icon" style="background:${c.icoBg};color:${c.icoClr}"><i class="fa-solid ${c.icon}"></i></div>
+    <div class="crm-stat-card ${c.cls}" style="cursor:pointer" onclick="crmCardFilter('${c.filter}')">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div class="crm-stat-icon" style="background:${c.icoBg};color:${c.icoClr}"><i class="fa-solid ${c.icon}"></i></div>
+      </div>
       <div class="crm-stat-val">${c.val}</div>
       <div class="crm-stat-lbl">${c.lbl}</div>
     </div>`).join('');
@@ -11110,17 +11118,18 @@ function _renderCrmTable() {
     return `
       <tr data-id="${l._id}" style="${staleBg}">
         <td><input type="checkbox" class="crm-row-check" data-id="${l._id}" ${checked} onchange="crmRowCheck(this,'${l._id}')" style="accent-color:var(--orange);width:14px;height:14px"/></td>
-        <td><strong style="cursor:pointer;color:var(--royal)" onclick="openLeadDetail('${l._id}')">${escHtml(l.name)}</strong>${staleTag}</td>
+        <td><strong style="cursor:pointer;color:var(--royal);transition:color .15s" onmouseover="this.style.color='#1d4ed8'" onmouseout="this.style.color='var(--royal)'" onclick="openLeadDetail('${l._id}')">${escHtml(l.name)}</strong>${staleTag}</td>
         <td style="font-size:12px">${escHtml(l.mobile||'—')}</td>
         <td style="font-size:11px;color:var(--gray-600);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escHtml(l.email||'')}">${escHtml(l.email||'—')}</td>
         <td style="font-size:12px;color:var(--gray-600)">${escHtml(l.city||'—')}</td>
         <td style="font-size:11px;color:var(--gray-600);max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escHtml(l.courseInterest||'')}">${escHtml(l.courseInterest||'—')}</td>
-        <td><span class="badge badge-blue" style="font-size:10px">${SOURCE_LABELS[l.source]||l.source}</span></td>
+        <td><span class="badge badge-blue" style="font-size:10px;border:1px solid rgba(37,99,235,.12);letter-spacing:.2px">${SOURCE_LABELS[l.source]||l.source}</span></td>
         <td>
-          <select style="font-size:11px;padding:4px 8px;border-radius:20px;border:1px solid #e5e7eb;
+          <select style="font-size:11px;padding:5px 10px;border-radius:20px;border:1.5px solid ${(STAGE_CFG[l.stage||'new']||{}).color||'#3B82F6'}22;
                          color:${(STAGE_CFG[l.stage||'new']||{}).color||'#3B82F6'};
-                         background:${l.stage && STAGE_CFG[l.stage] ? STAGE_CFG[l.stage].cls.replace('stage-','') : ''};
-                         font-weight:700;cursor:pointer;min-width:110px;appearance:auto"
+                         background:${(STAGE_CFG[l.stage||'new']||{}).color||'#3B82F6'}0d;
+                         font-weight:700;cursor:pointer;min-width:120px;appearance:auto;outline:none;transition:all .2s"
+                  onfocus="this.style.boxShadow='0 0 0 3px '+(this.style.color||'#3B82F6')+'18'" onblur="this.style.boxShadow='none'"
                   onchange="crmInlineStageUpdate('${l._id}', this.value, this)">
             ${Object.entries(STAGE_CFG).filter(([k]) => !['contacted','applied','converted','lost'].includes(k)).map(([val, meta]) =>
               `<option value="${val}" ${(l.stage||'new') === val ? 'selected' : ''} style="color:${meta.color}">${meta.label}</option>`
@@ -11133,9 +11142,9 @@ function _renderCrmTable() {
         <td style="font-size:11px;color:var(--gray-600);white-space:nowrap">${formatDateTime(l.createdAt)}</td>
         <td style="font-size:12px;color:${overdue?'var(--danger)':'inherit'}">${overdue?'⚠️ ':''} ${fu}</td>
         <td>
-          <div style="display:flex;gap:5px">
-            <button class="btn btn-ghost btn-sm" onclick="openEditLead('${l._id}')" title="Edit"><i class="fa-solid fa-pen"></i></button>
-            <button class="btn btn-ghost btn-sm" onclick="deleteLead('${l._id}')" title="Delete" style="color:var(--danger)"><i class="fa-solid fa-trash"></i></button>
+          <div style="display:flex;gap:4px">
+            <button class="btn btn-ghost btn-sm" onclick="openEditLead('${l._id}')" title="Edit" style="border-radius:8px;padding:6px 8px;font-size:12px"><i class="fa-solid fa-pen"></i></button>
+            <button class="btn btn-ghost btn-sm" onclick="deleteLead('${l._id}')" title="Delete" style="color:var(--danger);border-radius:8px;padding:6px 8px;font-size:12px"><i class="fa-solid fa-trash"></i></button>
           </div>
         </td>
       </tr>`;
