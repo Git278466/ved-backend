@@ -8,11 +8,20 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="VED Admin"/>
 <meta name="application-name" content="VED Admin"/>
-<meta name="theme-color" content="#1A4FBB"/>
+<meta name="theme-color" content="#1A4FBB" id="metaThemeColor"/>
 <meta name="msapplication-TileColor" content="#0A1628"/>
 <meta name="description" content="VED Foundation Admin Portal — manage students, leads, donations and certificates."/>
 <title>VED Foundation — Admin Dashboard</title>
 <link rel="manifest" href="/manifest.json"/>
+<script>
+(function(){
+  var t=localStorage.getItem('ved-theme');
+  if(!t){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';}
+  document.documentElement.setAttribute('data-theme',t);
+  var m=document.querySelector('#metaThemeColor');
+  if(m)m.setAttribute('content',t==='dark'?'#0B1120':'#1A4FBB');
+})();
+</script>
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%230A1628'/%3E%3Crect x='28' y='28' width='60' height='60' rx='12' fill='%23F97316'/%3E%3Crect x='104' y='28' width='60' height='60' rx='12' fill='rgba(255,255,255,0.15)'/%3E%3Crect x='28' y='104' width='60' height='60' rx='12' fill='rgba(255,255,255,0.15)'/%3E%3Crect x='104' y='104' width='60' height='60' rx='12' fill='rgba(255,255,255,0.08)'/%3E%3Ctext x='96' y='108' font-family='Arial,sans-serif' font-size='48' font-weight='800' fill='white' text-anchor='middle' dominant-baseline='middle' opacity='0.9'%3EVF%3C/text%3E%3C/svg%3E"/>
 <link rel="icon" type="image/jpeg" href="vedlogo.jpeg"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -61,8 +70,113 @@
   --transition:  background-color 0.22s cubic-bezier(0.4,0,0.2,1), color 0.22s cubic-bezier(0.4,0,0.2,1), transform 0.22s cubic-bezier(0.4,0,0.2,1), opacity 0.22s cubic-bezier(0.4,0,0.2,1), border-color 0.22s cubic-bezier(0.4,0,0.2,1), box-shadow 0.22s cubic-bezier(0.4,0,0.2,1);
 }
 
+/* ── Dark theme overrides ── */
+[data-theme="dark"] {
+  --navy:        #0B1120;
+  --navy-mid:    #111827;
+  --navy-light:  #1E293B;
+  --royal:       #3B82F6;
+  --royal-light: #60A5FA;
+  --royal-glow:  rgba(59,130,246,0.22);
+  --orange:      #FB923C;
+  --orange-light:#FDBA74;
+  --orange-glow: rgba(251,146,60,0.18);
+  --white:       #F8FAFC;
+  --off-white:   #0F172A;
+  --gray-100:    #1E293B;
+  --gray-200:    #334155;
+  --gray-400:    #94A3B8;
+  --gray-600:    #CBD5E1;
+  --gray-800:    #E2E8F0;
+  --success:     #4ADE80;
+  --warning:     #FACC15;
+  --danger:      #F87171;
+  --info:        #38BDF8;
+  --shadow-sm:   0 2px 8px rgba(0,0,0,0.25);
+  --shadow-md:   0 4px 20px rgba(0,0,0,0.35);
+  --shadow-lg:   0 8px 40px rgba(0,0,0,0.45);
+}
+[data-theme="dark"] body{background:var(--off-white);color:var(--gray-800);}
+[data-theme="dark"] .header{background:var(--navy-mid);border-bottom-color:var(--gray-200);}
+[data-theme="dark"] .header-title{color:var(--white);}
+[data-theme="dark"] .hdr-btn{background:var(--gray-100);color:var(--gray-400);}
+[data-theme="dark"] .hdr-btn:hover{background:var(--gray-200);color:var(--white);}
+[data-theme="dark"] .hdr-avatar{border-color:var(--gray-200);}
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .table-wrap,
+[data-theme="dark"] .crm-chart-card,
+[data-theme="dark"] .crm-stat-card{background:var(--navy-mid);border-color:var(--gray-200);color:var(--gray-800);}
+[data-theme="dark"] .stat-value,
+[data-theme="dark"] .crm-stat-val{color:var(--white);}
+[data-theme="dark"] .data-table thead th{background:var(--navy);color:rgba(255,255,255,0.7);}
+[data-theme="dark"] .data-table tbody tr{border-bottom-color:var(--gray-200);}
+[data-theme="dark"] .data-table tbody tr:hover{background:rgba(59,130,246,0.06);}
+[data-theme="dark"] .data-table td{color:var(--gray-600);}
+[data-theme="dark"] .section-hdr h3{color:var(--white);}
+[data-theme="dark"] .modal-box{background:var(--navy-mid);border-color:var(--gray-200);}
+[data-theme="dark"] .modal-head{border-bottom-color:var(--gray-200);}
+[data-theme="dark"] .modal-head h3{color:var(--white);}
+[data-theme="dark"] .form-input,
+[data-theme="dark"] .form-select{background:var(--navy);border-color:var(--gray-200);color:var(--gray-800);}
+[data-theme="dark"] .form-label{color:var(--gray-400);}
+[data-theme="dark"] .btn-outline{color:var(--royal-light);border-color:var(--gray-200);}
+[data-theme="dark"] .btn-outline:hover{border-color:var(--royal);background:rgba(59,130,246,0.1);}
+[data-theme="dark"] .btn-ghost{background:var(--gray-100);color:var(--gray-400);}
+[data-theme="dark"] .btn-ghost:hover{background:var(--gray-200);color:var(--white);}
+[data-theme="dark"] .hdr-notif-panel,
+[data-theme="dark"] .hdr-profile-panel{background:var(--navy-mid);border-color:var(--gray-200);}
+[data-theme="dark"] .hdr-menu-item:hover{background:var(--gray-100);}
+[data-theme="dark"] .badge-blue{background:rgba(59,130,246,0.15);color:var(--royal-light);}
+[data-theme="dark"] .search-wrap input{background:var(--navy);border-color:var(--gray-200);color:var(--gray-800);}
+[data-theme="dark"] .pagination{background:var(--navy-mid);border-top-color:var(--gray-200);}
+[data-theme="dark"] .pg-btn{background:var(--gray-100);color:var(--gray-400);}
+[data-theme="dark"] .crm-tabs{background:var(--gray-100);border-color:var(--gray-200);}
+[data-theme="dark"] .crm-tab.active{background:var(--navy-mid);color:var(--royal-light);}
+[data-theme="dark"] .crm-filter-bar{background:var(--navy-mid);border-color:var(--gray-200);}
+[data-theme="dark"] .crm-filter-bar .form-select{background:var(--navy);border-color:var(--gray-200);color:var(--gray-600);}
+[data-theme="dark"] .bulk-action-bar{background:linear-gradient(135deg,#1E293B,#0F172A);}
+[data-theme="dark"] .role-card{background:var(--navy-mid);border-color:var(--gray-200);}
+[data-theme="dark"] .hdr-btn .dot{border-color:var(--navy-mid);}
+[data-theme="dark"] ::-webkit-scrollbar-thumb{background:var(--gray-200);}
+[data-theme="dark"] .filter-bar{background:var(--navy-mid);}
+[data-theme="dark"] .breadcrumb span{color:var(--gray-400);}
+[data-theme="dark"] .modal-header{border-bottom-color:var(--gray-200);}
+[data-theme="dark"] .modal-header h3{color:var(--white);}
+[data-theme="dark"] .modal-close{background:var(--gray-100);color:var(--gray-400);}
+[data-theme="dark"] .modal-body{color:var(--gray-600);}
+[data-theme="dark"] .modal-footer{border-top-color:var(--gray-200);}
+[data-theme="dark"] .modal-overlay{background:rgba(0,0,0,0.7);}
+[data-theme="dark"] .hdr-profile-name{color:var(--white);}
+[data-theme="dark"] .hdr-notif-item{border-bottom-color:var(--gray-200);}
+[data-theme="dark"] .hdr-menu-divider{background:var(--gray-200);}
+[data-theme="dark"] .sidebar-user{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.08);}
+[data-theme="dark"] .stat-label{color:var(--gray-400);}
+[data-theme="dark"] .section-hdr p{color:var(--gray-400);}
+[data-theme="dark"] strong[style*="color:var(--royal)"]{color:var(--royal-light) !important;}
+[data-theme="dark"] .uid-badge{background:var(--gray-100);color:var(--gray-400);}
+[data-theme="dark"] .hdr-panel-head{border-bottom-color:var(--gray-200);}
+[data-theme="dark"] .hdr-panel-head h4{color:var(--white);}
+[data-theme="dark"] .stage-badge{opacity:0.9;}
+[data-theme="dark"] select{color-scheme:dark;}
+
+/* ── Theme toggle button ── */
+.theme-toggle{
+  width:38px;height:38px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;color:var(--gray-600);
+  background:var(--gray-100);
+  transition:var(--transition);
+  cursor:pointer;border:none;
+}
+.theme-toggle:hover{background:var(--gray-200);color:var(--navy);}
+[data-theme="dark"] .theme-toggle{color:var(--warning);}
+.theme-toggle .fa-sun{display:none;}
+.theme-toggle .fa-moon{display:inline;}
+[data-theme="dark"] .theme-toggle .fa-sun{display:inline;}
+[data-theme="dark"] .theme-toggle .fa-moon{display:none;}
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:auto;}
+html{scroll-behavior:auto;transition:background-color 0.3s ease,color 0.3s ease;}
 body{
   font-family:'DM Sans',sans-serif;
   background:var(--off-white);
@@ -2035,6 +2149,10 @@ button:focus-visible,
 
         <button class="hdr-btn" title="Help" onclick="openHelpModal()">
           <i class="fa-solid fa-circle-question"></i>
+        </button>
+
+        <button class="theme-toggle" id="themeToggleBtn" title="Toggle Dark/Light Mode" aria-label="Toggle dark mode" onclick="toggleTheme()">
+          <i class="fa-solid fa-moon"></i><i class="fa-solid fa-sun"></i>
         </button>
 
         <div class="hdr-panel-wrap">
@@ -9895,6 +10013,16 @@ function navTo(page) {
 let sidebarOpen = true;
 
 function _isMobile() { return window.innerWidth <= 768; }
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const cur = html.getAttribute('data-theme') || 'light';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('ved-theme', next);
+  const m = document.getElementById('metaThemeColor');
+  if (m) m.setAttribute('content', next === 'dark' ? '#0B1120' : '#1A4FBB');
+}
 
 function toggleSidebar() {
   sidebarOpen = !sidebarOpen;
