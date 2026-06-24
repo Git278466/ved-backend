@@ -241,7 +241,6 @@ img{max-width:100%;}
   z-index:100;
   box-shadow:4px 0 24px rgba(0,0,0,0.18);
   overflow:hidden;
-  will-change:width;
   transform:translateZ(0);
 }
 .sidebar.collapsed{width:var(--sidebar-collapsed);}
@@ -464,8 +463,8 @@ img{max-width:100%;}
   flex:1;overflow-y:auto;
   padding:var(--space-6);
 }
-.page{display:none;}
-.page.active{display:block;animation:fadeIn 0.28s ease;}
+.page{display:none;contain:content;}
+.page.active{display:block;contain:style;animation:fadeIn 0.18s ease;}
 
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 
@@ -506,7 +505,7 @@ img{max-width:100%;}
 .stat-card.gold::before{background:linear-gradient(90deg,var(--warning),#FDE047);}
 .stat-card.indigo::before{background:linear-gradient(90deg,#4F46E5,#818CF8);}
 
-.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);will-change:transform;}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
 
 .stat-icon{
   width:40px;height:40px;border-radius:var(--radius-sm);
@@ -5854,8 +5853,11 @@ async function apiFetch(method, path, body = null, _retry = 0) {
   if (body)  options.body = JSON.stringify(body);
 
   const _doFetch = async () => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
     try {
-      const res = await fetch(`${CONFIG.BASE_URL}${cleanPath}`, options);
+      const res = await fetch(`${CONFIG.BASE_URL}${cleanPath}`, { ...options, signal: controller.signal });
+      clearTimeout(timeoutId);
 
       let data = {};
       try { data = await res.json(); } catch { data = {}; }
@@ -5876,14 +5878,15 @@ async function apiFetch(method, path, body = null, _retry = 0) {
       return result;
 
     } catch (err) {
-      // Network error — retry GET requests up to 2 times with backoff
+      clearTimeout(timeoutId);
       if (_retry < 2 && method === 'GET') {
         await new Promise(r => setTimeout(r, 800 * (_retry + 1)));
         return apiFetch(method, path, body, _retry + 1);
       }
       console.error('API Fetch Error:', err);
       _setServerStatus(false);
-      return { ok: false, status: 0, data: null, error: 'Server unreachable.' };
+      const msg = err.name === 'AbortError' ? 'Request timed out.' : 'Server unreachable.';
+      return { ok: false, status: 0, data: null, error: msg };
     } finally {
       if (cacheKey) delete _pendingRequests[cacheKey];
     }
@@ -8318,9 +8321,8 @@ async function loadPartners(force = false) {
   if (LIVE.loaded.partners && !force) return;
   setTableLoading('partnersTableBody', 9, 'Loading partners...');
 
-  const [r, adminsRes, refRes] = await Promise.all([
+  const [r, refRes] = await Promise.all([
     apiFetch('GET', '/partners'),
-    apiFetch('GET', '/admins'),
     apiFetch('GET', '/referrers'),
   ]);
 
@@ -8329,10 +8331,12 @@ async function loadPartners(force = false) {
     ? unwrapArray(r.data, ['partners', 'associatePartners', 'records', 'items', 'data'])
     : [];
 
-  // Admin accounts with "Associate Partner" role — map to partner shape
-  const allAdmins = adminsRes.ok
-    ? unwrapArray(adminsRes.data, ['admins', 'records', 'items', 'data'])
-    : [];
+  // Admin accounts with "Associate Partner" role — reuse state.admins if available
+  let allAdmins = state.admins || [];
+  if (!allAdmins.length) {
+    const adminsRes = await apiFetch('GET', '/admins');
+    allAdmins = adminsRes.ok ? unwrapArray(adminsRes.data, ['admins', 'records', 'items', 'data']) : [];
+  }
   const apAdmins = allAdmins
     .filter(a => {
       const rn = (a.role?.name || a.roleName || '').toLowerCase();
@@ -8535,7 +8539,6 @@ async function fetchCurrentUser() {
 
     saveUser(user);
     updateUserUI(user);
-    applySidebarPermissions();
 
     return user;
   }
@@ -8546,7 +8549,6 @@ async function fetchCurrentUser() {
     state.currentUser = saved;
     state.currentUserRole = saved.role || null;
     updateUserUI(saved);
-    applySidebarPermissions();
     return saved;
   }
 
@@ -8572,7 +8574,6 @@ async function fetchRoles() {
   renderRolesPage();
   populateRoleDropdowns();
   renderOverviewRoleSummary();
-  updateOverviewStats();
 }
 
 async function createRole(payload) {
@@ -8628,7 +8629,6 @@ async function fetchAdmins() {
   }
 
   renderAdminsTable();
-  updateOverviewStats();
 }
 
 async function createAdmin(payload, successMsg = 'Admin created successfully!') {
@@ -8769,42 +8769,43 @@ function _renderStatCards(stats, stale = false) {
 }
 
 let _statsDebounceTimer = null;
-async function updateOverviewStats() {
-  // Debounce: fetchRoles(), fetchAdmins(), and init() all call this within ms of each other.
-  // Coalesce them into a single update 80ms after the last call.
+let _statsGeneration = 0;
+function updateOverviewStats() {
   clearTimeout(_statsDebounceTimer);
-  await new Promise(resolve => { _statsDebounceTimer = setTimeout(resolve, 80); });
+  _statsDebounceTimer = setTimeout(_doUpdateOverviewStats, 80);
+}
+async function _doUpdateOverviewStats() {
+  const gen = ++_statsGeneration;
 
-  // 1. Show cached data instantly (no blank zeros on hard refresh)
   const cached = _loadStatsCache();
   if (cached) {
-    _renderStatCards(cached, true); // stale=true shows "Syncing…"
+    _renderStatCards(cached, true);
     renderBarChart(cached.monthlyTrend);
   }
 
-  // 2. Fetch fresh data from server
   const statsRes = await apiFetch('GET', '/dashboard/stats');
+  if (gen !== _statsGeneration) return;
 
   let stats = cached || {};
 
   if (statsRes.ok) {
     stats = statsRes.data.data || statsRes.data.stats || statsRes.data;
-    _saveStatsCache(stats); // persist for next hard refresh
+    _saveStatsCache(stats);
   }
 
-  // 3. Render with fresh (or best available) data
   _renderStatCards(stats, false);
   renderBarChart(stats.monthlyTrend);
-  loadRecentActivity();
 
-  // Admin Activity Tracker
-  const actSection = document.getElementById('adminActivitySection');
-  if (actSection) {
-    if (canDo('admin_management', 'view')) {
-      actSection.style.display = '';
-      loadAdminActivity();
-    } else {
-      actSection.style.display = 'none';
+  if (state.currentPage === 'overview') {
+    loadRecentActivity();
+    const actSection = document.getElementById('adminActivitySection');
+    if (actSection) {
+      if (canDo('admin_management', 'view')) {
+        actSection.style.display = '';
+        loadAdminActivity();
+      } else {
+        actSection.style.display = 'none';
+      }
     }
   }
 }
@@ -9962,6 +9963,7 @@ const PAGE_META = {
 };
 
 function navTo(page) {
+  if (page === state.currentPage && page !== 'overview') return;
   const permMap = {
     roles:           'roles.view',
     admins:          'admin_management.view',
@@ -10240,18 +10242,22 @@ async function init() {
     // Load overview stats (non-blocking — fire and forget for UI)
     updateOverviewStats();
 
+    // Start polling only after auth is confirmed
+    _startPolling();
+
     // Auto-refresh admin activity every 60s — store ID for cleanup
     let _activityRunning = false;
+    if (window._activityInterval) clearInterval(window._activityInterval);
     window._activityInterval = setInterval(() => {
       if (_activityRunning || document.hidden) return;
-      if (document.getElementById('page-overview')?.classList.contains('active')) {
+      if (state.currentPage === 'overview') {
         _activityRunning = true;
         loadAdminActivity().finally(() => { _activityRunning = false; });
       }
     }, 60000);
 
-  wireDashboardAccessibility();
-  applyDashboardPerformanceHints();
+    wireDashboardAccessibility();
+    applyDashboardPerformanceHints();
 
   } catch (err) {
     console.error('Init error:', err);
@@ -10287,7 +10293,7 @@ function applyDashboardPerformanceHints() {
 
 document.addEventListener('DOMContentLoaded', init);
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && getToken()) {
+  if (!document.hidden && getToken() && state.currentPage === 'overview') {
     updateOverviewStats();
   }
 });
@@ -11020,8 +11026,12 @@ async function initCRM() {
 }
 
 async function _crmLoadAdmins() {
-  const r = await apiFetch('GET', '/admins?limit=100');
-  CRM.admins = r.ok ? (r.data.admins || r.data.data || []) : [];
+  if (state.admins && state.admins.length) {
+    CRM.admins = state.admins;
+  } else {
+    const r = await apiFetch('GET', '/admins?limit=100');
+    CRM.admins = r.ok ? (r.data.admins || r.data.data || []) : [];
+  }
   _crmPopulateAdminDropdowns();
   _crmPopulateImportedByFilter();
 }
@@ -11169,10 +11179,11 @@ function _crmAssignFilterClose(e) {
 
 async function crmRefresh() {
   clearApiCache('/leads');
-  await _crmFetchStats();
-  if (CRM.view === 'list')      await _crmFetchList();
+  const fetches = [_crmFetchStats()];
+  if (CRM.view === 'list')      fetches.push(_crmFetchList());
   if (CRM.view === 'kanban')    CRM.view = 'list';
-  if (CRM.view === 'analytics') await _crmFetchAnalytics();
+  if (CRM.view === 'analytics') fetches.push(_crmFetchAnalytics());
+  await Promise.all(fetches);
 }
 
 /* ── Stats cards ─────────────────────────────────────────────── */
@@ -11226,9 +11237,12 @@ function _renderCrmStats(f, a) {
 }
 
 /* ── List view ───────────────────────────────────────────────── */
+let _crmFetchGen = 0;
 async function _crmFetchList() {
+  const gen = ++_crmFetchGen;
   const params = _buildCrmParams();
   const r = await apiFetch('GET', `/leads?${params}`);
+  if (gen !== _crmFetchGen) return;
   if (!r.ok) { showToast('error','Failed to load leads', r.error); return; }
   CRM.leads = r.data.data || [];
   CRM.total = r.data.total || 0;
@@ -12119,35 +12133,36 @@ async function loadNotifications() {
 }
 
 /* ── Poll notification count every 30s for badge ─────────────── */
-(function startNotifPolling() {
-  async function pollNotifCount() {
-    if (document.hidden || !getToken()) return;
-    try {
-      const r = await apiFetch('GET', '/notifications/count');
-      if (r.ok && r.data.count > 0) {
-        const badge = document.getElementById('hdrNotifCount');
-        if (badge) { badge.textContent = r.data.count; badge.style.display = ''; }
-      }
-    } catch { /* silent */ }
-  }
-  setTimeout(pollNotifCount, 5000);
-  window._notifInterval = setInterval(pollNotifCount, 30000);
-})();
+async function _pollNotifCount() {
+  if (document.hidden || !getToken()) return;
+  try {
+    const r = await apiFetch('GET', '/notifications/count');
+    if (r.ok && r.data.count > 0) {
+      const badge = document.getElementById('hdrNotifCount');
+      if (badge) { badge.textContent = r.data.count; badge.style.display = ''; }
+    }
+  } catch { /* silent */ }
+}
 
 /* ── Poll CEP pending count for sidebar badge ─────────────────── */
-(function startCepBadgePolling() {
-  async function pollCepCount() {
-    if (document.hidden || !getToken()) return;
-    try {
-      const r = await apiFetch('GET', '/cep-certificates/admin/requests?status=pending&limit=1');
-      const count = r.ok ? (r.data.total || 0) : 0;
-      const badge = document.getElementById('cepCertBadge');
-      if (badge) { badge.textContent = count; badge.style.display = count ? '' : 'none'; }
-    } catch { /* silent */ }
-  }
-  setTimeout(pollCepCount, 3000);
-  window._cepInterval = setInterval(pollCepCount, 60000);
-})();
+async function _pollCepCount() {
+  if (document.hidden || !getToken()) return;
+  try {
+    const r = await apiFetch('GET', '/cep-certificates/admin/requests?status=pending&limit=1');
+    const count = r.ok ? (r.data.total || 0) : 0;
+    const badge = document.getElementById('cepCertBadge');
+    if (badge) { badge.textContent = count; badge.style.display = count ? '' : 'none'; }
+  } catch { /* silent */ }
+}
+
+function _startPolling() {
+  if (window._notifInterval) clearInterval(window._notifInterval);
+  if (window._cepInterval) clearInterval(window._cepInterval);
+  setTimeout(_pollNotifCount, 5000);
+  window._notifInterval = setInterval(_pollNotifCount, 30000);
+  setTimeout(_pollCepCount, 8000);
+  window._cepInterval = setInterval(_pollCepCount, 60000);
+}
 
 /* ══════════════════════════════════════════════════════════════
    CEP PARTNER CERTIFICATE — in-dashboard module
@@ -12779,14 +12794,13 @@ document.addEventListener('keydown', e => {
 });
 
 /* ── Init notifications count on load ──────────────────────── */
-async function _initNotifBadge() {
-  const res = await apiFetch('GET', '/students/stats/summary');
-  if (res.ok && res.data?.data?.pending) {
-    const badge = document.getElementById('hdrNotifCount');
-    if (badge && res.data.data.pending > 0) {
-      badge.textContent = Math.min(res.data.data.pending, 99);
-      badge.style.display = '';
-    }
+function _initNotifBadge() {
+  const cached = _loadStatsCache();
+  const pending = cached?.pendingStudents || 0;
+  const badge = document.getElementById('hdrNotifCount');
+  if (badge && pending > 0) {
+    badge.textContent = Math.min(pending, 99);
+    badge.style.display = '';
   }
 }
 
@@ -12929,7 +12943,9 @@ async function applySegFilters() {
   await _fetchSegData();
 }
 
+let _segFetchGen = 0;
 async function _fetchSegData() {
+  const gen = ++_segFetchGen;
   const listParams = buildSegQueryParams();
 
   // Summary params — no pagination/sort/search
@@ -12943,6 +12959,7 @@ async function _fetchSegData() {
     apiFetch('GET', `/students/filter/summary?${sumParams}`),
   ]);
 
+  if (gen !== _segFetchGen) return;
   _setSegLoading(false);
 
   if (!listRes.ok) {
