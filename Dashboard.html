@@ -5721,6 +5721,9 @@ function saveUser(user) {
 function clearAuth() {
   localStorage.removeItem(CONFIG.TOKEN_KEY);
   localStorage.removeItem(CONFIG.USER_KEY);
+  clearInterval(window._notifInterval);
+  clearInterval(window._cepInterval);
+  clearInterval(window._activityInterval);
 }
 
 /* ============================================================
@@ -10224,13 +10227,12 @@ async function init() {
 
     // Fetch current user first, then conditionally load sensitive data
     await fetchCurrentUser();
-    applySidebarPermissions();
     const fetches = [];
     if (canDo('roles', 'view'))            fetches.push(fetchRoles());
     if (canDo('admin_management', 'view')) fetches.push(fetchAdmins());
     if (fetches.length) await Promise.all(fetches);
 
-    // Apply permissions with fresh data
+    // Apply permissions once with fresh data
     applySidebarPermissions();
     _updateNavbarUser();
     _initNotifBadge();
@@ -10238,10 +10240,10 @@ async function init() {
     // Load overview stats (non-blocking — fire and forget for UI)
     updateOverviewStats();
 
-    // Auto-refresh admin activity every 60s (not 30s — halves background load)
+    // Auto-refresh admin activity every 60s — store ID for cleanup
     let _activityRunning = false;
-    setInterval(() => {
-      if (_activityRunning) return;  // skip if previous call still running
+    window._activityInterval = setInterval(() => {
+      if (_activityRunning || document.hidden) return;
       if (document.getElementById('page-overview')?.classList.contains('active')) {
         _activityRunning = true;
         loadAdminActivity().finally(() => { _activityRunning = false; });
@@ -10258,6 +10260,8 @@ async function init() {
 }
 
 function wireDashboardAccessibility() {
+  if (window._a11yWired) return;
+  window._a11yWired = true;
   document.querySelectorAll('.nav-item, .hdr-menu-item, .sidebar-user').forEach(el => {
     if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
     if (!el.hasAttribute('role')) el.setAttribute('role','button');
@@ -10282,6 +10286,11 @@ function applyDashboardPerformanceHints() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && getToken()) {
+    updateOverviewStats();
+  }
+});
 
 /* ============================================================
    PROFILE PAGE
@@ -12112,43 +12121,32 @@ async function loadNotifications() {
 /* ── Poll notification count every 30s for badge ─────────────── */
 (function startNotifPolling() {
   async function pollNotifCount() {
+    if (document.hidden || !getToken()) return;
     try {
-      const token = getToken ? getToken() : localStorage.getItem('ved_admin_token');
-      if (!token) return;
-      const res = await fetch((window.VED_API_BASE || 'http://localhost:5000/api').replace(/\/api$/,'') + '/api/notifications/count', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json().catch(() => ({}));
-      if (data.count > 0) {
+      const r = await apiFetch('GET', '/notifications/count');
+      if (r.ok && r.data.count > 0) {
         const badge = document.getElementById('hdrNotifCount');
-        if (badge) { badge.textContent = data.count; badge.style.display = ''; }
-        // Also update CEP pending badge
-        const cepBadge = document.getElementById('cepCertBadge');
-        if (cepBadge) { /* cep badge managed separately via loadCepPendingCount */ }
+        if (badge) { badge.textContent = r.data.count; badge.style.display = ''; }
       }
     } catch { /* silent */ }
   }
   setTimeout(pollNotifCount, 5000);
-  setInterval(pollNotifCount, 30000);
+  window._notifInterval = setInterval(pollNotifCount, 30000);
 })();
 
 /* ── Poll CEP pending count for sidebar badge ─────────────────── */
 (function startCepBadgePolling() {
   async function pollCepCount() {
+    if (document.hidden || !getToken()) return;
     try {
-      const token = getToken ? getToken() : localStorage.getItem('ved_admin_token');
-      if (!token) return;
-      const res  = await fetch((window.VED_API_BASE || 'http://localhost:5000/api').replace(/\/api$/,'') + '/api/cep-certificates/admin/requests?status=pending&limit=1', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json().catch(() => ({}));
-      const count = data.total || 0;
+      const r = await apiFetch('GET', '/cep-certificates/admin/requests?status=pending&limit=1');
+      const count = r.ok ? (r.data.total || 0) : 0;
       const badge = document.getElementById('cepCertBadge');
       if (badge) { badge.textContent = count; badge.style.display = count ? '' : 'none'; }
     } catch { /* silent */ }
   }
   setTimeout(pollCepCount, 3000);
-  setInterval(pollCepCount, 60000);
+  window._cepInterval = setInterval(pollCepCount, 60000);
 })();
 
 /* ══════════════════════════════════════════════════════════════
