@@ -365,7 +365,7 @@
           <div class="form-section-title">Mobilizer</div>
           <div class="form-row">
             <div class="form-group full">
-              <label>13. Mobilizer Name / Code <span class="req">*</span></label>
+              <label>13. Mobilizer Name / Code</label>
               <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
                 <input type="text" id="referralCode" placeholder="Enter mobilizer name or code"
                        style="flex:1;min-width:200px;text-transform:uppercase;letter-spacing:1px"
@@ -572,7 +572,7 @@
       if (!dob)                   { showErr('Please enter the date of birth.'); return; }
       if (!address)               { showErr('Please enter the residential address.'); return; }
       if (!education)             { showErr('Please select the educational qualification.'); return; }
-      if (!referralCode)          { showErr('Please enter the mobilizer name or code.'); return; }
+      // referralCode is optional
       if (!declaration)           { showErr('Please accept the declaration to proceed.'); return; }
 
       var gender  = document.querySelector('input[name="gender"]:checked')?.value || 'male';
