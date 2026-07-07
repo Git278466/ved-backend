@@ -11623,10 +11623,14 @@ async function openEditLead(id) {
   document.getElementById('leadStage').value       = l.stage       || '';
   document.getElementById('leadPriority').value    = l.priority    || 'medium';
   const _assignId = l.assignedTo?._id || l.assignedTo || '';
+  document.getElementById('leadId').dataset.originalAssignedTo = _assignId;
   const _assignAdmin = CRM.admins.find(a => a._id === _assignId);
   if (_assignAdmin) {
     const _aName = ((_assignAdmin.firstName||'') + ' ' + (_assignAdmin.lastName||'')).trim() || _assignAdmin.email;
     _assignPick(_assignId, _aName, _assignAdmin.code || '');
+  } else if (_assignId) {
+    document.getElementById('leadAssignedTo').value = _assignId;
+    document.getElementById('leadAssignedToInput').value = l.assignedTo?.fullName || l.assignedTo?.firstName || 'Assigned';
   } else {
     _assignPick('', '', '');
   }
@@ -11658,7 +11662,7 @@ async function saveLead() {
     source:         document.getElementById('leadSource').value || 'manual',
     stage:          document.getElementById('leadStage').value,
     priority:       document.getElementById('leadPriority').value,
-    assignedTo:     document.getElementById('leadAssignedTo').value || null,
+    assignedTo:     document.getElementById('leadAssignedTo').value || document.getElementById('leadId').dataset.originalAssignedTo || null,
     nextFollowUp:   document.getElementById('leadFollowUp').value || undefined,
   };
 
