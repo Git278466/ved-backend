@@ -11587,6 +11587,7 @@ function crmClearSelection() {
 /* ── Add / Edit Lead modal ───────────────────────────────────── */
 function openAddLeadModal() {
   document.getElementById('leadId').value     = '';
+  document.getElementById('leadId').dataset.originalAssignedTo = '';
   document.getElementById('leadModalTitle').textContent = 'Add New Lead';
   const sub = document.getElementById('leadModalSub'); if (sub) sub.textContent = 'Capture a new lead into the CRM';
   ['leadName','leadMobile','leadEmail','leadCity','leadState','leadCourse','leadNotes'].forEach(id => {
@@ -11651,6 +11652,7 @@ async function saveLead() {
   const btn = document.getElementById('saveLeadBtn');
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…'; }
 
+  const id = document.getElementById('leadId').value;
   const body = {
     name,
     mobile:         document.getElementById('leadMobile').value.trim(),
@@ -11662,11 +11664,9 @@ async function saveLead() {
     source:         document.getElementById('leadSource').value || 'manual',
     stage:          document.getElementById('leadStage').value,
     priority:       document.getElementById('leadPriority').value,
-    assignedTo:     document.getElementById('leadAssignedTo').value || document.getElementById('leadId').dataset.originalAssignedTo || null,
+    assignedTo:     document.getElementById('leadAssignedTo').value || (id ? document.getElementById('leadId').dataset.originalAssignedTo : '') || null,
     nextFollowUp:   document.getElementById('leadFollowUp').value || undefined,
   };
-
-  const id = document.getElementById('leadId').value;
   const r  = id ? await apiFetch('PUT', `/leads/${id}`, body) : await apiFetch('POST', '/leads', body);
 
   if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-save"></i> Save Lead'; }
