@@ -3250,6 +3250,14 @@ button:focus-visible,
               <option value="medium">Medium</option>
               <option value="low">Low</option>
             </select>
+            <div style="position:relative;min-width:150px">
+              <input class="form-input" id="crmFilterCourse"
+                placeholder="Course…" autocomplete="off"
+                oninput="debouncedCrmCourseFilter()"
+                style="padding-right:26px;font-size:13px"/>
+              <span id="crmCourseFilterClear" onclick="crmClearCourseFilter()"
+                style="display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);cursor:pointer;color:#9ca3af;font-size:13px">&#x2715;</span>
+            </div>
             <div style="position:relative;min-width:170px">
               <input class="form-input" id="crmFilterAssignedInput"
                 placeholder="Assigned to…" autocomplete="off"
@@ -11260,11 +11268,13 @@ function _buildCrmParams() {
   const priority   = document.getElementById('crmFilterPriority')?.value || '';
   const assignedTo = document.getElementById('crmFilterAssigned')?.value || '';
   const importedBy = document.getElementById('crmFilterImportedBy')?.value || '';
+  const course     = document.getElementById('crmFilterCourse')?.value?.trim() || '';
   if (stage)      p.set('stage', stage);
   if (source)     p.set('source', source);
   if (priority)   p.set('priority', priority);
   if (assignedTo) p.set('assignedTo', assignedTo);
   if (importedBy) p.set('importedBy', importedBy);
+  if (course)     p.set('courseInterest', course);
   p.set('page', CRM.page); p.set('limit', CRM.limit);
   p.set('sortBy', CRM.sortBy); p.set('sortOrder', CRM.sortOrder);
   return p;
@@ -11397,15 +11407,28 @@ function crmToggleStaleFilter() {
 }
 
 function crmResetFilters() {
-  ['crmSearch','crmFilterStage','crmFilterSource','crmFilterPriority','crmFilterImportedBy'].forEach(id => {
+  ['crmSearch','crmFilterStage','crmFilterSource','crmFilterPriority','crmFilterImportedBy','crmFilterCourse'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
+  const clr = document.getElementById('crmCourseFilterClear'); if (clr) clr.style.display = 'none';
   _crmAssignFilterPick('', '');
   document.getElementById('crmFilterAssignedInput') && (document.getElementById('crmFilterAssignedInput').value = '');
   _crmStaleFilter = false;
   const staleBtn = document.getElementById('crmStaleBtn');
   if (staleBtn) { staleBtn.style.background = ''; staleBtn.style.color = '#b45309'; }
   CRM.sortBy = 'createdAt'; CRM.sortOrder = 'desc';
+  CRM.page = 1; _crmFetchList();
+}
+let _crmCourseTimer;
+function debouncedCrmCourseFilter() {
+  const clr = document.getElementById('crmCourseFilterClear');
+  if (clr) clr.style.display = document.getElementById('crmFilterCourse')?.value ? 'inline' : 'none';
+  clearTimeout(_crmCourseTimer);
+  _crmCourseTimer = setTimeout(() => { CRM.page = 1; _crmFetchList(); }, 450);
+}
+function crmClearCourseFilter() {
+  const el = document.getElementById('crmFilterCourse'); if (el) el.value = '';
+  const clr = document.getElementById('crmCourseFilterClear'); if (clr) clr.style.display = 'none';
   CRM.page = 1; _crmFetchList();
 }
 function debouncedCrmSearch() {
