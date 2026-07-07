@@ -321,9 +321,8 @@
               <textarea id="address" placeholder="House No., Street, Locality, City, State, PIN Code" required></textarea>
             </div>
             <div class="form-group full">
-              <label>10. Aadhaar Number</label>
-              <input type="text" id="aadhaar" placeholder="XXXX XXXX XXXX" maxlength="14">
-              <span class="field-note">Optional — used for identification purposes only</span>
+              <label>10. Aadhaar Number <span class="req">*</span></label>
+              <input type="text" id="aadhaar" placeholder="XXXX XXXX XXXX" maxlength="14" required>
             </div>
           </div>
 
@@ -578,6 +577,7 @@
       var gender  = document.querySelector('input[name="gender"]:checked')?.value || 'male';
       var certificateProgram = document.querySelector('input[name="certificateProgram"]:checked')?.value || 'NESCOM';
       var aadhaar = document.getElementById('aadhaar').value.trim();
+      if (!aadhaar || aadhaar.replace(/\s/g,'').length !== 12) { showErr('Please enter a valid 12-digit Aadhaar number.'); return; }
       var regDate = document.getElementById('registrationDate').value;
 
       var payload = {

@@ -2348,6 +2348,7 @@ button:focus-visible,
                 <option value="not_answering">Not Answering</option>
                 <option value="not_reachable">Not Reachable</option>
                 <option value="call_back">Call Back</option>
+                <option value="follow_up">Follow Up</option>
                 <option value="interested">Interested</option>
                 <option value="enrolled">Enrolled</option>
                 <option value="not_interested">Not Interested</option>
@@ -10511,7 +10512,7 @@ const STAGE_CFG = {
   call_back:      { label:'Call Back',      cls:'stage-call-back',      icon:'fa-phone-arrow-down-left', color:'#0284C7' },
   interested:     { label:'Interested',     cls:'stage-interested',     icon:'fa-fire',          color:'#F97316' },
   enrolled:       { label:'Enrolled',       cls:'stage-enrolled',       icon:'fa-graduation-cap',color:'#0D9488' },
-  follow_up:      { label:'Follow Up',     cls:'stage-call-back',      icon:'fa-calendar-check',color:'#8B5CF6' },
+  follow_up:      { label:'Follow Up',     cls:'stage-follow-up',      icon:'fa-calendar-check',color:'#8B5CF6' },
   not_interested: { label:'Not Interested', cls:'stage-not-interested', icon:'fa-thumbs-down',   color:'#6B7280' },
   /* legacy aliases so old records still display cleanly */
   contacted:  { label:'Call Back',      cls:'stage-call-back',      icon:'fa-phone',         color:'#0284C7' },
@@ -11243,7 +11244,7 @@ async function _crmFetchList() {
   const params = _buildCrmParams();
   const r = await apiFetch('GET', `/leads?${params}`);
   if (gen !== _crmFetchGen) return;
-  if (!r.ok) { showToast('error','Failed to load leads', r.error); return; }
+  if (!r.ok) { CRM.leads = []; CRM.total = 0; _renderCrmTable(); _renderCrmPagination(); showToast('error','Failed to load leads', r.error); return; }
   CRM.leads = r.data.data || [];
   CRM.total = r.data.total || 0;
   _renderCrmTable();
@@ -11296,14 +11297,13 @@ function _renderCrmTable() {
     const stageHtml = crmStageBadgeHtml(l.stage);
     const assigned = l.assignedTo ? escHtml(l.assignedTo.fullName || l.assignedTo.firstName || '—') : '<span style="color:var(--gray-400)">Unassigned</span>';
     const fu   = l.nextFollowUp ? new Date(l.nextFollowUp).toLocaleDateString('en-IN') : '—';
-    const overdue = l.nextFollowUp && new Date(l.nextFollowUp) < new Date() && !['converted','lost'].includes(l.stage);
+    const overdue = l.nextFollowUp && !isNaN(new Date(l.nextFollowUp).getTime()) && new Date(l.nextFollowUp) < new Date() && !['converted','lost'].includes(l.stage);
     const checked = CRM.selected.has(l._id) ? 'checked' : '';
     const prioCls = { high:'prio-high', medium:'prio-medium', low:'prio-low' }[l.priority] || 'prio-medium';
-    const doneStages = ['enrolled','converted','lost','not_interested'];
     const lastTouch = new Date(l.lastContactedAt || l.updatedAt || l.createdAt).getTime();
     const staleDays = Math.floor((now - lastTouch) / (24*60*60*1000));
-    const isStale = !doneStages.includes(l.stage) && (now - lastTouch) >= DAY7;
-    const isCritical = !doneStages.includes(l.stage) && (now - lastTouch) >= DAY14;
+    const isStale = !doneStagesGlobal.includes(l.stage) && (now - lastTouch) >= DAY7;
+    const isCritical = !doneStagesGlobal.includes(l.stage) && (now - lastTouch) >= DAY14;
     const staleBg = isCritical ? 'background:rgba(239,68,68,.06);border-left:3px solid #ef4444' : isStale ? 'background:rgba(234,179,8,.06);border-left:3px solid #f59e0b' : '';
     const staleTag = isCritical ? `<span style="font-size:9px;background:rgba(239,68,68,.12);color:#dc2626;padding:1px 6px;border-radius:4px;font-weight:700;margin-left:6px">🔴 ${staleDays}d inactive</span>` : isStale ? `<span style="font-size:9px;background:rgba(234,179,8,.12);color:#b45309;padding:1px 6px;border-radius:4px;font-weight:700;margin-left:6px">🟡 ${staleDays}d inactive</span>` : '';
     return `
@@ -11322,9 +11322,11 @@ function _renderCrmTable() {
                          font-weight:700;cursor:pointer;min-width:120px;appearance:auto;outline:none;transition:all .2s"
                   onfocus="this.style.boxShadow='0 0 0 3px '+(this.style.color||'#3B82F6')+'18'" onblur="this.style.boxShadow='none'"
                   onchange="crmInlineStageUpdate('${l._id}', this.value, this)">
-            ${Object.entries(STAGE_CFG).filter(([k]) => !['contacted','applied','converted','lost'].includes(k)).map(([val, meta]) =>
-              `<option value="${val}" ${(l.stage||'new') === val ? 'selected' : ''} style="color:${meta.color}">${meta.label}</option>`
-            ).join('')}
+            ${Object.entries(STAGE_CFG).filter(([k]) => !['contacted','applied','converted','lost'].includes(k)).map(([val, meta]) => {
+              const legacyMap = { contacted:'call_back', applied:'interested' };
+              const effectiveStage = legacyMap[l.stage] || l.stage || 'new';
+              return `<option value="${val}" ${effectiveStage === val ? 'selected' : ''} style="color:${meta.color}">${meta.label}</option>`;
+            }).join('')}
           </select>
         </td>
         <td><span class="prio-dot ${prioCls}"></span> <span style="font-size:12px;text-transform:capitalize">${l.priority}</span></td>
@@ -11352,9 +11354,9 @@ function _renderCrmPagination() {
   info.textContent = CRM.total ? `Showing ${s}–${e} of ${CRM.total}` : 'No leads';
   let h = `<button class="pg-btn" onclick="crmGoPage(${CRM.page-1})" ${CRM.page<=1?'disabled':''}><i class="fa-solid fa-chevron-left"></i></button>`;
   const lo = Math.max(1, CRM.page-2), hi = Math.min(tp, CRM.page+2);
-  if (lo > 1) h += `<button class="pg-btn" onclick="crmGoPage(1)">1</button>`;
+  if (lo > 1) { h += `<button class="pg-btn" onclick="crmGoPage(1)">1</button>`; if (lo > 2) h += `<span style="padding:0 4px;color:var(--gray-400)">…</span>`; }
   for (let p = lo; p <= hi; p++) h += `<button class="pg-btn${p===CRM.page?' active':''}" onclick="crmGoPage(${p})">${p}</button>`;
-  if (hi < tp) h += `<button class="pg-btn" onclick="crmGoPage(${tp})">${tp}</button>`;
+  if (hi < tp) { if (hi < tp-1) h += `<span style="padding:0 4px;color:var(--gray-400)">…</span>`; h += `<button class="pg-btn" onclick="crmGoPage(${tp})">${tp}</button>`; }
   h += `<button class="pg-btn" onclick="crmGoPage(${CRM.page+1})" ${CRM.page>=tp?'disabled':''}><i class="fa-solid fa-chevron-right"></i></button>`;
   btns.innerHTML = h;
 }
@@ -11403,6 +11405,7 @@ function crmResetFilters() {
   _crmStaleFilter = false;
   const staleBtn = document.getElementById('crmStaleBtn');
   if (staleBtn) { staleBtn.style.background = ''; staleBtn.style.color = '#b45309'; }
+  CRM.sortBy = 'createdAt'; CRM.sortOrder = 'desc';
   CRM.page = 1; _crmFetchList();
 }
 function debouncedCrmSearch() {
