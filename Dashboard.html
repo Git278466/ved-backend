@@ -5519,6 +5519,26 @@ button:focus-visible,
         </div>
       </div>
 
+      <!-- Source selector -->
+      <div style="margin-top:16px">
+        <label style="font-size:12px;font-weight:700;color:#374151;display:block;margin-bottom:6px">
+          <i class="fa-solid fa-tag" style="color:#7c3aed;margin-right:5px"></i>
+          Set Source For All Imported Leads
+          <span style="font-weight:400;color:#9ca3af;margin-left:4px">(overrides file's source column)</span>
+        </label>
+        <select class="form-select" id="importSource" style="font-size:13px">
+          <option value="">— Use source from file (default: CSV Import) —</option>
+          <option value="csv_import">CSV Import</option>
+          <option value="website">Website</option>
+          <option value="referral">Referral</option>
+          <option value="event">Event / Camp</option>
+          <option value="social_media">Social Media</option>
+          <option value="walk_in">Walk-in</option>
+          <option value="manual">Manual</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
       <!-- Template download -->
       <div style="margin-top:14px;padding:12px 16px;background:#eff6ff;border-radius:8px;font-size:13px;color:#1e40af">
         <i class="fa-solid fa-circle-info" style="margin-right:6px"></i>
@@ -10704,6 +10724,7 @@ async function submitInlineImport() {
 function openImportLeadsModal() {
   clearImportFile();
   _importAssignClear();
+  const src = document.getElementById('importSource'); if (src) src.value = '';
   document.getElementById('importResult').style.display = 'none';
   openModal('leadImportModal');
 }
@@ -10805,6 +10826,8 @@ async function submitImport() {
   form.append('file', _importFile);
   const assignedTo = document.getElementById('importAssignedTo')?.value || '';
   if (assignedTo) form.append('assignedTo', assignedTo);
+  const importSource = document.getElementById('importSource')?.value || '';
+  if (importSource) form.append('source', importSource);
 
   try {
     const token = getToken();
