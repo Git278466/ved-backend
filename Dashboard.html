@@ -1234,6 +1234,19 @@ button:focus-visible,
   /* CRM tabs: scrollable */
   .crm-tabs{overflow-x:auto;width:100%;}
   .crm-tab{white-space:nowrap;}
+
+  /* Force single-column for all inline-style grids with large minmax */
+  #teamsGrid,#partnerProgressGrid,#wsGrid,#mktGrid,
+  #adminActivityGrid,#contentTilesGrid,
+  #donationSummary,#refSummary{grid-template-columns:1fr !important;}
+  .crm-analytics-grid{grid-template-columns:1fr;}
+
+  /* Toast: prevent edge bleed on narrow screens */
+  .toast-container{right:8px;left:8px;}
+  .toast{min-width:0;max-width:100%;}
+
+  /* Search results: leave room on small screens */
+  .hdr-search-results{max-height:calc(80vh - 160px);}
 }
 
 /* Touch devices — remove hover effects, add active states */
@@ -2038,6 +2051,12 @@ button:focus-visible,
   .modal-box{max-height:96vh;}
   .pg-btn{width:30px;height:30px;font-size:11px;}
   .data-table th,.data-table td{padding:8px 6px;font-size:11px;}
+  /* Stats that are still 2-col at 360px → collapse to 1 */
+  #ccStats,#wsStats,#donationSummary,#refSummary{grid-template-columns:1fr !important;}
+  .loading-row{padding:20px;}
+  /* Toast: tight screens */
+  .toast-container{right:6px;left:6px;}
+  .toast{font-size:12px;}
 }
 </style>
 </head>
@@ -3138,7 +3157,7 @@ button:focus-visible,
         </div>
 
         <!-- Content tiles -->
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-bottom:24px">
+        <div id="contentTilesGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-bottom:24px">
           <div style="background:#fff;border-radius:14px;padding:22px;border:1px solid #e5e7eb;box-shadow:0 4px 12px rgba(15,23,42,.07)">
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
               <div style="width:40px;height:40px;background:#eaf3ff;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#2563EB;font-size:18px"><i class="fa-solid fa-house"></i></div>
