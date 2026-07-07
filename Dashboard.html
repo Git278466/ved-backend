@@ -2385,8 +2385,8 @@ button:focus-visible,
             <input class="form-input" id="leadFollowUp" type="date"/>
           </div>
           <div class="form-group">
-            <label class="form-label">Notes</label>
-            <textarea class="form-textarea" id="leadNotes" placeholder="Any additional notes…" style="height:70px"></textarea>
+            <label class="form-label">Remarks</label>
+            <textarea class="form-textarea" id="leadNotes" placeholder="Enter remarks…" style="height:70px"></textarea>
           </div>
         </div>
 
@@ -11783,7 +11783,7 @@ async function openLeadDetail(id) {
     <div class="lead-info-row"><span class="lead-info-lbl">Priority</span><span class="lead-info-val" style="text-transform:capitalize">${l.priority||'medium'}</span></div>
     <div class="lead-info-row"><span class="lead-info-lbl">Assigned To</span><span class="lead-info-val">${l.assignedTo ? escHtml(l.assignedTo.fullName||l.assignedTo.firstName||'—') : '<span style="color:var(--gray-400)">Unassigned</span>'}</span></div>
     <div class="lead-info-row"><span class="lead-info-lbl">Next Follow-up</span><span class="lead-info-val">${l.nextFollowUp ? new Date(l.nextFollowUp).toLocaleDateString('en-IN') : '—'}</span></div>
-    <div class="lead-info-row"><span class="lead-info-lbl">Notes</span><span class="lead-info-val">${escHtml(l.notes||'—')}</span></div>
+    <div class="lead-info-row"><span class="lead-info-lbl">Remarks</span><span class="lead-info-val">${escHtml(l.notes||'—')}</span></div>
     <div class="lead-info-row"><span class="lead-info-lbl">Created</span><span class="lead-info-val">${new Date(l.createdAt).toLocaleDateString('en-IN')}</span></div>`;
 
   _renderTimeline(acts);
