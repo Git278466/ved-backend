@@ -226,7 +226,7 @@ img{max-width:100%;}
 /* =========================================================
    LAYOUT SHELL
    ========================================================= */
-.app-shell{display:flex;height:100vh;overflow:hidden;}
+.app-shell{display:flex;height:100vh;height:100svh;overflow:hidden;}
 
 /* =========================================================
    SIDEBAR
@@ -463,8 +463,8 @@ img{max-width:100%;}
   flex:1;overflow-y:auto;
   padding:var(--space-6);
 }
-.page{display:none;contain:content;}
-.page.active{display:block;contain:style;animation:fadeIn 0.18s ease;}
+.page{display:none;}
+.page.active{display:block;animation:fadeIn 0.18s ease both;}
 
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 
@@ -8621,7 +8621,12 @@ async function fetchCurrentUser() {
     return saved;
   }
 
-  clearAuth();
+  // Only clear auth + redirect on real unauthorized responses (401/403).
+  // On network errors (status 0 = timeout/unreachable) the token is still
+  // valid — don't wipe it, just redirect so user can retry.
+  if (r.status === 401 || r.status === 403) {
+    clearAuth();
+  }
   window.location.href = 'login.html';
   return null;
 }
@@ -10308,8 +10313,9 @@ async function init() {
     _updateNavbarUser();
     _initNotifBadge();
 
-    // Load overview stats (non-blocking — fire and forget for UI)
-    updateOverviewStats();
+    // Explicitly activate overview page — guards against any race that
+    // strips the active class before JS finishes booting
+    navTo('overview');
 
     // Start polling only after auth is confirmed
     _startPolling();
