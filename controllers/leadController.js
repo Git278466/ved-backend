@@ -35,6 +35,7 @@ const buildLeadFilter = (q) => {
   if (q.priority)   f.priority   = q.priority;
   if (q.assignedTo) f.assignedTo = q.assignedTo === 'unassigned' ? null : q.assignedTo;
   if (q.importedBy) f.createdBy  = q.importedBy;
+  if (q.courseInterest) f.courseInterest = new RegExp(q.courseInterest, 'i');
   if (q.city)       f.city       = new RegExp(q.city,  'i');
   if (q.state)      f.state      = new RegExp(q.state, 'i');
   if (q.minScore)   f.score      = { ...(f.score||{}), $gte: Number(q.minScore) };
@@ -96,7 +97,9 @@ exports.getFunnelStats = async (req, res) => {
     const matchScope = req.scopedAdminId
       ? { $or: [{ createdBy: req.scopedAdminId }, { assignedTo: req.scopedAdminId }] }
       : {};
-    const stages = ['not_answering', 'not_reachable', 'call_back', 'interested', 'enrolled', 'not_interested'];
+    if (req.query.assignedTo) matchScope.assignedTo = new (require('mongoose').Types.ObjectId)(req.query.assignedTo);
+    if (req.query.importedBy) matchScope.createdBy  = new (require('mongoose').Types.ObjectId)(req.query.importedBy);
+    const stages = ['new', 'not_answering', 'not_reachable', 'call_back', 'follow_up', 'interested', 'enrolled', 'not_interested'];
     const counts = await Lead.aggregate([
       ...(Object.keys(matchScope).length ? [{ $match: matchScope }] : []),
       { $group: { _id: '$stage', count: { $sum: 1 }, avgScore: { $avg: '$score' } } },
@@ -126,30 +129,37 @@ exports.getAnalytics = async (req, res) => {
   try {
     const since = new Date();
     since.setMonth(since.getMonth() - 6);
+    const extraFilter = {};
+    if (req.query.assignedTo) extraFilter.assignedTo = new (require('mongoose').Types.ObjectId)(req.query.assignedTo);
+    if (req.query.importedBy) extraFilter.createdBy  = new (require('mongoose').Types.ObjectId)(req.query.importedBy);
+    const hasExtra = Object.keys(extraFilter).length > 0;
+    const extraMatch = hasExtra ? [{ $match: extraFilter }] : [];
+
+    const overdueFilter = { nextFollowUp: { $lt: new Date() }, stage: { $nin: ['enrolled', 'not_interested', 'converted', 'lost'] }, ...extraFilter };
 
     const [bySource, byPriority, trend, topAdmins, overdueCount] = await Promise.all([
-      Lead.aggregate([{ $group: { _id: '$source', count: { $sum: 1 } } }, { $sort: { count: -1 } }]),
-      Lead.aggregate([{ $group: { _id: '$priority', count: { $sum: 1 } } }]),
+      Lead.aggregate([...extraMatch, { $group: { _id: '$source', count: { $sum: 1 } } }, { $sort: { count: -1 } }]),
+      Lead.aggregate([...extraMatch, { $group: { _id: '$priority', count: { $sum: 1 } } }]),
       Lead.aggregate([
-        { $match: { createdAt: { $gte: since } } },
+        { $match: { createdAt: { $gte: since }, ...extraFilter } },
         { $group: { _id: { year: { $year: '$createdAt' }, month: { $month: '$createdAt' } }, count: { $sum: 1 } } },
         { $sort: { '_id.year': 1, '_id.month': 1 } },
       ]),
       Lead.aggregate([
-        { $match: { assignedTo: { $ne: null } } },
+        { $match: { assignedTo: { $ne: null }, ...extraFilter } },
         { $group: { _id: '$assignedTo', total: { $sum: 1 }, converted: { $sum: { $cond: [{ $eq: ['$stage', 'converted'] }, 1, 0] } } } },
         { $sort: { converted: -1 } },
         { $limit: 5 },
         { $lookup: { from: 'admins', localField: '_id', foreignField: '_id', as: 'admin' } },
         { $unwind: { path: '$admin', preserveNullAndEmptyArrays: true } },
       ]),
-      Lead.countDocuments({ nextFollowUp: { $lt: new Date() }, stage: { $nin: ['enrolled', 'not_interested', 'converted', 'lost'] } }),
+      Lead.countDocuments(overdueFilter),
     ]);
 
     const [total, hot, warm] = await Promise.all([
-      Lead.countDocuments(),
-      Lead.countDocuments({ score: { $gte: 61 } }),
-      Lead.countDocuments({ score: { $gte: 31, $lt: 61 } }),
+      Lead.countDocuments(extraFilter),
+      Lead.countDocuments({ score: { $gte: 61 }, ...extraFilter }),
+      Lead.countDocuments({ score: { $gte: 31, $lt: 61 }, ...extraFilter }),
     ]);
 
     res.json({
@@ -202,6 +212,14 @@ exports.updateLead = async (req, res) => {
     const updateBody = { ...req.body };
     for (const field of ENUM_FIELDS) {
       if (updateBody[field] === '' || updateBody[field] === null) delete updateBody[field];
+    }
+
+    // Prevent non-admin roles from accidentally clearing assignedTo (e.g. associate partner editing a lead
+    // whose assigned admin is not in their local cache, causing the field to arrive as null)
+    const _role = req.admin.role;
+    const _canReassign = _role && (_role.isSystem === true || _role.name === 'Admin');
+    if (!_canReassign && (updateBody.assignedTo === null || updateBody.assignedTo === '' || updateBody.assignedTo === undefined)) {
+      delete updateBody.assignedTo;
     }
 
     const lead = await Lead.findByIdAndUpdate(req.params.id, updateBody, { new: true, runValidators: true })
@@ -373,6 +391,7 @@ exports.exportLeads = async (req, res) => {
       .populate('assignedTo', 'firstName lastName email')
       .lean();
 
+    const STAGE_LABELS = { new:'New', not_answering:'Not Answering', not_reachable:'Not Reachable', call_back:'Call Back', interested:'Interested', enrolled:'Enrolled', follow_up:'Follow Up', not_interested:'Not Interested' };
     // Build rows
     const rows = leads.map((l, i) => ({
       'S.No':           i + 1,
@@ -382,7 +401,7 @@ exports.exportLeads = async (req, res) => {
       'City':           l.city            || '',
       'State':          l.state           || '',
       'Course Interest':l.courseInterest  || '',
-      'Stage':          l.stage           || '',
+      'Response':       STAGE_LABELS[l.stage] || l.stage || '',
       'Source':         l.source          || '',
       'Priority':       l.priority        || '',
       'Score':          l.score           ?? '',
@@ -427,7 +446,9 @@ exports.exportLeads = async (req, res) => {
 exports.importLeads = async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ success:false, message:'No file uploaded.' });
-    const assignedTo = req.body.assignedTo || null;  // optional: assign all leads to this admin
+    const VALID_SOURCES_GLOBAL = ['website','referral','event','social_media','walk_in','manual','csv_import','other'];
+    const assignedTo   = req.body.assignedTo || null;
+    const globalSource = req.body.source && VALID_SOURCES_GLOBAL.includes(req.body.source) ? req.body.source : null;
 
     const ext  = req.file.originalname.split('.').pop().toLowerCase();
     let rows   = [];
@@ -456,7 +477,6 @@ exports.importLeads = async (req, res) => {
       state:['state','province'],
       courseInterest:['course','course interest','interested course','program','programme'],
       source:['source','lead source'],
-      stage:['stage','lead stage','status'],
       priority:['priority'],
       score:['score'],
       notes:['notes','note','remarks','comment'],
@@ -464,7 +484,6 @@ exports.importLeads = async (req, res) => {
     };
 
     const VALID_SOURCES  = ['website','referral','event','social_media','walk_in','manual','csv_import','other'];
-    const VALID_STAGES   = ['not_answering','not_reachable','call_back','interested','enrolled','not_interested','new','contacted','applied','converted','lost'];
     const VALID_PRIORITY = ['low','medium','high'];
 
     const normalize = (key) => String(key||'').toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -490,8 +509,7 @@ exports.importLeads = async (req, res) => {
       const name = get('name');
       if (!name) { skipped++; errors.push('Row ' + (i+2) + ': Name is required — skipped.'); continue; }
 
-      const source   = VALID_SOURCES.includes(get('source').toLowerCase())  ? get('source').toLowerCase()  : 'csv_import';
-      const stage    = VALID_STAGES.includes(get('stage').toLowerCase())     ? get('stage').toLowerCase()   : 'not_answering';
+      const source   = globalSource || (VALID_SOURCES.includes(get('source').toLowerCase()) ? get('source').toLowerCase() : 'csv_import');
       const priority = VALID_PRIORITY.includes(get('priority').toLowerCase())? get('priority').toLowerCase(): 'medium';
       const score    = Number(get('score')) || 10;
       const rawDate  = get('date');
@@ -506,14 +524,14 @@ exports.importLeads = async (req, res) => {
           state:          get('state')  || undefined,
           courseInterest: get('courseInterest') || undefined,
           notes:          get('notes')  || undefined,
-          source, stage, priority, score,
+          source, stage: 'new', priority, score,
           createdBy:  req.admin?._id,
           assignedTo: assignedTo || undefined,
           ...(leadDate && !isNaN(leadDate) && { createdAt: leadDate }),
         });
         imported++;
         createdLeadIds.push(lead._id);
-        if (preview.length < 5) preview.push({ name, email: get('email'), mobile: get('mobile'), stage, source });
+        if (preview.length < 5) preview.push({ name, email: get('email'), mobile: get('mobile'), stage: 'new', source });
       } catch (err) {
         skipped++;
         errors.push('Row ' + (i+2) + ' ("' + name + '"): ' + err.message);
@@ -580,11 +598,14 @@ exports.getImportHistory = async (req, res) => {
 ──────────────────────────────────────────────────────────────── */
 exports.exportAndDeleteLeads = async (req, res) => {
   try {
-    const { stage, startDate, endDate } = req.body;
+    const { stage, startDate, endDate, importedBy } = req.body;
     const filter = {};
 
     if (stage && stage !== 'all') {
       filter.stage = Array.isArray(stage) ? { $in: stage } : stage;
+    }
+    if (importedBy) {
+      filter.createdBy = importedBy;
     }
     if (startDate || endDate) {
       filter.createdAt = {};
@@ -601,6 +622,7 @@ exports.exportAndDeleteLeads = async (req, res) => {
       return res.status(400).json({ success: false, message: 'No leads found matching the criteria.' });
     }
 
+    const STAGE_LABELS2 = { new:'New', not_answering:'Not Answering', not_reachable:'Not Reachable', call_back:'Call Back', interested:'Interested', enrolled:'Enrolled', follow_up:'Follow Up', not_interested:'Not Interested' };
     const rows = leads.map((l, i) => ({
       'S.No':           i + 1,
       'Name':           l.name            || '',
@@ -609,7 +631,7 @@ exports.exportAndDeleteLeads = async (req, res) => {
       'City':           l.city            || '',
       'State':          l.state           || '',
       'Course Interest':l.courseInterest  || '',
-      'Stage':          l.stage           || '',
+      'Response':       STAGE_LABELS2[l.stage] || l.stage || '',
       'Source':         l.source          || '',
       'Priority':       l.priority        || '',
       'Score':          l.score           ?? '',
@@ -681,20 +703,21 @@ exports.getPartnerProgress = async (req, res) => {
 
     if (!partners.length) return res.json({ success: true, data: [] });
 
-    const stages = ['not_answering', 'not_reachable', 'call_back', 'interested', 'enrolled', 'not_interested'];
+    const stages = ['new', 'not_answering', 'not_reachable', 'call_back', 'follow_up', 'interested', 'enrolled', 'not_interested'];
 
-    // 3. For each partner aggregate their lead counts by stage
+    // 3. For each partner aggregate their lead counts by stage (assigned OR created by them)
     const data = await Promise.all(partners.map(async (p) => {
       const agg = await Lead.aggregate([
-        { $match: { assignedTo: p._id } },
-        { $group: { _id: '$stage', count: { $sum: 1 } } },
+        { $match: { $or: [{ assignedTo: p._id }, { createdBy: p._id }] } },
+        { $group: { _id: { leadId: '$_id', stage: '$stage' } } },
+        { $group: { _id: '$_id.stage', count: { $sum: 1 } } },
       ]);
 
       const byStage = {};
       agg.forEach(x => { byStage[x._id] = x.count; });
 
       const total     = agg.reduce((s, x) => s + x.count, 0);
-      const converted = byStage['converted'] || 0;
+      const converted = byStage['enrolled'] || byStage['converted'] || 0;
       const convRate  = total ? Math.round((converted / total) * 100) : 0;
 
       return {
