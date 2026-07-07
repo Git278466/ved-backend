@@ -1149,6 +1149,7 @@ button:focus-visible,
   .header{padding:0 12px;gap:8px;}
   .header-title{font-size:14px;}
   .breadcrumb{display:none;}
+  .hdr-search-overlay{padding:60px 14px 0;}
 
   /* Page content */
   .page-content{padding:14px 12px;}
@@ -1167,6 +1168,7 @@ button:focus-visible,
   /* CRM */
   .crm-filter-bar{flex-direction:column;align-items:stretch;}
   .crm-filter-bar .form-select{width:100%;}
+  .crm-filter-bar .search-wrap{max-width:none;}
   .crm-kanban{grid-template-columns:1fr;}
   .crm-stat-row{grid-template-columns:repeat(2,1fr);}
 
@@ -1203,7 +1205,7 @@ button:focus-visible,
 @media(max-width:480px){
   /* Stats: single column */
   .stat-grid{grid-template-columns:1fr;}
-  .crm-stat-row{grid-template-columns:1fr 1fr;}
+  .crm-stat-row{grid-template-columns:1fr;}
   .seg-summary-grid{grid-template-columns:repeat(2,1fr);}
 
   /* Modals: bottom sheet */
@@ -2017,6 +2019,25 @@ button:focus-visible,
   #cepCertTemplate{box-shadow:none!important;}
   .cep-tab-bar,.cep-cert-action-bar,.section-hdr,.cep-info-band,
   .cep-panel:not(#cepPanelCert){display:none!important;}
+}
+
+/* Desktop: hide hamburger — sidebar is always docked ≥769px */
+@media(min-width:769px){ #mobileMenuBtn{display:none;} }
+
+/* Ultra-small: ≤360px */
+@media(max-width:360px){
+  .header{gap:4px;padding:0 8px;}
+  .header-title{font-size:12px;}
+  .hdr-btn{width:30px;height:30px;font-size:13px;}
+  .hdr-avatar{width:30px;height:30px;font-size:11px;}
+  .header-actions{gap:2px;}
+  .page-content{padding:10px 8px;}
+  .crm-stat-row{grid-template-columns:1fr;}
+  .seg-summary-grid{grid-template-columns:1fr;}
+  .hdr-search-overlay{padding:50px 8px 0;}
+  .modal-box{max-height:96vh;}
+  .pg-btn{width:30px;height:30px;font-size:11px;}
+  .data-table th,.data-table td{padding:8px 6px;font-size:11px;}
 }
 </style>
 </head>
