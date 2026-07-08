@@ -5001,6 +5001,52 @@ button:focus-visible,
   </div>
 </div>
 
+<!-- Mobilization Edit Modal -->
+<div class="modal-overlay" id="mobEditModal" onclick="if(event.target===this)closeModal('mobEditModal')">
+  <div class="modal-box" style="max-width:500px">
+    <div class="modal-header">
+      <div><h3><i class="fa-solid fa-pen" style="color:var(--royal);margin-right:8px"></i>Edit Entry</h3><p id="mobEditName"></p></div>
+      <button class="modal-close" onclick="closeModal('mobEditModal')"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="mobEditId"/>
+      <div class="form-row" style="grid-template-columns:1fr 1fr">
+        <div class="form-group">
+          <label class="form-label">Organization / School</label>
+          <input class="form-input" id="mobEditOrg" placeholder="School / College / University"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mobile</label>
+          <input class="form-input" id="mobEditMobile" placeholder="Student mobile"/>
+        </div>
+      </div>
+      <div class="form-row" style="grid-template-columns:1fr 1fr">
+        <div class="form-group">
+          <label class="form-label">Certificate Program</label>
+          <select class="form-select" id="mobEditCertProg">
+            <option value="">— None —</option>
+            <option value="NESCOM">NESCOM</option>
+            <option value="IBM">IBM</option>
+            <option value="Workshop">Workshop</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Skill Course</label>
+          <input class="form-input" id="mobEditSkill" placeholder="e.g. Python, Tally"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Address</label>
+        <input class="form-input" id="mobEditAddress" placeholder="Full address"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('mobEditModal')">Cancel</button>
+      <button class="btn btn-primary" id="mobEditSaveBtn" onclick="saveMobEdit()"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="donationModal">
   <div class="modal-box">
     <div class="modal-header">
@@ -7394,6 +7440,7 @@ function renderMobilization(list, page, total, pages) {
       <td>
         <div style="display:flex;gap:4px">
           <button class="btn btn-ghost btn-sm" onclick="openMobDetail('${m._id}')" title="View full details"><i class="fa-solid fa-eye"></i></button>
+          <button class="btn btn-ghost btn-sm" onclick="openMobEdit('${m._id}')" title="Edit"><i class="fa-solid fa-pen"></i></button>
           <button class="btn btn-sm" style="background:rgba(239,68,68,0.1);color:var(--danger)" onclick="deleteMob('${m._id}')" title="Delete"><i class="fa-solid fa-trash"></i></button>
         </div>
       </td>
@@ -7543,6 +7590,42 @@ async function deleteMob(id) {
   const r = await apiFetch('DELETE', `/mobilization/${id}`);
   if (r.ok) { showToast('success', 'Registration deleted.'); loadMobilization(true); }
   else showToast('error', r.error || 'Failed to delete.');
+}
+
+function openMobEdit(id) {
+  const m = _mobCache.find(x => x._id === id);
+  if (!m) { showToast('error', 'Record not found in cache. Refresh and try again.'); return; }
+  document.getElementById('mobEditId').value        = id;
+  document.getElementById('mobEditName').textContent = m.fullName || '';
+  document.getElementById('mobEditOrg').value        = m.organization || '';
+  document.getElementById('mobEditMobile').value     = m.mobile || '';
+  document.getElementById('mobEditCertProg').value   = m.certificateProgram || '';
+  document.getElementById('mobEditSkill').value      = m.skillCourse || '';
+  document.getElementById('mobEditAddress').value    = m.address || '';
+  openModal('mobEditModal');
+}
+
+async function saveMobEdit() {
+  const id  = document.getElementById('mobEditId').value;
+  const btn = document.getElementById('mobEditSaveBtn');
+  if (!id) return;
+  const body = {
+    organization:      document.getElementById('mobEditOrg').value.trim(),
+    mobile:            document.getElementById('mobEditMobile').value.trim(),
+    certificateProgram:document.getElementById('mobEditCertProg').value,
+    skillCourse:       document.getElementById('mobEditSkill').value.trim(),
+    address:           document.getElementById('mobEditAddress').value.trim(),
+  };
+  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+  const r = await apiFetch('PATCH', `/mobilization/${id}`, body);
+  btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
+  if (r.ok) {
+    showToast('success', 'Entry updated successfully.');
+    closeModal('mobEditModal');
+    loadMobilization(true);
+  } else {
+    showToast('error', r.error || 'Failed to save.');
+  }
 }
 
 function exportMobCSV() {
