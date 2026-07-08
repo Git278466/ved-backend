@@ -484,6 +484,54 @@ app.use("/api/workshops",              workshopRoutes);
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
   });
 
+  // GET /api/mobilization/export/:program — export NESCOM or IBM students as Excel
+  app.get("/api/mobilization/export/:program", mobAuth, async (req, res) => {
+    if (!Mob) return res.status(503).json({ success: false, message: "Unavailable." });
+    try {
+      const XLSX = require("xlsx");
+      const program = (req.params.program || "").toUpperCase();
+      if (!["NESCOM", "IBM", "WORKSHOP"].includes(program))
+        return res.status(400).json({ success: false, message: "Invalid program. Use NESCOM, IBM or WORKSHOP." });
+
+      const dbValue = program === "WORKSHOP" ? "Workshop" : program;
+      const docs = await Mob.find({ certificateProgram: dbValue }).sort({ createdAt: -1 }).lean();
+      if (!docs.length)
+        return res.status(404).json({ success: false, message: `No ${program} students found.` });
+
+      const rows = docs.map((d, i) => ({
+        "S.No":                  i + 1,
+        "Full Name":             d.fullName || "",
+        "Guardian Name":         d.guardianName || "",
+        "Guardian Contact":      d.guardianContact || "",
+        "Guardian Occupation":   d.guardianOccupation || "",
+        "Institution":           d.organization || "",
+        "Student Mobile":        d.mobile || "",
+        "Date of Birth":         d.dob ? new Date(d.dob).toLocaleDateString("en-IN") : "",
+        "Gender":                d.gender || "",
+        "Address":               d.address || "",
+        "Aadhaar":               d.aadhaar || "",
+        "Education":             d.education || "",
+        "Certificate Program":   d.certificateProgram || "",
+        "Referral Code":         d.referralCode || "",
+        "Status":                d.status || "",
+        "Registration Date":     d.registrationDate ? new Date(d.registrationDate).toLocaleDateString("en-IN") : "",
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(rows);
+      ws["!cols"] = Object.keys(rows[0]).map(k => ({
+        wch: Math.max(k.length, ...rows.map(r => String(r[k] || "").length)) + 2,
+      }));
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, `${program} Students`);
+      const buf = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
+
+      const date = new Date().toISOString().slice(0, 10);
+      res.setHeader("Content-Disposition", `attachment; filename="mobilization-${program}-${date}.xlsx"`);
+      res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+      res.send(buf);
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+  });
+
   // PATCH /api/mobilization/:id
   app.patch("/api/mobilization/:id", mobAuth, async (req, res) => {
     if (!Mob) return res.status(503).json({ success: false, message: "Unavailable." });
