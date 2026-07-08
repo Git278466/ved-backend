@@ -3497,49 +3497,101 @@ button:focus-visible,
            PAGE: MOBILIZATION
            ════════════════════════════════════════════════ -->
       <div class="page" id="page-mobilization">
-        <div class="section-hdr">
-          <div><h3>Mobilization Registrations</h3><p>Skilling Project — student registration submissions.</p></div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-outline btn-sm" onclick="exportMobExcel('NESCOM')" id="btnMobNescom"><i class="fa-solid fa-file-excel"></i> NESCOM Excel</button>
-            <button class="btn btn-outline btn-sm" onclick="exportMobExcel('IBM')" id="btnMobIbm"><i class="fa-solid fa-file-excel"></i> IBM Excel</button>
-            <button class="btn btn-outline btn-sm" onclick="exportMobExcel('WORKSHOP')" id="btnMobWorkshop"><i class="fa-solid fa-file-excel"></i> Workshop Excel</button>
-            <button class="btn btn-outline btn-sm" onclick="exportMobCSV()"><i class="fa-solid fa-download"></i> Export All CSV</button>
-            <button class="btn btn-outline btn-sm" onclick="loadMobilization(true)"><i class="fa-solid fa-rotate"></i> Refresh</button>
-            <a href="/mobilization-form" target="_blank" class="btn btn-primary btn-sm"><i class="fa-solid fa-arrow-up-right-from-square"></i> View Form</a>
+
+        <!-- ── Premium Page Header ── -->
+        <div style="margin-bottom:28px">
+          <div style="font-size:12px;color:#94a3b8;font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:6px;letter-spacing:.2px">
+            <i class="fa-solid fa-gauge-high" style="font-size:10px"></i>
+            <span>Dashboard</span>
+            <span style="color:#cbd5e1;font-size:10px">›</span>
+            <span style="color:#64748b">Mobilization</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+            <div>
+              <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;line-height:1.2;letter-spacing:-0.4px">Mobilization Registrations</h1>
+              <p style="font-size:13px;color:#64748b;margin:5px 0 0;font-weight:400">Skilling Project — student registration submissions.</p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <button onclick="exportMobExcel('NESCOM')" id="btnMobNescom"
+                      style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap"
+                      onmouseenter="this.style.borderColor='#16a34a';this.style.color='#16a34a';this.style.background='#f0fdf4'"
+                      onmouseleave="this.style.borderColor='#e2e8f0';this.style.color='#374151';this.style.background='#fff'">
+                <i class="fa-solid fa-file-excel" style="color:#16a34a"></i> NESCOM
+              </button>
+              <button onclick="exportMobExcel('IBM')" id="btnMobIbm"
+                      style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap"
+                      onmouseenter="this.style.borderColor='#1d4ed8';this.style.color='#1d4ed8';this.style.background='#eff6ff'"
+                      onmouseleave="this.style.borderColor='#e2e8f0';this.style.color='#374151';this.style.background='#fff'">
+                <i class="fa-solid fa-file-excel" style="color:#1d4ed8"></i> IBM
+              </button>
+              <button onclick="exportMobExcel('WORKSHOP')" id="btnMobWorkshop"
+                      style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap"
+                      onmouseenter="this.style.borderColor='#ea580c';this.style.color='#ea580c';this.style.background='#fff7ed'"
+                      onmouseleave="this.style.borderColor='#e2e8f0';this.style.color='#374151';this.style.background='#fff'">
+                <i class="fa-solid fa-file-excel" style="color:#ea580c"></i> Workshop
+              </button>
+              <button onclick="exportMobCSV()"
+                      style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap"
+                      onmouseenter="this.style.borderColor='#6366f1';this.style.color='#6366f1';this.style.background='#eef2ff'"
+                      onmouseleave="this.style.borderColor='#e2e8f0';this.style.color='#374151';this.style.background='#fff'">
+                <i class="fa-solid fa-download"></i> CSV
+              </button>
+              <button onclick="loadMobilization(true)" title="Refresh"
+                      style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;color:#64748b;font-size:13px;cursor:pointer;transition:all .2s"
+                      onmouseenter="this.style.borderColor='#2563EB';this.style.color='#2563EB';this.style.transform='rotate(30deg)'"
+                      onmouseleave="this.style.borderColor='#e2e8f0';this.style.color='#64748b';this.style.transform='rotate(0deg)'">
+                <i class="fa-solid fa-rotate"></i>
+              </button>
+              <a href="/mobilization-form" target="_blank"
+                 style="display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border:none;border-radius:10px;background:#2563EB;color:#fff;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s;white-space:nowrap;box-shadow:0 2px 8px rgba(37,99,235,.3)"
+                 onmouseenter="this.style.background='#1d4ed8';this.style.boxShadow='0 4px 16px rgba(37,99,235,.4)'"
+                 onmouseleave="this.style.background='#2563EB';this.style.boxShadow='0 2px 8px rgba(37,99,235,.3)'">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> View Form
+              </a>
+            </div>
           </div>
         </div>
 
         <!-- Summary stat cards -->
-        <div id="mobSummary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:14px;margin-bottom:20px"></div>
+        <div id="mobSummary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:20px"></div>
 
         <!-- ── FILTER PANEL ── -->
-        <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:16px 18px;margin-bottom:16px;box-shadow:var(--shadow-sm)">
-          <!-- Row 1: search + action buttons -->
-          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
-            <div class="search-wrap" style="flex:1;min-width:220px">
-              <i class="fa-solid fa-magnifying-glass"></i>
-              <input type="text" id="mobSearch" placeholder="Search name, mobile, guardian, skill…" oninput="debounceMob()">
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:20px 22px;margin-bottom:18px;box-shadow:0 1px 4px rgba(15,23,42,.05)">
+          <!-- Row 1: search + clear -->
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
+            <div style="position:relative;flex:1;min-width:240px">
+              <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px;pointer-events:none"></i>
+              <input type="text" id="mobSearch" placeholder="Search name, mobile, guardian, skill…" oninput="debounceMob()"
+                     style="width:100%;padding:10px 14px 10px 38px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:13px;color:#0f172a;background:#f8fafc;outline:none;transition:all .2s;box-sizing:border-box"
+                     onfocus="this.style.borderColor='#2563EB';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(37,99,235,.1)'"
+                     onblur="this.style.borderColor='#e5e7eb';this.style.background='#f8fafc';this.style.boxShadow='none'">
             </div>
-            <button class="btn btn-ghost btn-sm" onclick="clearMobFilters()" title="Clear all filters">
+            <button onclick="clearMobFilters()"
+                    style="display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border:1.5px solid #e5e7eb;border-radius:12px;background:#fff;color:#64748b;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s"
+                    onmouseenter="this.style.borderColor='#ef4444';this.style.color='#ef4444';this.style.background='#fef2f2'"
+                    onmouseleave="this.style.borderColor='#e5e7eb';this.style.color='#64748b';this.style.background='#fff'">
               <i class="fa-solid fa-xmark"></i> Clear
             </button>
           </div>
           <!-- Row 2: dropdown filters -->
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px">
-            <select class="form-select" id="mobStatusFilter" onchange="loadMobilization(true)" title="Filter by status">
+            <select class="form-select" id="mobStatusFilter" onchange="loadMobilization(true)"
+                    style="padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:13px;background:#f8fafc;color:#0f172a;cursor:pointer;outline:none">
               <option value="">All Status</option>
               <option value="new">🔵 New</option>
               <option value="contacted">🟡 Contacted</option>
               <option value="enrolled">🟢 Enrolled</option>
               <option value="closed">⚫ Closed</option>
             </select>
-            <select class="form-select" id="mobGenderFilter" onchange="loadMobilization(true)" title="Filter by gender">
+            <select class="form-select" id="mobGenderFilter" onchange="loadMobilization(true)"
+                    style="padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:13px;background:#f8fafc;color:#0f172a;cursor:pointer;outline:none">
               <option value="">All Genders</option>
               <option value="male">♂ Male</option>
               <option value="female">♀ Female</option>
               <option value="other">⊕ Other</option>
             </select>
-            <select class="form-select" id="mobCourseFilter" onchange="loadMobilization(true)" title="Filter by skill course">
+            <select class="form-select" id="mobCourseFilter" onchange="loadMobilization(true)"
+                    style="padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:13px;background:#f8fafc;color:#0f172a;cursor:pointer;outline:none">
               <option value="">All Courses</option>
               <option value="Web Development">Web Development</option>
               <option value="Cyber Security">Cyber Security</option>
@@ -3553,53 +3605,58 @@ button:focus-visible,
               <option value="Solar / Renewable Energy">Solar / Renewable Energy</option>
               <option value="Other">Other</option>
             </select>
-            <select class="form-select" id="mobDestFilter" onchange="loadMobilization(true)" title="Filter by education destination">
+            <select class="form-select" id="mobDestFilter" onchange="loadMobilization(true)"
+                    style="padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:13px;background:#f8fafc;color:#0f172a;cursor:pointer;outline:none">
               <option value="">All Destinations</option>
               <option value="india">🇮🇳 India</option>
               <option value="abroad">✈️ Abroad</option>
             </select>
-            <div style="display:flex;flex-direction:column;gap:3px">
-              <label style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px">From Date</label>
-              <input class="form-input" type="date" id="mobDateFrom" onchange="loadMobilization(true)" style="padding:6px 10px;font-size:12px">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <label style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.6px">From Date</label>
+              <input class="form-input" type="date" id="mobDateFrom" onchange="loadMobilization(true)"
+                     style="padding:9px 12px;font-size:13px;border:1.5px solid #e5e7eb;border-radius:12px;background:#f8fafc;color:#0f172a;outline:none">
             </div>
-            <div style="display:flex;flex-direction:column;gap:3px">
-              <label style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px">To Date</label>
-              <input class="form-input" type="date" id="mobDateTo" onchange="loadMobilization(true)" style="padding:6px 10px;font-size:12px">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <label style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.6px">To Date</label>
+              <input class="form-input" type="date" id="mobDateTo" onchange="loadMobilization(true)"
+                     style="padding:9px 12px;font-size:13px;border:1.5px solid #e5e7eb;border-radius:12px;background:#f8fafc;color:#0f172a;outline:none">
             </div>
           </div>
-          <!-- Row 3: active filter chips + result count -->
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:8px">
+          <!-- Active filters + count -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:8px">
             <div id="mobActiveFilters" style="display:flex;gap:6px;flex-wrap:wrap"></div>
-            <span id="mobResultCount" style="font-size:12px;color:var(--gray-400);font-weight:600;white-space:nowrap"></span>
+            <span id="mobResultCount" style="font-size:12px;color:#64748b;font-weight:600;white-space:nowrap;background:#f1f5f9;padding:4px 12px;border-radius:999px"></span>
           </div>
         </div>
 
-        <!-- Table -->
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Student Name</th>
-                <th>Mobile</th>
-                <th>Organization</th>
-                <th>Guardian</th>
-                <th>Gender</th>
-                <th>Certificate</th>
-                <th>Qualification</th>
-                <th>Dest.</th>
-                <th>Status</th>
-                <th>Reg. Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="mobTableBody"></tbody>
-          </table>
+        <!-- Table Container -->
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;box-shadow:0 1px 4px rgba(15,23,42,.05)">
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;min-width:900px">
+              <thead>
+                <tr style="background:#f8fafc;border-bottom:2px solid #e5e7eb">
+                  <th style="padding:14px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">#</th>
+                  <th style="padding:14px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Student Name</th>
+                  <th style="padding:14px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Mobile</th>
+                  <th style="padding:14px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Organization</th>
+                  <th style="padding:14px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Guardian</th>
+                  <th style="padding:14px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Gender</th>
+                  <th style="padding:14px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Certificate</th>
+                  <th style="padding:14px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Qualification</th>
+                  <th style="padding:14px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Dest.</th>
+                  <th style="padding:14px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Status</th>
+                  <th style="padding:14px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Reg. Date</th>
+                  <th style="padding:14px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="mobTableBody"></tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Pagination -->
-        <div id="mobPagination" style="display:flex;align-items:center;justify-content:space-between;padding:14px 4px 4px;flex-wrap:wrap;gap:10px">
-          <span id="mobPageInfo" style="font-size:12px;color:var(--gray-600)"></span>
+        <div id="mobPagination" style="display:flex;align-items:center;justify-content:space-between;padding:18px 2px 4px;flex-wrap:wrap;gap:10px">
+          <span id="mobPageInfo" style="font-size:13px;color:#64748b;font-weight:500"></span>
           <div style="display:flex;gap:6px" id="mobPageBtns"></div>
         </div>
       </div><!-- /page-mobilization -->
@@ -7307,41 +7364,53 @@ async function loadMobilization(force = false) {
       { label:'Female',      value: byGender.female    || 0, icon:'fa-venus',             color:'#db2777' },
     ];
     summaryEl.innerHTML = cards.map(c => `
-      <div style="background:#fff;border-radius:12px;padding:16px 18px;border:1px solid #e5e7eb;
-                  box-shadow:0 4px 12px rgba(15,23,42,.07);display:flex;align-items:center;gap:12px;cursor:pointer"
+      <div style="background:#fff;border-radius:16px;padding:20px 20px 18px;border:1px solid #e5e7eb;
+                  box-shadow:0 1px 4px rgba(15,23,42,.06);cursor:pointer;transition:all .25s ease"
+           onmouseenter="this.style.boxShadow='0 8px 28px rgba(15,23,42,.12)';this.style.transform='translateY(-3px)';this.style.borderColor='${c.color}40'"
+           onmouseleave="this.style.boxShadow='0 1px 4px rgba(15,23,42,.06)';this.style.transform='translateY(0)';this.style.borderColor='#e5e7eb'"
            onclick="if('${c.label}'==='New'){document.getElementById('mobStatusFilter').value='new';_mobPage=1;loadMobilization(true);}
                     else if('${c.label}'==='Contacted'){document.getElementById('mobStatusFilter').value='contacted';_mobPage=1;loadMobilization(true);}
                     else if('${c.label}'==='Enrolled'){document.getElementById('mobStatusFilter').value='enrolled';_mobPage=1;loadMobilization(true);}
                     else if('${c.label}'==='Male'){document.getElementById('mobGenderFilter').value='male';_mobPage=1;loadMobilization(true);}
                     else if('${c.label}'==='Female'){document.getElementById('mobGenderFilter').value='female';_mobPage=1;loadMobilization(true);}">
-        <div style="width:40px;height:40px;border-radius:10px;background:${c.color}18;
-                    display:flex;align-items:center;justify-content:center;color:${c.color};font-size:17px;flex-shrink:0">
+        <div style="width:44px;height:44px;border-radius:12px;
+                    background:linear-gradient(135deg,${c.color}22,${c.color}10);
+                    display:flex;align-items:center;justify-content:center;color:${c.color};font-size:18px;flex-shrink:0;
+                    border:1px solid ${c.color}20;margin-bottom:14px">
           <i class="fa-solid ${c.icon}"></i>
         </div>
-        <div>
-          <div style="font-size:.7rem;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:.4px">${c.label}</div>
-          <div style="font-size:1.35rem;font-weight:900;color:#0A1628;line-height:1.2">${c.value}</div>
-        </div>
+        <div style="font-size:26px;font-weight:800;color:#0f172a;line-height:1;margin-bottom:4px;letter-spacing:-0.5px">${c.value}</div>
+        <div style="font-size:12px;color:#64748b;font-weight:500;letter-spacing:.1px">${c.label}</div>
       </div>`).join('');
 
     // Top courses mini-chart
     if (d.byCourse && d.byCourse.length) {
       const maxCount = d.byCourse[0].count || 1;
       const courseHtml = d.byCourse.map(c => `
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:7px">
-          <div style="font-size:12px;color:var(--gray-800);width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          <div style="font-size:13px;color:#374151;font-weight:500;min-width:0;flex:0 0 170px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"
                title="${escHtml(c._id||'Unknown')}">${escHtml(c._id||'Unknown')}</div>
-          <div style="flex:1;height:8px;background:#f1f5ff;border-radius:999px;overflow:hidden">
-            <div style="height:100%;width:${Math.round((c.count/maxCount)*100)}%;background:linear-gradient(90deg,#1A4FBB,#2563EB);border-radius:999px"></div>
+          <div style="flex:1;height:7px;background:#f1f5f9;border-radius:999px;overflow:hidden">
+            <div style="height:100%;width:${Math.round((c.count/maxCount)*100)}%;background:linear-gradient(90deg,#2563EB,#60a5fa);border-radius:999px;transition:width .6s ease"></div>
           </div>
-          <div style="font-size:11px;font-weight:700;color:var(--navy);min-width:22px;text-align:right">${c.count}</div>
+          <div style="font-size:12px;font-weight:700;color:#1e40af;min-width:28px;text-align:right">${c.count}</div>
         </div>`).join('');
       const existing = document.getElementById('mobCourseChart');
       if (existing) existing.remove();
       const chartDiv = document.createElement('div');
       chartDiv.id = 'mobCourseChart';
-      chartDiv.style.cssText = 'background:#fff;border:1px solid var(--gray-200);border-radius:12px;padding:16px 18px;margin-bottom:16px;box-shadow:0 4px 12px rgba(15,23,42,.05)';
-      chartDiv.innerHTML = `<div style="font-size:12px;font-weight:800;color:var(--navy);margin-bottom:12px;text-transform:uppercase;letter-spacing:.6px"><i class="fa-solid fa-chart-bar" style="color:var(--royal);margin-right:6px"></i>Registrations by Skill Course</div>${courseHtml}`;
+      chartDiv.style.cssText = 'background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:20px 22px;margin-bottom:18px;box-shadow:0 1px 4px rgba(15,23,42,.05)';
+      chartDiv.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+          <div style="width:34px;height:34px;border-radius:10px;background:#eff6ff;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="fa-solid fa-chart-bar" style="color:#2563EB;font-size:14px"></i>
+          </div>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#0f172a">Skill Course Distribution</div>
+            <div style="font-size:12px;color:#64748b;margin-top:1px">Top courses by registration count</div>
+          </div>
+        </div>
+        ${courseHtml}`;
       summaryEl.insertAdjacentElement('afterend', chartDiv);
     }
 
@@ -7382,60 +7451,97 @@ function renderMobilization(list, page, total, pages) {
   const tbody = document.getElementById('mobTableBody');
   if (!tbody) return;
   if (!list.length) {
-    renderEmptyRow('mobTableBody', 13, 'No registrations found', 'Try adjusting your filters or share the mobilization form.');
+    renderEmptyRow('mobTableBody', 12, 'No registrations found', 'Try adjusting your filters or share the mobilization form.');
     _renderMobPagination(0, 0, 0);
     return;
   }
 
   const offset = (page - 1) * _mobLimit;
+  const _avatarPalette = ['#2563EB','#7c3aed','#16a34a','#ea580c','#db2777','#0891b2','#0d9488','#dc2626'];
   tbody.innerHTML = list.map((m, i) => {
     const genderLabel = MOB_GENDER_LABELS[m.gender] || m.gender || '—';
     const sm  = MOB_STATUS_META[m.status] || { label: m.status, color:'#6b7280', bg:'rgba(107,114,128,.12)' };
     const destIcon = m.educationDest === 'abroad' ? '✈️' : '🇮🇳';
+    const initials = (m.fullName || 'U').split(' ').slice(0,2).map(n => n[0] || '').join('').toUpperCase() || 'U';
+    const avBg = _avatarPalette[(m.fullName || '').charCodeAt(0) % _avatarPalette.length];
+    const rowBg = i % 2 === 0 ? '#fff' : '#fafbfc';
     return `
-    <tr>
-      <td style="color:var(--gray-400);font-size:12px">${offset + i + 1}</td>
-      <td>
-        <div style="font-weight:700;color:var(--navy);font-size:13px">${escHtml(m.fullName)}</div>
-        ${m.dob ? `<div style="font-size:11px;color:var(--gray-400)">DOB: ${formatDate(m.dob)}</div>` : ''}
-        ${m.referralCode ? `<div style="font-size:10px;color:#7c3aed;font-weight:600"><i class="fa-solid fa-tag" style="font-size:9px"></i> ${escHtml(m.referralCode)}</div>` : ''}
+    <tr style="background:${rowBg};border-bottom:1px solid #f1f5f9;transition:background .15s"
+        onmouseenter="this.style.background='#f0f7ff'"
+        onmouseleave="this.style.background='${rowBg}'">
+      <td style="padding:14px 16px;color:#94a3b8;font-size:12px;font-weight:600;white-space:nowrap">${offset + i + 1}</td>
+      <td style="padding:14px 16px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:36px;height:36px;border-radius:10px;background:${avBg};display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0;letter-spacing:.5px">${initials}</div>
+          <div>
+            <div style="font-weight:600;color:#0f172a;font-size:13px;line-height:1.3">${escHtml(m.fullName)}</div>
+            ${m.dob ? `<div style="font-size:11px;color:#94a3b8;margin-top:1px">DOB: ${formatDate(m.dob)}</div>` : ''}
+            ${m.referralCode ? `<div style="font-size:10px;color:#7c3aed;font-weight:600;margin-top:1px"><i class="fa-solid fa-tag" style="font-size:8px"></i> ${escHtml(m.referralCode)}</div>` : ''}
+          </div>
+        </div>
       </td>
-      <td>
-        ${m.mobile ? `<div style="font-size:13px">${escHtml(m.mobile)}</div><div style="font-size:10px;color:var(--gray-400)">Student</div>` : ''}
-        ${m.guardianContact ? `<div style="font-size:12px;color:var(--gray-600)">${escHtml(m.guardianContact)}</div><div style="font-size:10px;color:var(--gray-400)">Guardian</div>` : (!m.mobile ? '<span style="color:var(--gray-300)">—</span>' : '')}
+      <td style="padding:14px 16px">
+        ${m.mobile ? `<div style="font-size:13px;color:#0f172a;font-weight:500">${escHtml(m.mobile)}</div><div style="font-size:10px;color:#94a3b8;margin-top:1px">Student</div>` : ''}
+        ${m.guardianContact ? `<div style="font-size:12px;color:#475569;margin-top:3px">${escHtml(m.guardianContact)}</div><div style="font-size:10px;color:#94a3b8;margin-top:1px">Guardian</div>` : (!m.mobile ? '<span style="color:#cbd5e1">—</span>' : '')}
       </td>
-      <td style="font-size:12px;color:var(--gray-600)">${escHtml(m.organization || '—')}</td>
-      <td>
-        <div style="font-size:12px;font-weight:600">${escHtml(m.guardianName || '—')}</div>
-        ${m.guardianOccupation ? `<div style="font-size:10px;color:var(--gray-400)">${escHtml(m.guardianOccupation)}</div>` : ''}
+      <td style="padding:14px 16px;max-width:140px">
+        <div style="font-size:13px;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escHtml(m.organization||'')}">${escHtml(m.organization || '—')}</div>
       </td>
-      <td style="font-size:12px">${genderLabel}</td>
-      <td>
-        <span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;
-          ${m.certificateProgram === 'IBM' ? 'background:rgba(22,163,74,.12);color:#16a34a' : m.certificateProgram === 'NESCOM' ? 'background:rgba(11,99,206,.12);color:#0b63ce' : m.certificateProgram === 'Workshop' ? 'background:rgba(249,115,22,.12);color:#f97316' : 'background:#f3f4f6;color:#6b7280'}">
+      <td style="padding:14px 16px">
+        <div style="font-size:13px;font-weight:500;color:#0f172a">${escHtml(m.guardianName || '—')}</div>
+        ${m.guardianOccupation ? `<div style="font-size:11px;color:#94a3b8;margin-top:1px">${escHtml(m.guardianOccupation)}</div>` : ''}
+      </td>
+      <td style="padding:14px 16px">
+        <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;
+          ${m.gender === 'male' ? 'background:#eff6ff;color:#2563EB;border:1px solid #bfdbfe' : m.gender === 'female' ? 'background:#fdf2f8;color:#db2777;border:1px solid #f9a8d4' : 'background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0'}">
+          ${m.gender === 'male' ? '♂' : m.gender === 'female' ? '♀' : '⊕'} ${m.gender ? (m.gender.charAt(0).toUpperCase() + m.gender.slice(1)) : '—'}
+        </span>
+      </td>
+      <td style="padding:14px 16px">
+        <span style="display:inline-block;padding:4px 11px;border-radius:999px;font-size:11px;font-weight:700;
+          ${m.certificateProgram === 'IBM' ? 'background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0' : m.certificateProgram === 'NESCOM' ? 'background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe' : m.certificateProgram === 'Workshop' ? 'background:#fff7ed;color:#ea580c;border:1px solid #fed7aa' : 'background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0'}">
           ${escHtml(m.certificateProgram || '—')}
         </span>
       </td>
-      <td style="font-size:11px;color:var(--gray-600);max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escHtml(m.education||'')}">${escHtml(m.education || '—')}</td>
-      <td style="font-size:11px;text-align:center">
-        <div>${destIcon}</div>
-        ${m.degreeMode ? `<div style="font-size:10px;color:var(--gray-400)">${{regular:'Regular',distance:'Distance',online:'Online'}[m.degreeMode]||m.degreeMode}</div>` : ''}
+      <td style="padding:14px 16px">
+        <span style="display:inline-block;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:500;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escHtml(m.education||'')}">
+          ${escHtml(m.education || '—')}
+        </span>
       </td>
-      <td>
-        <select style="font-size:11px;padding:4px 6px;border-radius:6px;border:1px solid #e5e7eb;
-                       color:${sm.color};background:${sm.bg};font-weight:700;cursor:pointer;min-width:88px"
+      <td style="padding:14px 16px;text-align:center">
+        <div style="font-size:17px;line-height:1">${destIcon}</div>
+        ${m.degreeMode ? `<div style="font-size:10px;color:#94a3b8;margin-top:3px">${{regular:'Regular',distance:'Distance',online:'Online'}[m.degreeMode]||m.degreeMode}</div>` : ''}
+      </td>
+      <td style="padding:14px 16px">
+        <select style="font-size:12px;padding:6px 10px 6px 10px;border-radius:999px;border:1.5px solid ${sm.color}40;
+                       color:${sm.color};background:${sm.bg};font-weight:700;cursor:pointer;min-width:102px;outline:none;transition:all .2s"
                 onchange="updateMobStatus('${m._id}', this.value)">
           ${Object.entries(MOB_STATUS_META).map(([val, meta]) =>
             `<option value="${val}" ${m.status === val ? 'selected' : ''}>${meta.label}</option>`
           ).join('')}
         </select>
       </td>
-      <td style="font-size:11px;color:var(--gray-600);white-space:nowrap">${formatDate(m.registrationDate || m.createdAt)}</td>
-      <td>
-        <div style="display:flex;gap:4px">
-          <button class="btn btn-ghost btn-sm" onclick="openMobDetail('${m._id}')" title="View full details"><i class="fa-solid fa-eye"></i></button>
-          <button class="btn btn-ghost btn-sm" onclick="openMobEdit('${m._id}')" title="Edit"><i class="fa-solid fa-pen"></i></button>
-          <button class="btn btn-sm" style="background:rgba(239,68,68,0.1);color:var(--danger)" onclick="deleteMob('${m._id}')" title="Delete"><i class="fa-solid fa-trash"></i></button>
+      <td style="padding:14px 16px;font-size:12px;color:#64748b;white-space:nowrap;font-weight:500">${formatDate(m.registrationDate || m.createdAt)}</td>
+      <td style="padding:14px 16px">
+        <div style="display:flex;gap:6px;align-items:center">
+          <button onclick="openMobDetail('${m._id}')" title="View details"
+                  style="width:32px;height:32px;border-radius:8px;border:none;background:#eff6ff;color:#2563EB;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;flex-shrink:0"
+                  onmouseenter="this.style.background='#2563EB';this.style.color='#fff';this.style.transform='scale(1.1)'"
+                  onmouseleave="this.style.background='#eff6ff';this.style.color='#2563EB';this.style.transform='scale(1)'">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+          <button onclick="openMobEdit('${m._id}')" title="Edit"
+                  style="width:32px;height:32px;border-radius:8px;border:none;background:#fffbeb;color:#d97706;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;flex-shrink:0"
+                  onmouseenter="this.style.background='#d97706';this.style.color='#fff';this.style.transform='scale(1.1)'"
+                  onmouseleave="this.style.background='#fffbeb';this.style.color='#d97706';this.style.transform='scale(1)'">
+            <i class="fa-solid fa-pen"></i>
+          </button>
+          <button onclick="deleteMob('${m._id}')" title="Delete"
+                  style="width:32px;height:32px;border-radius:8px;border:none;background:#fef2f2;color:#ef4444;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;flex-shrink:0"
+                  onmouseenter="this.style.background='#ef4444';this.style.color='#fff';this.style.transform='scale(1.1)'"
+                  onmouseleave="this.style.background='#fef2f2';this.style.color='#ef4444';this.style.transform='scale(1)'">
+            <i class="fa-solid fa-trash"></i>
+          </button>
         </div>
       </td>
     </tr>`;
@@ -7456,11 +7562,12 @@ function _renderMobPagination(page, total, pages) {
   info.textContent = `Showing ${from}–${to} of ${total} registrations`;
 
   const btnStyle = (active) =>
-    `style="padding:5px 11px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid;
-     background:${active ? 'var(--royal)' : '#fff'};color:${active ? '#fff' : 'var(--gray-600)'};
-     border-color:${active ? 'var(--royal)' : 'var(--gray-200)'};"`;
+    `style="min-width:34px;height:34px;padding:0 10px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid;
+     display:inline-flex;align-items:center;justify-content:center;transition:all .2s;
+     background:${active ? '#2563EB' : '#fff'};color:${active ? '#fff' : '#475569'};
+     border-color:${active ? '#2563EB' : '#e5e7eb'};"`;
 
-  let html = `<button ${btnStyle(false)} ${page <= 1 ? 'disabled style="opacity:.4;cursor:default"' : ''} onclick="if(${page}>1){_mobPage=${page-1};loadMobilization(true);}">‹ Prev</button>`;
+  let html = `<button ${btnStyle(false)} ${page <= 1 ? 'disabled style="opacity:.35;cursor:default;min-width:34px;height:34px;padding:0 10px;border-radius:8px;font-size:12px;font-weight:600;border:1.5px solid #e5e7eb;background:#fff;color:#475569;"' : ''} onclick="if(${page}>1){_mobPage=${page-1};loadMobilization(true);}">‹ Prev</button>`;
 
   const maxVisible = 5;
   let startP = Math.max(1, page - 2);
