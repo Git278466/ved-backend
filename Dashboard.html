@@ -242,6 +242,8 @@ img{max-width:100%;}
   box-shadow:4px 0 24px rgba(0,0,0,0.18);
   overflow:hidden;
   transform:translateZ(0);
+  will-change:transform;
+  contain:layout style;
 }
 .sidebar.collapsed{width:var(--sidebar-collapsed);}
 .sidebar.sidebar-closed{width:0 !important;overflow:hidden !important;box-shadow:none;}
@@ -487,6 +489,7 @@ img{max-width:100%;}
   transition:var(--transition);
   position:relative;
   overflow:hidden;
+  contain:layout style paint;
 }
 .stat-card::before{
   content:'';
@@ -817,6 +820,7 @@ button:focus-visible,
   display:flex;flex-direction:column;
   transform:scale(0.96) translateY(8px);
   transition:transform 0.2s cubic-bezier(0.4,0,0.2,1);
+  will-change:transform;
 }
 .modal-overlay.open .modal-box{transform:scale(1) translateY(0);}
 .modal-box.wide{max-width:860px;}
@@ -1199,6 +1203,42 @@ button:focus-visible,
     max-height:80vh;
     overflow-y:auto;
   }
+
+  /* ── Performance: remove expensive blur effects on mobile ── */
+  .header{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}
+  .modal-overlay{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;background:rgba(10,22,40,0.65) !important;}
+  .toast{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}
+
+  /* ── Stat cards: compact horizontal layout ── */
+  .stat-grid{gap:10px !important;}
+  .stat-card{
+    flex-direction:row !important;
+    align-items:center !important;
+    gap:12px !important;
+    padding:12px 14px !important;
+  }
+  .stat-card::before{height:100% !important;width:3px !important;right:auto !important;top:0 !important;bottom:0 !important;opacity:1 !important;}
+  .stat-icon{width:36px !important;height:36px !important;font-size:14px !important;flex-shrink:0 !important;}
+  .stat-card > div:nth-child(2){flex:1 !important;min-width:0 !important;}
+  .stat-value{font-size:22px !important;}
+  .stat-label{font-size:10.5px !important;}
+  .stat-meta{font-size:11px !important;margin-top:2px !important;}
+
+  /* ── Disable card hover-lift on mobile — causes reflow jank ── */
+  .stat-card:hover{transform:none !important;box-shadow:var(--shadow-sm) !important;}
+  .role-card:hover{transform:none !important;box-shadow:var(--shadow-sm) !important;}
+  .chart-card:hover{transform:none !important;box-shadow:var(--shadow-sm) !important;}
+
+  /* ── Compact chart/activity cards ── */
+  .chart-card{padding:14px !important;}
+  .activity-item{padding:10px 14px !important;}
+  .section-hdr{margin-bottom:12px !important;}
+  .mt-16{margin-top:12px !important;}
+
+  /* ── Touch-friendly minimum targets ── */
+  .btn{min-height:44px !important;}
+  .filter-select{min-height:44px !important;}
+  .search-wrap input{min-height:44px !important;padding-top:12px !important;padding-bottom:12px !important;}
 }
 
 /* Small mobile: ≤ 480px */
@@ -1280,6 +1320,22 @@ button:focus-visible,
   .mob-filter-grid{grid-template-columns:1fr !important;}
 }
 
+/* =========================================================
+   REDUCED MOTION — respect user accessibility preference
+   ========================================================= */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+    scroll-behavior:auto !important;
+  }
+  .page.active{animation:none !important;}
+  .sidebar{transition:none !important;}
+  .modal-box{transition:none !important;}
+  .spinner{animation:spin 1.5s linear infinite !important;}
+}
+
 /* Touch devices — remove hover effects, add active states */
 @media(hover:none){
   .nav-item:hover{background:transparent;color:var(--gray-400);}
@@ -1292,11 +1348,17 @@ button:focus-visible,
   .nav-item{padding:12px 12px;}
   .hdr-btn{width:44px;height:44px;}
   .filter-checkbox-item{padding:8px 7px;}
+  /* Disable ALL card hover-lift animations on touch */
+  .stat-card:hover,.role-card:hover,.chart-card:hover,.activity-card:hover{transform:none !important;box-shadow:var(--shadow-sm) !important;}
+  .btn-primary:hover,.btn-orange:hover,.btn-danger:hover,.btn-success:hover,.btn-outline:hover{transform:none !important;}
   /* Disable premium card hover lifts on touch — reduces jank */
   .crm-stat-card{transform:none !important;transition:none !important;}
   .crm-stat-card:hover{box-shadow:var(--shadow-sm) !important;transform:none !important;}
   /* Disable inline table-row hover bg change on touch */
   .prem-table-wrap tr{transition:none !important;}
+  /* Disable stat card ::before accent bar animation on touch */
+  .stat-card{transition:none !important;}
+  .stat-card::before{transition:none !important;}
 }
 
 /* =========================================================
@@ -7229,8 +7291,10 @@ function _mktSetCat(key) {
   _renderMktGrid();
 }
 
+let _filterMktTimer = null;
 function filterMktMaterials() {
-  _renderMktGrid();
+  clearTimeout(_filterMktTimer);
+  _filterMktTimer = setTimeout(_renderMktGrid, 200);
 }
 
 function _renderMktGrid() {
@@ -9093,7 +9157,7 @@ function _renderStatCards(stats, stale = false) {
   const overviewStats = document.getElementById('overviewStats');
   if (!overviewStats) return;
 
-  overviewStats.innerHTML = cards.length
+  const html = cards.length
     ? cards.map(c => `
         <div class="stat-card ${c.color}">
           <div class="stat-icon"><i class="fa-solid ${c.icon}"></i></div>
@@ -9107,6 +9171,7 @@ function _renderStatCards(stats, stale = false) {
         </div>
       `).join('')
     : '<div style="padding:20px;color:var(--gray-400);font-size:13px">No accessible modules</div>';
+  requestAnimationFrame(() => { overviewStats.innerHTML = html; });
 }
 
 let _statsDebounceTimer = null;
@@ -9560,11 +9625,15 @@ function renderRolesPage() {
   renderRolesTable();
 }
 
+let _filterRolesTimer = null;
 function filterRoles() {
-  const q = document.getElementById('roleSearch')?.value.toLowerCase() || '';
-  const st = document.getElementById('roleStatusFilter')?.value || '';
-  renderRoleCards(q, st);
-  renderRolesTable(q, st);
+  clearTimeout(_filterRolesTimer);
+  _filterRolesTimer = setTimeout(() => {
+    const q = document.getElementById('roleSearch')?.value.toLowerCase() || '';
+    const st = document.getElementById('roleStatusFilter')?.value || '';
+    renderRoleCards(q, st);
+    renderRolesTable(q, st);
+  }, 200);
 }
 
 function getFilteredRoles(q = '', st = '') {
@@ -9815,11 +9884,15 @@ function getAdminDisplayName(admin) {
   );
 }
 
+let _filterAdminsTimer = null;
 function filterAdmins() {
-  const q = document.getElementById('adminSearch')?.value.toLowerCase() || '';
-  const roleF = document.getElementById('adminRoleFilter')?.value || '';
-  const stF = document.getElementById('adminStatusFilter')?.value || '';
-  renderAdminsTable(q, roleF, stF);
+  clearTimeout(_filterAdminsTimer);
+  _filterAdminsTimer = setTimeout(() => {
+    const q = document.getElementById('adminSearch')?.value.toLowerCase() || '';
+    const roleF = document.getElementById('adminRoleFilter')?.value || '';
+    const stF = document.getElementById('adminStatusFilter')?.value || '';
+    renderAdminsTable(q, roleF, stF);
+  }, 200);
 }
 
 /* Role meta for visual styling */
@@ -10542,11 +10615,14 @@ function checkMobile() {
   }
 }
 
+let _resizeTimer = null;
 window.addEventListener('resize', () => {
-  checkMobile();
-  // Close mobile sidebar when resizing to desktop
-  if (!_isMobile()) closeMobileSidebar();
-});
+  clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(() => {
+    checkMobile();
+    if (!_isMobile()) closeMobileSidebar();
+  }, 150);
+}, {passive: true});
 checkMobile();
 
 /* ============================================================
