@@ -7499,6 +7499,7 @@ function openMobDetail(id) {
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px">
       ${field('Highest Qualification', m.education)}
+      ${field('Preferred Certificate Program', m.certificateProgram || '—')}
       ${field('Interested Skill Course', m.skillCourse)}
       ${field('Future Course / Degree', m.futureCourse || '—')}
       ${field('Degree Program Mode', degreeModeLabel)}
