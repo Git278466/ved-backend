@@ -3586,7 +3586,6 @@ button:focus-visible,
                 <th>Guardian</th>
                 <th>Gender</th>
                 <th>Certificate</th>
-                <th>Skill Course</th>
                 <th>Qualification</th>
                 <th>Dest.</th>
                 <th>Status</th>
@@ -7415,11 +7414,6 @@ function renderMobilization(list, page, total, pages) {
         <span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;
           ${m.certificateProgram === 'IBM' ? 'background:rgba(22,163,74,.12);color:#16a34a' : m.certificateProgram === 'NESCOM' ? 'background:rgba(11,99,206,.12);color:#0b63ce' : m.certificateProgram === 'Workshop' ? 'background:rgba(249,115,22,.12);color:#f97316' : 'background:#f3f4f6;color:#6b7280'}">
           ${escHtml(m.certificateProgram || '—')}
-        </span>
-      </td>
-      <td>
-        <span style="display:inline-block;background:#eef2fb;color:var(--navy);padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escHtml(m.skillCourse||'')}">
-          ${escHtml(m.skillCourse || '—')}
         </span>
       </td>
       <td style="font-size:11px;color:var(--gray-600);max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escHtml(m.education||'')}">${escHtml(m.education || '—')}</td>
