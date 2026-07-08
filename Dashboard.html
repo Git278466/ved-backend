@@ -1249,6 +1249,37 @@ button:focus-visible,
   .hdr-search-results{max-height:calc(80vh - 160px);}
 }
 
+/* ── Premium page headers — mobile ─────────────────────── */
+@media(max-width:768px){
+  .prem-page-hdr{margin-bottom:20px !important;}
+  .prem-page-hdr > div:last-child{flex-direction:column !important;align-items:flex-start !important;gap:10px !important;}
+  .prem-page-hdr > div:last-child > h1{font-size:20px !important;}
+  .prem-hdr-actions{flex-wrap:wrap !important;width:100% !important;}
+  .prem-hdr-actions > *{flex:1 1 auto !important;min-width:80px !important;justify-content:center !important;}
+
+  /* Premium filter panels — stack on mobile */
+  .prem-filter-panel > div:first-child{flex-direction:column !important;align-items:stretch !important;}
+  .prem-filter-panel select,
+  .prem-filter-panel > div:first-child > input{width:100% !important;box-sizing:border-box !important;}
+  .prem-filter-panel > div:first-child > div{width:100% !important;min-width:0 !important;}
+  .prem-filter-panel > div:first-child > div input{width:100% !important;box-sizing:border-box !important;}
+  .mob-filter-grid{grid-template-columns:1fr 1fr !important;}
+
+  /* Table scroll containers — add iOS momentum scroll */
+  .prem-table-wrap{-webkit-overflow-scrolling:touch !important;overflow-x:auto !important;}
+
+  /* Mobilization summary cards: 2 per row on mobile */
+  #mobSummary{grid-template-columns:repeat(2,1fr) !important;}
+}
+
+@media(max-width:480px){
+  /* Single column on small phones */
+  #mobSummary{grid-template-columns:1fr !important;}
+  .prem-page-hdr > div:last-child > h1{font-size:18px !important;}
+  .prem-hdr-actions > *{flex:1 1 calc(50% - 8px) !important;}
+  .mob-filter-grid{grid-template-columns:1fr !important;}
+}
+
 /* Touch devices — remove hover effects, add active states */
 @media(hover:none){
   .nav-item:hover{background:transparent;color:var(--gray-400);}
@@ -1261,6 +1292,11 @@ button:focus-visible,
   .nav-item{padding:12px 12px;}
   .hdr-btn{width:44px;height:44px;}
   .filter-checkbox-item{padding:8px 7px;}
+  /* Disable premium card hover lifts on touch — reduces jank */
+  .crm-stat-card{transform:none !important;transition:none !important;}
+  .crm-stat-card:hover{box-shadow:var(--shadow-sm) !important;transform:none !important;}
+  /* Disable inline table-row hover bg change on touch */
+  .prem-table-wrap tr{transition:none !important;}
 }
 
 /* =========================================================
@@ -3232,7 +3268,7 @@ button:focus-visible,
       <div class="page" id="page-crm">
 
         <!-- ── Premium Page Header ── -->
-        <div style="margin-bottom:28px">
+        <div class="prem-page-hdr" style="margin-bottom:28px">
           <div style="font-size:12px;color:#94a3b8;font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:6px;letter-spacing:.2px">
             <i class="fa-solid fa-gauge-high" style="font-size:10px"></i>
             <span>Dashboard</span>
@@ -3244,7 +3280,7 @@ button:focus-visible,
               <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;line-height:1.2;letter-spacing:-0.4px">CRM &amp; Lead Management</h1>
               <p style="font-size:13px;color:#64748b;margin:5px 0 0;font-weight:400">Capture, track and convert leads into enrolled students.</p>
             </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <div class="prem-hdr-actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
               <button onclick="crmRefresh()" title="Refresh"
                       style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;color:#64748b;font-size:13px;cursor:pointer;transition:all .2s"
                       onmouseenter="this.style.borderColor='#2563EB';this.style.color='#2563EB';this.style.transform='rotate(30deg)'"
@@ -3291,7 +3327,7 @@ button:focus-visible,
         <!-- ── LIST VIEW ── -->
         <div id="crmViewList">
           <!-- Filters bar -->
-          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(15,23,42,.05)">
+          <div class="prem-filter-panel" style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(15,23,42,.05)">
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
               <div style="position:relative;flex:1;min-width:200px;max-width:280px">
                 <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px;pointer-events:none"></i>
@@ -3378,7 +3414,7 @@ button:focus-visible,
 
           <!-- Table -->
           <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;box-shadow:0 1px 4px rgba(15,23,42,.05)">
-            <div style="overflow-x:auto">
+            <div class="prem-table-wrap" style="overflow-x:auto;-webkit-overflow-scrolling:touch">
               <table style="width:100%;border-collapse:collapse;min-width:1100px" id="crmTable">
                 <thead>
                   <tr style="background:#f8fafc;border-bottom:2px solid #e5e7eb">
@@ -3545,7 +3581,7 @@ button:focus-visible,
       <div class="page" id="page-mobilization">
 
         <!-- ── Premium Page Header ── -->
-        <div style="margin-bottom:28px">
+        <div class="prem-page-hdr" style="margin-bottom:28px">
           <div style="font-size:12px;color:#94a3b8;font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:6px;letter-spacing:.2px">
             <i class="fa-solid fa-gauge-high" style="font-size:10px"></i>
             <span>Dashboard</span>
@@ -3557,7 +3593,7 @@ button:focus-visible,
               <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;line-height:1.2;letter-spacing:-0.4px">Mobilization Registrations</h1>
               <p style="font-size:13px;color:#64748b;margin:5px 0 0;font-weight:400">Skilling Project — student registration submissions.</p>
             </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <div class="prem-hdr-actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
               <button onclick="exportMobExcel('NESCOM')" id="btnMobNescom"
                       style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap"
                       onmouseenter="this.style.borderColor='#16a34a';this.style.color='#16a34a';this.style.background='#f0fdf4'"
@@ -3602,7 +3638,7 @@ button:focus-visible,
         <div id="mobSummary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:20px"></div>
 
         <!-- ── FILTER PANEL ── -->
-        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:20px 22px;margin-bottom:18px;box-shadow:0 1px 4px rgba(15,23,42,.05)">
+        <div class="prem-filter-panel" style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:20px 22px;margin-bottom:18px;box-shadow:0 1px 4px rgba(15,23,42,.05)">
           <!-- Row 1: search + clear -->
           <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
             <div style="position:relative;flex:1;min-width:240px">
@@ -3620,7 +3656,7 @@ button:focus-visible,
             </button>
           </div>
           <!-- Row 2: dropdown filters -->
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px">
+          <div class="mob-filter-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px">
             <select class="form-select" id="mobStatusFilter" onchange="loadMobilization(true)"
                     style="padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:13px;background:#f8fafc;color:#0f172a;cursor:pointer;outline:none">
               <option value="">All Status</option>
@@ -3677,7 +3713,7 @@ button:focus-visible,
 
         <!-- Table Container -->
         <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;box-shadow:0 1px 4px rgba(15,23,42,.05)">
-          <div style="overflow-x:auto">
+          <div class="prem-table-wrap" style="overflow-x:auto;-webkit-overflow-scrolling:touch">
             <table style="width:100%;border-collapse:collapse;min-width:900px">
               <thead>
                 <tr style="background:#f8fafc;border-bottom:2px solid #e5e7eb">
