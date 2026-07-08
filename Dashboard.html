@@ -1299,6 +1299,35 @@ button:focus-visible,
 
   /* Header: on very small phones hide help button to prevent overflow */
   .hdr-btn[title="Help"]{display:none !important;}
+
+  /* ── Admin management rows: fix cramped layout ── */
+  /* Row structure: [Avatar] [Name flex:1] [Status] | [Actions full-width 2nd row] */
+  .hov-fafafa{
+    flex-wrap:wrap !important;
+    gap:6px !important;
+    padding:10px 14px !important;
+    align-items:center !important;
+  }
+  /* Avatar: slightly smaller */
+  .hov-fafafa > div:nth-child(1){
+    width:34px !important;height:34px !important;font-size:12px !important;
+  }
+  /* Name area: fill all space between avatar and status badge */
+  .hov-fafafa > div:nth-child(2){flex:1 !important;min-width:0 !important;}
+  /* Status badge: right side of row 1 */
+  .hov-fafafa > div:nth-child(3){flex-shrink:0 !important;}
+  /* Date: hide on mobile — saves 80px+ of space */
+  .hov-fafafa > div:nth-child(4){display:none !important;}
+  /* Actions: full-width second row, right-aligned */
+  .hov-fafafa > div:nth-child(5){
+    width:100% !important;
+    display:flex !important;
+    justify-content:flex-end !important;
+    gap:4px !important;
+    padding-top:6px !important;
+    border-top:1px solid #f1f5f9 !important;
+    margin-top:2px !important;
+  }
 }
 
 /* ── Premium page headers — mobile ─────────────────────── */
