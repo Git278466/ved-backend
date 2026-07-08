@@ -1149,10 +1149,19 @@ button:focus-visible,
   /* Show mobile overlay */
   .mobile-overlay.active{display:block;}
 
-  /* Header */
-  .header{padding:0 12px;gap:8px;}
-  .header-title{font-size:14px;}
+  /* Header — fix layout on mobile */
+  .header{padding:0 10px;gap:6px;height:56px;}
+  /* Title container: must flex:1 to take available space between hamburger & actions */
+  .header > div:nth-child(2){flex:1 !important;min-width:0 !important;overflow:hidden !important;}
+  .header-title{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .header-title span{display:none;}
   .breadcrumb{display:none;}
+  /* Actions: must NOT wrap — causes double-height header on mobile */
+  .header-actions{flex-wrap:nowrap !important;gap:2px !important;}
+  /* Compact header buttons to fit in 1 row */
+  .hdr-btn{width:36px !important;height:36px !important;font-size:13px !important;}
+  .theme-toggle{width:36px !important;height:36px !important;font-size:13px !important;}
+  .hdr-avatar{width:34px !important;height:34px !important;font-size:12px !important;}
   .hdr-search-overlay{padding:60px 14px 0;}
 
   /* Page content */
@@ -1287,6 +1296,9 @@ button:focus-visible,
 
   /* Search results: leave room on small screens */
   .hdr-search-results{max-height:calc(80vh - 160px);}
+
+  /* Header: on very small phones hide help button to prevent overflow */
+  .hdr-btn[title="Help"]{display:none !important;}
 }
 
 /* ── Premium page headers — mobile ─────────────────────── */
