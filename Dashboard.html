@@ -3265,7 +3265,7 @@ button:focus-visible,
         <div class="section-hdr">
           <div><h3>Commission</h3><p>Track milestone tiers & commission payouts in one place.</p></div>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-outline btn-sm" onclick="loadReferrals()"><i class="fa-solid fa-rotate"></i> Refresh</button>
+            <button class="btn btn-outline btn-sm" onclick="loadReferrals(true)"><i class="fa-solid fa-rotate"></i> Refresh</button>
           </div>
         </div>
 
@@ -3944,7 +3944,7 @@ button:focus-visible,
             <input type="text" id="mktSearch" placeholder="Search materials…" oninput="filterMktMaterials()" style="width:100%">
           </div>
           <div id="mktCategoryTabs" style="display:flex;gap:8px;flex-wrap:wrap"></div>
-          <button class="btn btn-ghost btn-sm" onclick="loadMarketingMaterials()" style="margin-left:auto">
+          <button class="btn btn-ghost btn-sm" onclick="loadMarketingMaterials(true)" style="margin-left:auto">
             <i class="fa-solid fa-rotate"></i> Refresh
           </button>
         </div>
@@ -4127,7 +4127,7 @@ button:focus-visible,
             <h3><i class="fa-solid fa-id-card cep-gold"></i> My CEP Certificate</h3>
             <p>Request your Channel Education Partner certificate and track approval status.</p>
           </div>
-          <button class="btn btn-outline btn-sm" onclick="cepLoadRequests()">
+          <button class="btn btn-outline btn-sm" onclick="cepLoadRequests(true)">
             <i class="fa-solid fa-rotate"></i> Refresh
           </button>
         </div>
@@ -4210,7 +4210,7 @@ button:focus-visible,
           <div class="cep-history-card">
             <div class="cep-history-hdr">
               <h4><i class="fa-solid fa-list-check" style="color:#1A4FBB"></i> Request History</h4>
-              <button class="btn btn-ghost btn-sm" onclick="cepLoadRequests()" style="font-size:12px;padding:4px 10px"><i class="fa-solid fa-rotate"></i></button>
+              <button class="btn btn-ghost btn-sm" onclick="cepLoadRequests(true)" style="font-size:12px;padding:4px 10px"><i class="fa-solid fa-rotate"></i></button>
             </div>
             <div id="cepHistoryBody">
               <div style="text-align:center;padding:32px;color:var(--gray-400)"><i class="fa-solid fa-spinner fa-spin"></i></div>
@@ -7330,7 +7330,8 @@ function _mktCatMeta(key) {
   return MKT_CATEGORIES.find(c => c.key === key) || MKT_CATEGORIES[MKT_CATEGORIES.length - 1];
 }
 
-async function loadMarketingMaterials() {
+async function loadMarketingMaterials(force = false) {
+  if (force) clearApiCache('/marketing-materials');
   const grid = document.getElementById('mktGrid');
   if (!grid) return;
   grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--gray-400)"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.8rem"></i></div>';
@@ -8052,6 +8053,7 @@ let _teamsCache = [];
 
 async function loadTeams(force = false) {
   if (!canDo('admin_management', 'view')) return;
+  if (force) clearApiCache('/teams');
   const grid = document.getElementById('teamsGrid');
   if (!grid) return;
   grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray-400)"><i class="fa-solid fa-spinner fa-spin"></i> Loading teams...</div>';
@@ -8702,6 +8704,7 @@ async function deletePartner(id) {
 async function loadInstitutions(force = false) {
   if (!canDo('institutions', 'view')) return;
   if (LIVE.loaded.institutions && !force) return;
+  if (force) { clearApiCache('/institutions'); clearApiCache('/referrers'); }
   setTableLoading('institutionsTableBody', 9, 'Loading institutions...');
 
   const [r, refRes] = await Promise.all([
@@ -8727,6 +8730,7 @@ const TIER_ICONS  = { Normal:'fa-shield', Silver:'fa-award', Gold:'fa-trophy', P
 
 async function loadInstLeadOverview(force = false) {
   if (!force && document.getElementById('instLeadOverviewBody')?.dataset?.loaded) return;
+  if (force) clearApiCache('/institutions/leads-overview');
 
   const tbody   = document.getElementById('instLeadOverviewBody');
   const summary = document.getElementById('instLeadSummary');
@@ -8823,6 +8827,7 @@ function viewInstLeads(institutionId, name) {
 async function loadPartners(force = false) {
   if (!canDo('associate_partners', 'view')) return;
   if (LIVE.loaded.partners && !force) return;
+  if (force) { clearApiCache('/partners'); clearApiCache('/referrers'); clearApiCache('/admins'); }
   setTableLoading('partnersTableBody', 9, 'Loading partners...');
 
   const [r, refRes] = await Promise.all([
@@ -9567,6 +9572,7 @@ async function _populateImportHistoryApFilter() {
 async function loadAdminActivity(force = false) {
   const grid = document.getElementById('adminActivityGrid');
   if (!grid) return;
+  if (force) clearApiCache('/dashboard/admin-activity');
 
   if (force || !grid.dataset.loaded) {
     grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--gray-400)"><i class="fa-solid fa-spinner fa-spin" style="margin-right:8px"></i> Loading admin activity...</div>';
@@ -10567,7 +10573,7 @@ function navTo(page) {
   if (page === 'profile')       loadProfilePage();
   if (page === 'mobilization')  loadMobilization();
   if (page === 'cep_partner' && typeof onCepPartnerPageLoad === 'function') onCepPartnerPageLoad();
-  if (page === 'marketing')     loadMarketingMaterials();
+  if (page === 'marketing')     loadMarketingMaterials(true);
 }
 
 /* ============================================================
@@ -12817,7 +12823,8 @@ async function cepSubmitRequest(e) {
 }
 
 /* Load my requests — drives all dynamic sections */
-async function cepLoadRequests() {
+async function cepLoadRequests(force = false) {
+  if (force) clearApiCache('/cep-certificates');
   const histBody = document.getElementById('cepHistoryBody');
   if (histBody) histBody.innerHTML = '<div style="text-align:center;padding:32px;color:var(--gray-400)"><i class="fa-solid fa-spinner fa-spin"></i></div>';
 
@@ -14307,6 +14314,7 @@ const CC_STATUS_META = {
 
 async function loadCounsellingCert(force = false) {
   if (!canDo('counselling_cert', 'view')) return;
+  if (force) clearApiCache('/counselling-responses');
   const status   = document.getElementById('ccStatusFilter')?.value || '';
   const userType = document.getElementById('ccTypeFilter')?.value   || '';
   const tbody    = document.getElementById('ccTableBody');
@@ -14854,7 +14862,8 @@ function switchRefTab(tab) {
   if (tab === 'leads') loadCommissionLeads();
 }
 
-async function loadReferrals() {
+async function loadReferrals(force = false) {
+  if (force) { clearApiCache('/referrers'); clearApiCache('/leads'); }
   const statsRes = await apiFetch('GET', '/referrers/stats');
 
   if (statsRes.ok) {
@@ -14871,8 +14880,7 @@ async function loadReferrals() {
     renderTierChart();
   }
 
-  loadCommissionLeads();
-
+  loadCommissionLeads(force);
 }
 
 function renderTierChart() {
@@ -15011,11 +15019,13 @@ function refStatCard(icon, color, bg, label, value) {
   </div>`;
 }
 
-async function loadCommissionLeads() {
+async function loadCommissionLeads(force = false) {
+  if (force) clearApiCache('/leads');
   const tbody = document.getElementById('refLeadsTableBody');
+  if (!tbody) return;
   tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:30px;color:#6b7280">Loading...</td></tr>';
 
-  const status = document.getElementById('refCommStatusFilter').value;
+  const status = document.getElementById('refCommStatusFilter')?.value || '';
   const params = new URLSearchParams({ hasReferrer: '1', limit: 100 });
   if (status) params.set('commissionStatus', status);
 
