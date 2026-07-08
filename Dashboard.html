@@ -3231,18 +3231,51 @@ button:focus-visible,
            ════════════════════════════════════════════════ -->
       <div class="page" id="page-crm">
 
-        <!-- Header -->
-        <div class="section-hdr" style="background:#fff;padding:20px 24px;border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:0 1px 3px rgba(10,22,40,.04);margin-bottom:20px">
-          <div>
-            <h3 style="font-size:18px;display:flex;align-items:center;gap:10px"><i class="fa-solid fa-chart-line" style="color:var(--royal);font-size:16px"></i> CRM &amp; Lead Management</h3>
-            <p style="margin-top:4px">Capture, track and convert leads into enrolled students.</p>
+        <!-- ── Premium Page Header ── -->
+        <div style="margin-bottom:28px">
+          <div style="font-size:12px;color:#94a3b8;font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:6px;letter-spacing:.2px">
+            <i class="fa-solid fa-gauge-high" style="font-size:10px"></i>
+            <span>Dashboard</span>
+            <span style="color:#cbd5e1;font-size:10px">›</span>
+            <span style="color:#64748b">CRM &amp; Leads</span>
           </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-            <button class="btn btn-ghost btn-sm" onclick="crmRefresh()" style="border-radius:8px"><i class="fa-solid fa-rotate"></i> Refresh</button>
-            <button class="btn btn-outline btn-sm" id="exportLeadsBtn" onclick="exportLeadsToExcel()" style="border-radius:8px"><i class="fa-solid fa-file-excel" style="color:#16a34a"></i> Export</button>
-            <button class="btn btn-outline btn-sm" id="exportDeleteLeadsBtn" onclick="openExportDeleteModal()" style="display:none;border-radius:8px"><i class="fa-solid fa-file-export" style="color:#dc2626"></i> Export &amp; Delete</button>
-            <button class="btn btn-outline btn-sm" onclick="openImportLeadsModal()" style="border-radius:8px"><i class="fa-solid fa-file-import" style="color:#7c3aed"></i> Import</button>
-            <button class="btn btn-primary btn-sm" onclick="openAddLeadModal()" style="border-radius:8px;padding:8px 18px"><i class="fa-solid fa-plus"></i> Add Lead</button>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+            <div>
+              <h1 style="font-size:26px;font-weight:700;color:#0f172a;margin:0;line-height:1.2;letter-spacing:-0.4px">CRM &amp; Lead Management</h1>
+              <p style="font-size:13px;color:#64748b;margin:5px 0 0;font-weight:400">Capture, track and convert leads into enrolled students.</p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <button onclick="crmRefresh()" title="Refresh"
+                      style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;color:#64748b;font-size:13px;cursor:pointer;transition:all .2s"
+                      onmouseenter="this.style.borderColor='#2563EB';this.style.color='#2563EB';this.style.transform='rotate(30deg)'"
+                      onmouseleave="this.style.borderColor='#e2e8f0';this.style.color='#64748b';this.style.transform='rotate(0deg)'">
+                <i class="fa-solid fa-rotate"></i>
+              </button>
+              <button id="exportLeadsBtn" onclick="exportLeadsToExcel()"
+                      style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap"
+                      onmouseenter="this.style.borderColor='#16a34a';this.style.color='#16a34a';this.style.background='#f0fdf4'"
+                      onmouseleave="this.style.borderColor='#e2e8f0';this.style.color='#374151';this.style.background='#fff'">
+                <i class="fa-solid fa-file-excel" style="color:#16a34a"></i> Export
+              </button>
+              <button id="exportDeleteLeadsBtn" onclick="openExportDeleteModal()"
+                      style="display:none;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid #fecaca;border-radius:10px;background:#fff;color:#dc2626;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap"
+                      onmouseenter="this.style.background='#fef2f2'"
+                      onmouseleave="this.style.background='#fff'">
+                <i class="fa-solid fa-file-export"></i> Export &amp; Delete
+              </button>
+              <button onclick="openImportLeadsModal()"
+                      style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap"
+                      onmouseenter="this.style.borderColor='#7c3aed';this.style.color='#7c3aed';this.style.background='#f5f3ff'"
+                      onmouseleave="this.style.borderColor='#e2e8f0';this.style.color='#374151';this.style.background='#fff'">
+                <i class="fa-solid fa-file-import" style="color:#7c3aed"></i> Import
+              </button>
+              <button onclick="openAddLeadModal()"
+                      style="display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border:none;border-radius:10px;background:#2563EB;color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;box-shadow:0 2px 8px rgba(37,99,235,.3)"
+                      onmouseenter="this.style.background='#1d4ed8';this.style.boxShadow='0 4px 16px rgba(37,99,235,.4)'"
+                      onmouseleave="this.style.background='#2563EB';this.style.boxShadow='0 2px 8px rgba(37,99,235,.3)'">
+                <i class="fa-solid fa-plus"></i> Add Lead
+              </button>
+            </div>
           </div>
         </div>
 
@@ -3258,66 +3291,79 @@ button:focus-visible,
         <!-- ── LIST VIEW ── -->
         <div id="crmViewList">
           <!-- Filters bar -->
-          <div class="crm-filter-bar">
-            <div class="search-wrap" style="flex:1;min-width:200px;max-width:280px">
-              <i class="fa-solid fa-magnifying-glass"></i>
-              <input type="text" id="crmSearch" placeholder="Search name, email, mobile…" oninput="debouncedCrmSearch()"/>
-            </div>
-            <select class="form-select" id="crmFilterStage" onchange="crmApplyFilters()">
-              <option value="">All Responses</option>
-              <option value="new">New</option>
-              <option value="not_answering">Not Answering</option>
-              <option value="not_reachable">Not Reachable</option>
-              <option value="call_back">Call Back</option>
-              <option value="interested">Interested</option>
-              <option value="enrolled">Enrolled</option>
-              <option value="follow_up">Follow Up</option>
-              <option value="not_interested">Not Interested</option>
-            </select>
-            <select class="form-select" id="crmFilterSource" onchange="crmApplyFilters()">
-              <option value="">All Sources</option>
-              <option value="website">Website</option>
-              <option value="referral">Referral</option>
-              <option value="event">Event</option>
-              <option value="social_media">Social Media</option>
-              <option value="walk_in">Walk-in</option>
-              <option value="manual">Manual</option>
-              <option value="other">Other</option>
-            </select>
-            <select class="form-select" id="crmFilterPriority" onchange="crmApplyFilters()">
-              <option value="">All Priority</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
-            </select>
-            <div style="position:relative;min-width:150px">
-              <input class="form-input" id="crmFilterCourse"
-                placeholder="Course…" autocomplete="off"
-                oninput="debouncedCrmCourseFilter()"
-                style="padding-right:26px;font-size:13px"/>
-              <span id="crmCourseFilterClear" onclick="crmClearCourseFilter()"
-                style="display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);cursor:pointer;color:#9ca3af;font-size:13px">&#x2715;</span>
-            </div>
-            <div style="position:relative;min-width:170px">
-              <input class="form-input" id="crmFilterAssignedInput"
-                placeholder="Assigned to…" autocomplete="off"
-                oninput="_crmAssignFilterSearch(this.value)"
-                onfocus="_crmAssignFilterSearch(this.value)"
-                style="padding-right:26px;font-size:13px"/>
-              <input type="hidden" id="crmFilterAssigned" value=""/>
-              <span id="crmAssignFilterClear" onclick="_crmAssignFilterClear()"
-                style="display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);cursor:pointer;color:#9ca3af;font-size:13px">&#x2715;</span>
-              <div id="crmAssignDropdown"
-                style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #2563EB;border-radius:8px;box-shadow:0 4px 16px rgba(10,22,40,.12);z-index:999;max-height:200px;overflow-y:auto;margin-top:2px">
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(15,23,42,.05)">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+              <div style="position:relative;flex:1;min-width:200px;max-width:280px">
+                <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px;pointer-events:none"></i>
+                <input type="text" id="crmSearch" placeholder="Search name, email, mobile…" oninput="debouncedCrmSearch()"
+                       style="width:100%;padding:9px 12px 9px 36px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:13px;color:#0f172a;background:#f8fafc;outline:none;transition:all .2s;box-sizing:border-box"
+                       onfocus="this.style.borderColor='#2563EB';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(37,99,235,.1)'"
+                       onblur="this.style.borderColor='#e5e7eb';this.style.background='#f8fafc';this.style.boxShadow='none'"/>
               </div>
+              <select class="form-select" id="crmFilterStage" onchange="crmApplyFilters()"
+                      style="padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:13px;background:#f8fafc;color:#0f172a;cursor:pointer;outline:none;min-width:135px">
+                <option value="">All Responses</option>
+                <option value="new">New</option>
+                <option value="not_answering">Not Answering</option>
+                <option value="not_reachable">Not Reachable</option>
+                <option value="call_back">Call Back</option>
+                <option value="interested">Interested</option>
+                <option value="enrolled">Enrolled</option>
+                <option value="follow_up">Follow Up</option>
+                <option value="not_interested">Not Interested</option>
+              </select>
+              <select class="form-select" id="crmFilterSource" onchange="crmApplyFilters()"
+                      style="padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:13px;background:#f8fafc;color:#0f172a;cursor:pointer;outline:none;min-width:120px">
+                <option value="">All Sources</option>
+                <option value="website">Website</option>
+                <option value="referral">Referral</option>
+                <option value="event">Event</option>
+                <option value="social_media">Social Media</option>
+                <option value="walk_in">Walk-in</option>
+                <option value="manual">Manual</option>
+                <option value="other">Other</option>
+              </select>
+              <select class="form-select" id="crmFilterPriority" onchange="crmApplyFilters()"
+                      style="padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:13px;background:#f8fafc;color:#0f172a;cursor:pointer;outline:none;min-width:120px">
+                <option value="">All Priority</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+              <div style="position:relative;min-width:150px">
+                <input class="form-input" id="crmFilterCourse" placeholder="Course…" autocomplete="off"
+                       oninput="debouncedCrmCourseFilter()"
+                       style="padding:9px 28px 9px 12px;font-size:13px;border:1.5px solid #e5e7eb;border-radius:12px;background:#f8fafc;color:#0f172a;outline:none;width:100%;box-sizing:border-box"/>
+                <span id="crmCourseFilterClear" onclick="crmClearCourseFilter()"
+                      style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:#94a3b8;font-size:12px">&#x2715;</span>
+              </div>
+              <div style="position:relative;min-width:160px">
+                <input class="form-input" id="crmFilterAssignedInput" placeholder="Assigned to…" autocomplete="off"
+                       oninput="_crmAssignFilterSearch(this.value)"
+                       onfocus="_crmAssignFilterSearch(this.value)"
+                       style="padding:9px 28px 9px 12px;font-size:13px;border:1.5px solid #e5e7eb;border-radius:12px;background:#f8fafc;color:#0f172a;outline:none;width:100%;box-sizing:border-box"/>
+                <input type="hidden" id="crmFilterAssigned" value=""/>
+                <span id="crmAssignFilterClear" onclick="_crmAssignFilterClear()"
+                      style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:#94a3b8;font-size:12px">&#x2715;</span>
+                <div id="crmAssignDropdown"
+                     style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #2563EB;border-radius:10px;box-shadow:0 4px 16px rgba(10,22,40,.12);z-index:999;max-height:200px;overflow-y:auto;margin-top:4px">
+                </div>
+              </div>
+              <select class="form-select" id="crmFilterImportedBy" onchange="crmApplyFilters()"
+                      style="display:none;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:13px;background:#f8fafc;color:#0f172a;cursor:pointer;outline:none;min-width:190px;max-width:240px">
+                <option value="">All Imported From</option>
+              </select>
+              <button id="crmStaleBtn" onclick="crmToggleStaleFilter()" title="Show only stale leads (7+ days inactive)"
+                      style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid #f59e0b;border-radius:12px;background:rgba(245,158,11,.06);color:#b45309;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap">
+                <i class="fa-solid fa-clock-rotate-left"></i> Stale
+              </button>
+              <button onclick="crmResetFilters()"
+                      style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid #e5e7eb;border-radius:12px;background:#fff;color:#64748b;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap"
+                      onmouseenter="this.style.borderColor='#ef4444';this.style.color='#ef4444';this.style.background='#fef2f2'"
+                      onmouseleave="this.style.borderColor='#e5e7eb';this.style.color='#64748b';this.style.background='#fff'">
+                <i class="fa-solid fa-rotate"></i> Reset
+              </button>
             </div>
-            <select class="form-select" id="crmFilterImportedBy" onchange="crmApplyFilters()" style="display:none;min-width:190px;max-width:240px">
-              <option value="">Imported from</option>
-            </select>
-            <button class="btn btn-ghost btn-sm" id="crmStaleBtn" onclick="crmToggleStaleFilter()" title="Show only stale leads (7+ days inactive)" style="border:1.5px solid #f59e0b;color:#b45309;border-radius:8px;background:rgba(245,158,11,.06)">
-              <i class="fa-solid fa-clock-rotate-left"></i> Stale
-            </button>
-            <button class="btn btn-ghost btn-sm" onclick="crmResetFilters()" style="border-radius:8px"><i class="fa-solid fa-rotate"></i> Reset</button>
           </div>
 
           <!-- Bulk bar -->
@@ -3331,33 +3377,33 @@ button:focus-visible,
           </div>
 
           <!-- Table -->
-          <div class="table-wrap">
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;box-shadow:0 1px 4px rgba(15,23,42,.05)">
             <div style="overflow-x:auto">
-              <table class="data-table" id="crmTable">
+              <table style="width:100%;border-collapse:collapse;min-width:1100px" id="crmTable">
                 <thead>
-                  <tr>
-                    <th><input type="checkbox" id="crmSelectAll" onchange="crmToggleAll(this)" style="accent-color:var(--orange);width:14px;height:14px"/></th>
-                    <th>Name</th>
-                    <th>Mobile</th>
-                    <th>Email</th>
-                    <th>City</th>
-                    <th>Course</th>
-                    <th>Source</th>
-                    <th>Response</th>
-                    <th>Priority</th>
-                    <th>Assigned To</th>
-                    <th>Imported From</th>
-                    <th>Import Date</th>
-                    <th>Next Follow-up</th>
-                    <th>Actions</th>
+                  <tr style="background:#f8fafc;border-bottom:2px solid #e5e7eb">
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap"><input type="checkbox" id="crmSelectAll" onchange="crmToggleAll(this)" style="accent-color:#2563EB;width:14px;height:14px"/></th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Name</th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Mobile</th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Email</th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">City</th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Course</th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Source</th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Response</th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Priority</th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Assigned To</th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Imported From</th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Import Date</th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Next Follow-up</th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="crmTableBody"><!-- JS --></tbody>
               </table>
             </div>
-            <div class="pagination" id="crmPagination">
-              <div class="pagination-info" id="crmPagInfo"></div>
-              <div class="pagination-btns" id="crmPagBtns"></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid #f1f5f9;flex-wrap:wrap;gap:10px" id="crmPagination">
+              <div style="font-size:13px;color:#64748b;font-weight:500" id="crmPagInfo"></div>
+              <div style="display:flex;gap:6px" id="crmPagBtns"></div>
             </div>
           </div>
         </div>
@@ -11490,12 +11536,13 @@ function _renderCrmStats(f, a) {
     { lbl:'Overdue',        val: a.overdueCount||0, icon:'fa-clock',           cls:'red',    icoBg:'rgba(239,68,68,0.1)', icoClr:'var(--danger)',  filter:'_overdue' },
   ];
   grid.innerHTML = cards.map(c => `
-    <div class="crm-stat-card ${c.cls}" style="cursor:pointer" onclick="crmCardFilter('${c.filter}')">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between">
-        <div class="crm-stat-icon" style="background:${c.icoBg};color:${c.icoClr}"><i class="fa-solid ${c.icon}"></i></div>
-      </div>
-      <div class="crm-stat-val">${c.val}</div>
-      <div class="crm-stat-lbl">${c.lbl}</div>
+    <div class="crm-stat-card ${c.cls}" style="cursor:pointer;transition:all .25s ease;border-radius:16px;padding:20px 20px 18px;position:relative;overflow:hidden"
+         onmouseenter="this.style.boxShadow='0 8px 28px rgba(15,23,42,.12)';this.style.transform='translateY(-3px)'"
+         onmouseleave="this.style.boxShadow='';this.style.transform='translateY(0)'"
+         onclick="crmCardFilter('${c.filter}')">
+      <div style="width:44px;height:44px;border-radius:12px;background:${c.icoBg};color:${c.icoClr};display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:14px"><i class="fa-solid ${c.icon}"></i></div>
+      <div class="crm-stat-val" style="font-size:26px;font-weight:800;letter-spacing:-0.5px;line-height:1;margin-bottom:4px">${c.val}</div>
+      <div class="crm-stat-lbl" style="font-size:12px;font-weight:500;letter-spacing:.1px">${c.lbl}</div>
     </div>`).join('');
 }
 
@@ -11557,34 +11604,56 @@ function _renderCrmTable() {
       return;
     }
   }
-  tbody.innerHTML = leads.map(l => {
+  const _crmAvatarPalette = ['#2563EB','#7c3aed','#16a34a','#ea580c','#db2777','#0891b2','#0d9488','#dc2626'];
+  const _prioStyles = {
+    high:   { bg:'#fef2f2', color:'#dc2626', border:'#fecaca', dot:'#ef4444' },
+    medium: { bg:'#fffbeb', color:'#b45309', border:'#fde68a', dot:'#f59e0b' },
+    low:    { bg:'#f0fdf4', color:'#15803d', border:'#bbf7d0', dot:'#22c55e' },
+  };
+  tbody.innerHTML = leads.map((l, _ri) => {
     const stageHtml = crmStageBadgeHtml(l.stage);
-    const assigned = l.assignedTo ? escHtml(l.assignedTo.fullName || l.assignedTo.firstName || '—') : '<span style="color:var(--gray-400)">Unassigned</span>';
+    const assignedName = l.assignedTo ? escHtml(l.assignedTo.fullName || l.assignedTo.firstName || '—') : null;
     const fu   = l.nextFollowUp ? new Date(l.nextFollowUp).toLocaleDateString('en-IN') : '—';
     const overdue = l.nextFollowUp && !isNaN(new Date(l.nextFollowUp).getTime()) && new Date(l.nextFollowUp) < new Date() && !['converted','lost'].includes(l.stage);
     const checked = CRM.selected.has(l._id) ? 'checked' : '';
-    const prioCls = { high:'prio-high', medium:'prio-medium', low:'prio-low' }[l.priority] || 'prio-medium';
+    const pStyle = _prioStyles[l.priority] || _prioStyles.medium;
     const lastTouch = new Date(l.lastContactedAt || l.updatedAt || l.createdAt).getTime();
     const staleDays = Math.floor((now - lastTouch) / (24*60*60*1000));
     const isStale = !doneStagesGlobal.includes(l.stage) && (now - lastTouch) >= DAY7;
     const isCritical = !doneStagesGlobal.includes(l.stage) && (now - lastTouch) >= DAY14;
-    const staleBg = isCritical ? 'background:rgba(239,68,68,.06);border-left:3px solid #ef4444' : isStale ? 'background:rgba(234,179,8,.06);border-left:3px solid #f59e0b' : '';
-    const staleTag = isCritical ? `<span style="font-size:9px;background:rgba(239,68,68,.12);color:#dc2626;padding:1px 6px;border-radius:4px;font-weight:700;margin-left:6px">🔴 ${staleDays}d inactive</span>` : isStale ? `<span style="font-size:9px;background:rgba(234,179,8,.12);color:#b45309;padding:1px 6px;border-radius:4px;font-weight:700;margin-left:6px">🟡 ${staleDays}d inactive</span>` : '';
+    const rowBorderLeft = isCritical ? 'border-left:3px solid #ef4444' : isStale ? 'border-left:3px solid #f59e0b' : 'border-left:3px solid transparent';
+    const rowBg = _ri % 2 === 0 ? '#fff' : '#fafbfc';
+    const staleTag = isCritical ? `<span style="font-size:9px;background:#fef2f2;color:#dc2626;padding:2px 7px;border-radius:999px;font-weight:700;margin-left:6px;border:1px solid #fecaca">🔴 ${staleDays}d</span>`
+                   : isStale    ? `<span style="font-size:9px;background:#fffbeb;color:#b45309;padding:2px 7px;border-radius:999px;font-weight:700;margin-left:6px;border:1px solid #fde68a">🟡 ${staleDays}d</span>` : '';
+    const initials = (l.name || 'U').split(' ').slice(0,2).map(n => n[0]||'').join('').toUpperCase() || 'U';
+    const avBg = _crmAvatarPalette[(l.name||'').charCodeAt(0) % _crmAvatarPalette.length];
+    const stageCfg = STAGE_CFG[l.stage||'new'] || { color:'#3B82F6' };
     return `
-      <tr data-id="${l._id}" style="${staleBg}">
-        <td><input type="checkbox" class="crm-row-check" data-id="${l._id}" ${checked} onchange="crmRowCheck(this,'${l._id}')" style="accent-color:var(--orange);width:14px;height:14px"/></td>
-        <td><strong style="cursor:pointer;color:var(--royal);transition:color .15s" onmouseover="this.style.color='#1d4ed8'" onmouseout="this.style.color='var(--royal)'" onclick="openLeadDetail('${l._id}')">${escHtml(l.name)}</strong>${staleTag}</td>
-        <td style="font-size:12px">${escHtml(l.mobile||'—')}</td>
-        <td style="font-size:11px;color:var(--gray-600);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escHtml(l.email||'')}">${escHtml(l.email||'—')}</td>
-        <td style="font-size:12px;color:var(--gray-600)">${escHtml(l.city||'—')}</td>
-        <td style="font-size:11px;color:var(--gray-600);max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escHtml(l.courseInterest||'')}">${escHtml(l.courseInterest||'—')}</td>
-        <td><span class="badge badge-blue" style="font-size:10px;border:1px solid rgba(37,99,235,.12);letter-spacing:.2px">${SOURCE_LABELS[l.source]||l.source}</span></td>
-        <td>
-          <select style="font-size:11px;padding:5px 10px;border-radius:20px;border:1.5px solid ${(STAGE_CFG[l.stage||'new']||{}).color||'#3B82F6'}22;
-                         color:${(STAGE_CFG[l.stage||'new']||{}).color||'#3B82F6'};
-                         background:${(STAGE_CFG[l.stage||'new']||{}).color||'#3B82F6'}0d;
-                         font-weight:700;cursor:pointer;min-width:120px;appearance:auto;outline:none;transition:all .2s"
-                  onfocus="this.style.boxShadow='0 0 0 3px '+(this.style.color||'#3B82F6')+'18'" onblur="this.style.boxShadow='none'"
+      <tr data-id="${l._id}" style="background:${rowBg};${rowBorderLeft};border-bottom:1px solid #f1f5f9;transition:background .15s"
+          onmouseenter="this.style.background='#f0f7ff'"
+          onmouseleave="this.style.background='${rowBg}'">
+        <td style="padding:13px 16px"><input type="checkbox" class="crm-row-check" data-id="${l._id}" ${checked} onchange="crmRowCheck(this,'${l._id}')" style="accent-color:#2563EB;width:14px;height:14px"/></td>
+        <td style="padding:13px 16px">
+          <div style="display:flex;align-items:center;gap:9px">
+            <div style="width:32px;height:32px;border-radius:9px;background:${avBg};display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;flex-shrink:0">${initials}</div>
+            <div>
+              <div style="font-weight:600;color:#2563EB;font-size:13px;cursor:pointer;transition:color .15s" onclick="openLeadDetail('${l._id}')"
+                   onmouseover="this.style.color='#1d4ed8'" onmouseout="this.style.color='#2563EB'">${escHtml(l.name)}</div>
+              ${staleTag ? `<div style="margin-top:2px">${staleTag}</div>` : ''}
+            </div>
+          </div>
+        </td>
+        <td style="padding:13px 16px;font-size:13px;color:#0f172a;font-weight:500">${escHtml(l.mobile||'—')}</td>
+        <td style="padding:13px 16px;font-size:12px;color:#64748b;max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escHtml(l.email||'')}">${escHtml(l.email||'—')}</td>
+        <td style="padding:13px 16px;font-size:13px;color:#475569">${escHtml(l.city||'—')}</td>
+        <td style="padding:13px 16px;font-size:12px;color:#475569;max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escHtml(l.courseInterest||'')}">${escHtml(l.courseInterest||'—')}</td>
+        <td style="padding:13px 16px">
+          <span style="display:inline-block;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;letter-spacing:.2px">${SOURCE_LABELS[l.source]||l.source||'—'}</span>
+        </td>
+        <td style="padding:13px 16px">
+          <select style="font-size:12px;padding:6px 10px;border-radius:999px;border:1.5px solid ${stageCfg.color}40;
+                         color:${stageCfg.color};background:${stageCfg.color}0d;
+                         font-weight:700;cursor:pointer;min-width:126px;outline:none;transition:all .2s"
                   onchange="crmInlineStageUpdate('${l._id}', this.value, this)">
             ${Object.entries(STAGE_CFG).filter(([k]) => !['contacted','applied','converted','lost'].includes(k)).map(([val, meta]) => {
               const legacyMap = { contacted:'call_back', applied:'interested' };
@@ -11593,15 +11662,30 @@ function _renderCrmTable() {
             }).join('')}
           </select>
         </td>
-        <td><span class="prio-dot ${prioCls}"></span> <span style="font-size:12px;text-transform:capitalize">${l.priority}</span></td>
-        <td style="font-size:12px">${assigned}</td>
-        <td style="font-size:12px">${escHtml(l.createdBy ? (l.createdBy.fullName || l.createdBy.firstName || l.createdBy.email || '—') : '—')}</td>
-        <td style="font-size:11px;color:var(--gray-600);white-space:nowrap">${formatDateTime(l.createdAt)}</td>
-        <td style="font-size:12px;color:${overdue?'var(--danger)':'inherit'}">${overdue?'⚠️ ':''} ${fu}</td>
-        <td>
-          <div style="display:flex;gap:4px">
-            <button class="btn btn-ghost btn-sm" onclick="openEditLead('${l._id}')" title="Edit" style="border-radius:8px;padding:6px 8px;font-size:12px"><i class="fa-solid fa-pen"></i></button>
-            <button class="btn btn-ghost btn-sm" onclick="deleteLead('${l._id}')" title="Delete" style="color:var(--danger);border-radius:8px;padding:6px 8px;font-size:12px"><i class="fa-solid fa-trash"></i></button>
+        <td style="padding:13px 16px">
+          <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;background:${pStyle.bg};color:${pStyle.color};border:1px solid ${pStyle.border}">
+            <span style="width:6px;height:6px;border-radius:50%;background:${pStyle.dot};flex-shrink:0"></span>
+            ${(l.priority||'medium').charAt(0).toUpperCase()+(l.priority||'medium').slice(1)}
+          </span>
+        </td>
+        <td style="padding:13px 16px;font-size:13px;color:#374151">${assignedName || '<span style="color:#94a3b8;font-size:12px">Unassigned</span>'}</td>
+        <td style="padding:13px 16px;font-size:12px;color:#64748b">${escHtml(l.createdBy ? (l.createdBy.fullName || l.createdBy.firstName || l.createdBy.email || '—') : '—')}</td>
+        <td style="padding:13px 16px;font-size:12px;color:#64748b;white-space:nowrap">${formatDateTime(l.createdAt)}</td>
+        <td style="padding:13px 16px;font-size:13px;color:${overdue?'#ef4444':'#64748b'};white-space:nowrap;font-weight:${overdue?'600':'400'}">${overdue?'⚠️ ':''}${fu}</td>
+        <td style="padding:13px 16px">
+          <div style="display:flex;gap:6px;align-items:center">
+            <button onclick="openEditLead('${l._id}')" title="Edit"
+                    style="width:32px;height:32px;border-radius:8px;border:none;background:#fffbeb;color:#d97706;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;flex-shrink:0"
+                    onmouseenter="this.style.background='#d97706';this.style.color='#fff';this.style.transform='scale(1.1)'"
+                    onmouseleave="this.style.background='#fffbeb';this.style.color='#d97706';this.style.transform='scale(1)'">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+            <button onclick="deleteLead('${l._id}')" title="Delete"
+                    style="width:32px;height:32px;border-radius:8px;border:none;background:#fef2f2;color:#ef4444;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;flex-shrink:0"
+                    onmouseenter="this.style.background='#ef4444';this.style.color='#fff';this.style.transform='scale(1.1)'"
+                    onmouseleave="this.style.background='#fef2f2';this.style.color='#ef4444';this.style.transform='scale(1)'">
+              <i class="fa-solid fa-trash"></i>
+            </button>
           </div>
         </td>
       </tr>`;
@@ -11615,13 +11699,17 @@ function _renderCrmPagination() {
   const tp  = Math.max(1, Math.ceil(CRM.total / CRM.limit));
   const s   = (CRM.page - 1) * CRM.limit + 1;
   const e   = Math.min(CRM.page * CRM.limit, CRM.total);
-  info.textContent = CRM.total ? `Showing ${s}–${e} of ${CRM.total}` : 'No leads';
-  let h = `<button class="pg-btn" onclick="crmGoPage(${CRM.page-1})" ${CRM.page<=1?'disabled':''}><i class="fa-solid fa-chevron-left"></i></button>`;
+  info.textContent = CRM.total ? `Showing ${s}–${e} of ${CRM.total} leads` : 'No leads';
+  const _pb = (active, disabled) =>
+    `min-width:34px;height:34px;padding:0 10px;border-radius:8px;font-size:12px;font-weight:600;cursor:${disabled?'default':'pointer'};border:1.5px solid;
+     display:inline-flex;align-items:center;justify-content:center;transition:all .2s;opacity:${disabled?.4:1};
+     background:${active?'#2563EB':'#fff'};color:${active?'#fff':'#475569'};border-color:${active?'#2563EB':'#e5e7eb'};`;
+  let h = `<button style="${_pb(false,CRM.page<=1)}" onclick="crmGoPage(${CRM.page-1})" ${CRM.page<=1?'disabled':''}><i class="fa-solid fa-chevron-left"></i></button>`;
   const lo = Math.max(1, CRM.page-2), hi = Math.min(tp, CRM.page+2);
-  if (lo > 1) { h += `<button class="pg-btn" onclick="crmGoPage(1)">1</button>`; if (lo > 2) h += `<span style="padding:0 4px;color:var(--gray-400)">…</span>`; }
-  for (let p = lo; p <= hi; p++) h += `<button class="pg-btn${p===CRM.page?' active':''}" onclick="crmGoPage(${p})">${p}</button>`;
-  if (hi < tp) { if (hi < tp-1) h += `<span style="padding:0 4px;color:var(--gray-400)">…</span>`; h += `<button class="pg-btn" onclick="crmGoPage(${tp})">${tp}</button>`; }
-  h += `<button class="pg-btn" onclick="crmGoPage(${CRM.page+1})" ${CRM.page>=tp?'disabled':''}><i class="fa-solid fa-chevron-right"></i></button>`;
+  if (lo > 1) { h += `<button style="${_pb(false,false)}" onclick="crmGoPage(1)">1</button>`; if (lo > 2) h += `<span style="padding:0 6px;color:#94a3b8;font-size:14px">…</span>`; }
+  for (let p = lo; p <= hi; p++) h += `<button style="${_pb(p===CRM.page,false)}" onclick="crmGoPage(${p})">${p}</button>`;
+  if (hi < tp) { if (hi < tp-1) h += `<span style="padding:0 6px;color:#94a3b8;font-size:14px">…</span>`; h += `<button style="${_pb(false,false)}" onclick="crmGoPage(${tp})">${tp}</button>`; }
+  h += `<button style="${_pb(false,CRM.page>=tp)}" onclick="crmGoPage(${CRM.page+1})" ${CRM.page>=tp?'disabled':''}><i class="fa-solid fa-chevron-right"></i></button>`;
   btns.innerHTML = h;
 }
 
