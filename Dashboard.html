@@ -1015,6 +1015,45 @@ button:focus-visible,
 }
 
 /* =========================================================
+   SKELETON LOADING
+   ========================================================= */
+@keyframes skelShimmer{
+  0%{background-position:-200% 0}
+  100%{background-position:200% 0}
+}
+.skel{
+  border-radius:5px;
+  background:linear-gradient(90deg,#f0f2f5 25%,#e2e5ea 50%,#f0f2f5 75%);
+  background-size:200% 100%;
+  animation:skelShimmer 1.4s ease infinite;
+  display:block;
+}
+[data-theme="dark"] .skel{
+  background:linear-gradient(90deg,#1e2435 25%,#252c3d 50%,#1e2435 75%);
+  background-size:200% 100%;
+}
+/* table skeleton row */
+.skel-tr td{padding:10px 12px;border-bottom:1px solid var(--gray-100);}
+/* stat card skeleton */
+.skel-stat-card{
+  background:var(--card-bg,#fff);
+  border-radius:var(--radius-lg);
+  padding:var(--space-5);
+  border:1px solid var(--card-border,var(--gray-200));
+  box-shadow:var(--shadow-sm);
+  display:flex;flex-direction:column;gap:12px;
+}
+/* generic card skeleton */
+.skel-card{
+  background:var(--card-bg,#fff);
+  border-radius:var(--radius-lg);
+  padding:20px;
+  border:1px solid var(--card-border,var(--gray-200));
+  box-shadow:var(--shadow-sm);
+  display:flex;flex-direction:column;gap:12px;
+}
+
+/* =========================================================
    EMPTY STATE
    ========================================================= */
 .empty-state{
@@ -6452,19 +6491,15 @@ function renderErrorRow(tbodyId, cols, err) {
   `;
 }
 
-function setTableLoading(tbodyId, cols, msg) {
+/* widths[i] gives the skel width for column i — first col is narrow (number), rest vary */
+const _SKEL_WIDTHS = ['28px','62%','55%','45%','38%','50%','42%','36%','30%','44%','38%','50%','42%','36%'];
+function _skelRow(cols) {
+  return `<tr class="skel-tr">${Array.from({length:cols},(_,i)=>`<td><span class="skel" style="height:13px;width:${_SKEL_WIDTHS[i]||'50%'};margin:1px 0"></span></td>`).join('')}</tr>`;
+}
+function setTableLoading(tbodyId, cols) {
   const el = document.getElementById(tbodyId);
   if (!el) return;
-
-  el.innerHTML = `
-    <tr>
-      <td colspan="${cols}">
-        <div class="loading-row">
-          <div class="spinner"></div>${escHtml(msg)}
-        </div>
-      </td>
-    </tr>
-  `;
+  el.innerHTML = Array.from({length:6}, () => _skelRow(cols)).join('');
 }
 
 function showLoading(containerId, msg = 'Loading...') {
@@ -6472,6 +6507,24 @@ function showLoading(containerId, msg = 'Loading...') {
   if (el) {
     el.innerHTML = `<div class="loading-row"><div class="spinner"></div>${escHtml(msg)}</div>`;
   }
+}
+
+/* Skeleton card grid — renders n shimmer cards inside a container */
+function skelCards(containerId, n = 4, style = '') {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = Array.from({length:n}, () => `
+    <div class="skel-card" ${style ? `style="${style}"` : ''}>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="skel" style="width:40px;height:40px;border-radius:10px;flex-shrink:0"></span>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+          <span class="skel" style="height:13px;width:55%"></span>
+          <span class="skel" style="height:11px;width:35%"></span>
+        </div>
+      </div>
+      <span class="skel" style="height:11px;width:80%"></span>
+      <span class="skel" style="height:11px;width:60%"></span>
+    </div>`).join('');
 }
 
 function showToast(type = 'success', message = '', sub = '') {
@@ -7334,7 +7387,7 @@ async function loadMarketingMaterials(force = false) {
   if (force) clearApiCache('/marketing-materials');
   const grid = document.getElementById('mktGrid');
   if (!grid) return;
-  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--gray-400)"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.8rem"></i></div>';
+  skelCards('mktGrid', 6);
 
   const role = state.currentUserRole || getSavedUser()?.role;
   _mktIsManager = !!(role && (role.isSystem || ['Super Admin','Admin'].includes(role.name)));
@@ -8056,7 +8109,7 @@ async function loadTeams(force = false) {
   if (force) clearApiCache('/teams');
   const grid = document.getElementById('teamsGrid');
   if (!grid) return;
-  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray-400)"><i class="fa-solid fa-spinner fa-spin"></i> Loading teams...</div>';
+  skelCards('teamsGrid', 4);
 
   const r = await apiFetch('GET', '/teams');
   if (!r.ok) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray-400)">Failed to load teams.</div>'; return; }
@@ -8736,7 +8789,7 @@ async function loadInstLeadOverview(force = false) {
   const summary = document.getElementById('instLeadSummary');
   if (!tbody) return;
 
-  tbody.innerHTML = `<tr><td colspan="14" style="text-align:center;padding:24px;"><span style="color:var(--gray-400);">Loading…</span></td></tr>`;
+  tbody.innerHTML = Array.from({length:5}, () => _skelRow(14)).join('');
 
   const r = await apiFetch('GET', '/institutions/leads-overview');
   if (!r.ok) {
@@ -9296,6 +9349,20 @@ async function _doUpdateOverviewStats() {
   if (cached) {
     _renderStatCards(cached, true);
     renderBarChart(cached.monthlyTrend);
+  } else {
+    /* No cache — show stat card skeletons while fetching */
+    const el = document.getElementById('overviewStats');
+    if (el) el.innerHTML = Array.from({length:4}, () => `
+      <div class="skel-stat-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="display:flex;flex-direction:column;gap:8px;flex:1">
+            <span class="skel" style="height:12px;width:55%"></span>
+            <span class="skel" style="height:26px;width:40%"></span>
+            <span class="skel" style="height:10px;width:45%"></span>
+          </div>
+          <span class="skel" style="width:44px;height:44px;border-radius:12px;flex-shrink:0"></span>
+        </div>
+      </div>`).join('');
   }
 
   const statsRes = await apiFetch('GET', '/dashboard/stats');
@@ -9405,7 +9472,7 @@ async function loadPartnerProgress() {
   const grid = document.getElementById('partnerProgressGrid');
   if (!grid) return;
 
-  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--gray-400)"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div>';
+  skelCards('partnerProgressGrid', 3);
 
   const r = await apiFetch('GET', '/leads/partner-progress');
   if (!r.ok) {
@@ -9493,7 +9560,7 @@ async function loadImportHistory(page) {
 
   _importHistoryPage = page || 1;
 
-  tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--gray-400)"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</td></tr>';
+  tbody.innerHTML = Array.from({length:5}, () => _skelRow(8)).join('');
 
   const apId   = apSel?.value || '';
   const search = document.getElementById('importHistorySearch')?.value?.trim() || '';
@@ -9575,7 +9642,7 @@ async function loadAdminActivity(force = false) {
   if (force) clearApiCache('/dashboard/admin-activity');
 
   if (force || !grid.dataset.loaded) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--gray-400)"><i class="fa-solid fa-spinner fa-spin" style="margin-right:8px"></i> Loading admin activity...</div>';
+    skelCards('adminActivityGrid', 3);
   }
 
   const res = await apiFetch('GET', '/dashboard/admin-activity');
@@ -12056,7 +12123,7 @@ async function _crmFetchKanban() {
 async function _crmFetchAnalytics() {
   const grid = document.getElementById('crmAnalyticsGrid');
   if (!grid) return;
-  grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray-400)"><i class="fa-solid fa-spinner fa-spin" style="margin-right:8px"></i>Loading analytics…</div>`;
+  skelCards('crmAnalyticsGrid', 4);
 
   const [funnelRes, analyticsRes] = await Promise.all([
     apiFetch('GET', '/leads/funnel'),
@@ -12826,7 +12893,14 @@ async function cepSubmitRequest(e) {
 async function cepLoadRequests(force = false) {
   if (force) clearApiCache('/cep-certificates');
   const histBody = document.getElementById('cepHistoryBody');
-  if (histBody) histBody.innerHTML = '<div style="text-align:center;padding:32px;color:var(--gray-400)"><i class="fa-solid fa-spinner fa-spin"></i></div>';
+  if (histBody) histBody.innerHTML = Array.from({length:4}, () => `
+    <div class="skel-card" style="padding:14px 16px;flex-direction:row;align-items:center;gap:10px">
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+        <span class="skel" style="height:12px;width:60%"></span>
+        <span class="skel" style="height:10px;width:40%"></span>
+      </div>
+      <span class="skel" style="width:64px;height:22px;border-radius:999px;flex-shrink:0"></span>
+    </div>`).join('');
 
   const r = await apiFetch('GET', '/cep-certificates/my-requests?limit=50');
   if (!r.ok) {
