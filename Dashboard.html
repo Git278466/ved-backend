@@ -288,6 +288,25 @@ img{max-width:100%;}
 .sidebar.collapsed{width:var(--sidebar-collapsed);}
 .sidebar.sidebar-closed{width:0 !important;overflow:hidden !important;box-shadow:none;}
 
+/* ── Drag-to-resize handle (VS Code style) ──────────────────────
+   Grab the right edge and drag to widen/narrow the sidebar.
+   Double-click to reset. Width persists in localStorage. */
+.sidebar-resizer{
+  position:absolute;top:0;right:0;bottom:0;
+  width:6px;cursor:col-resize;z-index:130;
+  background:transparent;transition:background 0.15s ease;
+}
+.sidebar-resizer::after{               /* subtle grab line on hover */
+  content:'';position:absolute;top:0;bottom:0;right:0;width:2px;
+  background:transparent;transition:background 0.15s ease;
+}
+.sidebar-resizer:hover::after,.sidebar-resizer.dragging::after{background:var(--sidebar-active-bar);box-shadow:0 0 8px rgba(110,155,255,0.6);}
+.sidebar.collapsed .sidebar-resizer,.sidebar.sidebar-closed .sidebar-resizer{display:none;}
+/* While dragging: kill transitions for 1:1 tracking, block text selection */
+body.sidebar-resizing{cursor:col-resize;user-select:none;-webkit-user-select:none;}
+body.sidebar-resizing .sidebar,body.sidebar-resizing .main-area{transition:none !important;}
+@media (max-width:768px){.sidebar-resizer{display:none;}}  /* off on mobile overlay */
+
 /* Decorative gradient blob in sidebar */
 .sidebar::before{
   content:'';
@@ -2542,7 +2561,7 @@ button:focus-visible,
       <div class="nav-section-label">MAIN</div>
 
       <div class="nav-item active" onclick="navTo('overview')" data-page="overview" data-perm="dashboard.view">
-        <i class="fa-solid fa-grid-2"></i><span>Overview</span>
+        <i class="fa-solid fa-gauge-high"></i><span>Overview</span>
       </div>
       <div class="nav-item" onclick="navTo('students')" data-page="students" data-perm="students.view">
         <i class="fa-solid fa-user-graduate"></i><span>Students</span>
@@ -2626,6 +2645,10 @@ button:focus-visible,
     <div class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">
       <i class="fa-solid fa-chevrons-left" id="collapseIcon"></i>
     </div>
+
+    <!-- Drag-to-resize handle -->
+    <div class="sidebar-resizer" id="sidebarResizer" title="Drag to resize · double-click to reset"
+         role="separator" aria-orientation="vertical" aria-label="Resize sidebar"></div>
   </nav>
 
   <!-- ======================================================
@@ -12054,6 +12077,60 @@ function toggleSidebar() {
   }
   if (hIcon) hIcon.className = 'fa-solid fa-bars';
 }
+
+/* ── Drag-to-resize sidebar (VS Code style) ──────────────────────
+   Grab the right edge, drag to resize; width persists across reloads.
+   Double-click resets to the default. Min/max clamp the range. */
+(function initSidebarResize() {
+  const SB_MIN = 200, SB_MAX = 420, SB_DEFAULT = 260, SB_KEY = 'ved-sidebar-w';
+
+  // Restore a previously saved width on load
+  const saved = parseInt(localStorage.getItem(SB_KEY), 10);
+  if (saved && saved >= SB_MIN && saved <= SB_MAX) {
+    document.documentElement.style.setProperty('--sidebar-w', saved + 'px');
+  }
+
+  function wire() {
+    const sidebar = document.getElementById('sidebar');
+    const handle  = document.getElementById('sidebarResizer');
+    if (!sidebar || !handle) return;
+    let dragging = false;
+
+    handle.addEventListener('pointerdown', (e) => {
+      if (sidebar.classList.contains('collapsed') || _isMobile()) return;
+      dragging = true;
+      handle.setPointerCapture(e.pointerId);
+      handle.classList.add('dragging');
+      document.body.classList.add('sidebar-resizing');
+      e.preventDefault();
+    });
+    handle.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      let w = e.clientX - sidebar.getBoundingClientRect().left;
+      w = Math.max(SB_MIN, Math.min(SB_MAX, Math.round(w)));
+      document.documentElement.style.setProperty('--sidebar-w', w + 'px');
+    });
+    const end = (e) => {
+      if (!dragging) return;
+      dragging = false;
+      try { handle.releasePointerCapture(e.pointerId); } catch (_) {}
+      handle.classList.remove('dragging');
+      document.body.classList.remove('sidebar-resizing');
+      localStorage.setItem(SB_KEY, parseInt(getComputedStyle(sidebar).width, 10));
+    };
+    handle.addEventListener('pointerup', end);
+    handle.addEventListener('pointercancel', end);
+
+    // Double-click resets to default
+    handle.addEventListener('dblclick', () => {
+      document.documentElement.style.setProperty('--sidebar-w', SB_DEFAULT + 'px');
+      localStorage.setItem(SB_KEY, SB_DEFAULT);
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire);
+  else wire();
+})();
 
 function openMobileSidebar() {
   sidebarOpen = true;
