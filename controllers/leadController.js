@@ -112,6 +112,16 @@ exports.getCourseOptions = async (req, res) => {
   }
 };
 
+// ── GET /api/leads/meta/cities — distinct city values for the filter dropdown ──
+exports.getCityOptions = async (req, res) => {
+  try {
+    const values = await Lead.distinct('city', { city: { $nin: [null, ''] } });
+    res.json({ success: true, data: values.sort((a, b) => a.localeCompare(b)).slice(0, 500) });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 // ── GET /api/leads/funnel ──────────────────────────────────────
 exports.getFunnelStats = async (req, res) => {
   try {
