@@ -20,6 +20,7 @@ const mobilizationSchema = new mongoose.Schema(
 
     // ── Education & Interests ───────────────────────────────────
     education:         { type: String, trim: true },
+    certificateProgram:{ type: String, enum: ['NESCOM', 'IBM', 'Workshop', ''], default: '' },
     skillCourse:       { type: String, trim: true },
     futureCourse:      { type: String, trim: true },
     degreeMode:        { type: String, enum: ['regular', 'distance', 'online', ''], default: 'regular' },
