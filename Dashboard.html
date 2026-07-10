@@ -7873,15 +7873,12 @@ async function loadMobilization(force = false) {
   const summaryEl = document.getElementById('mobSummary');
   if (summaryEl && statsRes.ok) {
     const d = statsRes.data.data || {};
-    const byGender = (d.byGender || []).reduce((a, b) => { a[b._id] = b.count; return a; }, {});
     const byCertProgram = (d.byCertificateProgram || []).reduce((a, b) => { a[b._id] = b.count; return a; }, {});
     const cards = [
       { label:'Total',       value: d.total            ?? 0, icon:'fa-users',             color:'#0b63ce' },
       { label:'New',         value: d.newCount         ?? 0, icon:'fa-envelope-open',     color:'#f7941d' },
       { label:'Contacted',   value: d.contactedCount   ?? 0, icon:'fa-phone',             color:'#7c3aed' },
       { label:'Enrolled',    value: d.enrolledCount    ?? 0, icon:'fa-graduation-cap',    color:'#16a34a' },
-      { label:'Male',        value: byGender.male      || 0, icon:'fa-mars',              color:'#2563eb' },
-      { label:'Female',      value: byGender.female    || 0, icon:'fa-venus',             color:'#db2777' },
       { label:'NESCOM',      value: byCertProgram.NESCOM   || 0, icon:'fa-certificate',   color:'#0b63ce' },
       { label:'IBM',         value: byCertProgram.IBM      || 0, icon:'fa-certificate',   color:'#16a34a' },
       { label:'Workshop',    value: byCertProgram.Workshop || 0, icon:'fa-certificate',   color:'#f97316' },
@@ -7894,8 +7891,6 @@ async function loadMobilization(force = false) {
            onclick="if('${c.label}'==='New'){document.getElementById('mobStatusFilter').value='new';_mobPage=1;loadMobilization(true);}
                     else if('${c.label}'==='Contacted'){document.getElementById('mobStatusFilter').value='contacted';_mobPage=1;loadMobilization(true);}
                     else if('${c.label}'==='Enrolled'){document.getElementById('mobStatusFilter').value='enrolled';_mobPage=1;loadMobilization(true);}
-                    else if('${c.label}'==='Male'){document.getElementById('mobGenderFilter').value='male';_mobPage=1;loadMobilization(true);}
-                    else if('${c.label}'==='Female'){document.getElementById('mobGenderFilter').value='female';_mobPage=1;loadMobilization(true);}
                     else if('${c.label}'==='NESCOM'){document.getElementById('mobCertProgramFilter').value='NESCOM';_mobPage=1;loadMobilization(true);}
                     else if('${c.label}'==='IBM'){document.getElementById('mobCertProgramFilter').value='IBM';_mobPage=1;loadMobilization(true);}
                     else if('${c.label}'==='Workshop'){document.getElementById('mobCertProgramFilter').value='Workshop';_mobPage=1;loadMobilization(true);}">
