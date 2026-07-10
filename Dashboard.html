@@ -1899,17 +1899,31 @@ button:focus-visible,
 .crm-fh.has-value .crm-fh-clear{display:inline-block;}
 .crm-fh.has-value .crm-fh-input,.crm-fh.has-value .crm-fh-select,.crm-fh.has-value .crm-fh-btn{border-color:var(--royal);background:rgba(37,99,235,.05);color:var(--navy);}
 
-/* Searchable dropdown popover (Course / Assigned To / Imported From) */
-.crm-sdd-panel{position:absolute;top:calc(100% + 4px);left:0;min-width:210px;max-width:260px;background:#fff;border:1.5px solid var(--royal);border-radius:10px;box-shadow:0 8px 24px rgba(10,22,40,.16);z-index:50;max-height:230px;overflow-y:auto;display:none;}
-[data-theme="dark"] .crm-sdd-panel{background:var(--navy-mid);}
-.crm-sdd-item{padding:8px 12px;font-size:12.5px;cursor:pointer;color:var(--navy);border-bottom:1px solid var(--gray-100);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-[data-theme="dark"] .crm-sdd-item{color:var(--gray-100);border-color:var(--gray-200);}
-.crm-sdd-item:hover{background:rgba(37,99,235,.08);}
-.crm-sdd-empty{padding:14px;text-align:center;font-size:12px;color:var(--gray-400);}
+/* Searchable dropdown popover (Course / City / Source / Response / Priority / Assigned To / Imported From) */
+.crm-sdd-panel{position:fixed;min-width:210px;max-width:280px;background:#fff;border:1px solid var(--gray-200);border-radius:12px;box-shadow:0 12px 32px rgba(10,22,40,.14),0 2px 8px rgba(10,22,40,.06);z-index:1001;max-height:288px;overflow:hidden;display:none;flex-direction:column;
+  opacity:0;transform:translateY(-6px) scale(.97);transform-origin:top left;transition:opacity .2s cubic-bezier(.4,0,.2,1),transform .2s cubic-bezier(.4,0,.2,1);pointer-events:none;}
+.crm-sdd-panel.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+[data-theme="dark"] .crm-sdd-panel{background:var(--navy-mid);border-color:var(--gray-200);}
+.crm-sdd-search{position:sticky;top:0;background:#fff;padding:8px;border-bottom:1px solid var(--gray-100);z-index:1;flex-shrink:0;}
+[data-theme="dark"] .crm-sdd-search{background:var(--navy-mid);border-color:var(--gray-200);}
+.crm-sdd-search input{width:100%;padding:7px 9px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:12.5px;box-sizing:border-box;font-family:inherit;color:var(--navy);outline:none;transition:border-color .15s;}
+.crm-sdd-search input:focus{border-color:var(--royal);box-shadow:0 0 0 3px rgba(37,99,235,.08);}
+[data-theme="dark"] .crm-sdd-search input{background:var(--navy);color:var(--gray-100);}
+.crm-sdd-list{overflow-y:auto;overscroll-behavior:contain;padding:4px;max-height:238px;}
+.crm-sdd-item{padding:8px 11px;font-size:12.5px;cursor:pointer;color:var(--navy);border-radius:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;justify-content:space-between;gap:8px;transition:background .12s;}
+[data-theme="dark"] .crm-sdd-item{color:var(--gray-100);}
+.crm-sdd-item:hover,.crm-sdd-item.active{background:rgba(37,99,235,.09);}
+.crm-sdd-item.selected{color:var(--royal);font-weight:600;background:rgba(37,99,235,.06);}
+.crm-sdd-item .crm-sdd-check{font-size:10px;color:var(--royal);opacity:0;flex-shrink:0;}
+.crm-sdd-item.selected .crm-sdd-check{opacity:1;}
+.crm-sdd-empty{padding:18px 14px;text-align:center;font-size:12px;color:var(--gray-400);}
+.crm-sdd-more{padding:8px 11px;text-align:center;font-size:10.5px;color:var(--gray-400);font-style:italic;border-top:1px solid var(--gray-100);}
 
 /* Date range popover */
-.crm-dr-panel{position:absolute;top:calc(100% + 4px);left:0;background:#fff;border:1.5px solid var(--royal);border-radius:10px;box-shadow:0 8px 24px rgba(10,22,40,.16);z-index:50;display:none;padding:12px;width:225px;}
-[data-theme="dark"] .crm-dr-panel{background:var(--navy-mid);}
+.crm-dr-panel{position:fixed;background:#fff;border:1px solid var(--gray-200);border-radius:12px;box-shadow:0 12px 32px rgba(10,22,40,.14),0 2px 8px rgba(10,22,40,.06);z-index:1001;display:none;padding:12px;width:225px;
+  opacity:0;transform:translateY(-6px) scale(.97);transform-origin:top left;transition:opacity .2s cubic-bezier(.4,0,.2,1),transform .2s cubic-bezier(.4,0,.2,1);pointer-events:none;}
+.crm-dr-panel.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+[data-theme="dark"] .crm-dr-panel{background:var(--navy-mid);border-color:var(--gray-200);}
 .crm-dr-panel label{font-size:9.5px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:3px;}
 .crm-dr-panel input[type=date]{width:100%;padding:7px 9px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:12px;margin-bottom:9px;box-sizing:border-box;font-family:inherit;color:var(--navy);}
 .crm-dr-actions{display:flex;gap:6px;justify-content:flex-end;}
@@ -3742,9 +3756,7 @@ button:focus-visible,
                         <button type="button" class="crm-fh-btn" id="crmFhBtn_city" onclick="crmSddOpen('city')">All Cities <i class="fa-solid fa-chevron-down"></i></button>
                         <input type="hidden" id="crmFhVal_city" value=""/>
                         <span class="crm-fh-clear" onclick="crmSddClear('city')">&#x2715;</span>
-                        <div class="crm-sdd-panel" id="crmSdd_city">
-                          <div style="padding:6px"><input type="text" placeholder="Search city…" oninput="crmSddRender('city', this.value)" style="width:100%;padding:6px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;box-sizing:border-box" onclick="event.stopPropagation()"/></div>
-                        </div>
+                        <div class="crm-sdd-panel" id="crmSdd_city"></div>
                       </div>
                     </th>
                     <th id="crmFhTh_course">
@@ -3752,9 +3764,7 @@ button:focus-visible,
                         <button type="button" class="crm-fh-btn" id="crmFhBtn_course" onclick="crmSddOpen('course')">All Courses <i class="fa-solid fa-chevron-down"></i></button>
                         <input type="hidden" id="crmFhVal_course" value=""/>
                         <span class="crm-fh-clear" onclick="crmSddClear('course')">&#x2715;</span>
-                        <div class="crm-sdd-panel" id="crmSdd_course">
-                          <div style="padding:6px"><input type="text" placeholder="Search course…" oninput="crmSddRender('course', this.value)" style="width:100%;padding:6px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;box-sizing:border-box" onclick="event.stopPropagation()"/></div>
-                        </div>
+                        <div class="crm-sdd-panel" id="crmSdd_course"></div>
                       </div>
                     </th>
                     <th id="crmFhTh_source">
@@ -3762,9 +3772,7 @@ button:focus-visible,
                         <button type="button" class="crm-fh-btn" id="crmFhBtn_source" onclick="crmSddOpen('source')">All Sources <i class="fa-solid fa-chevron-down"></i></button>
                         <input type="hidden" id="crmFhVal_source" value=""/>
                         <span class="crm-fh-clear" onclick="crmSddClear('source')">&#x2715;</span>
-                        <div class="crm-sdd-panel" id="crmSdd_source">
-                          <div style="padding:6px"><input type="text" placeholder="Search source…" oninput="crmSddRender('source', this.value)" style="width:100%;padding:6px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;box-sizing:border-box" onclick="event.stopPropagation()"/></div>
-                        </div>
+                        <div class="crm-sdd-panel" id="crmSdd_source"></div>
                       </div>
                     </th>
                     <th id="crmFhTh_stage">
@@ -3772,9 +3780,7 @@ button:focus-visible,
                         <button type="button" class="crm-fh-btn" id="crmFhBtn_stage" onclick="crmSddOpen('stage')">All Responses <i class="fa-solid fa-chevron-down"></i></button>
                         <input type="hidden" id="crmFhVal_stage" value=""/>
                         <span class="crm-fh-clear" onclick="crmSddClear('stage')">&#x2715;</span>
-                        <div class="crm-sdd-panel" id="crmSdd_stage">
-                          <div style="padding:6px"><input type="text" placeholder="Search response…" oninput="crmSddRender('stage', this.value)" style="width:100%;padding:6px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;box-sizing:border-box" onclick="event.stopPropagation()"/></div>
-                        </div>
+                        <div class="crm-sdd-panel" id="crmSdd_stage"></div>
                       </div>
                     </th>
                     <th id="crmFhTh_priority">
@@ -3782,9 +3788,7 @@ button:focus-visible,
                         <button type="button" class="crm-fh-btn" id="crmFhBtn_priority" onclick="crmSddOpen('priority')">All Priority <i class="fa-solid fa-chevron-down"></i></button>
                         <input type="hidden" id="crmFhVal_priority" value=""/>
                         <span class="crm-fh-clear" onclick="crmSddClear('priority')">&#x2715;</span>
-                        <div class="crm-sdd-panel" id="crmSdd_priority">
-                          <div style="padding:6px"><input type="text" placeholder="Search priority…" oninput="crmSddRender('priority', this.value)" style="width:100%;padding:6px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;box-sizing:border-box" onclick="event.stopPropagation()"/></div>
-                        </div>
+                        <div class="crm-sdd-panel" id="crmSdd_priority"></div>
                       </div>
                     </th>
                     <th id="crmFhTh_assignedTo">
@@ -3792,9 +3796,7 @@ button:focus-visible,
                         <button type="button" class="crm-fh-btn" id="crmFhBtn_assignedTo" onclick="crmSddOpen('assignedTo')">All Assigned <i class="fa-solid fa-chevron-down"></i></button>
                         <input type="hidden" id="crmFhVal_assignedTo" value=""/>
                         <span class="crm-fh-clear" onclick="crmSddClear('assignedTo')">&#x2715;</span>
-                        <div class="crm-sdd-panel" id="crmSdd_assignedTo">
-                          <div style="padding:6px"><input type="text" placeholder="Search…" oninput="crmSddRender('assignedTo', this.value)" style="width:100%;padding:6px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;box-sizing:border-box" onclick="event.stopPropagation()"/></div>
-                        </div>
+                        <div class="crm-sdd-panel" id="crmSdd_assignedTo"></div>
                       </div>
                     </th>
                     <th id="crmFhTh_importedBy">
@@ -3802,9 +3804,7 @@ button:focus-visible,
                         <button type="button" class="crm-fh-btn" id="crmFhBtn_importedBy" onclick="crmSddOpen('importedBy')">All Imported From <i class="fa-solid fa-chevron-down"></i></button>
                         <input type="hidden" id="crmFhVal_importedBy" value=""/>
                         <span class="crm-fh-clear" onclick="crmSddClear('importedBy')">&#x2715;</span>
-                        <div class="crm-sdd-panel" id="crmSdd_importedBy">
-                          <div style="padding:6px"><input type="text" placeholder="Search…" oninput="crmSddRender('importedBy', this.value)" style="width:100%;padding:6px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;box-sizing:border-box" onclick="event.stopPropagation()"/></div>
-                        </div>
+                        <div class="crm-sdd-panel" id="crmSdd_importedBy"></div>
                       </div>
                     </th>
                     <th id="crmFhTh_importDate">
@@ -13077,7 +13077,9 @@ function crmFhClearText(field) {
 }
 
 /* Searchable dropdown popovers — course / city / source / stage / priority / assignedTo / importedBy */
-let _crmSddOpenField = null;
+/* Back-compat: older markup referenced crmSddRender in inline handlers that are
+   overwritten on open; keep a safe delegate so any stray call is harmless. */
+function crmSddRender(field, q) { crmSddRenderList(field, q); }
 const CRM_SDD_PLACEHOLDER = {
   course:'All Courses', city:'All Cities', source:'All Sources', stage:'All Responses',
   priority:'All Priority', assignedTo:'All Assigned', importedBy:'All Imported From',
@@ -13112,34 +13114,153 @@ function crmSddOptions(field) {
   }
   return [];
 }
-function crmSddOpen(field) {
-  _crmSddOpenField = field;
-  crmSddRender(field, '');
-  const panel = document.getElementById('crmSdd_' + field);
-  if (panel) panel.style.display = 'block';
-  setTimeout(() => document.addEventListener('click', crmSddOutsideClose, { once: true }), 0);
+
+/* ── Unified dropdown controller ─────────────────────────────────
+   Only one dropdown (searchable or date-range) is open at a time.
+   Fixed positioning with auto-flip + viewport clamp; Esc / outside
+   click / scroll all close it; full keyboard nav on searchable ones. */
+let _crmDD = null;          // { type:'sdd'|'dr', field }
+let _crmDDOpts = [];        // options currently rendered for the open sdd
+let _crmDDActive = -1;      // keyboard-highlighted index
+let _crmDDSearchTimer = null;
+const CRM_DD_MAX_RENDER = 100;
+
+function _crmDDPosition(panel, trigger) {
+  const tr = trigger.getBoundingClientRect();
+  panel.style.minWidth = Math.min(Math.max(tr.width, 200), 280) + 'px';
+  const pw = panel.offsetWidth, ph = panel.offsetHeight;
+  const vw = document.documentElement.clientWidth, vh = window.innerHeight;
+  let left = tr.left;
+  if (left + pw > vw - 8) left = vw - pw - 8;
+  if (left < 8) left = 8;
+  let top = tr.bottom + 5;
+  const openUp = (top + ph > vh - 8) && (tr.top - 5 - ph > 8);
+  if (openUp) { top = tr.top - 5 - ph; panel.style.transformOrigin = 'bottom left'; }
+  else panel.style.transformOrigin = 'top left';
+  panel.style.left = Math.round(left) + 'px';
+  panel.style.top  = Math.round(top)  + 'px';
 }
-function crmSddOutsideClose(e) {
-  if (!_crmSddOpenField) return;
-  const field = _crmSddOpenField;
+
+function crmDDCloseActive() {
+  if (!_crmDD) return;
+  const { type, field } = _crmDD;
+  const panel = document.getElementById((type === 'sdd' ? 'crmSdd_' : 'crmDr_') + field);
+  const btn   = document.getElementById((type === 'sdd' ? 'crmFhBtn_' : 'crmDrBtn_') + field);
+  if (btn) btn.setAttribute('aria-expanded', 'false');
+  if (panel) {
+    panel.classList.remove('open');
+    const p = panel;
+    setTimeout(() => { if (!p.classList.contains('open')) p.style.display = 'none'; }, 200);
+  }
+  _crmDD = null; _crmDDOpts = []; _crmDDActive = -1;
+  document.removeEventListener('keydown', _crmDDKeydown, true);
+  document.removeEventListener('mousedown', _crmDDOutside, true);
+  document.removeEventListener('scroll', _crmDDScrollClose, true);
+  window.removeEventListener('resize', crmDDCloseActive);
+}
+
+function _crmDDOutside(e) {
+  if (!_crmDD) return;
+  const { type, field } = _crmDD;
+  const panel = document.getElementById((type === 'sdd' ? 'crmSdd_' : 'crmDr_') + field);
+  const btn   = document.getElementById((type === 'sdd' ? 'crmFhBtn_' : 'crmDrBtn_') + field);
+  if (panel && !panel.contains(e.target) && btn && !btn.contains(e.target)) crmDDCloseActive();
+}
+
+function _crmDDScrollClose(e) {
+  if (!_crmDD) return;
+  const panel = document.getElementById((_crmDD.type === 'sdd' ? 'crmSdd_' : 'crmDr_') + _crmDD.field);
+  if (panel && panel.contains(e.target)) return;   // ignore scrolling inside the list
+  crmDDCloseActive();
+}
+
+function _crmDDAttachListeners() {
+  setTimeout(() => {
+    document.addEventListener('keydown', _crmDDKeydown, true);
+    document.addEventListener('mousedown', _crmDDOutside, true);
+    document.addEventListener('scroll', _crmDDScrollClose, true);
+    window.addEventListener('resize', crmDDCloseActive);
+  }, 0);
+}
+
+/* ── Searchable dropdowns ── */
+function crmSddOpen(field) {
+  const already = _crmDD && _crmDD.type === 'sdd' && _crmDD.field === field;
+  crmDDCloseActive();
+  if (already) return;                              // toggle off if same field
+
   const panel = document.getElementById('crmSdd_' + field);
   const btn   = document.getElementById('crmFhBtn_' + field);
-  if (panel && !panel.contains(e.target) && e.target !== btn && !(btn && btn.contains(e.target))) panel.style.display = 'none';
-  else setTimeout(() => document.addEventListener('click', crmSddOutsideClose, { once: true }), 0);
+  if (!panel || !btn) return;
+
+  panel.innerHTML =
+    `<div class="crm-sdd-search"><input type="text" id="crmSddSearch_${field}" placeholder="Search…" autocomplete="off" role="searchbox"/></div>` +
+    `<div class="crm-sdd-list" id="crmSddList_${field}" role="listbox"></div>`;
+  const search = document.getElementById('crmSddSearch_' + field);
+  search.addEventListener('input', () => {
+    clearTimeout(_crmDDSearchTimer);
+    _crmDDSearchTimer = setTimeout(() => crmSddRenderList(field, search.value), 200);
+  });
+  _crmDD = { type: 'sdd', field };
+  btn.setAttribute('aria-expanded', 'true');
+  crmSddRenderList(field, '');
+
+  panel.style.display = 'flex';
+  _crmDDPosition(panel, btn);
+  requestAnimationFrame(() => { panel.classList.add('open'); search.focus(); });
+  _crmDDAttachListeners();
 }
-function crmSddRender(field, q) {
-  const panel = document.getElementById('crmSdd_' + field);
-  if (!panel) return;
+
+function crmSddRenderList(field, q) {
+  const list = document.getElementById('crmSddList_' + field);
+  if (!list) return;
   const query = (q || '').toLowerCase().trim();
-  const opts  = crmSddOptions(field).filter(o => !query || o.label.toLowerCase().includes(query));
-  const searchBox = panel.querySelector('div');
-  const listHtml = opts.length
-    ? opts.map(o => `<div class="crm-sdd-item" onclick="crmSddPick('${field}','${escHtml(o.value)}','${escHtml(o.label)}')">${escHtml(o.label)}</div>`).join('')
-    : '<div class="crm-sdd-empty">No matches</div>';
-  panel.innerHTML = '';
-  if (searchBox) panel.appendChild(searchBox);
-  panel.insertAdjacentHTML('beforeend', listHtml);
+  const selected = document.getElementById('crmFhVal_' + field)?.value || '';
+  _crmDDOpts = crmSddOptions(field).filter(o => !query || o.label.toLowerCase().includes(query));
+  _crmDDActive = -1;
+  if (!_crmDDOpts.length) { list.innerHTML = '<div class="crm-sdd-empty">No results found</div>'; return; }
+  const shown = _crmDDOpts.slice(0, CRM_DD_MAX_RENDER);
+  list.innerHTML = shown.map((o, i) =>
+    `<div class="crm-sdd-item${String(o.value) === String(selected) ? ' selected' : ''}" role="option" data-idx="${i}" onclick="crmSddPickIndex('${field}',${i})">
+       <span>${escHtml(o.label)}</span><i class="fa-solid fa-check crm-sdd-check"></i>
+     </div>`).join('') +
+    (_crmDDOpts.length > CRM_DD_MAX_RENDER ? `<div class="crm-sdd-more">Showing first ${CRM_DD_MAX_RENDER} of ${_crmDDOpts.length} — keep typing to narrow</div>` : '');
+  // reposition (height may have changed) while keeping it anchored
+  const panel = document.getElementById('crmSdd_' + field);
+  const btn   = document.getElementById('crmFhBtn_' + field);
+  if (panel && btn) _crmDDPosition(panel, btn);
 }
+
+function crmSddPickIndex(field, i) {
+  const o = _crmDDOpts[i];
+  if (!o) return;
+  crmDDCloseActive();
+  crmSddSet(field, o.value, o.label);
+  crmApplyFilters();
+}
+
+function _crmDDKeydown(e) {
+  if (!_crmDD) return;
+  if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); crmDDCloseActive(); return; }
+  if (_crmDD.type !== 'sdd') return;
+  const list = document.getElementById('crmSddList_' + _crmDD.field);
+  if (!list) return;
+  const items = [...list.querySelectorAll('.crm-sdd-item')];
+  if (!items.length) return;
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    _crmDDActive = e.key === 'ArrowDown'
+      ? Math.min(items.length - 1, _crmDDActive + 1)
+      : Math.max(0, _crmDDActive - 1);
+    items.forEach(it => it.classList.remove('active'));
+    items[_crmDDActive].classList.add('active');
+    items[_crmDDActive].scrollIntoView({ block: 'nearest' });
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (_crmDDActive >= 0 && items[_crmDDActive]) items[_crmDDActive].click();
+  }
+}
+
 /* Set an sdd field's value + button label WITHOUT triggering a fetch */
 function crmSddSet(field, value, label) {
   const btn = document.getElementById('crmFhBtn_' + field);
@@ -13147,32 +13268,32 @@ function crmSddSet(field, value, label) {
   if (btn) btn.innerHTML = `${escHtml(value ? label : (CRM_SDD_PLACEHOLDER[field] || 'All'))} <i class="fa-solid fa-chevron-down"></i>`;
   if (val) val.value = value;
   document.getElementById('crmFhWrap_' + field)?.classList.toggle('has-value', !!value);
-  const panel = document.getElementById('crmSdd_' + field);
-  if (panel) panel.style.display = 'none';
 }
 function crmSddPick(field, value, label) {
+  crmDDCloseActive();
   crmSddSet(field, value, label);
   crmApplyFilters();
 }
 function crmSddClear(field) {
-  crmSddPick(field, '', '');
+  crmSddSet(field, '', '');
+  crmApplyFilters();
 }
 
-/* Date-range popovers — importDate / nextFollowUp */
-let _crmDrOpenField = null;
+/* ── Date-range popovers — importDate / nextFollowUp ── */
 function crmDrOpen(field) {
-  _crmDrOpenField = field;
-  const panel = document.getElementById('crmDr_' + field);
-  if (panel) panel.style.display = 'block';
-  setTimeout(() => document.addEventListener('click', crmDrOutsideClose, { once: true }), 0);
-}
-function crmDrOutsideClose(e) {
-  if (!_crmDrOpenField) return;
-  const field = _crmDrOpenField;
+  const already = _crmDD && _crmDD.type === 'dr' && _crmDD.field === field;
+  crmDDCloseActive();
+  if (already) return;
+
   const panel = document.getElementById('crmDr_' + field);
   const btn   = document.getElementById('crmDrBtn_' + field);
-  if (panel && !panel.contains(e.target) && e.target !== btn && !(btn && btn.contains(e.target))) panel.style.display = 'none';
-  else setTimeout(() => document.addEventListener('click', crmDrOutsideClose, { once: true }), 0);
+  if (!panel || !btn) return;
+  _crmDD = { type: 'dr', field };
+  btn.setAttribute('aria-expanded', 'true');
+  panel.style.display = 'block';
+  _crmDDPosition(panel, btn);
+  requestAnimationFrame(() => panel.classList.add('open'));
+  _crmDDAttachListeners();
 }
 function crmDrApply(field) {
   const from = document.getElementById('crmDrFrom_' + field)?.value || '';
@@ -13180,8 +13301,7 @@ function crmDrApply(field) {
   const lbl  = document.getElementById('crmDrLbl_' + field);
   if (lbl) lbl.textContent = (from || to) ? `${from || '…'} → ${to || '…'}` : 'Any date';
   document.getElementById('crmFhWrap_' + field)?.classList.toggle('has-value', !!(from || to));
-  const panel = document.getElementById('crmDr_' + field);
-  if (panel) panel.style.display = 'none';
+  crmDDCloseActive();
   crmApplyFilters();
 }
 function crmDrClear(field) {
