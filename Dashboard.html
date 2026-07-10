@@ -1864,6 +1864,81 @@ button:focus-visible,
 .crm-filter-bar .form-select:focus{border-color:var(--royal);box-shadow:0 0 0 3px rgba(37,99,235,.1);}
 .crm-filter-bar .search-wrap{flex:1;min-width:180px;max-width:280px;}
 
+/* ── CRM column-header filters ─────────────────────────────────── */
+.crm-table-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+.crm-toolbar-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.crm-toolbar-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border:1.5px solid var(--gray-200);border-radius:9px;background:#fff;color:var(--gray-600);font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;white-space:nowrap;font-family:inherit;}
+.crm-toolbar-btn:hover{border-color:var(--royal);color:var(--royal);background:rgba(37,99,235,.05);}
+.crm-toolbar-btn.on{background:var(--royal);border-color:var(--royal);color:#fff;}
+.crm-toolbar-btn.stale-on{background:#f59e0b;border-color:#f59e0b;color:#fff;}
+.crm-filter-count{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:#fff;color:var(--royal);font-size:9.5px;font-weight:800;}
+.crm-toolbar-btn.on .crm-filter-count{background:rgba(255,255,255,.25);color:#fff;}
+
+#crmTable thead th{position:sticky;top:0;z-index:3;background:#f8fafc;vertical-align:middle;}
+[data-theme="dark"] #crmTable thead th{background:var(--navy-mid);}
+#crmTable thead tr.crm-filter-row th{padding:6px 8px;background:#fff;border-bottom:2px solid var(--gray-200);border-top:1px solid var(--gray-100);}
+[data-theme="dark"] #crmTable thead tr.crm-filter-row th{background:var(--navy);}
+
+.crm-th-title{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;}
+.crm-th-title:hover{color:var(--royal);}
+.crm-sort-ico{font-size:9px;opacity:.3;transition:opacity .15s;}
+.crm-th-title.sorted .crm-sort-ico{opacity:1;color:var(--royal);}
+.crm-th-nosort{cursor:default;}
+
+.crm-fh{position:relative;display:flex;align-items:center;}
+.crm-fh-input,.crm-fh-select,.crm-fh-btn{width:100%;height:33px;padding:0 24px 0 9px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:12px;background:#f8fafc;color:var(--navy);outline:none;transition:all .15s;box-sizing:border-box;font-weight:500;font-family:inherit;text-align:left;cursor:pointer;}
+.crm-fh-input{cursor:text;}
+.crm-fh-input:focus,.crm-fh-select:focus,.crm-fh-btn:focus{border-color:var(--royal);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.08);}
+.crm-fh-select{appearance:none;-webkit-appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 9px center;}
+.crm-fh-btn{color:var(--gray-400);display:flex;align-items:center;justify-content:space-between;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.crm-fh-btn i{font-size:9px;flex-shrink:0;}
+.crm-fh-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--gray-400);font-size:10px;display:none;padding:3px;z-index:1;}
+.crm-fh-clear:hover{color:var(--danger);}
+.crm-fh.has-value .crm-fh-clear{display:inline-block;}
+.crm-fh.has-value .crm-fh-input,.crm-fh.has-value .crm-fh-select,.crm-fh.has-value .crm-fh-btn{border-color:var(--royal);background:rgba(37,99,235,.05);color:var(--navy);}
+
+/* Searchable dropdown popover (Course / Assigned To / Imported From) */
+.crm-sdd-panel{position:absolute;top:calc(100% + 4px);left:0;min-width:210px;max-width:260px;background:#fff;border:1.5px solid var(--royal);border-radius:10px;box-shadow:0 8px 24px rgba(10,22,40,.16);z-index:50;max-height:230px;overflow-y:auto;display:none;}
+[data-theme="dark"] .crm-sdd-panel{background:var(--navy-mid);}
+.crm-sdd-item{padding:8px 12px;font-size:12.5px;cursor:pointer;color:var(--navy);border-bottom:1px solid var(--gray-100);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+[data-theme="dark"] .crm-sdd-item{color:var(--gray-100);border-color:var(--gray-200);}
+.crm-sdd-item:hover{background:rgba(37,99,235,.08);}
+.crm-sdd-empty{padding:14px;text-align:center;font-size:12px;color:var(--gray-400);}
+
+/* Date range popover */
+.crm-dr-panel{position:absolute;top:calc(100% + 4px);left:0;background:#fff;border:1.5px solid var(--royal);border-radius:10px;box-shadow:0 8px 24px rgba(10,22,40,.16);z-index:50;display:none;padding:12px;width:225px;}
+[data-theme="dark"] .crm-dr-panel{background:var(--navy-mid);}
+.crm-dr-panel label{font-size:9.5px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:3px;}
+.crm-dr-panel input[type=date]{width:100%;padding:7px 9px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:12px;margin-bottom:9px;box-sizing:border-box;font-family:inherit;color:var(--navy);}
+.crm-dr-actions{display:flex;gap:6px;justify-content:flex-end;}
+.crm-dr-actions button{padding:6px 12px;border-radius:7px;font-size:11.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--gray-200);background:#fff;font-family:inherit;}
+.crm-dr-actions button.primary{background:var(--royal);border-color:var(--royal);color:#fff;}
+
+/* Mobile filter drawer */
+.crm-filter-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(10,22,40,.45);z-index:998;}
+.crm-filter-drawer-overlay.open{display:block;}
+.crm-filter-drawer{position:fixed;top:0;right:-100%;width:min(340px,86vw);height:100%;background:#fff;z-index:999;box-shadow:-8px 0 30px rgba(10,22,40,.2);transition:right .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;}
+[data-theme="dark"] .crm-filter-drawer{background:var(--navy-mid);}
+.crm-filter-drawer.open{right:0;}
+.crm-filter-drawer-hdr{padding:16px 18px;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.crm-filter-drawer-body{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:14px;}
+.crm-filter-drawer-fld label{font-size:10.5px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px;}
+.crm-filter-drawer-fld .crm-fh{width:100%;}
+.crm-filter-drawer-fld .crm-fh-input,.crm-filter-drawer-fld .crm-fh-select,.crm-filter-drawer-fld .crm-fh-btn{height:38px;font-size:13px;}
+.crm-filter-drawer-footer{padding:14px 18px;border-top:1px solid var(--gray-200);display:flex;gap:8px;flex-shrink:0;}
+
+.crm-mobile-filter-toggle{display:none;}
+
+@media (max-width:1024px){
+  .crm-fh-input,.crm-fh-select,.crm-fh-btn{height:30px;font-size:11.5px;}
+}
+@media (max-width:768px){
+  .crm-desktop-filter-row{display:none !important;}
+  .crm-mobile-filter-toggle{display:inline-flex;}
+}
+
 /* Score system removed */
 
 /* Stage badge */
@@ -3593,78 +3668,20 @@ button:focus-visible,
 
         <!-- ── LIST VIEW ── -->
         <div id="crmViewList">
-          <!-- Filters bar -->
-          <div class="prem-filter-panel" style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(15,23,42,.05)">
-            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-              <div style="position:relative;flex:1;min-width:200px;max-width:280px">
-                <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px;pointer-events:none"></i>
-                <input type="text" id="crmSearch" placeholder="Search name, email, mobile…" oninput="debouncedCrmSearch()"
-                       style="width:100%;padding:9px 12px 9px 36px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:13px;color:#0f172a;background:#f8fafc;outline:none;transition:all .2s;box-sizing:border-box"
-                       onfocus="this.style.borderColor='#2563EB';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(37,99,235,.1)'"
-                       onblur="this.style.borderColor='#e5e7eb';this.style.background='#f8fafc';this.style.boxShadow='none'"/>
-              </div>
-              <select class="form-select" id="crmFilterStage" onchange="crmApplyFilters()"
-                      style="padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:13px;background:#f8fafc;color:#0f172a;cursor:pointer;outline:none;min-width:135px">
-                <option value="">All Responses</option>
-                <option value="new">New</option>
-                <option value="not_answering">Not Answering</option>
-                <option value="not_reachable">Not Reachable</option>
-                <option value="call_back">Call Back</option>
-                <option value="interested">Interested</option>
-                <option value="enrolled">Enrolled</option>
-                <option value="follow_up">Follow Up</option>
-                <option value="not_interested">Not Interested</option>
-              </select>
-              <select class="form-select" id="crmFilterSource" onchange="crmApplyFilters()"
-                      style="padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:13px;background:#f8fafc;color:#0f172a;cursor:pointer;outline:none;min-width:120px">
-                <option value="">All Sources</option>
-                <option value="website">Website</option>
-                <option value="referral">Referral</option>
-                <option value="event">Event</option>
-                <option value="social_media">Social Media</option>
-                <option value="walk_in">Walk-in</option>
-                <option value="manual">Manual</option>
-                <option value="other">Other</option>
-              </select>
-              <select class="form-select" id="crmFilterPriority" onchange="crmApplyFilters()"
-                      style="padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:13px;background:#f8fafc;color:#0f172a;cursor:pointer;outline:none;min-width:120px">
-                <option value="">All Priority</option>
-                <option value="high">High</option>
-                <option value="medium">Medium</option>
-                <option value="low">Low</option>
-              </select>
-              <div style="position:relative;min-width:150px">
-                <input class="form-input" id="crmFilterCourse" placeholder="Course…" autocomplete="off"
-                       oninput="debouncedCrmCourseFilter()"
-                       style="padding:9px 28px 9px 12px;font-size:13px;border:1.5px solid #e5e7eb;border-radius:12px;background:#f8fafc;color:#0f172a;outline:none;width:100%;box-sizing:border-box"/>
-                <span id="crmCourseFilterClear" onclick="crmClearCourseFilter()"
-                      style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:#94a3b8;font-size:12px">&#x2715;</span>
-              </div>
-              <div style="position:relative;min-width:160px">
-                <input class="form-input" id="crmFilterAssignedInput" placeholder="Assigned to…" autocomplete="off"
-                       oninput="_crmAssignFilterSearch(this.value)"
-                       onfocus="_crmAssignFilterSearch(this.value)"
-                       style="padding:9px 28px 9px 12px;font-size:13px;border:1.5px solid #e5e7eb;border-radius:12px;background:#f8fafc;color:#0f172a;outline:none;width:100%;box-sizing:border-box"/>
-                <input type="hidden" id="crmFilterAssigned" value=""/>
-                <span id="crmAssignFilterClear" onclick="_crmAssignFilterClear()"
-                      style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:#94a3b8;font-size:12px">&#x2715;</span>
-                <div id="crmAssignDropdown"
-                     style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #2563EB;border-radius:10px;box-shadow:0 4px 16px rgba(10,22,40,.12);z-index:999;max-height:200px;overflow-y:auto;margin-top:4px">
-                </div>
-              </div>
-              <select class="form-select" id="crmFilterImportedBy" onchange="crmApplyFilters()"
-                      style="display:none;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:13px;background:#f8fafc;color:#0f172a;cursor:pointer;outline:none;min-width:190px;max-width:240px">
-                <option value="">All Imported From</option>
-              </select>
-              <button id="crmStaleBtn" onclick="crmToggleStaleFilter()" title="Show only stale leads (7+ days inactive)"
-                      style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid #f59e0b;border-radius:12px;background:rgba(245,158,11,.06);color:#b45309;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap">
+          <!-- Table toolbar -->
+          <div class="crm-table-toolbar">
+            <div class="crm-toolbar-left">
+              <button class="crm-toolbar-btn crm-desktop-filter-row on" id="crmFilterToggleBtn" onclick="crmToggleFilterRow()" title="Show/hide column filters">
+                <i class="fa-solid fa-filter"></i> Filters <span class="crm-filter-count" id="crmFilterCount" style="display:none">0</span>
+              </button>
+              <button class="crm-toolbar-btn crm-mobile-filter-toggle" onclick="crmOpenFilterDrawer()">
+                <i class="fa-solid fa-filter"></i> Filters <span class="crm-filter-count" id="crmFilterCountMobile" style="display:none">0</span>
+              </button>
+              <button id="crmStaleBtn" class="crm-toolbar-btn" onclick="crmToggleStaleFilter()" title="Show only stale leads (7+ days inactive)">
                 <i class="fa-solid fa-clock-rotate-left"></i> Stale
               </button>
-              <button onclick="crmResetFilters()"
-                      style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid #e5e7eb;border-radius:12px;background:#fff;color:#64748b;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap"
-                      onmouseenter="this.style.borderColor='#ef4444';this.style.color='#ef4444';this.style.background='#fef2f2'"
-                      onmouseleave="this.style.borderColor='#e5e7eb';this.style.color='#64748b';this.style.background='#fff'">
-                <i class="fa-solid fa-rotate"></i> Reset
+              <button class="crm-toolbar-btn" onclick="crmResetFilters()">
+                <i class="fa-solid fa-rotate"></i> Clear All Filters
               </button>
             </div>
           </div>
@@ -3682,23 +3699,149 @@ button:focus-visible,
           <!-- Table -->
           <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;box-shadow:0 1px 4px rgba(15,23,42,.05)">
             <div class="prem-table-wrap" style="overflow-x:auto;-webkit-overflow-scrolling:touch">
-              <table style="width:100%;border-collapse:collapse;min-width:1100px" id="crmTable">
+              <table style="width:100%;border-collapse:collapse;min-width:1300px" id="crmTable">
                 <thead>
-                  <tr style="background:#f8fafc;border-bottom:2px solid #e5e7eb">
+                  <tr style="background:#f8fafc;border-bottom:1px solid #e5e7eb">
                     <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap"><input type="checkbox" id="crmSelectAll" onchange="crmToggleAll(this)" style="accent-color:#2563EB;width:14px;height:14px"/></th>
-                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Name</th>
-                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Mobile</th>
-                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Email</th>
-                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">City</th>
-                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Course</th>
-                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Source</th>
-                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Response</th>
-                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Priority</th>
-                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Assigned To</th>
-                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Imported From</th>
-                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Import Date</th>
-                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Next Follow-up</th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap"><span class="crm-th-title" id="crmThSort_name" onclick="crmSort('name')">Name <i class="fa-solid fa-arrow-down-short-wide crm-sort-ico"></i></span></th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap"><span class="crm-th-title crm-th-nosort">Mobile</span></th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap"><span class="crm-th-title crm-th-nosort">Email</span></th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap"><span class="crm-th-title" id="crmThSort_city" onclick="crmSort('city')">City <i class="fa-solid fa-arrow-down-short-wide crm-sort-ico"></i></span></th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap"><span class="crm-th-title" id="crmThSort_courseInterest" onclick="crmSort('courseInterest')">Course <i class="fa-solid fa-arrow-down-short-wide crm-sort-ico"></i></span></th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap"><span class="crm-th-title" id="crmThSort_source" onclick="crmSort('source')">Source <i class="fa-solid fa-arrow-down-short-wide crm-sort-ico"></i></span></th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap"><span class="crm-th-title" id="crmThSort_stage" onclick="crmSort('stage')">Response <i class="fa-solid fa-arrow-down-short-wide crm-sort-ico"></i></span></th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap"><span class="crm-th-title" id="crmThSort_priority" onclick="crmSort('priority')">Priority <i class="fa-solid fa-arrow-down-short-wide crm-sort-ico"></i></span></th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap"><span class="crm-th-title crm-th-nosort">Assigned To</span></th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap" id="crmThImportedBy"><span class="crm-th-title crm-th-nosort">Imported From</span></th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap"><span class="crm-th-title" id="crmThSort_createdAt" onclick="crmSort('createdAt')">Import Date <i class="fa-solid fa-arrow-down-short-wide crm-sort-ico"></i></span></th>
+                    <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap"><span class="crm-th-title" id="crmThSort_nextFollowUp" onclick="crmSort('nextFollowUp')">Next Follow-up <i class="fa-solid fa-arrow-down-short-wide crm-sort-ico"></i></span></th>
                     <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Actions</th>
+                  </tr>
+                  <tr class="crm-filter-row crm-desktop-filter-row" id="crmFilterRow">
+                    <th></th>
+                    <th id="crmFhTh_name">
+                      <div class="crm-fh" id="crmFhWrap_name">
+                        <input class="crm-fh-input" id="crmFh_name" placeholder="Filter name…" autocomplete="off" oninput="crmFhTextInput('name')"/>
+                        <span class="crm-fh-clear" onclick="crmFhClearText('name')">&#x2715;</span>
+                      </div>
+                    </th>
+                    <th id="crmFhTh_mobile">
+                      <div class="crm-fh" id="crmFhWrap_mobile">
+                        <input class="crm-fh-input" id="crmFh_mobile" placeholder="Filter mobile…" autocomplete="off" oninput="crmFhTextInput('mobile')"/>
+                        <span class="crm-fh-clear" onclick="crmFhClearText('mobile')">&#x2715;</span>
+                      </div>
+                    </th>
+                    <th id="crmFhTh_email">
+                      <div class="crm-fh" id="crmFhWrap_email">
+                        <input class="crm-fh-input" id="crmFh_email" placeholder="Filter email…" autocomplete="off" oninput="crmFhTextInput('email')"/>
+                        <span class="crm-fh-clear" onclick="crmFhClearText('email')">&#x2715;</span>
+                      </div>
+                    </th>
+                    <th id="crmFhTh_city">
+                      <div class="crm-fh" id="crmFhWrap_city">
+                        <input class="crm-fh-input" id="crmFh_city" placeholder="Filter city…" autocomplete="off" oninput="crmFhTextInput('city')"/>
+                        <span class="crm-fh-clear" onclick="crmFhClearText('city')">&#x2715;</span>
+                      </div>
+                    </th>
+                    <th id="crmFhTh_course">
+                      <div class="crm-fh" id="crmFhWrap_course" style="position:relative">
+                        <button type="button" class="crm-fh-btn" id="crmFhBtn_course" onclick="crmSddOpen('course')">All Courses <i class="fa-solid fa-chevron-down"></i></button>
+                        <input type="hidden" id="crmFhVal_course" value=""/>
+                        <span class="crm-fh-clear" onclick="crmSddClear('course')">&#x2715;</span>
+                        <div class="crm-sdd-panel" id="crmSdd_course">
+                          <div style="padding:6px"><input type="text" placeholder="Search course…" oninput="crmSddRender('course', this.value)" style="width:100%;padding:6px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;box-sizing:border-box" onclick="event.stopPropagation()"/></div>
+                        </div>
+                      </div>
+                    </th>
+                    <th id="crmFhTh_source">
+                      <div class="crm-fh" id="crmFhWrap_source">
+                        <select class="crm-fh-select" id="crmFh_source" onchange="crmFhSelectChange('source')">
+                          <option value="">All Sources</option>
+                          <option value="website">Website</option>
+                          <option value="referral">Referral</option>
+                          <option value="event">Event</option>
+                          <option value="social_media">Social Media</option>
+                          <option value="walk_in">Walk-in</option>
+                          <option value="manual">Manual</option>
+                          <option value="other">Other</option>
+                        </select>
+                        <span class="crm-fh-clear" onclick="crmFhClearSelect('source')">&#x2715;</span>
+                      </div>
+                    </th>
+                    <th id="crmFhTh_stage">
+                      <div class="crm-fh" id="crmFhWrap_stage">
+                        <select class="crm-fh-select" id="crmFh_stage" onchange="crmFhSelectChange('stage')">
+                          <option value="">All Responses</option>
+                          <option value="new">New</option>
+                          <option value="not_answering">Not Answering</option>
+                          <option value="not_reachable">Not Reachable</option>
+                          <option value="call_back">Call Back</option>
+                          <option value="interested">Interested</option>
+                          <option value="enrolled">Enrolled</option>
+                          <option value="follow_up">Follow Up</option>
+                          <option value="not_interested">Not Interested</option>
+                        </select>
+                        <span class="crm-fh-clear" onclick="crmFhClearSelect('stage')">&#x2715;</span>
+                      </div>
+                    </th>
+                    <th id="crmFhTh_priority">
+                      <div class="crm-fh" id="crmFhWrap_priority">
+                        <select class="crm-fh-select" id="crmFh_priority" onchange="crmFhSelectChange('priority')">
+                          <option value="">All Priority</option>
+                          <option value="high">High</option>
+                          <option value="medium">Medium</option>
+                          <option value="low">Low</option>
+                        </select>
+                        <span class="crm-fh-clear" onclick="crmFhClearSelect('priority')">&#x2715;</span>
+                      </div>
+                    </th>
+                    <th id="crmFhTh_assignedTo">
+                      <div class="crm-fh" id="crmFhWrap_assignedTo" style="position:relative">
+                        <button type="button" class="crm-fh-btn" id="crmFhBtn_assignedTo" onclick="crmSddOpen('assignedTo')">All Assigned <i class="fa-solid fa-chevron-down"></i></button>
+                        <input type="hidden" id="crmFhVal_assignedTo" value=""/>
+                        <span class="crm-fh-clear" onclick="crmSddClear('assignedTo')">&#x2715;</span>
+                        <div class="crm-sdd-panel" id="crmSdd_assignedTo">
+                          <div style="padding:6px"><input type="text" placeholder="Search…" oninput="crmSddRender('assignedTo', this.value)" style="width:100%;padding:6px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;box-sizing:border-box" onclick="event.stopPropagation()"/></div>
+                        </div>
+                      </div>
+                    </th>
+                    <th id="crmFhTh_importedBy">
+                      <div class="crm-fh" id="crmFhWrap_importedBy" style="position:relative">
+                        <button type="button" class="crm-fh-btn" id="crmFhBtn_importedBy" onclick="crmSddOpen('importedBy')">All Imported From <i class="fa-solid fa-chevron-down"></i></button>
+                        <input type="hidden" id="crmFhVal_importedBy" value=""/>
+                        <span class="crm-fh-clear" onclick="crmSddClear('importedBy')">&#x2715;</span>
+                        <div class="crm-sdd-panel" id="crmSdd_importedBy">
+                          <div style="padding:6px"><input type="text" placeholder="Search…" oninput="crmSddRender('importedBy', this.value)" style="width:100%;padding:6px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;box-sizing:border-box" onclick="event.stopPropagation()"/></div>
+                        </div>
+                      </div>
+                    </th>
+                    <th id="crmFhTh_importDate">
+                      <div class="crm-fh" id="crmFhWrap_importDate" style="position:relative">
+                        <button type="button" class="crm-fh-btn" id="crmDrBtn_importDate" onclick="crmDrOpen('importDate')"><span id="crmDrLbl_importDate">Any date</span> <i class="fa-solid fa-calendar-days"></i></button>
+                        <div class="crm-dr-panel" id="crmDr_importDate" onclick="event.stopPropagation()">
+                          <label>From</label><input type="date" id="crmDrFrom_importDate"/>
+                          <label>To</label><input type="date" id="crmDrTo_importDate"/>
+                          <div class="crm-dr-actions">
+                            <button onclick="crmDrClear('importDate')">Clear</button>
+                            <button class="primary" onclick="crmDrApply('importDate')">Apply</button>
+                          </div>
+                        </div>
+                      </div>
+                    </th>
+                    <th id="crmFhTh_nextFollowUp">
+                      <div class="crm-fh" id="crmFhWrap_nextFollowUp" style="position:relative">
+                        <button type="button" class="crm-fh-btn" id="crmDrBtn_nextFollowUp" onclick="crmDrOpen('nextFollowUp')"><span id="crmDrLbl_nextFollowUp">Any date</span> <i class="fa-solid fa-calendar-days"></i></button>
+                        <div class="crm-dr-panel" id="crmDr_nextFollowUp" onclick="event.stopPropagation()">
+                          <label>From</label><input type="date" id="crmDrFrom_nextFollowUp"/>
+                          <label>To</label><input type="date" id="crmDrTo_nextFollowUp"/>
+                          <div class="crm-dr-actions">
+                            <button onclick="crmDrClear('nextFollowUp')">Clear</button>
+                            <button class="primary" onclick="crmDrApply('nextFollowUp')">Apply</button>
+                          </div>
+                        </div>
+                      </div>
+                    </th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody id="crmTableBody"><!-- JS --></tbody>
@@ -3707,6 +3850,20 @@ button:focus-visible,
             <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid #f1f5f9;flex-wrap:wrap;gap:10px" id="crmPagination">
               <div style="font-size:13px;color:#64748b;font-weight:500" id="crmPagInfo"></div>
               <div style="display:flex;gap:6px" id="crmPagBtns"></div>
+            </div>
+          </div>
+
+          <!-- Mobile filter drawer -->
+          <div class="crm-filter-drawer-overlay" id="crmFilterDrawerOverlay" onclick="crmCloseFilterDrawer()"></div>
+          <div class="crm-filter-drawer" id="crmFilterDrawer">
+            <div class="crm-filter-drawer-hdr">
+              <h3 style="font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin:0">Filters</h3>
+              <button onclick="crmCloseFilterDrawer()" style="background:none;border:none;font-size:18px;color:var(--gray-400);cursor:pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="crm-filter-drawer-body" id="crmFilterDrawerBody"><!-- filter fields moved in here on open --></div>
+            <div class="crm-filter-drawer-footer">
+              <button class="btn btn-outline" style="flex:1" onclick="crmResetFilters()">Clear All</button>
+              <button class="btn btn-primary" style="flex:1" onclick="crmCloseFilterDrawer()">Apply</button>
             </div>
           </div>
         </div>
@@ -12792,7 +12949,7 @@ async function initCRM() {
   if (CRM.initialized) { crmRefresh(); return; }
   CRM.initialized = true;
   await _crmLoadAdmins();
-  _crmShowImportedByFilter();
+  _crmLoadCourseOptions();
   await crmRefresh();
 }
 
@@ -12804,35 +12961,27 @@ async function _crmLoadAdmins() {
     CRM.admins = r.ok ? (r.data.admins || r.data.data || []) : [];
   }
   _crmPopulateAdminDropdowns();
-  _crmPopulateImportedByFilter();
+  _crmShowImportedByFilter();
 }
 
-function _crmPopulateImportedByFilter() {
-  const sel = document.getElementById('crmFilterImportedBy');
-  if (!sel) return;
-  sel.innerHTML = '<option value="">All Imported From</option>';
-  CRM.admins
-    .filter(a => (a.role?.name || '').toLowerCase() === 'associate partner')
-    .forEach(a => {
-      const name = [a.firstName, a.lastName].filter(Boolean).join(' ') || a.email || a.code || 'Unknown';
-      const opt = document.createElement('option');
-      opt.value = a._id;
-      opt.textContent = `${name}${a.code ? ` (${a.code})` : ''}`;
-      sel.appendChild(opt);
-    });
+async function _crmLoadCourseOptions() {
+  const r = await apiFetch('GET', '/leads/meta/courses');
+  CRM.courseOptions = r.ok ? (r.data.data || []) : [];
 }
 
 function _crmShowImportedByFilter() {
   const role = state.currentUserRole || getSavedUser()?.role;
   const isAdminOrSA = role && (role.isSystem || ['Super Admin','Admin'].includes(role.name));
-  const sel = document.getElementById('crmFilterImportedBy');
-  if (sel) sel.style.display = isAdminOrSA ? '' : 'none';
+  ['crmThImportedBy','crmFhTh_importedBy'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = isAdminOrSA ? '' : 'none';
+  });
   const edBtn = document.getElementById('exportDeleteLeadsBtn');
   if (edBtn) edBtn.style.display = isAdminOrSA ? '' : 'none';
 }
 
 function _crmPopulateAdminDropdowns() {
-  // Store only Associate Partners for filter (used by _crmAssignFilterSearch)
+  // Store only Associate Partners for the Assigned To / Imported From filters
   CRM.apAdmins = CRM.admins.filter(a => {
     const rn = (a.role?.name || a.roleName || '').toLowerCase();
     return rn === 'associate partner';
@@ -12903,49 +13052,204 @@ function _assignClear() {
   document.getElementById('leadAssignedToInput').focus();
 }
 
-/* ── CRM Assigned-To filter (searchable, AP only) ─────────────── */
-function _crmAssignFilterSearch(query) {
-  const dropdown = document.getElementById('crmAssignDropdown');
-  if (!dropdown) return;
-  const q = (query || '').toLowerCase().trim();
-  const list = (CRM.apAdmins || []).filter(a => {
-    const name  = ((a.firstName||'') + ' ' + (a.lastName||'')).trim().toLowerCase();
-    const code  = (a.code || '').toLowerCase();
-    return !q || name.includes(q) || code.includes(q);
+/* ── CRM column-header filters ──────────────────────────────────
+   Text (name/mobile/email/city), select (source/stage/priority),
+   searchable dropdown (course/assignedTo/importedBy), date range
+   (importDate/nextFollowUp). All funnel into crmApplyFilters(). ── */
+const CRM_FH_FIELDS  = ['name','mobile','email','city','course','source','stage','priority','assignedTo','importedBy','importDate','nextFollowUp'];
+const CRM_FH_LABELS  = { name:'Name', mobile:'Mobile', email:'Email', city:'City', course:'Course', source:'Source', stage:'Response', priority:'Priority', assignedTo:'Assigned To', importedBy:'Imported From', importDate:'Import Date', nextFollowUp:'Next Follow-up' };
+
+function crmFhToggleClear(field) {
+  const wrap  = document.getElementById('crmFhWrap_' + field);
+  const input = document.getElementById('crmFh_' + field);
+  if (wrap && input) wrap.classList.toggle('has-value', !!input.value);
+}
+
+let _crmFhTextTimer = {};
+function crmFhTextInput(field) {
+  crmFhToggleClear(field);
+  clearTimeout(_crmFhTextTimer[field]);
+  _crmFhTextTimer[field] = setTimeout(() => crmApplyFilters(), 400);
+}
+function crmFhClearText(field) {
+  const input = document.getElementById('crmFh_' + field);
+  if (input) input.value = '';
+  crmFhToggleClear(field);
+  crmApplyFilters();
+}
+function crmFhSelectChange(field) { crmFhToggleClear(field); crmApplyFilters(); }
+function crmFhClearSelect(field) {
+  const sel = document.getElementById('crmFh_' + field);
+  if (sel) sel.value = '';
+  crmFhToggleClear(field);
+  crmApplyFilters();
+}
+
+/* Searchable dropdown popovers — course / assignedTo / importedBy */
+let _crmSddOpenField = null;
+function crmSddOptions(field) {
+  if (field === 'course') return (CRM.courseOptions || []).map(c => ({ value: c, label: c }));
+  if (field === 'assignedTo' || field === 'importedBy') {
+    const base = field === 'assignedTo' ? [{ value: '', label: 'All Assigned' }, { value: 'unassigned', label: 'Unassigned' }] : [{ value: '', label: 'All Imported From' }];
+    return base.concat((CRM.apAdmins || []).map(a => ({
+      value: a._id,
+      label: (((a.firstName||'')+' '+(a.lastName||'')).trim() || a.email || 'Unknown') + (a.code ? ` (${a.code})` : ''),
+    })));
+  }
+  return [];
+}
+function crmSddOpen(field) {
+  _crmSddOpenField = field;
+  crmSddRender(field, '');
+  const panel = document.getElementById('crmSdd_' + field);
+  if (panel) panel.style.display = 'block';
+  setTimeout(() => document.addEventListener('click', crmSddOutsideClose, { once: true }), 0);
+}
+function crmSddOutsideClose(e) {
+  if (!_crmSddOpenField) return;
+  const field = _crmSddOpenField;
+  const panel = document.getElementById('crmSdd_' + field);
+  const btn   = document.getElementById('crmFhBtn_' + field);
+  if (panel && !panel.contains(e.target) && e.target !== btn && !(btn && btn.contains(e.target))) panel.style.display = 'none';
+  else setTimeout(() => document.addEventListener('click', crmSddOutsideClose, { once: true }), 0);
+}
+function crmSddRender(field, q) {
+  const panel = document.getElementById('crmSdd_' + field);
+  if (!panel) return;
+  const query = (q || '').toLowerCase().trim();
+  const opts  = crmSddOptions(field).filter(o => !query || o.label.toLowerCase().includes(query));
+  const searchBox = panel.querySelector('div');
+  const listHtml = opts.length
+    ? opts.map(o => `<div class="crm-sdd-item" onclick="crmSddPick('${field}','${escHtml(o.value)}','${escHtml(o.label)}')">${escHtml(o.label)}</div>`).join('')
+    : '<div class="crm-sdd-empty">No matches</div>';
+  panel.innerHTML = '';
+  if (searchBox) panel.appendChild(searchBox);
+  panel.insertAdjacentHTML('beforeend', listHtml);
+}
+function crmSddPick(field, value, label) {
+  const btn = document.getElementById('crmFhBtn_' + field);
+  const val = document.getElementById('crmFhVal_' + field);
+  if (btn) btn.innerHTML = `${escHtml(value ? label : CRM_FH_LABELS[field] === 'Course' ? 'All Courses' : 'All ' + CRM_FH_LABELS[field])} <i class="fa-solid fa-chevron-down"></i>`;
+  if (val) val.value = value;
+  document.getElementById('crmFhWrap_' + field)?.classList.toggle('has-value', !!value);
+  const panel = document.getElementById('crmSdd_' + field);
+  if (panel) panel.style.display = 'none';
+  crmApplyFilters();
+}
+function crmSddClear(field) {
+  crmSddPick(field, '', '');
+}
+
+/* Date-range popovers — importDate / nextFollowUp */
+let _crmDrOpenField = null;
+function crmDrOpen(field) {
+  _crmDrOpenField = field;
+  const panel = document.getElementById('crmDr_' + field);
+  if (panel) panel.style.display = 'block';
+  setTimeout(() => document.addEventListener('click', crmDrOutsideClose, { once: true }), 0);
+}
+function crmDrOutsideClose(e) {
+  if (!_crmDrOpenField) return;
+  const field = _crmDrOpenField;
+  const panel = document.getElementById('crmDr_' + field);
+  const btn   = document.getElementById('crmDrBtn_' + field);
+  if (panel && !panel.contains(e.target) && e.target !== btn && !(btn && btn.contains(e.target))) panel.style.display = 'none';
+  else setTimeout(() => document.addEventListener('click', crmDrOutsideClose, { once: true }), 0);
+}
+function crmDrApply(field) {
+  const from = document.getElementById('crmDrFrom_' + field)?.value || '';
+  const to   = document.getElementById('crmDrTo_' + field)?.value   || '';
+  const lbl  = document.getElementById('crmDrLbl_' + field);
+  if (lbl) lbl.textContent = (from || to) ? `${from || '…'} → ${to || '…'}` : 'Any date';
+  document.getElementById('crmFhWrap_' + field)?.classList.toggle('has-value', !!(from || to));
+  const panel = document.getElementById('crmDr_' + field);
+  if (panel) panel.style.display = 'none';
+  crmApplyFilters();
+}
+function crmDrClear(field) {
+  const f = document.getElementById('crmDrFrom_' + field); if (f) f.value = '';
+  const t = document.getElementById('crmDrTo_' + field);   if (t) t.value = '';
+  crmDrApply(field);
+}
+
+/* Click-to-sort column titles (independent of filtering) */
+function crmSort(field) {
+  if (CRM.sortBy === field) {
+    CRM.sortOrder = CRM.sortOrder === 'asc' ? 'desc' : 'asc';
+  } else {
+    CRM.sortBy = field;
+    CRM.sortOrder = 'asc';
+  }
+  document.querySelectorAll('#crmTable .crm-th-title.sorted').forEach(el => el.classList.remove('sorted'));
+  const active = document.getElementById('crmThSort_' + field);
+  if (active) {
+    active.classList.add('sorted');
+    const ico = active.querySelector('.crm-sort-ico');
+    if (ico) ico.className = 'fa-solid crm-sort-ico ' + (CRM.sortOrder === 'asc' ? 'fa-arrow-up-short-wide' : 'fa-arrow-down-wide-short');
+  }
+  CRM.page = 1;
+  _crmFetchList();
+}
+
+/* Show/hide the desktop filter row */
+function crmToggleFilterRow() {
+  const row = document.getElementById('crmFilterRow');
+  const btn = document.getElementById('crmFilterToggleBtn');
+  if (!row) return;
+  const hidden = row.style.display === 'none';
+  row.style.display = hidden ? '' : 'none';
+  if (btn) btn.classList.toggle('on', hidden);
+  if (hidden) requestAnimationFrame(crmSyncStickyOffsets);
+}
+window.addEventListener('resize', () => { if (state.currentPage === 'crm') crmSyncStickyOffsets(); });
+
+/* Mobile filter drawer — reparents the same filter controls (no duplicated state) */
+function crmOpenFilterDrawer() {
+  const body = document.getElementById('crmFilterDrawerBody');
+  if (!body) return;
+  body.innerHTML = '';
+  CRM_FH_FIELDS.forEach(f => {
+    const th = document.getElementById('crmFhTh_' + f);
+    const wrap = document.getElementById('crmFhWrap_' + f);
+    if (!th || !wrap || th.style.display === 'none') return;
+    const fld = document.createElement('div');
+    fld.className = 'crm-filter-drawer-fld';
+    fld.innerHTML = `<label>${CRM_FH_LABELS[f]}</label>`;
+    fld.appendChild(wrap);
+    body.appendChild(fld);
   });
-  const items = [{ _id: '', label: 'All Assigned', code: '' }, { _id: 'unassigned', label: 'Unassigned', code: '' }]
-    .concat(list.map(a => ({ _id: a._id, label: ((a.firstName||'')+' '+(a.lastName||'')).trim()||a.email, code: a.code||'' })));
-
-  dropdown.innerHTML = items.map(item => `
-    <div onclick="_crmAssignFilterPick('${escHtml(item._id)}','${escHtml(item.label)}')"
-         class="hov-eff6ff" style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid #f3f4f6">
-      ${item.code ? `<span style="font-family:monospace;font-size:11px;font-weight:700;background:#f1f5f9;color:#1e40af;padding:2px 5px;border-radius:4px;border:1px solid #dbeafe;flex-shrink:0">${escHtml(item.code)}</span>` : ''}
-      <span style="color:#0A1628">${escHtml(item.label)}</span>
-    </div>`).join('');
-  dropdown.style.display = 'block';
-  setTimeout(() => document.addEventListener('click', _crmAssignFilterClose, { once: true }), 0);
+  document.getElementById('crmFilterDrawer')?.classList.add('open');
+  document.getElementById('crmFilterDrawerOverlay')?.classList.add('open');
+}
+function crmCloseFilterDrawer() {
+  CRM_FH_FIELDS.forEach(f => {
+    const th = document.getElementById('crmFhTh_' + f);
+    const wrap = document.getElementById('crmFhWrap_' + f);
+    if (th && wrap) th.appendChild(wrap);
+  });
+  document.getElementById('crmFilterDrawer')?.classList.remove('open');
+  document.getElementById('crmFilterDrawerOverlay')?.classList.remove('open');
 }
 
-function _crmAssignFilterPick(id, label) {
-  document.getElementById('crmFilterAssigned').value      = id;
-  document.getElementById('crmFilterAssignedInput').value = id ? label : '';
-  const clr = document.getElementById('crmAssignFilterClear');
-  if (clr) clr.style.display = id ? 'inline' : 'none';
-  const dd = document.getElementById('crmAssignDropdown');
-  if (dd) dd.style.display = 'none';
-  CRM.page = 1; _crmFetchList(); _crmRefreshStats();
+/* Keep the filter-row sticky offset in sync with the title row's rendered height */
+function crmSyncStickyOffsets() {
+  const titleRow = document.querySelector('#crmTable thead tr:first-child');
+  const filterRow = document.getElementById('crmFilterRow');
+  if (!titleRow || !filterRow || filterRow.style.display === 'none') return;
+  const h = titleRow.offsetHeight;
+  filterRow.querySelectorAll('th').forEach(th => { th.style.top = h + 'px'; });
 }
 
-function _crmAssignFilterClear() {
-  _crmAssignFilterPick('', '');
-  document.getElementById('crmFilterAssignedInput').value = '';
-  document.getElementById('crmFilterAssignedInput').focus();
-}
-
-function _crmAssignFilterClose(e) {
-  const dd  = document.getElementById('crmAssignDropdown');
-  const inp = document.getElementById('crmFilterAssignedInput');
-  if (dd && !dd.contains(e.target) && e.target !== inp) dd.style.display = 'none';
+function crmUpdateFilterCount() {
+  let n = 0;
+  ['name','mobile','email','city'].forEach(f => { if (document.getElementById('crmFh_' + f)?.value) n++; });
+  ['source','stage','priority'].forEach(f => { if (document.getElementById('crmFh_' + f)?.value) n++; });
+  ['course','assignedTo','importedBy'].forEach(f => { if (document.getElementById('crmFhVal_' + f)?.value) n++; });
+  ['importDate','nextFollowUp'].forEach(f => { if (document.getElementById('crmDrFrom_' + f)?.value || document.getElementById('crmDrTo_' + f)?.value) n++; });
+  ['crmFilterCount','crmFilterCountMobile'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = n; el.style.display = n ? 'inline-flex' : 'none'; }
+  });
 }
 
 async function crmRefresh() {
@@ -12972,8 +13276,8 @@ async function _crmFetchStats() {
 }
 
 async function _crmRefreshStats() {
-  const assignedTo = document.getElementById('crmFilterAssigned')?.value || '';
-  const importedBy = document.getElementById('crmFilterImportedBy')?.value || '';
+  const assignedTo = document.getElementById('crmFhVal_assignedTo')?.value || '';
+  const importedBy = document.getElementById('crmFhVal_importedBy')?.value || '';
   let qs = '';
   if (assignedTo) qs += '&assignedTo=' + assignedTo;
   if (importedBy) qs += '&importedBy=' + importedBy;
@@ -13018,24 +13322,39 @@ async function _crmFetchList() {
   CRM.total = r.data.total || 0;
   _renderCrmTable();
   _renderCrmPagination();
+  requestAnimationFrame(crmSyncStickyOffsets);
 }
 
 function _buildCrmParams() {
   const p = new URLSearchParams();
-  const s = document.getElementById('crmSearch')?.value?.trim() || '';
-  if (s) p.set('search', s);
-  const stage      = document.getElementById('crmFilterStage')?.value    || '';
-  const source     = document.getElementById('crmFilterSource')?.value   || '';
-  const priority   = document.getElementById('crmFilterPriority')?.value || '';
-  const assignedTo = document.getElementById('crmFilterAssigned')?.value || '';
-  const importedBy = document.getElementById('crmFilterImportedBy')?.value || '';
-  const course     = document.getElementById('crmFilterCourse')?.value?.trim() || '';
+  const name       = document.getElementById('crmFh_name')?.value?.trim()   || '';
+  const mobile     = document.getElementById('crmFh_mobile')?.value?.trim() || '';
+  const email      = document.getElementById('crmFh_email')?.value?.trim()  || '';
+  const city       = document.getElementById('crmFh_city')?.value?.trim()   || '';
+  const stage      = document.getElementById('crmFh_stage')?.value    || '';
+  const source     = document.getElementById('crmFh_source')?.value   || '';
+  const priority   = document.getElementById('crmFh_priority')?.value || '';
+  const assignedTo = document.getElementById('crmFhVal_assignedTo')?.value || '';
+  const importedBy = document.getElementById('crmFhVal_importedBy')?.value || '';
+  const course     = document.getElementById('crmFhVal_course')?.value     || '';
+  const importFrom = document.getElementById('crmDrFrom_importDate')?.value || '';
+  const importTo   = document.getElementById('crmDrTo_importDate')?.value   || '';
+  const fuFrom     = document.getElementById('crmDrFrom_nextFollowUp')?.value || '';
+  const fuTo       = document.getElementById('crmDrTo_nextFollowUp')?.value   || '';
+  if (name)       p.set('name', name);
+  if (mobile)     p.set('mobile', mobile);
+  if (email)      p.set('email', email);
+  if (city)       p.set('city', city);
   if (stage)      p.set('stage', stage);
   if (source)     p.set('source', source);
   if (priority)   p.set('priority', priority);
   if (assignedTo) p.set('assignedTo', assignedTo);
   if (importedBy) p.set('importedBy', importedBy);
   if (course)     p.set('courseInterest', course);
+  if (importFrom) p.set('startDate', importFrom);
+  if (importTo)   p.set('endDate', importTo);
+  if (fuFrom)     p.set('nextFollowUpFrom', fuFrom);
+  if (fuTo)       p.set('nextFollowUpTo', fuTo);
   p.set('page', CRM.page); p.set('limit', CRM.limit);
   p.set('sortBy', CRM.sortBy); p.set('sortOrder', CRM.sortOrder);
   return p;
@@ -13181,7 +13500,7 @@ function crmGoPage(p) {
 }
 
 function crmCardFilter(stage) {
-  const sel = document.getElementById('crmFilterStage');
+  const sel = document.getElementById('crmFh_stage');
   if (!sel) return;
   if (stage === '_overdue') {
     sel.value = '';
@@ -13190,52 +13509,39 @@ function crmCardFilter(stage) {
     sel.value = stage;
     CRM.sortBy = 'createdAt'; CRM.sortOrder = 'desc';
   }
+  crmFhToggleClear('stage');
   CRM.page = 1;
   _crmFetchList();
   _crmRefreshStats();
+  crmUpdateFilterCount();
 }
 
-function crmApplyFilters() { CRM.page = 1; _crmFetchList(); _crmRefreshStats(); }
+function crmApplyFilters() {
+  CRM.page = 1;
+  _crmFetchList();
+  _crmRefreshStats();
+  crmUpdateFilterCount();
+}
 
 let _crmStaleFilter = false;
 function crmToggleStaleFilter() {
   _crmStaleFilter = !_crmStaleFilter;
-  const btn = document.getElementById('crmStaleBtn');
-  if (btn) {
-    btn.style.background = _crmStaleFilter ? '#f59e0b' : '';
-    btn.style.color = _crmStaleFilter ? '#fff' : '#b45309';
-  }
+  document.getElementById('crmStaleBtn')?.classList.toggle('stale-on', _crmStaleFilter);
   _renderCrmTable();
 }
 
 function crmResetFilters() {
-  ['crmSearch','crmFilterStage','crmFilterSource','crmFilterPriority','crmFilterImportedBy','crmFilterCourse'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.value = '';
-  });
-  const clr = document.getElementById('crmCourseFilterClear'); if (clr) clr.style.display = 'none';
-  _crmAssignFilterPick('', '');
-  document.getElementById('crmFilterAssignedInput') && (document.getElementById('crmFilterAssignedInput').value = '');
+  ['name','mobile','email','city'].forEach(f => { const el = document.getElementById('crmFh_'+f); if (el) el.value = ''; crmFhToggleClear(f); });
+  ['source','stage','priority'].forEach(f => { const el = document.getElementById('crmFh_'+f); if (el) el.value = ''; crmFhToggleClear(f); });
+  ['course','assignedTo','importedBy'].forEach(f => crmSddPick(f, '', ''));
+  ['importDate','nextFollowUp'].forEach(f => crmDrClear(f));
   _crmStaleFilter = false;
-  const staleBtn = document.getElementById('crmStaleBtn');
-  if (staleBtn) { staleBtn.style.background = ''; staleBtn.style.color = '#b45309'; }
+  document.getElementById('crmStaleBtn')?.classList.remove('stale-on');
   CRM.sortBy = 'createdAt'; CRM.sortOrder = 'desc';
-  CRM.page = 1; _crmFetchList();
-}
-let _crmCourseTimer;
-function debouncedCrmCourseFilter() {
-  const clr = document.getElementById('crmCourseFilterClear');
-  if (clr) clr.style.display = document.getElementById('crmFilterCourse')?.value ? 'inline' : 'none';
-  clearTimeout(_crmCourseTimer);
-  _crmCourseTimer = setTimeout(() => { CRM.page = 1; _crmFetchList(); }, 450);
-}
-function crmClearCourseFilter() {
-  const el = document.getElementById('crmFilterCourse'); if (el) el.value = '';
-  const clr = document.getElementById('crmCourseFilterClear'); if (clr) clr.style.display = 'none';
-  CRM.page = 1; _crmFetchList();
-}
-function debouncedCrmSearch() {
-  clearTimeout(CRM.searchTimer);
-  CRM.searchTimer = setTimeout(() => { CRM.page = 1; _crmFetchList(); }, 450);
+  document.querySelectorAll('#crmTable .crm-th-title.sorted').forEach(el => el.classList.remove('sorted'));
+  CRM.page = 1;
+  _crmFetchList();
+  crmUpdateFilterCount();
 }
 
 /* ── View switch ─────────────────────────────────────────────── */
