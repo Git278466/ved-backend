@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
       fullName, guardianName, guardianContact, guardianOccupation,
       organization, mobile,
       dob, gender, address, aadhaar,
-      education, skillCourse, futureCourse, degreeMode, educationDest,
+      education, certificateProgram, skillCourse, futureCourse, degreeMode, educationDest,
       declarationAccepted, registrationDate,
       referralCode,
     } = req.body;
@@ -57,7 +57,7 @@ router.post('/', async (req, res) => {
       fullName, guardianName, guardianContact, guardianOccupation,
       organization, mobile,
       dob, gender, address, aadhaar,
-      education, skillCourse, futureCourse, degreeMode, educationDest,
+      education, certificateProgram, skillCourse, futureCourse, degreeMode, educationDest,
       declarationAccepted,
       registrationDate: registrationDate || new Date(),
       referralCode:  referralCode ? referralCode.toUpperCase().trim() : undefined,
@@ -89,16 +89,17 @@ router.use(protectAdmin);
 router.get('/', async (req, res) => {
   try {
     const {
-      search, status, gender, skillCourse, educationDest,
+      search, status, gender, skillCourse, certificateProgram, educationDest,
       dateFrom, dateTo,
       page = 1, limit = 50,
     } = req.query;
 
     const filter = {};
-    if (status)        filter.status        = status;
-    if (gender)        filter.gender        = gender;
-    if (skillCourse)   filter.skillCourse   = new RegExp(skillCourse, 'i');
-    if (educationDest) filter.educationDest = educationDest;
+    if (status)             filter.status             = status;
+    if (gender)             filter.gender              = gender;
+    if (skillCourse)        filter.skillCourse         = new RegExp(skillCourse, 'i');
+    if (certificateProgram) filter.certificateProgram  = certificateProgram;
+    if (educationDest)      filter.educationDest       = educationDest;
 
     // Date range on registrationDate
     if (dateFrom || dateTo) {
@@ -144,7 +145,7 @@ router.get('/', async (req, res) => {
 // GET /api/mobilization/stats
 router.get('/stats', async (req, res) => {
   try {
-    const [total, newCount, contactedCount, enrolledCount, byGender, byDest, byCourse] = await Promise.all([
+    const [total, newCount, contactedCount, enrolledCount, byGender, byDest, byCourse, byCertificateProgram] = await Promise.all([
       Mobilization.countDocuments(),
       Mobilization.countDocuments({ status: 'new' }),
       Mobilization.countDocuments({ status: 'contacted' }),
@@ -152,8 +153,9 @@ router.get('/stats', async (req, res) => {
       Mobilization.aggregate([{ $group: { _id: '$gender',        count: { $sum: 1 } } }]),
       Mobilization.aggregate([{ $group: { _id: '$educationDest', count: { $sum: 1 } } }]),
       Mobilization.aggregate([{ $group: { _id: '$skillCourse',   count: { $sum: 1 } } }, { $sort: { count: -1 } }, { $limit: 8 }]),
+      Mobilization.aggregate([{ $group: { _id: '$certificateProgram', count: { $sum: 1 } } }]),
     ]);
-    res.json({ success: true, data: { total, newCount, contactedCount, enrolledCount, byGender, byDest, byCourse } });
+    res.json({ success: true, data: { total, newCount, contactedCount, enrolledCount, byGender, byDest, byCourse, byCertificateProgram } });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

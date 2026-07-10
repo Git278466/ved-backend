@@ -394,12 +394,44 @@ app.use("/api/workshops",              workshopRoutes);
   let Mob;
   try { Mob = require("./models/Mobilization"); } catch (_) {}
 
+  // Resolve a mobilizer referral code against Admin / Institution / Partner
+  async function resolveMobReferralCode(code) {
+    if (!code) return null;
+    const upper = code.toUpperCase().trim();
+    try {
+      const Admin       = require("./models/Admin");
+      const Institution = require("./models/Institution");
+      const Partner     = require("./models/Partner");
+      const [admin, inst, partner] = await Promise.all([
+        Admin.findOne({ code: upper }).select("firstName lastName code").lean(),
+        Institution.findOne({ code: upper }).select("name code").lean(),
+        Partner.findOne({ code: upper }).select("organizationName code").lean(),
+      ]);
+      if (admin)   return { type: "admin",       id: admin._id,   name: ((admin.firstName||"") + " " + (admin.lastName||"")).trim() };
+      if (inst)    return { type: "institution", id: inst._id,    name: inst.name };
+      if (partner) return { type: "partner",     id: partner._id, name: partner.organizationName };
+    } catch (_) {}
+    return null;
+  }
+
   // POST /api/mobilization  — public
   app.post("/api/mobilization", async (req, res) => {
     if (!Mob) return res.status(503).json({ success: false, message: "Mobilization model unavailable." });
     try {
       if (!req.body.fullName) return res.status(400).json({ success: false, message: "Full name is required." });
-      const doc = await Mob.create(req.body);
+
+      const body = { ...req.body };
+      if (body.referralCode) {
+        body.referralCode = String(body.referralCode).toUpperCase().trim();
+        const ref = await resolveMobReferralCode(body.referralCode);
+        if (ref) {
+          body.referredByType = ref.type;
+          body.referredById   = ref.id;
+          body.referredByName = ref.name;
+        }
+      }
+
+      const doc = await Mob.create(body);
       res.status(201).json({ success: true, message: "Registration successful! We will get in touch soon.", data: doc });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
   });
@@ -423,12 +455,13 @@ app.use("/api/workshops",              workshopRoutes);
   app.get("/api/mobilization", mobAuth, async (req, res) => {
     if (!Mob) return res.status(503).json({ success: false, message: "Mobilization model unavailable.", data: [], total: 0 });
     try {
-      const { search, status, gender, skillCourse, educationDest, dateFrom, dateTo, page = 1, limit = 25 } = req.query;
+      const { search, status, gender, skillCourse, certificateProgram, educationDest, dateFrom, dateTo, page = 1, limit = 25 } = req.query;
       const filter = {};
-      if (status)        filter.status      = status;
-      if (gender)        filter.gender      = gender;
-      if (skillCourse)   filter.skillCourse = new RegExp(skillCourse, "i");
-      if (educationDest) filter.educationDest = educationDest;
+      if (status)             filter.status             = status;
+      if (gender)             filter.gender              = gender;
+      if (skillCourse)        filter.skillCourse         = new RegExp(skillCourse, "i");
+      if (certificateProgram) filter.certificateProgram  = certificateProgram;
+      if (educationDest)      filter.educationDest       = educationDest;
       if (dateFrom || dateTo) {
         filter.registrationDate = {};
         if (dateFrom) filter.registrationDate.$gte = new Date(dateFrom);
@@ -440,6 +473,8 @@ app.use("/api/workshops",              workshopRoutes);
           { mobile:       new RegExp(search, "i") },
           { guardianName: new RegExp(search, "i") },
           { skillCourse:  new RegExp(search, "i") },
+          { organization: new RegExp(search, "i") },
+          { aadhaar:      new RegExp(search, "i") },
         ];
       }
       const pageNum  = Math.max(1, Number(page));
@@ -470,6 +505,7 @@ app.use("/api/workshops",              workshopRoutes);
             { $sort: { count: -1 } },
             { $limit: 10 },
           ],
+          byCertificateProgram: [{ $group: { _id: "$certificateProgram", count: { $sum: 1 } } }],
         }},
       ]);
       const total     = result?.total?.[0]?.n     || 0;
@@ -480,6 +516,7 @@ app.use("/api/workshops",              workshopRoutes);
         total, newCount: newC, contactedCount: contacted, enrolledCount: enrolled,
         byGender: result?.byGender || [],
         byCourse: result?.byCourse || [],
+        byCertificateProgram: result?.byCertificateProgram || [],
       }});
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
   });
