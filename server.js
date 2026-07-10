@@ -269,6 +269,7 @@ const referrerRoutes             = safeRoute("./routes/referrerRoutes");
 const counsellingResponseRoutes  = safeRoute("./routes/counsellingResponseRoutes");
 const workshopRoutes             = safeRoute("./routes/workshopRoutes");
 const mobilizationRoutes         = safeRoute("./routes/mobilizationRoutes");
+const teamRoutes                 = safeRoute("./routes/teamRoutes");
 const institutionLeadRoutes      = safeRoute("./routes/institutionLeadRoutes");
 const partnerCertificateRoutes   = safeRoute("./routes/partnerCertificateRoutes");
 const notificationRoutes         = safeRoute("./routes/notificationRoutes");
@@ -593,6 +594,7 @@ app.use("/api/workshops",              workshopRoutes);
   app.use("/api/mobilization", mobilizationRoutes);
 }());
 
+app.use("/api/teams",                  teamRoutes);
 app.use("/api/institution",            institutionLeadRoutes);
 app.use("/api/cep-certificates",       partnerCertificateRoutes);
 app.use("/api/notifications",          notificationRoutes);
