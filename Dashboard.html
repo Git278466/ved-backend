@@ -64,8 +64,28 @@
   --danger:      #EF4444;
   --info:        #38BDF8;
 
-  --sidebar-w:   260px;
-  --sidebar-collapsed: 72px;
+  /* ==========================================================
+     SIDEBAR — single source of truth for width
+     ▸ To change the sidebar width, edit --sidebar-w below.
+       Supported values: 240px / 260px / 280px / 300px / 320px
+       (any px value works). The content area (.main-area is
+       flex:1) auto-adjusts — no other change is required.
+     ========================================================== */
+  --sidebar-w:   260px;          /* ← CHANGE SIDEBAR WIDTH HERE */
+  --sidebar-collapsed: 72px;     /* width of the collapsed rail */
+
+  /* ==========================================================
+     SCROLLBAR — single source of truth (used by the sidebar nav
+     and every scroll container). Cross-browser: WebKit (Chrome/
+     Edge/Safari) via ::-webkit-scrollbar, Firefox via
+     scrollbar-width/scrollbar-color.
+     ========================================================== */
+  --scrollbar-width:  6px;              /* ← CHANGE SCROLLBAR THICKNESS HERE */
+  --scrollbar-radius: 10px;             /* thumb corner radius */
+  --scrollbar-thumb:  var(--gray-200);  /* thumb colour (theme-aware) */
+  --scrollbar-thumb-hover: var(--royal);/* thumb colour on hover */
+  --scrollbar-track:  transparent;      /* track colour */
+
   --header-h:    64px;
   --radius-sm:   8px;
   --radius-md:   12px;
@@ -165,7 +185,7 @@
 [data-theme="dark"] .bulk-action-bar{background:linear-gradient(135deg,#1E293B,#0F172A);}
 [data-theme="dark"] .role-card{background:var(--navy-mid);border-color:var(--gray-200);}
 [data-theme="dark"] .hdr-btn .dot{border-color:var(--navy-mid);}
-[data-theme="dark"] ::-webkit-scrollbar-thumb{background:var(--gray-200);}
+[data-theme="dark"] ::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);}
 [data-theme="dark"] .filter-bar{background:var(--navy-mid);}
 [data-theme="dark"] .breadcrumb span{color:var(--gray-400);}
 [data-theme="dark"] .modal-header{border-bottom-color:var(--gray-200);}
@@ -223,12 +243,16 @@ ul{list-style:none;}
 img{max-width:100%;}
 
 /* =========================================================
-   SCROLLBAR
+   SCROLLBAR  (driven entirely by the --scrollbar-* variables
+   above — edit those, not the rules below)
    ========================================================= */
-::-webkit-scrollbar{width:6px;height:6px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:10px;}
-::-webkit-scrollbar-thumb:hover{background:var(--royal);}
+/* WebKit — Chrome / Edge / Safari */
+::-webkit-scrollbar{width:var(--scrollbar-width);height:var(--scrollbar-width);}
+::-webkit-scrollbar-track{background:var(--scrollbar-track);}
+::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:var(--scrollbar-radius);}
+::-webkit-scrollbar-thumb:hover{background:var(--scrollbar-thumb-hover);}
+/* Firefox */
+*{scrollbar-width:thin;scrollbar-color:var(--scrollbar-thumb) var(--scrollbar-track);}
 
 /* =========================================================
    LAYOUT SHELL
@@ -329,7 +353,18 @@ img{max-width:100%;}
 .sidebar-nav{
   flex:1;overflow-y:auto;overflow-x:hidden;
   padding:10px 10px;
+  /* Firefox: keep the scrollbar thin & inside the sidebar */
+  scrollbar-width:thin;
+  scrollbar-color:var(--scrollbar-thumb) var(--scrollbar-track);
 }
+/* Sidebar scrollbar (WebKit) — inherits the --scrollbar-* vars so it
+   stays inside the rail and never overlaps menu items. To size the
+   sidebar scrollbar independently, override --scrollbar-width on
+   .sidebar-nav here. */
+.sidebar-nav::-webkit-scrollbar{width:var(--scrollbar-width);}
+.sidebar-nav::-webkit-scrollbar-track{background:var(--scrollbar-track);}
+.sidebar-nav::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:var(--scrollbar-radius);}
+.sidebar-nav::-webkit-scrollbar-thumb:hover{background:var(--scrollbar-thumb-hover);}
 .nav-section-label{
   font-size:10px;font-weight:700;
   color:var(--gray-400);letter-spacing:1.5px;
