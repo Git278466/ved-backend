@@ -27,8 +27,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<!-- Non-render-blocking CSS: page paints immediately, fonts/icons apply as
+     soon as they arrive (media=print → all swap). <noscript> keeps the
+     blocking fallback for JS-disabled browsers. -->
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" media="print" onload="this.media='all'"/>
+<noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+</noscript>
 <script src="/config.js"></script>
 
 <style>
@@ -1083,28 +1090,65 @@ button:focus-visible,
   display:flex;align-items:center;justify-content:space-between;
   letter-spacing:-0.1px;
 }
-.mini-bar-chart{display:flex;align-items:flex-end;gap:8px;height:100px;}
+.mini-bar-chart{display:flex;align-items:flex-end;gap:8px;height:100px;position:relative;}
 .bar-item{
   flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+  position:relative;
 }
 .bar{
   width:100%;border-radius:var(--radius-sm) var(--radius-sm) 0 0;
   background:linear-gradient(180deg,var(--royal-light),var(--royal));
-  transition:height 0.5s ease;
+  transition:height 0.7s cubic-bezier(0.34,1.56,0.64,1),filter .18s ease,box-shadow .18s ease;
   min-height:4px;
+  height:0;
+  cursor:pointer;
 }
+.bar:hover{filter:brightness(1.08);box-shadow:0 4px 14px rgba(26,79,187,.28);}
 .bar.orange{background:linear-gradient(180deg,var(--orange-light),var(--orange));}
 .bar.green{background:linear-gradient(180deg,#4ADE80,var(--success));}
-.bar-label{font-size:10px;color:var(--gray-400);}
+.bar-item.is-current .bar{box-shadow:0 0 0 2px var(--card-bg,#fff),0 0 0 3.5px var(--royal);}
+.bar-current-dot{
+  position:absolute;top:-14px;width:6px;height:6px;border-radius:50%;background:var(--royal);
+  box-shadow:0 0 0 3px rgba(26,79,187,.18);
+}
+.bar-label{font-size:10px;color:var(--gray-400);transition:color .18s ease,font-weight .18s ease;}
+.bar-item.is-current .bar-label{color:var(--royal);font-weight:700;}
+.chart-tooltip{
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);
+  background:var(--navy);color:#fff;font-size:11px;font-weight:600;line-height:1.3;
+  padding:5px 9px;border-radius:7px;white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity .15s ease,transform .15s ease;z-index:5;
+  box-shadow:0 4px 12px rgba(0,0,0,.18);
+}
+.chart-tooltip::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:4px solid transparent;border-top-color:var(--navy);
+}
+.bar-item:hover .chart-tooltip{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* Status donut placeholder */
+/* Status donut — data-driven */
 .donut-wrap{
   display:flex;align-items:center;gap:20px;
 }
-.donut-svg{width:90px;height:90px;flex-shrink:0;}
+.donut-svg-wrap{position:relative;width:90px;height:90px;flex-shrink:0;}
+.donut-svg{width:90px;height:90px;display:block;}
+.donut-svg circle{transition:stroke-dasharray .9s cubic-bezier(0.34,1.0,0.64,1),stroke-dashoffset .9s cubic-bezier(0.34,1.0,0.64,1),stroke-width .18s ease,opacity .18s ease;}
+.donut-center{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  pointer-events:none;
+}
+.donut-center-value{font-family:'Sora',sans-serif;font-size:17px;font-weight:800;color:var(--text-primary,var(--navy));line-height:1;}
+.donut-center-label{font-size:8.5px;color:var(--gray-400);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
 .donut-legend{flex:1;}
-.donut-item{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px;}
+.donut-item{
+  display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px;
+  cursor:pointer;border-radius:6px;padding:3px 6px;margin-left:-6px;
+  transition:background .15s ease,opacity .15s ease;
+}
+.donut-item:hover{background:var(--gray-100);}
+.donut-item.is-dim{opacity:.4;}
 .donut-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.donut-item-count{color:var(--gray-400);font-weight:500;margin-left:auto;padding-left:8px;}
 
 /* =========================================================
    GRID HELPERS
@@ -2959,20 +3003,16 @@ button:focus-visible,
           <div class="chart-card">
             <div class="chart-title">Student Status</div>
             <div class="donut-wrap">
-              <svg class="donut-svg" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#EEF2FB" stroke-width="3"/>
-                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#2563EB" stroke-width="3"
-                  stroke-dasharray="60 40" stroke-dashoffset="25" stroke-linecap="round"/>
-                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#22C55E" stroke-width="3"
-                  stroke-dasharray="25 75" stroke-dashoffset="-35" stroke-linecap="round"/>
-                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#F97316" stroke-width="3"
-                  stroke-dasharray="15 85" stroke-dashoffset="-60" stroke-linecap="round"/>
-              </svg>
-              <div class="donut-legend">
-                <div class="donut-item"><div class="donut-dot" style="background:var(--royal)"></div><span>Approved (60%)</span></div>
-                <div class="donut-item"><div class="donut-dot" style="background:var(--success)"></div><span>Pending (25%)</span></div>
-                <div class="donut-item"><div class="donut-dot" style="background:var(--orange)"></div><span>Rejected (15%)</span></div>
+              <div class="donut-svg-wrap">
+                <svg class="donut-svg" id="statusDonutSvg" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--gray-100)" stroke-width="3"/>
+                </svg>
+                <div class="donut-center">
+                  <div class="donut-center-value" id="donutCenterValue">—</div>
+                  <div class="donut-center-label">Total</div>
+                </div>
               </div>
+              <div class="donut-legend" id="statusDonutLegend"><!-- JS --></div>
             </div>
           </div>
         </div>
@@ -3219,8 +3259,29 @@ button:focus-visible,
           <div><h3>Teams</h3><p>Group admins into teams and assign leads for distribution.</p></div>
           <div style="display:flex;gap:8px">
             <button class="btn btn-outline btn-sm" onclick="loadTeams(true)"><i class="fa-solid fa-rotate"></i> Refresh</button>
-            <button class="btn btn-primary btn-sm" onclick="openCreateTeamModal()"><i class="fa-solid fa-plus"></i> Create Team</button>
+            <button class="btn btn-primary btn-sm" id="teamCreateBtn" onclick="openCreateTeamModal()"><i class="fa-solid fa-plus"></i> Create Team</button>
           </div>
+        </div>
+
+        <!-- Teams toolbar: search / filter / sort / export -->
+        <div id="teamsToolbar" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px">
+          <div style="position:relative;flex:1;min-width:180px;max-width:320px">
+            <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:12px"></i>
+            <input type="text" id="teamSearch" class="form-input" placeholder="Search teams…" style="padding-left:34px" oninput="debouncedTeamSearch()">
+          </div>
+          <select id="teamStatusFilter" class="form-select" style="width:auto" onchange="TEAMS.page=1;loadTeams(true)">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+          <select id="teamSort" class="form-select" style="width:auto" onchange="TEAMS.page=1;loadTeams(true)">
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="members">Most Members</option>
+            <option value="leads">Most Leads</option>
+          </select>
+          <button class="btn btn-outline btn-sm" onclick="exportTeamsCSV()" title="Export teams to CSV"><i class="fa-solid fa-file-csv"></i> CSV</button>
+          <button class="btn btn-outline btn-sm" onclick="exportTeamsExcel()" title="Export teams to Excel"><i class="fa-solid fa-file-excel" style="color:#16a34a"></i> Excel</button>
         </div>
 
         <div id="teamsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-top:16px">
@@ -3229,6 +3290,7 @@ button:focus-visible,
             Click Refresh to load teams
           </div>
         </div>
+        <div id="teamsPager" style="display:flex;justify-content:center;align-items:center;gap:10px;margin-top:16px"></div>
       </div>
 
 
@@ -3897,6 +3959,13 @@ button:focus-visible,
               <option value="">All Destinations</option>
               <option value="india">🇮🇳 India</option>
               <option value="abroad">✈️ Abroad</option>
+            </select>
+            <select class="form-select" id="mobCertProgramFilter" onchange="loadMobilization(true)" title="Filter by certificate program"
+                    style="padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:13px;background:#f8fafc;color:#0f172a;cursor:pointer;outline:none">
+              <option value="">All Programs</option>
+              <option value="NESCOM">NESCOM</option>
+              <option value="IBM">IBM</option>
+              <option value="Workshop">Workshop</option>
             </select>
             <div style="display:flex;flex-direction:column;gap:4px">
               <label style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.6px">From Date</label>
@@ -4883,7 +4952,7 @@ button:focus-visible,
      ============================================================ -->
 <!-- Teams: Create/Edit Modal -->
 <div class="modal-overlay" id="teamModal" onclick="if(event.target===this)closeModal('teamModal')">
-  <div class="modal-box" style="max-width:520px">
+  <div class="modal-box" style="max-width:560px">
     <div class="modal-header">
       <div><h3 id="teamModalTitle">Create Team</h3><p>Group admins together for lead assignment</p></div>
       <button class="modal-close" onclick="closeModal('teamModal')"><i class="fa-solid fa-xmark"></i></button>
@@ -4892,19 +4961,50 @@ button:focus-visible,
       <input type="hidden" id="teamId">
       <div class="form-group" style="margin-bottom:14px">
         <label class="form-label">Team Name *</label>
-        <input type="text" id="teamName" class="form-input" placeholder="e.g. Sales Team Mumbai">
+        <input type="text" id="teamName" class="form-input" placeholder="e.g. Sales Team Mumbai" oninput="document.getElementById('teamNameErr').style.display='none'">
+        <div id="teamNameErr" style="display:none;color:var(--danger);font-size:11px;margin-top:4px"></div>
       </div>
       <div class="form-group" style="margin-bottom:14px">
         <label class="form-label">Description</label>
         <input type="text" id="teamDesc" class="form-input" placeholder="Brief description (optional)">
       </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div class="form-group">
+          <label class="form-label">Team Lead</label>
+          <select id="teamLeader" class="form-select"><option value="">— Select Lead —</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select id="teamStatus" class="form-select">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div class="form-group">
+          <label class="form-label">Lead Distribution Type</label>
+          <select id="teamDistribution" class="form-select">
+            <option value="round_robin">Round Robin</option>
+            <option value="equal">Equal Distribution</option>
+            <option value="manual">Manual</option>
+            <option value="capacity">Capacity Based</option>
+            <option value="priority">Priority</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Max Leads Per Member</label>
+          <input type="number" id="teamMaxLeads" class="form-input" min="0" placeholder="0 = unlimited">
+        </div>
+      </div>
       <div class="form-group" style="margin-bottom:14px">
-        <label class="form-label">Team Leader</label>
-        <select id="teamLeader" class="form-select"><option value="">— Select Leader —</option></select>
+        <label class="form-label">Tags</label>
+        <input type="text" id="teamTags" class="form-input" placeholder="e.g. sales, mumbai, priority (comma separated)">
       </div>
       <div class="form-group">
-        <label class="form-label">Members (select multiple)</label>
-        <div id="teamMembersList" style="max-height:200px;overflow-y:auto;border:1px solid var(--gray-200);border-radius:8px;padding:8px"></div>
+        <label class="form-label">Members <span id="teamMembersCount" style="color:var(--gray-400);font-weight:400"></span></label>
+        <input type="text" id="teamMemberSearch" class="form-input" placeholder="Search admins…" style="margin-bottom:8px" oninput="filterTeamMemberList(this.value)">
+        <div id="teamMembersList" style="max-height:180px;overflow-y:auto;border:1px solid var(--gray-200);border-radius:8px;padding:8px"></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -4916,14 +5016,20 @@ button:focus-visible,
 
 <!-- Teams: Assign Leads Modal -->
 <div class="modal-overlay" id="teamAssignModal" onclick="if(event.target===this)closeModal('teamAssignModal')">
-  <div class="modal-box" style="max-width:480px">
+  <div class="modal-box" style="max-width:500px">
     <div class="modal-header">
-      <div><h3>Assign Leads to Team</h3><p id="teamAssignSub">Leads will be equally distributed among members</p></div>
+      <div><h3>Assign Leads to Team</h3><p id="teamAssignSub">Distribute unassigned leads among members</p></div>
       <button class="modal-close" onclick="closeModal('teamAssignModal')"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="teamAssignId">
-      <div class="form-group" style="margin-bottom:14px">
+
+      <div style="display:flex;gap:4px;margin-bottom:14px;border-bottom:1px solid var(--gray-200)">
+        <button class="btn btn-ghost btn-sm" id="taTabExisting" onclick="taSwitchMode('existing')" style="border-radius:8px 8px 0 0;border-bottom:2px solid transparent"><i class="fa-solid fa-list"></i> Existing Leads</button>
+        <button class="btn btn-ghost btn-sm" id="taTabUpload" onclick="taSwitchMode('upload')" style="border-radius:8px 8px 0 0;border-bottom:2px solid transparent"><i class="fa-solid fa-file-excel" style="color:#16a34a"></i> Upload Excel</button>
+      </div>
+
+      <div id="taModeExisting" class="form-group" style="margin-bottom:14px">
         <label class="form-label">Assign which leads?</label>
         <select id="teamAssignFilter" class="form-select">
           <option value="unassigned">All Unassigned Leads</option>
@@ -4931,11 +5037,118 @@ button:focus-visible,
           <option value="follow_up">Only "Follow Up" Stage Leads</option>
         </select>
       </div>
-      <div id="teamAssignPreview" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;font-size:13px;color:#166534;display:none"></div>
+
+      <div id="taModeUpload" style="display:none;margin-bottom:14px">
+        <div id="taDropzone" onclick="document.getElementById('taFileInput').click()" style="border:2px dashed var(--gray-200);border-radius:10px;padding:20px;text-align:center;cursor:pointer">
+          <i class="fa-solid fa-cloud-arrow-up" style="font-size:1.6rem;color:var(--gray-400);margin-bottom:8px;display:block"></i>
+          <div style="font-size:13px;color:var(--gray-600);font-weight:600">Click to upload leads file</div>
+          <div style="font-size:11px;color:#9ca3af;margin-top:4px">Supports: <strong>.xlsx</strong> · <strong>.xls</strong> · <strong>.csv</strong> (max 10 MB)</div>
+          <input type="file" id="taFileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="taHandleFile(this.files[0])">
+        </div>
+        <div id="taFileInfo" style="display:none;align-items:center;gap:10px;background:#f8fafc;border:1px solid var(--gray-200);border-radius:8px;padding:8px 12px;margin-top:8px">
+          <i class="fa-solid fa-file-excel" style="color:#16a34a"></i>
+          <div style="flex:1;min-width:0">
+            <div id="taFileName" style="font-size:12px;font-weight:700;color:#0a1628;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+            <div id="taFileSize" style="font-size:11px;color:#9ca3af"></div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="taClearFile()" title="Remove file" style="color:var(--danger)"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div style="text-align:right;margin-top:6px">
+          <a href="javascript:void(0)" onclick="downloadImportTemplate()" style="font-size:11px;color:var(--royal)"><i class="fa-solid fa-download"></i> Download template</a>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div class="form-group">
+          <label class="form-label">Distribution</label>
+          <select id="teamAssignDistribution" class="form-select" onchange="onTeamAssignDistChange()">
+            <option value="round_robin">Round Robin</option>
+            <option value="equal">Equal Distribution</option>
+            <option value="manual">Manual (one member)</option>
+            <option value="capacity">Capacity Based</option>
+            <option value="priority">Priority First</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Max Per Member</label>
+          <input type="number" id="teamAssignMax" class="form-input" min="0" placeholder="0 = unlimited">
+        </div>
+      </div>
+      <div class="form-group" id="teamAssignMemberWrap" style="margin-bottom:14px;display:none">
+        <label class="form-label">Assign To Member</label>
+        <select id="teamAssignMember" class="form-select"></select>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-600);cursor:pointer;margin-bottom:4px">
+        <input type="checkbox" id="teamAssignSkipInactive" checked style="accent-color:var(--royal);width:15px;height:15px">
+        Skip inactive members
+      </label>
+      <div id="teamAssignPreview" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;font-size:13px;color:#166534;display:none;margin-top:10px"></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('teamAssignModal')">Cancel</button>
       <button class="btn btn-primary" id="teamAssignBtn" onclick="confirmTeamAssign()"><i class="fa-solid fa-paper-plane"></i> Assign Leads</button>
+    </div>
+  </div>
+</div>
+
+<!-- Teams: Manage Members Modal -->
+<div class="modal-overlay" id="teamMembersModal" onclick="if(event.target===this)closeModal('teamMembersModal')">
+  <div class="modal-box" style="max-width:560px">
+    <div class="modal-header">
+      <div><h3>Assign Members</h3><p id="teamMembersModalSub">Add or remove team members</p></div>
+      <button class="modal-close" onclick="closeModal('teamMembersModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="teamMembersTeamId">
+      <div class="form-group" style="margin-bottom:12px">
+        <label class="form-label">Current Members <span id="tmCurrentCount" style="color:var(--gray-400);font-weight:400"></span></label>
+        <div id="tmCurrentList" style="max-height:150px;overflow-y:auto;border:1px solid var(--gray-200);border-radius:8px;padding:8px"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Add Members</span>
+          <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:400;color:var(--gray-500);cursor:pointer">
+            <input type="checkbox" id="tmSelectAll" onchange="tmToggleSelectAll(this.checked)" style="accent-color:var(--royal)"> Select all
+          </label>
+        </label>
+        <input type="text" id="tmSearch" class="form-input" placeholder="Search admins…" style="margin-bottom:8px" oninput="tmFilterList(this.value)">
+        <div id="tmAddList" style="max-height:180px;overflow-y:auto;border:1px solid var(--gray-200);border-radius:8px;padding:8px"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('teamMembersModal')">Close</button>
+      <button class="btn btn-primary" id="tmAddBtn" onclick="tmAddSelected()"><i class="fa-solid fa-user-plus"></i> Add Selected</button>
+    </div>
+  </div>
+</div>
+
+<!-- Teams: Details Modal -->
+<div class="modal-overlay" id="teamDetailModal" onclick="if(event.target===this)closeModal('teamDetailModal')">
+  <div class="modal-box wide" style="max-width:900px">
+    <div class="modal-header" style="padding-bottom:0;flex-direction:column;align-items:stretch;gap:0">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;width:100%">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;flex-shrink:0"><i class="fa-solid fa-people-group"></i></div>
+          <div>
+            <h3 id="teamDetailName" style="display:flex;align-items:center;gap:8px">Team</h3>
+            <p id="teamDetailSub"></p>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeModal('teamDetailModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="teamDetailTabs" style="display:flex;gap:4px;margin-top:14px;border-bottom:1px solid var(--gray-200);overflow-x:auto">
+        <button class="btn btn-ghost btn-sm" id="tdTab-overview"    onclick="tdSwitchTab('overview')"    style="border-radius:8px 8px 0 0;border-bottom:2px solid transparent">Overview</button>
+        <button class="btn btn-ghost btn-sm" id="tdTab-members"     onclick="tdSwitchTab('members')"     style="border-radius:8px 8px 0 0;border-bottom:2px solid transparent">Members</button>
+        <button class="btn btn-ghost btn-sm" id="tdTab-leads"       onclick="tdSwitchTab('leads')"       style="border-radius:8px 8px 0 0;border-bottom:2px solid transparent">Assigned Leads</button>
+        <button class="btn btn-ghost btn-sm" id="tdTab-performance" onclick="tdSwitchTab('performance')" style="border-radius:8px 8px 0 0;border-bottom:2px solid transparent">Performance</button>
+        <button class="btn btn-ghost btn-sm" id="tdTab-activity"    onclick="tdSwitchTab('activity')"    style="border-radius:8px 8px 0 0;border-bottom:2px solid transparent">Activity</button>
+      </div>
+    </div>
+    <div class="modal-body" style="min-height:340px">
+      <div id="tdPanel-overview"></div>
+      <div id="tdPanel-members" style="display:none"></div>
+      <div id="tdPanel-leads" style="display:none"></div>
+      <div id="tdPanel-performance" style="display:none"></div>
+      <div id="tdPanel-activity" style="display:none"></div>
     </div>
   </div>
 </div>
@@ -7321,6 +7534,7 @@ function _mobGetFilters() {
     status:       document.getElementById('mobStatusFilter')?.value      || '',
     gender:       document.getElementById('mobGenderFilter')?.value      || '',
     skillCourse:  document.getElementById('mobCourseFilter')?.value      || '',
+    certificateProgram: document.getElementById('mobCertProgramFilter')?.value || '',
     educationDest:document.getElementById('mobDestFilter')?.value        || '',
     dateFrom:     document.getElementById('mobDateFrom')?.value          || '',
     dateTo:       document.getElementById('mobDateTo')?.value            || '',
@@ -7329,7 +7543,7 @@ function _mobGetFilters() {
 
 function clearMobFilters() {
   ['mobSearch','mobDateFrom','mobDateTo'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-  ['mobStatusFilter','mobGenderFilter','mobCourseFilter','mobDestFilter'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  ['mobStatusFilter','mobGenderFilter','mobCourseFilter','mobCertProgramFilter','mobDestFilter'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   _mobPage = 1;
   loadMobilization(true);
 }
@@ -7347,6 +7561,7 @@ function _mobRenderActiveFilters(f) {
   if (f.status)        chips.push([labels.status[f.status]       || f.status,        'mobStatusFilter',  false]);
   if (f.gender)        chips.push([labels.gender[f.gender]       || f.gender,        'mobGenderFilter',  false]);
   if (f.skillCourse)   chips.push([f.skillCourse,                                     'mobCourseFilter',  false]);
+  if (f.certificateProgram) chips.push([f.certificateProgram,                          'mobCertProgramFilter', false]);
   if (f.educationDest) chips.push([labels.educationDest[f.educationDest] || f.educationDest, 'mobDestFilter', false]);
   if (f.dateFrom)      chips.push(['From: ' + f.dateFrom,        'mobDateFrom',      true]);
   if (f.dateTo)        chips.push(['To: '   + f.dateTo,          'mobDateTo',        true]);
@@ -7659,6 +7874,7 @@ async function loadMobilization(force = false) {
   if (summaryEl && statsRes.ok) {
     const d = statsRes.data.data || {};
     const byGender = (d.byGender || []).reduce((a, b) => { a[b._id] = b.count; return a; }, {});
+    const byCertProgram = (d.byCertificateProgram || []).reduce((a, b) => { a[b._id] = b.count; return a; }, {});
     const cards = [
       { label:'Total',       value: d.total            ?? 0, icon:'fa-users',             color:'#0b63ce' },
       { label:'New',         value: d.newCount         ?? 0, icon:'fa-envelope-open',     color:'#f7941d' },
@@ -7666,6 +7882,9 @@ async function loadMobilization(force = false) {
       { label:'Enrolled',    value: d.enrolledCount    ?? 0, icon:'fa-graduation-cap',    color:'#16a34a' },
       { label:'Male',        value: byGender.male      || 0, icon:'fa-mars',              color:'#2563eb' },
       { label:'Female',      value: byGender.female    || 0, icon:'fa-venus',             color:'#db2777' },
+      { label:'NESCOM',      value: byCertProgram.NESCOM   || 0, icon:'fa-certificate',   color:'#0b63ce' },
+      { label:'IBM',         value: byCertProgram.IBM      || 0, icon:'fa-certificate',   color:'#16a34a' },
+      { label:'Workshop',    value: byCertProgram.Workshop || 0, icon:'fa-certificate',   color:'#f97316' },
     ];
     summaryEl.innerHTML = cards.map(c => `
       <div style="background:#fff;border-radius:16px;padding:20px 20px 18px;border:1px solid #e5e7eb;
@@ -7676,7 +7895,10 @@ async function loadMobilization(force = false) {
                     else if('${c.label}'==='Contacted'){document.getElementById('mobStatusFilter').value='contacted';_mobPage=1;loadMobilization(true);}
                     else if('${c.label}'==='Enrolled'){document.getElementById('mobStatusFilter').value='enrolled';_mobPage=1;loadMobilization(true);}
                     else if('${c.label}'==='Male'){document.getElementById('mobGenderFilter').value='male';_mobPage=1;loadMobilization(true);}
-                    else if('${c.label}'==='Female'){document.getElementById('mobGenderFilter').value='female';_mobPage=1;loadMobilization(true);}">
+                    else if('${c.label}'==='Female'){document.getElementById('mobGenderFilter').value='female';_mobPage=1;loadMobilization(true);}
+                    else if('${c.label}'==='NESCOM'){document.getElementById('mobCertProgramFilter').value='NESCOM';_mobPage=1;loadMobilization(true);}
+                    else if('${c.label}'==='IBM'){document.getElementById('mobCertProgramFilter').value='IBM';_mobPage=1;loadMobilization(true);}
+                    else if('${c.label}'==='Workshop'){document.getElementById('mobCertProgramFilter').value='Workshop';_mobPage=1;loadMobilization(true);}">
         <div style="width:44px;height:44px;border-radius:12px;
                     background:linear-gradient(135deg,${c.color}22,${c.color}10);
                     display:flex;align-items:center;justify-content:center;color:${c.color};font-size:18px;flex-shrink:0;
@@ -8039,7 +8261,7 @@ function exportMobCSV() {
     '#','Full Name','Student Mobile','Organization',
     'Guardian Name','Guardian Contact','Guardian Occupation',
     'Gender','DOB','Address','Aadhaar',
-    'Education','Skill Course','Future Course','Degree Mode','Edu. Destination',
+    'Education','Certificate Program','Skill Course','Future Course','Degree Mode','Edu. Destination',
     'Referral Code','Referred By',
     'Status','Registration Date'
   ];
@@ -8049,7 +8271,7 @@ function exportMobCSV() {
     m.guardianName || '', m.guardianContact || '', m.guardianOccupation || '',
     m.gender || '', m.dob ? new Date(m.dob).toLocaleDateString('en-IN') : '',
     (m.address || '').replace(/,/g,' '), m.aadhaar || '',
-    m.education || '', m.skillCourse || '', m.futureCourse || '',
+    m.education || '', m.certificateProgram || '', m.skillCourse || '', m.futureCourse || '',
     m.degreeMode || '', m.educationDest || '',
     m.referralCode || '', m.referredByName || '',
     m.status || '',
@@ -8100,139 +8322,363 @@ async function exportMobExcel(program) {
 }
 
 /* ============================================================
-   TEAMS
+   TEAMS — Enterprise Team Management
+   Layers: state (TEAMS) → services (TeamsAPI) → render → handlers
 ============================================================ */
-let _teamsCache = [];
+const TEAMS = {
+  list: [], total: 0, page: 1, pages: 1, limit: 12,
+  admins: [],
+  searchTimer: null,
+  current: null,                 // team loaded in the details modal
+  detailTab: 'overview',
+  loaded: { performance: false, activity: false },
+  leads: { page: 1, pages: 1, total: 0, q: '', stage: '', timer: null },
+  assignMode: 'existing',        // 'existing' | 'upload' (Assign Leads modal)
+  assignFile: null,
+};
+
+const TEAM_STAGE_CLR = { new:'#3b82f6', not_answering:'#dc2626', not_reachable:'#ea580c', call_back:'#0284c7', interested:'#f97316', enrolled:'#0d9488', follow_up:'#8b5cf6', not_interested:'#6b7280', contacted:'#0ea5e9', applied:'#a855f7', converted:'#059669', lost:'#94a3b8' };
+const TEAM_STAGE_LBL = { new:'New', not_answering:'Not Answering', not_reachable:'Not Reachable', call_back:'Call Back', interested:'Interested', enrolled:'Enrolled', follow_up:'Follow Up', not_interested:'Not Interested', contacted:'Contacted', applied:'Applied', converted:'Converted', lost:'Lost' };
+const TEAM_DIST_LBL  = { round_robin:'Round Robin', equal:'Equal Distribution', manual:'Manual', capacity:'Capacity Based', priority:'Priority' };
+const TEAM_ACT_META  = {
+  team_created:   { icon:'fa-flag',            clr:'#2563eb' },
+  team_updated:   { icon:'fa-pen',             clr:'#0284c7' },
+  member_added:   { icon:'fa-user-plus',       clr:'#16a34a' },
+  member_removed: { icon:'fa-user-minus',      clr:'#dc2626' },
+  lead_assigned:  { icon:'fa-paper-plane',     clr:'#7c3aed' },
+  lead_reassigned:{ icon:'fa-arrows-rotate',   clr:'#ea580c' },
+  lead_closed:    { icon:'fa-circle-check',    clr:'#0d9488' },
+  leader_changed: { icon:'fa-crown',           clr:'#ca8a04' },
+  status_changed: { icon:'fa-toggle-on',       clr:'#64748b' },
+};
+
+/* ── Service layer — every Teams API call lives here ─────────── */
+const TeamsAPI = {
+  getTeams:         (qs = '')       => apiFetch('GET',    `/teams${qs}`),
+  getTeam:          (id)            => apiFetch('GET',    `/teams/${id}`),
+  createTeam:       (body)          => apiFetch('POST',   '/teams', body),
+  updateTeam:       (id, body)      => apiFetch('PUT',    `/teams/${id}`, body),
+  deleteTeam:       (id)            => apiFetch('DELETE', `/teams/${id}`),
+  setTeamStatus:    (id, status)    => apiFetch('PATCH',  `/teams/${id}/status`, { status }),
+  assignMembers:    (id, memberIds) => apiFetch('POST',   `/teams/${id}/members`, { memberIds }),
+  removeMembers:    (id, memberIds) => apiFetch('DELETE', `/teams/${id}/members`, { memberIds }),
+  assignLeads:      (id, body)      => apiFetch('POST',   `/teams/${id}/assign-leads`, body),
+  getTeamLeads:     (id, qs = '')   => apiFetch('GET',    `/teams/${id}/leads${qs}`),
+  getTeamAnalytics: (id)            => apiFetch('GET',    `/teams/${id}/analytics`),
+  getTeamActivity:  (id)            => apiFetch('GET',    `/teams/${id}/activity`),
+};
+
+/* ── Small utils ──────────────────────────────────────────────── */
+function teamAdminName(a) {
+  if (!a) return '—';
+  return a.fullName || [a.firstName, a.lastName].filter(Boolean).join(' ') || a.name || a.email || '—';
+}
+function teamFmtDT(d) {
+  if (!d) return '—';
+  try { return new Date(d).toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }); }
+  catch { return '—'; }
+}
+function teamAvatar(a, size = 30) {
+  const init = teamAdminName(a).charAt(0).toUpperCase();
+  return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-size:${Math.round(size*0.38)}px;font-weight:700;flex-shrink:0" title="${escHtml(teamAdminName(a))}">${init}</div>`;
+}
+function teamCanCreate() { return canDo('admin_management', 'create'); }
+function teamCanUpdate() { return canDo('admin_management', 'update'); }
+function teamCanDelete() { return canDo('admin_management', 'delete'); }
+
+async function teamEnsureAdmins() {
+  if (TEAMS.admins.length) return TEAMS.admins;
+  if (state.admins?.length) { TEAMS.admins = state.admins; return TEAMS.admins; }
+  const r = await apiFetch('GET', '/admins');
+  if (r.ok) TEAMS.admins = unwrapArray(r.data, ['admins', 'records', 'items']);
+  return TEAMS.admins;
+}
+
+/* ── List: load + render ──────────────────────────────────────── */
+function debouncedTeamSearch() {
+  clearTimeout(TEAMS.searchTimer);
+  TEAMS.searchTimer = setTimeout(() => { TEAMS.page = 1; loadTeams(true); }, 450);
+}
+
+function _teamListQuery() {
+  const q      = document.getElementById('teamSearch')?.value.trim() || '';
+  const status = document.getElementById('teamStatusFilter')?.value || '';
+  const sort   = document.getElementById('teamSort')?.value || 'newest';
+  const p = new URLSearchParams();
+  if (q) p.set('q', q);
+  if (status) p.set('status', status);
+  p.set('sort', sort);
+  p.set('page', TEAMS.page);
+  p.set('limit', TEAMS.limit);
+  return `?${p.toString()}`;
+}
 
 async function loadTeams(force = false) {
   if (!canDo('admin_management', 'view')) return;
   if (force) clearApiCache('/teams');
   const grid = document.getElementById('teamsGrid');
   if (!grid) return;
-  skelCards('teamsGrid', 4);
 
-  const r = await apiFetch('GET', '/teams');
-  if (!r.ok) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray-400)">Failed to load teams.</div>'; return; }
+  const createBtn = document.getElementById('teamCreateBtn');
+  if (createBtn) createBtn.style.display = teamCanCreate() ? '' : 'none';
 
-  _teamsCache = r.data.data || [];
-  if (!_teamsCache.length) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray-400)"><i class="fa-solid fa-people-group" style="font-size:2rem;margin-bottom:12px;display:block;opacity:.3"></i>No teams yet. Create your first team!</div>';
+  skelCards('teamsGrid', 6);
+  teamEnsureAdmins();
+
+  const r = await TeamsAPI.getTeams(_teamListQuery());
+  const pager = document.getElementById('teamsPager');
+  if (!r.ok) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray-400)">Failed to load teams.<div style="margin-top:12px"><button class="btn btn-outline btn-sm" onclick="loadTeams(true)"><i class="fa-solid fa-rotate"></i> Retry</button></div></div>`;
+    if (pager) pager.innerHTML = '';
     return;
   }
 
-  const STAGE_CLR = { new:'#3b82f6', not_answering:'#dc2626', not_reachable:'#ea580c', call_back:'#0284c7', interested:'#f97316', enrolled:'#0d9488', follow_up:'#8b5cf6', not_interested:'#6b7280' };
-  const STAGE_LBL = { new:'New', not_answering:'Not Answering', not_reachable:'Not Reachable', call_back:'Call Back', interested:'Interested', enrolled:'Enrolled', follow_up:'Follow Up', not_interested:'Not Interested' };
+  TEAMS.list  = r.data.data || [];
+  TEAMS.total = r.data.total ?? TEAMS.list.length;
+  TEAMS.pages = r.data.pages || 1;
 
-  grid.innerHTML = _teamsCache.map(t => {
-    const leaderName = t.leader ? (t.leader.fullName || t.leader.firstName || t.leader.name || '—') : 'No leader';
-    const memberAvatars = (t.members || []).slice(0, 5).map(m => {
-      const init = (m.fullName || m.firstName || m.name || 'U').charAt(0).toUpperCase();
-      return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid #fff;margin-left:-8px" title="${escHtml(m.fullName||m.firstName||m.name||'')}">${init}</div>`;
-    }).join('');
-    const extraMembers = (t.members || []).length > 5 ? `<div style="width:30px;height:30px;border-radius:50%;background:#f1f5f9;color:#64748b;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid #fff;margin-left:-8px">+${t.members.length-5}</div>` : '';
+  if (!TEAMS.list.length) {
+    const filtered = document.getElementById('teamSearch')?.value || document.getElementById('teamStatusFilter')?.value;
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray-400)"><i class="fa-solid fa-people-group" style="font-size:2rem;margin-bottom:12px;display:block;opacity:.3"></i>${filtered ? 'No teams match your filters.' : 'No teams yet. Create your first team!'}</div>`;
+    if (pager) pager.innerHTML = '';
+    return;
+  }
 
-    const stageRows = (t.leadsByStage || []).filter(s => s.count > 0).map(s => {
-      const pct = t.totalLeads ? Math.round(s.count / t.totalLeads * 100) : 0;
-      return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-        <span style="font-size:10px;color:#6b7280;width:65px;flex-shrink:0">${STAGE_LBL[s._id]||s._id}</span>
-        <div style="flex:1;height:5px;background:#f1f5f9;border-radius:3px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${STAGE_CLR[s._id]||'#2563eb'};border-radius:3px"></div></div>
-        <span style="font-size:10px;font-weight:700;color:#374151;width:20px;text-align:right">${s.count}</span>
-      </div>`;
-    }).join('');
-
-    return `
-    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;box-shadow:0 2px 8px rgba(10,22,40,.06);padding:20px;position:relative">
-      <div style="position:absolute;top:12px;right:12px;display:flex;gap:4px">
-        <button class="btn btn-ghost btn-sm" onclick="openEditTeam('${t._id}')" title="Edit"><i class="fa-solid fa-pen" style="font-size:11px"></i></button>
-        <button class="btn btn-ghost btn-sm" onclick="deleteTeam('${t._id}')" title="Delete" style="color:var(--danger)"><i class="fa-solid fa-trash" style="font-size:11px"></i></button>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-        <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;flex-shrink:0"><i class="fa-solid fa-people-group"></i></div>
-        <div>
-          <div style="font-weight:800;color:#0a1628;font-size:15px">${escHtml(t.name)}</div>
-          <div style="font-size:11px;color:#9ca3af">${escHtml(t.description||'')} · Leader: ${escHtml(leaderName)}</div>
-        </div>
-      </div>
-
-      <div style="display:flex;align-items:center;margin-bottom:14px;padding-left:8px">${memberAvatars}${extraMembers}
-        <span style="font-size:11px;color:#6b7280;margin-left:10px">${(t.members||[]).length} members</span>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-        <div style="background:#f8fafc;border-radius:8px;padding:10px;text-align:center">
-          <div style="font-size:20px;font-weight:900;color:#0a1628">${t.totalLeads||0}</div>
-          <div style="font-size:10px;color:#9ca3af">Total Leads</div>
-        </div>
-        <div style="background:#f0fdf4;border-radius:8px;padding:10px;text-align:center">
-          <div style="font-size:20px;font-weight:900;color:#16a34a">${(t.leadsByStage||[]).find(s=>s._id==='enrolled')?.count||0}</div>
-          <div style="font-size:10px;color:#9ca3af">Enrolled</div>
-        </div>
-      </div>
-
-      ${stageRows || '<div style="font-size:11px;color:#9ca3af;text-align:center;padding:4px 0">No leads assigned yet</div>'}
-
-      <button class="btn btn-primary btn-sm" onclick="openTeamAssign('${t._id}')" style="width:100%;margin-top:12px">
-        <i class="fa-solid fa-paper-plane"></i> Assign Leads
-      </button>
-    </div>`;
-  }).join('');
+  grid.innerHTML = TEAMS.list.map(_teamCardHTML).join('');
+  _renderTeamsPager();
 }
 
-function openCreateTeamModal() {
+function _teamCardHTML(t) {
+  const leaderName = t.leader ? teamAdminName(t.leader) : 'No lead';
+  const memberAvatars = (t.members || []).slice(0, 5).map(m => {
+    const init = teamAdminName(m).charAt(0).toUpperCase();
+    return `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid #fff;margin-left:-8px" title="${escHtml(teamAdminName(m))}">${init}</div>`;
+  }).join('');
+  const extraMembers = (t.members || []).length > 5 ? `<div style="width:30px;height:30px;border-radius:50%;background:#f1f5f9;color:#64748b;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid #fff;margin-left:-8px">+${t.members.length-5}</div>` : '';
+
+  const stageRows = (t.leadsByStage || []).filter(s => s.count > 0).sort((a,b) => b.count - a.count).slice(0, 3).map(s => {
+    const pct = t.totalLeads ? Math.round(s.count / t.totalLeads * 100) : 0;
+    return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+      <span style="font-size:10px;color:#6b7280;width:65px;flex-shrink:0">${TEAM_STAGE_LBL[s._id]||s._id}</span>
+      <div style="flex:1;height:5px;background:#f1f5f9;border-radius:3px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${TEAM_STAGE_CLR[s._id]||'#2563eb'};border-radius:3px"></div></div>
+      <span style="font-size:10px;font-weight:700;color:#374151;width:20px;text-align:right">${s.count}</span>
+    </div>`;
+  }).join('');
+
+  const inactive = t.status === 'inactive';
+  return `
+  <div onclick="openTeamDetail('${t._id}')" style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;box-shadow:0 2px 8px rgba(10,22,40,.06);padding:20px;position:relative;cursor:pointer${inactive ? ';opacity:.7' : ''}">
+    <div style="position:absolute;top:12px;right:12px">
+      <button class="btn btn-ghost btn-sm" onclick="toggleTeamMenu(event,'${t._id}')" title="Actions"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-right:34px">
+      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;flex-shrink:0"><i class="fa-solid fa-people-group"></i></div>
+      <div style="min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-weight:800;color:#0a1628;font-size:15px">${escHtml(t.name)}</span>
+          <span class="badge ${inactive ? 'badge-danger' : 'badge-success'}">${inactive ? 'Inactive' : 'Active'}</span>
+        </div>
+        <div style="font-size:11px;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(t.description || 'No description')}</div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#6b7280;margin-bottom:12px">
+      <i class="fa-solid fa-crown" style="color:#ca8a04;font-size:10px"></i> ${escHtml(leaderName)}
+      <span style="color:#e5e7eb">|</span>
+      <i class="fa-regular fa-calendar" style="font-size:10px"></i> ${formatDate(t.createdAt)}
+    </div>
+
+    <div style="display:flex;align-items:center;margin-bottom:12px;padding-left:8px">${memberAvatars}${extraMembers}
+      <span style="font-size:11px;color:#6b7280;margin-left:10px">${t.memberCount ?? (t.members||[]).length} members</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+      <div style="background:#f8fafc;border-radius:8px;padding:8px;text-align:center">
+        <div style="font-size:18px;font-weight:900;color:#0a1628">${t.totalLeads||0}</div>
+        <div style="font-size:10px;color:#9ca3af">Total Leads</div>
+      </div>
+      <div style="background:#fffbeb;border-radius:8px;padding:8px;text-align:center">
+        <div style="font-size:18px;font-weight:900;color:#ca8a04">${t.pendingLeads||0}</div>
+        <div style="font-size:10px;color:#9ca3af">Pending</div>
+      </div>
+      <div style="background:#eff6ff;border-radius:8px;padding:8px;text-align:center">
+        <div style="font-size:18px;font-weight:900;color:#2563eb">${t.todayLeads||0}</div>
+        <div style="font-size:10px;color:#9ca3af">Today</div>
+      </div>
+    </div>
+
+    ${stageRows || '<div style="font-size:11px;color:#9ca3af;text-align:center;padding:4px 0">No leads assigned yet</div>'}
+
+    ${teamCanUpdate() ? `<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openTeamAssign('${t._id}')" style="width:100%;margin-top:12px" ${inactive ? 'disabled title="Team is inactive"' : ''}>
+      <i class="fa-solid fa-paper-plane"></i> Assign Leads
+    </button>` : ''}
+  </div>`;
+}
+
+function _renderTeamsPager() {
+  const pager = document.getElementById('teamsPager');
+  if (!pager) return;
+  if (TEAMS.pages <= 1) { pager.innerHTML = ''; return; }
+  pager.innerHTML = `
+    <button class="btn btn-outline btn-sm" onclick="teamsGoPage(${TEAMS.page - 1})" ${TEAMS.page <= 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-left"></i></button>
+    <span style="font-size:12px;color:var(--gray-500)">Page ${TEAMS.page} of ${TEAMS.pages} · ${TEAMS.total} teams</span>
+    <button class="btn btn-outline btn-sm" onclick="teamsGoPage(${TEAMS.page + 1})" ${TEAMS.page >= TEAMS.pages ? 'disabled' : ''}><i class="fa-solid fa-chevron-right"></i></button>`;
+}
+
+function teamsGoPage(p) {
+  if (p < 1 || p > TEAMS.pages) return;
+  TEAMS.page = p;
+  loadTeams(true);
+}
+
+/* ── Card action menu ─────────────────────────────────────────── */
+function toggleTeamMenu(ev, id) {
+  ev.stopPropagation();
+  const existing = document.getElementById('teamMenuPop');
+  if (existing) {
+    const same = existing.dataset.team === id;
+    existing.remove();
+    if (same) return;
+  }
+  const t = TEAMS.list.find(x => x._id === id);
+  if (!t) return;
+
+  const item = (icon, label, onclick, danger = false) =>
+    `<div onclick="event.stopPropagation();document.getElementById('teamMenuPop')?.remove();${onclick}" style="display:flex;align-items:center;gap:10px;padding:8px 14px;font-size:13px;color:${danger ? 'var(--danger)' : '#374151'};cursor:pointer" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''"><i class="fa-solid ${icon}" style="width:14px;font-size:12px"></i>${label}</div>`;
+
+  let items = item('fa-eye', 'View Details', `openTeamDetail('${id}')`);
+  if (teamCanUpdate()) {
+    items += item('fa-pen', 'Edit', `openEditTeam('${id}')`);
+    items += item('fa-user-plus', 'Assign Members', `openTeamMembers('${id}')`);
+    items += item('fa-paper-plane', 'Assign Leads', `openTeamAssign('${id}')`);
+  }
+  items += item('fa-chart-line', 'View Analytics', `openTeamDetail('${id}','performance')`);
+  if (teamCanUpdate()) {
+    items += t.status === 'inactive'
+      ? item('fa-toggle-on', 'Activate', `toggleTeamStatus('${id}','active')`)
+      : item('fa-toggle-off', 'Deactivate', `toggleTeamStatus('${id}','inactive')`);
+  }
+  if (teamCanDelete()) items += item('fa-trash', 'Delete', `deleteTeam('${id}')`, true);
+
+  const pop = document.createElement('div');
+  pop.id = 'teamMenuPop';
+  pop.dataset.team = id;
+  pop.style.cssText = 'position:fixed;z-index:1200;background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 8px 24px rgba(10,22,40,.14);min-width:180px;padding:6px 0;overflow:hidden';
+  pop.innerHTML = items;
+  document.body.appendChild(pop);
+
+  const rect = ev.currentTarget.getBoundingClientRect();
+  const w = pop.offsetWidth, h = pop.offsetHeight;
+  pop.style.left = Math.max(8, Math.min(rect.right - w, window.innerWidth - w - 8)) + 'px';
+  pop.style.top  = (rect.bottom + h + 8 > window.innerHeight ? rect.top - h - 4 : rect.bottom + 4) + 'px';
+}
+document.addEventListener('click', () => document.getElementById('teamMenuPop')?.remove());
+
+/* ── Create / Edit modal ──────────────────────────────────────── */
+async function openCreateTeamModal() {
+  if (!teamCanCreate()) { showToast('error', 'You do not have permission to create teams.'); return; }
   document.getElementById('teamId').value = '';
   document.getElementById('teamName').value = '';
   document.getElementById('teamDesc').value = '';
+  document.getElementById('teamStatus').value = 'active';
+  document.getElementById('teamDistribution').value = 'round_robin';
+  document.getElementById('teamMaxLeads').value = '';
+  document.getElementById('teamTags').value = '';
+  document.getElementById('teamMemberSearch').value = '';
+  document.getElementById('teamNameErr').style.display = 'none';
   document.getElementById('teamModalTitle').textContent = 'Create Team';
-  _populateTeamAdminDropdowns();
   openModal('teamModal');
+  await teamEnsureAdmins();
+  _populateTeamAdminDropdowns();
 }
 
-function openEditTeam(id) {
-  const t = _teamsCache.find(x => x._id === id);
+async function openEditTeam(id) {
+  if (!teamCanUpdate()) { showToast('error', 'You do not have permission to edit teams.'); return; }
+  const t = TEAMS.list.find(x => x._id === id) || TEAMS.current;
   if (!t) return;
   document.getElementById('teamId').value = t._id;
   document.getElementById('teamName').value = t.name || '';
   document.getElementById('teamDesc').value = t.description || '';
+  document.getElementById('teamStatus').value = t.status || 'active';
+  document.getElementById('teamDistribution').value = t.distributionType || 'round_robin';
+  document.getElementById('teamMaxLeads').value = t.maxLeadsPerMember || '';
+  document.getElementById('teamTags').value = (t.tags || []).join(', ');
+  document.getElementById('teamMemberSearch').value = '';
+  document.getElementById('teamNameErr').style.display = 'none';
   document.getElementById('teamModalTitle').textContent = 'Edit Team';
-  _populateTeamAdminDropdowns(t);
   openModal('teamModal');
+  await teamEnsureAdmins();
+  _populateTeamAdminDropdowns(t);
 }
 
 function _populateTeamAdminDropdowns(team) {
-  const admins = state.admins || [];
+  const admins = TEAMS.admins.length ? TEAMS.admins : (state.admins || []);
   const leaderSel = document.getElementById('teamLeader');
-  leaderSel.innerHTML = '<option value="">— Select Leader —</option>' +
+  leaderSel.innerHTML = '<option value="">— Select Lead —</option>' +
     admins.map(a => {
-      const n = a.fullName || a.firstName || a.name || a.email || '—';
       const sel = team && team.leader && (team.leader._id || team.leader) === a._id ? 'selected' : '';
-      return `<option value="${a._id}" ${sel}>${escHtml(n)}</option>`;
+      return `<option value="${a._id}" ${sel}>${escHtml(teamAdminName(a))}</option>`;
     }).join('');
 
   const memberIds = team ? (team.members || []).map(m => m._id || m) : [];
   const list = document.getElementById('teamMembersList');
   list.innerHTML = admins.map(a => {
-    const n = a.fullName || a.firstName || a.name || a.email || '—';
     const checked = memberIds.includes(a._id) ? 'checked' : '';
-    return `<label style="display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-bottom:1px solid #f1f5f9;font-size:13px">
-      <input type="checkbox" class="team-member-cb" value="${a._id}" ${checked} style="accent-color:var(--royal);width:15px;height:15px">
-      ${escHtml(n)}
+    return `<label class="team-member-row" data-name="${escHtml(teamAdminName(a).toLowerCase())} ${escHtml((a.email||'').toLowerCase())}" style="display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-bottom:1px solid #f1f5f9;font-size:13px">
+      <input type="checkbox" class="team-member-cb" value="${a._id}" ${checked} onchange="_updateTeamMemberCount()" style="accent-color:var(--royal);width:15px;height:15px">
+      ${escHtml(teamAdminName(a))}
+      <span style="font-size:11px;color:#9ca3af;margin-left:auto">${escHtml(a.email || '')}</span>
+      ${a.status === 'inactive' ? '<span class="badge badge-danger">Inactive</span>' : ''}
     </label>`;
-  }).join('');
+  }).join('') || '<div style="text-align:center;padding:12px;color:var(--gray-400);font-size:12px">No admins found</div>';
+  _updateTeamMemberCount();
+}
+
+function _updateTeamMemberCount() {
+  const n = document.querySelectorAll('.team-member-cb:checked').length;
+  const el = document.getElementById('teamMembersCount');
+  if (el) el.textContent = n ? `(${n} selected)` : '';
+}
+
+function filterTeamMemberList(q) {
+  const needle = q.trim().toLowerCase();
+  document.querySelectorAll('#teamMembersList .team-member-row').forEach(row => {
+    row.style.display = !needle || row.dataset.name.includes(needle) ? 'flex' : 'none';
+  });
 }
 
 async function saveTeam() {
-  const name = document.getElementById('teamName').value.trim();
-  if (!name) { showToast('error', 'Team name is required.'); return; }
+  const nameEl = document.getElementById('teamName');
+  const errEl  = document.getElementById('teamNameErr');
+  const name   = nameEl.value.trim();
+  if (!name || name.length < 3) {
+    errEl.textContent = !name ? 'Team name is required.' : 'Team name must be at least 3 characters.';
+    errEl.style.display = 'block';
+    nameEl.focus();
+    return;
+  }
+  const maxLeads = parseInt(document.getElementById('teamMaxLeads').value, 10);
+  if (document.getElementById('teamMaxLeads').value && (!Number.isFinite(maxLeads) || maxLeads < 0)) {
+    showToast('error', 'Max leads per member must be 0 or greater.');
+    return;
+  }
+
   const id = document.getElementById('teamId').value;
-  const leader = document.getElementById('teamLeader').value || null;
-  const members = [...document.querySelectorAll('.team-member-cb:checked')].map(cb => cb.value);
-  const description = document.getElementById('teamDesc').value.trim();
+  const body = {
+    name,
+    description:       document.getElementById('teamDesc').value.trim(),
+    leader:            document.getElementById('teamLeader').value || null,
+    members:           [...document.querySelectorAll('.team-member-cb:checked')].map(cb => cb.value),
+    status:            document.getElementById('teamStatus').value,
+    distributionType:  document.getElementById('teamDistribution').value,
+    maxLeadsPerMember: Number.isFinite(maxLeads) ? maxLeads : 0,
+    tags:              document.getElementById('teamTags').value.split(',').map(s => s.trim()).filter(Boolean),
+  };
 
   const btn = document.getElementById('saveTeamBtn');
   btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
-  const body = { name, description, leader, members };
-  const r = id ? await apiFetch('PUT', `/teams/${id}`, body) : await apiFetch('POST', '/teams', body);
+  const r = id ? await TeamsAPI.updateTeam(id, body) : await TeamsAPI.createTeam(body);
 
   btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-save"></i> Save Team';
 
@@ -8240,47 +8686,675 @@ async function saveTeam() {
     showToast('success', id ? 'Team updated!' : 'Team created!');
     closeModal('teamModal');
     loadTeams(true);
+    if (id && TEAMS.current?._id === id) _refreshTeamDetail(id);
   } else {
     showToast('error', r.error || 'Failed to save team.');
   }
 }
 
 async function deleteTeam(id) {
+  if (!teamCanDelete()) { showToast('error', 'You do not have permission to delete teams.'); return; }
   if (!await showConfirm('Delete Team', 'Delete this team? Leads will NOT be deleted, only the team grouping.')) return;
-  const r = await apiFetch('DELETE', `/teams/${id}`);
-  if (r.ok) { showToast('success', 'Team deleted.'); loadTeams(true); }
-  else showToast('error', r.error || 'Failed to delete.');
+  const r = await TeamsAPI.deleteTeam(id);
+  if (r.ok) {
+    showToast('success', 'Team deleted.');
+    if (TEAMS.current?._id === id) closeModal('teamDetailModal');
+    loadTeams(true);
+  } else showToast('error', r.error || 'Failed to delete.');
 }
 
+async function toggleTeamStatus(id, status) {
+  const r = await TeamsAPI.setTeamStatus(id, status);
+  if (r.ok) {
+    showToast('success', `Team ${status === 'active' ? 'activated' : 'deactivated'}.`);
+    loadTeams(true);
+    if (TEAMS.current?._id === id) _refreshTeamDetail(id);
+  } else showToast('error', r.error || 'Failed to update status.');
+}
+
+/* ── Assign Leads modal ───────────────────────────────────────── */
 function openTeamAssign(id) {
-  const t = _teamsCache.find(x => x._id === id);
+  if (!teamCanUpdate()) { showToast('error', 'You do not have permission to assign leads.'); return; }
+  const t = TEAMS.list.find(x => x._id === id) || TEAMS.current;
   if (!t) return;
   document.getElementById('teamAssignId').value = id;
-  document.getElementById('teamAssignSub').textContent = `${t.name} — ${(t.members||[]).length} members · Leads distributed equally`;
+  document.getElementById('teamAssignSub').textContent = `${t.name} — ${(t.members||[]).length} members`;
+  document.getElementById('teamAssignDistribution').value = (t.distributionType && t.distributionType !== 'manual') ? t.distributionType : 'round_robin';
+  document.getElementById('teamAssignMax').value = t.maxLeadsPerMember || '';
+  document.getElementById('teamAssignSkipInactive').checked = t.rules?.skipInactive !== false;
   document.getElementById('teamAssignPreview').style.display = 'none';
+
+  const memberSel = document.getElementById('teamAssignMember');
+  memberSel.innerHTML = (t.members || []).map(m => `<option value="${m._id || m}">${escHtml(teamAdminName(m))}</option>`).join('');
+  taClearFile();
+  taSwitchMode('existing');
+  onTeamAssignDistChange();
   openModal('teamAssignModal');
 }
 
+function onTeamAssignDistChange() {
+  const manual = document.getElementById('teamAssignDistribution').value === 'manual';
+  document.getElementById('teamAssignMemberWrap').style.display = manual ? '' : 'none';
+}
+
+/* mode: 'existing' = distribute unassigned leads, 'upload' = import file then distribute */
+function taSwitchMode(mode) {
+  TEAMS.assignMode = mode;
+  const upload = mode === 'upload';
+  document.getElementById('taModeExisting').style.display = upload ? 'none' : '';
+  document.getElementById('taModeUpload').style.display   = upload ? '' : 'none';
+  document.getElementById('teamAssignBtn').innerHTML = upload
+    ? '<i class="fa-solid fa-file-import"></i> Import & Assign'
+    : '<i class="fa-solid fa-paper-plane"></i> Assign Leads';
+  [['taTabExisting', !upload], ['taTabUpload', upload]].forEach(([btnId, active]) => {
+    const b = document.getElementById(btnId);
+    b.style.color = active ? 'var(--royal)' : '';
+    b.style.borderBottomColor = active ? 'var(--royal)' : 'transparent';
+    b.style.fontWeight = active ? '700' : '';
+  });
+}
+
+function taHandleFile(file) {
+  if (!file) return;
+  if (!/\.(xlsx|xls|csv)$/i.test(file.name)) { showToast('error', 'Only .xlsx, .xls, .csv files allowed.'); return; }
+  if (file.size > 10 * 1024 * 1024) { showToast('error', 'File too large (max 10 MB).'); return; }
+  TEAMS.assignFile = file;
+  document.getElementById('taFileName').textContent = file.name;
+  document.getElementById('taFileSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+  document.getElementById('taFileInfo').style.display = 'flex';
+}
+
+function taClearFile() {
+  TEAMS.assignFile = null;
+  const fi = document.getElementById('taFileInput'); if (fi) fi.value = '';
+  const info = document.getElementById('taFileInfo'); if (info) info.style.display = 'none';
+}
+
+/** Upload the Excel/CSV via the existing /leads/import endpoint. */
+async function _taImportFile(file) {
+  const form = new FormData();
+  form.append('file', file);
+  const res = await fetch(CONFIG.BASE_URL.replace(/\/+$/, '') + '/leads/import', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + getToken() },
+    body: form,
+  });
+  return res.json();
+}
+
 async function confirmTeamAssign() {
-  const id = document.getElementById('teamAssignId').value;
+  const id     = document.getElementById('teamAssignId').value;
   const filter = document.getElementById('teamAssignFilter').value;
-  const btn = document.getElementById('teamAssignBtn');
-  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Assigning...';
+  const dist   = document.getElementById('teamAssignDistribution').value;
+  const maxRaw = document.getElementById('teamAssignMax').value;
+  const upload = TEAMS.assignMode === 'upload';
+  const preview = document.getElementById('teamAssignPreview');
+  const btn    = document.getElementById('teamAssignBtn');
 
-  const body = {};
-  if (filter === 'new') body.stage = 'new';
-  else if (filter === 'follow_up') body.stage = 'follow_up';
+  if (upload && !TEAMS.assignFile) { showToast('error', 'Choose an Excel/CSV file first.'); return; }
 
-  const r = await apiFetch('POST', `/teams/${id}/assign-leads`, body);
-  btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Assign Leads';
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${upload ? 'Importing…' : 'Assigning…'}`;
 
-  if (r.ok) {
-    showToast('success', r.data.message || 'Leads assigned!');
+  const body = {
+    distribution: dist,
+    skipInactive: document.getElementById('teamAssignSkipInactive').checked,
+  };
+  if (maxRaw) body.maxPerMember = parseInt(maxRaw, 10) || 0;
+  if (dist === 'manual') body.memberId = document.getElementById('teamAssignMember').value;
+
+  let importSummary = '';
+  try {
+    if (upload) {
+      const imp = await _taImportFile(TEAMS.assignFile);
+      if (!imp.success) throw new Error(imp.message || 'Import failed.');
+      if (!imp.leadIds || !imp.leadIds.length) throw new Error('File imported 0 leads — nothing to assign.' + (imp.errors?.length ? ' ' + imp.errors[0] : ''));
+      body.leadIds = imp.leadIds;
+      importSummary = `${imp.imported} imported${imp.skipped ? `, ${imp.skipped} skipped` : ''} · `;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Assigning…';
+    } else {
+      if (filter === 'new') body.stage = 'new';
+      else if (filter === 'follow_up') body.stage = 'follow_up';
+    }
+
+    const r = await TeamsAPI.assignLeads(id, body);
+    if (!r.ok) {
+      // upload mode: leads are already in the system, only distribution failed
+      if (upload) throw new Error(`${importSummary}but assignment failed: ${r.error || 'unknown error'}. Leads are imported and can be assigned from the "Existing Leads" tab.`);
+      throw new Error(r.error || 'Failed to assign leads.');
+    }
+
+    showToast('success', importSummary + (r.data.message || 'Leads assigned!'));
+    taClearFile();
     closeModal('teamAssignModal');
     loadTeams(true);
-  } else {
-    showToast('error', r.error || 'Failed to assign leads.');
+    clearApiCache('/leads');
+    if (TEAMS.current?._id === id) _refreshTeamDetail(id);
+  } catch (err) {
+    preview.style.display = 'block';
+    preview.style.background = '#fef2f2'; preview.style.borderColor = '#fecaca'; preview.style.color = '#dc2626';
+    preview.textContent = err.message;
+    showToast('error', err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = TEAMS.assignMode === 'upload'
+      ? '<i class="fa-solid fa-file-import"></i> Import & Assign'
+      : '<i class="fa-solid fa-paper-plane"></i> Assign Leads';
   }
+}
+
+/* ── Manage Members modal ─────────────────────────────────────── */
+async function openTeamMembers(id) {
+  if (!teamCanUpdate()) { showToast('error', 'You do not have permission to manage members.'); return; }
+  document.getElementById('teamMembersTeamId').value = id;
+  document.getElementById('tmSearch').value = '';
+  document.getElementById('tmSelectAll').checked = false;
+  openModal('teamMembersModal');
+  await teamEnsureAdmins();
+  await _renderTeamMembersModal(id);
+}
+
+async function _renderTeamMembersModal(id) {
+  const cur = document.getElementById('tmCurrentList');
+  const add = document.getElementById('tmAddList');
+  cur.innerHTML = add.innerHTML = '<div style="text-align:center;padding:12px;color:var(--gray-400);font-size:12px"><i class="fa-solid fa-spinner fa-spin"></i></div>';
+
+  clearApiCache(`/teams/${id}`);
+  const r = await TeamsAPI.getTeam(id);
+  if (!r.ok) { cur.innerHTML = '<div style="text-align:center;padding:12px;color:var(--gray-400);font-size:12px">Failed to load team.</div>'; add.innerHTML = ''; return; }
+
+  const team = r.data.data;
+  document.getElementById('teamMembersModalSub').textContent = `${team.name} — add or remove members`;
+  document.getElementById('tmCurrentCount').textContent = `(${(team.members || []).length})`;
+
+  cur.innerHTML = (team.members || []).map(m => `
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 4px;border-bottom:1px solid #f1f5f9;font-size:13px">
+      ${teamAvatar(m, 26)}
+      <div style="min-width:0;flex:1">
+        <div style="font-weight:600;color:#0a1628;display:flex;align-items:center;gap:6px">${escHtml(teamAdminName(m))}
+          ${team.leader && (team.leader._id || team.leader) === m._id ? '<i class="fa-solid fa-crown" style="color:#ca8a04;font-size:10px" title="Team Lead"></i>' : ''}
+        </div>
+        <div style="font-size:11px;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(m.email || '')}</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="color:var(--danger)" title="Remove" onclick="tmRemoveMember('${id}','${m._id}')"><i class="fa-solid fa-user-minus" style="font-size:11px"></i></button>
+    </div>`).join('') || '<div style="text-align:center;padding:12px;color:var(--gray-400);font-size:12px">No members yet</div>';
+
+  const memberIds = new Set((team.members || []).map(m => String(m._id)));
+  const candidates = TEAMS.admins.filter(a => !memberIds.has(String(a._id)));
+  add.innerHTML = candidates.map(a => `
+    <label class="tm-add-row" data-name="${escHtml(teamAdminName(a).toLowerCase())} ${escHtml((a.email||'').toLowerCase())}" style="display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-bottom:1px solid #f1f5f9;font-size:13px">
+      <input type="checkbox" class="tm-add-cb" value="${a._id}" style="accent-color:var(--royal);width:15px;height:15px">
+      ${escHtml(teamAdminName(a))}
+      <span style="font-size:11px;color:#9ca3af;margin-left:auto">${escHtml(a.email || '')}</span>
+      ${a.status === 'inactive' ? '<span class="badge badge-danger">Inactive</span>' : ''}
+    </label>`).join('') || '<div style="text-align:center;padding:12px;color:var(--gray-400);font-size:12px">All admins are already members</div>';
+}
+
+function tmFilterList(q) {
+  const needle = q.trim().toLowerCase();
+  document.querySelectorAll('#tmAddList .tm-add-row').forEach(row => {
+    row.style.display = !needle || row.dataset.name.includes(needle) ? 'flex' : 'none';
+  });
+}
+
+function tmToggleSelectAll(checked) {
+  document.querySelectorAll('#tmAddList .tm-add-row').forEach(row => {
+    if (row.style.display !== 'none') row.querySelector('.tm-add-cb').checked = checked;
+  });
+}
+
+async function tmAddSelected() {
+  const id  = document.getElementById('teamMembersTeamId').value;
+  const ids = [...document.querySelectorAll('.tm-add-cb:checked')].map(cb => cb.value);
+  if (!ids.length) { showToast('error', 'Select at least one admin to add.'); return; }
+
+  const btn = document.getElementById('tmAddBtn');
+  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Adding...';
+  const r = await TeamsAPI.assignMembers(id, ids);
+  btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Add Selected';
+
+  if (r.ok) {
+    showToast('success', r.data.message || 'Members added.');
+    clearApiCache('/teams');
+    await _renderTeamMembersModal(id);
+    loadTeams(true);
+    if (TEAMS.current?._id === id) _refreshTeamDetail(id);
+  } else showToast('error', r.error || 'Failed to add members.');
+}
+
+async function tmRemoveMember(teamId, memberId) {
+  if (!await showConfirm('Remove Member', 'Remove this member from the team? Their assigned leads stay with them.')) return;
+  const r = await TeamsAPI.removeMembers(teamId, [memberId]);
+  if (r.ok) {
+    showToast('success', 'Member removed.');
+    clearApiCache('/teams');
+    await _renderTeamMembersModal(teamId);
+    loadTeams(true);
+    if (TEAMS.current?._id === teamId) _refreshTeamDetail(teamId);
+  } else showToast('error', r.error || 'Failed to remove member.');
+}
+
+/* ── Team Details modal ───────────────────────────────────────── */
+async function openTeamDetail(id, tab = 'overview') {
+  TEAMS.current = null;
+  TEAMS.loaded = { performance: false, activity: false };
+  TEAMS.leads = { page: 1, pages: 1, total: 0, q: '', stage: '', timer: null };
+  document.getElementById('teamDetailName').innerHTML = 'Loading…';
+  document.getElementById('teamDetailSub').textContent = '';
+  document.getElementById('tdPanel-overview').innerHTML = '<div style="text-align:center;padding:60px;color:var(--gray-400)"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem"></i></div>';
+  ['members','leads','performance','activity'].forEach(p => document.getElementById(`tdPanel-${p}`).innerHTML = '');
+  openModal('teamDetailModal');
+  tdSwitchTab(tab, true);
+  await _refreshTeamDetail(id, tab);
+}
+
+async function _refreshTeamDetail(id, tab) {
+  clearApiCache(`/teams/${id}`);
+  const r = await TeamsAPI.getTeam(id);
+  if (!r.ok) {
+    document.getElementById('tdPanel-overview').innerHTML = `<div style="text-align:center;padding:60px;color:var(--gray-400)">Failed to load team.<div style="margin-top:12px"><button class="btn btn-outline btn-sm" onclick="_refreshTeamDetail('${id}')"><i class="fa-solid fa-rotate"></i> Retry</button></div></div>`;
+    return;
+  }
+  TEAMS.current = r.data.data;
+  const t = TEAMS.current;
+
+  document.getElementById('teamDetailName').innerHTML = `${escHtml(t.name)} <span class="badge ${t.status === 'inactive' ? 'badge-danger' : 'badge-success'}">${t.status === 'inactive' ? 'Inactive' : 'Active'}</span>`;
+  document.getElementById('teamDetailSub').textContent = t.description || 'No description';
+
+  _renderTeamOverview();
+  _renderTeamMembersTab();
+  TEAMS.loaded = { performance: false, activity: false };
+  const active = tab || TEAMS.detailTab;
+  if (active === 'leads') _loadTeamLeadsTab();
+  if (active === 'performance') _loadTeamPerformanceTab();
+  if (active === 'activity') _loadTeamActivityTab();
+}
+
+function tdSwitchTab(tab, skipLoad = false) {
+  TEAMS.detailTab = tab;
+  ['overview','members','leads','performance','activity'].forEach(p => {
+    const panel = document.getElementById(`tdPanel-${p}`);
+    const btn   = document.getElementById(`tdTab-${p}`);
+    if (panel) panel.style.display = p === tab ? '' : 'none';
+    if (btn) {
+      btn.style.color = p === tab ? 'var(--royal)' : '';
+      btn.style.borderBottomColor = p === tab ? 'var(--royal)' : 'transparent';
+      btn.style.fontWeight = p === tab ? '700' : '';
+    }
+  });
+  if (skipLoad || !TEAMS.current) return;
+  if (tab === 'leads' && !document.getElementById('tdLeadsBody')) _loadTeamLeadsTab();
+  if (tab === 'performance' && !TEAMS.loaded.performance) _loadTeamPerformanceTab();
+  if (tab === 'activity' && !TEAMS.loaded.activity) _loadTeamActivityTab();
+}
+
+/* ── Details: Overview tab ────────────────────────────────────── */
+function _renderTeamOverview() {
+  const t = TEAMS.current;
+  const stat = (label, value, clr = '#0a1628', bg = '#f8fafc') => `
+    <div style="background:${bg};border-radius:10px;padding:14px;text-align:center">
+      <div style="font-size:22px;font-weight:900;color:${clr}">${value}</div>
+      <div style="font-size:11px;color:#9ca3af;margin-top:2px">${label}</div>
+    </div>`;
+
+  const info = (label, value) => `
+    <div style="padding:8px 0;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;gap:12px;font-size:13px">
+      <span style="color:#9ca3af">${label}</span><span style="color:#0a1628;font-weight:600;text-align:right">${value}</span>
+    </div>`;
+
+  const tags = (t.tags || []).map(tag => `<span class="badge badge-blue">${escHtml(tag)}</span>`).join(' ') || '<span style="color:#9ca3af">—</span>';
+  const activeLeads = Math.max((t.totalLeads || 0) - (t.closedLeads || 0) - (t.lostLeads || 0), 0);
+
+  document.getElementById('tdPanel-overview').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:18px">
+      ${stat('Members', t.memberCount || 0)}
+      ${stat('Active Leads', activeLeads, '#2563eb', '#eff6ff')}
+      ${stat('Closed Leads', t.closedLeads || 0, '#16a34a', '#f0fdf4')}
+      ${stat('Pending Leads', t.pendingLeads || 0, '#ca8a04', '#fffbeb')}
+      ${stat('Conversion Rate', (t.conversionRate || 0) + '%', '#7c3aed', '#f5f3ff')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px">
+      <div>
+        ${info('Team Lead', t.leader ? escHtml(teamAdminName(t.leader)) : '—')}
+        ${info('Distribution', TEAM_DIST_LBL[t.distributionType] || 'Round Robin')}
+        ${info('Max Leads / Member', t.maxLeadsPerMember || 'Unlimited')}
+        ${info('Skip Inactive Members', t.rules?.skipInactive === false ? 'No' : 'Yes')}
+      </div>
+      <div>
+        ${info("Today's Leads", t.todayLeads || 0)}
+        ${info('Created', formatDate(t.createdAt))}
+        ${info('Created By', t.createdBy ? escHtml(teamAdminName(t.createdBy)) : '—')}
+        ${info('Tags', tags)}
+      </div>
+    </div>`;
+}
+
+/* ── Details: Members tab ─────────────────────────────────────── */
+function _renderTeamMembersTab(filter = '') {
+  const t = TEAMS.current;
+  const needle = filter.trim().toLowerCase();
+  const members = (t.members || []).filter(m =>
+    !needle || teamAdminName(m).toLowerCase().includes(needle) || (m.email || '').toLowerCase().includes(needle));
+
+  const rows = members.map(m => {
+    const s = m.stats || {};
+    const isLead = t.leader && (t.leader._id || t.leader) === m._id;
+    const perf = s.conversionRate || 0;
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:8px">${teamAvatar(m, 28)}<span style="font-weight:600">${escHtml(teamAdminName(m))}${isLead ? ' <i class="fa-solid fa-crown" style="color:#ca8a04;font-size:10px" title="Team Lead"></i>' : ''}</span></div></td>
+      <td style="font-size:12px">${escHtml(m.email || '—')}</td>
+      <td style="font-size:12px">${escHtml(m.mobile || '—')}</td>
+      <td><span class="badge badge-navy">${escHtml(m.role?.name || 'Admin')}</span></td>
+      <td><span class="badge ${m.status === 'active' ? 'badge-success' : 'badge-danger'}">${m.status === 'active' ? 'Active' : 'Inactive'}</span></td>
+      <td style="text-align:center;font-weight:700">${s.pending ?? 0}</td>
+      <td style="text-align:center;font-weight:700;color:#16a34a">${s.closed ?? 0}</td>
+      <td style="min-width:110px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="flex:1;height:5px;background:#f1f5f9;border-radius:3px;overflow:hidden"><div style="height:100%;width:${perf}%;background:${perf >= 50 ? '#16a34a' : perf >= 20 ? '#ca8a04' : '#dc2626'};border-radius:3px"></div></div>
+          <span style="font-size:11px;font-weight:700">${perf}%</span>
+        </div>
+      </td>
+      <td>
+        ${teamCanUpdate() ? `<div style="display:flex;gap:2px">
+          ${!isLead ? `<button class="btn btn-ghost btn-sm" title="Make Team Lead" onclick="tdMakeLead('${m._id}')"><i class="fa-solid fa-crown" style="font-size:11px"></i></button>` : ''}
+          <button class="btn btn-ghost btn-sm" style="color:var(--danger)" title="Remove from team" onclick="tdRemoveMember('${m._id}')"><i class="fa-solid fa-user-minus" style="font-size:11px"></i></button>
+        </div>` : '—'}
+      </td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('tdPanel-members').innerHTML = `
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+      <div style="position:relative;flex:1;min-width:160px;max-width:280px">
+        <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:12px"></i>
+        <input type="text" class="form-input" placeholder="Search members…" value="${escHtml(filter)}" style="padding-left:34px" oninput="_renderTeamMembersTab(this.value)">
+      </div>
+      ${teamCanUpdate() ? `<button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="openTeamMembers('${t._id}')"><i class="fa-solid fa-user-plus"></i> Add Members</button>` : ''}
+    </div>
+    <div class="table-wrap"><table class="data-table">
+      <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Status</th><th style="text-align:center">Current</th><th style="text-align:center">Closed</th><th>Performance</th><th>Actions</th></tr></thead>
+      <tbody>${rows || `<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--gray-400)">${needle ? 'No members match your search.' : 'No members in this team yet.'}</td></tr>`}</tbody>
+    </table></div>`;
+
+  // keep focus in the search box while typing
+  if (needle) {
+    const inp = document.querySelector('#tdPanel-members input');
+    if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
+  }
+}
+
+async function tdMakeLead(memberId) {
+  const t = TEAMS.current;
+  if (!t) return;
+  if (!await showConfirm('Change Team Lead', 'Make this member the team lead?')) return;
+  const r = await TeamsAPI.updateTeam(t._id, { leader: memberId });
+  if (r.ok) {
+    showToast('success', 'Team lead updated.');
+    clearApiCache('/teams');
+    loadTeams(true);
+    _refreshTeamDetail(t._id);
+  } else showToast('error', r.error || 'Failed to update team lead.');
+}
+
+async function tdRemoveMember(memberId) {
+  const t = TEAMS.current;
+  if (!t) return;
+  if (!await showConfirm('Remove Member', 'Remove this member from the team? Their assigned leads stay with them.')) return;
+  const r = await TeamsAPI.removeMembers(t._id, [memberId]);
+  if (r.ok) {
+    showToast('success', 'Member removed.');
+    clearApiCache('/teams');
+    loadTeams(true);
+    _refreshTeamDetail(t._id);
+  } else showToast('error', r.error || 'Failed to remove member.');
+}
+
+/* ── Details: Assigned Leads tab ──────────────────────────────── */
+function _loadTeamLeadsTab() {
+  const t = TEAMS.current;
+  if (!t) return;
+  const stageOpts = Object.entries(TEAM_STAGE_LBL).map(([v, l]) => `<option value="${v}" ${TEAMS.leads.stage === v ? 'selected' : ''}>${l}</option>`).join('');
+  const memberOpts = (t.members || []).map(m => `<option value="${m._id}">${escHtml(teamAdminName(m))}</option>`).join('');
+
+  document.getElementById('tdPanel-leads').innerHTML = `
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+      <div style="position:relative;flex:1;min-width:160px;max-width:260px">
+        <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:12px"></i>
+        <input type="text" id="tdLeadSearch" class="form-input" placeholder="Search leads…" value="${escHtml(TEAMS.leads.q)}" style="padding-left:34px" oninput="tdDebouncedLeadSearch()">
+      </div>
+      <select id="tdLeadStage" class="form-select" style="width:auto" onchange="TEAMS.leads.stage=this.value;TEAMS.leads.page=1;_fetchTeamLeads()">
+        <option value="">All Stages</option>${stageOpts}
+      </select>
+      ${teamCanUpdate() && memberOpts ? `
+      <div style="display:flex;gap:6px;align-items:center;margin-left:auto">
+        <select id="tdReassignMember" class="form-select" style="width:auto">${memberOpts}</select>
+        <button class="btn btn-outline btn-sm" onclick="tdReassignSelected()"><i class="fa-solid fa-arrows-rotate"></i> Reassign Selected</button>
+      </div>` : ''}
+    </div>
+    <div class="table-wrap"><table class="data-table">
+      <thead><tr>
+        <th style="width:30px"><input type="checkbox" id="tdLeadCbAll" onchange="document.querySelectorAll('.td-lead-cb').forEach(c=>c.checked=this.checked)" style="accent-color:var(--royal)"></th>
+        <th>Lead Name</th><th>Phone</th><th>Source</th><th>Assigned To</th><th>Assigned Date</th><th>Status</th><th>Priority</th>
+      </tr></thead>
+      <tbody id="tdLeadsBody"></tbody>
+    </table></div>
+    <div id="tdLeadsPager" style="display:flex;justify-content:center;align-items:center;gap:10px;margin-top:12px"></div>`;
+  _fetchTeamLeads();
+}
+
+function tdDebouncedLeadSearch() {
+  clearTimeout(TEAMS.leads.timer);
+  TEAMS.leads.timer = setTimeout(() => {
+    TEAMS.leads.q = document.getElementById('tdLeadSearch')?.value.trim() || '';
+    TEAMS.leads.page = 1;
+    _fetchTeamLeads();
+  }, 450);
+}
+
+async function _fetchTeamLeads() {
+  const t = TEAMS.current;
+  if (!t) return;
+  setTableLoading('tdLeadsBody', 8);
+
+  const p = new URLSearchParams({ page: TEAMS.leads.page, limit: 10 });
+  if (TEAMS.leads.q) p.set('q', TEAMS.leads.q);
+  if (TEAMS.leads.stage) p.set('stage', TEAMS.leads.stage);
+  clearApiCache(`/teams/${t._id}/leads`);
+  const r = await TeamsAPI.getTeamLeads(t._id, `?${p.toString()}`);
+
+  const body = document.getElementById('tdLeadsBody');
+  if (!body) return;
+  if (!r.ok) { body.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--gray-400)">Failed to load leads.</td></tr>'; return; }
+
+  const leads = r.data.data || [];
+  TEAMS.leads.total = r.data.total || 0;
+  TEAMS.leads.pages = r.data.pages || 1;
+
+  const prioBadge = { high: 'badge-danger', medium: 'badge-warning', low: 'badge-navy' };
+  body.innerHTML = leads.map(l => `<tr>
+    <td><input type="checkbox" class="td-lead-cb" value="${l._id}" style="accent-color:var(--royal)"></td>
+    <td style="font-weight:600">${escHtml(l.name)}</td>
+    <td style="font-size:12px">${escHtml(l.mobile || '—')}</td>
+    <td><span class="badge badge-blue" style="text-transform:capitalize">${escHtml((l.source || '—').replace(/_/g, ' '))}</span></td>
+    <td style="font-size:12px">${escHtml(teamAdminName(l.assignedTo))}</td>
+    <td style="font-size:12px">${formatDate(l.updatedAt)}</td>
+    <td><span class="badge" style="background:${(TEAM_STAGE_CLR[l.stage]||'#2563eb')}18;color:${TEAM_STAGE_CLR[l.stage]||'#2563eb'};border:1px solid ${(TEAM_STAGE_CLR[l.stage]||'#2563eb')}30">${TEAM_STAGE_LBL[l.stage] || l.stage}</span></td>
+    <td><span class="badge ${prioBadge[l.priority] || 'badge-navy'}" style="text-transform:capitalize">${escHtml(l.priority || 'medium')}</span></td>
+  </tr>`).join('') || '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--gray-400)">No leads assigned to this team yet.</td></tr>';
+
+  const pager = document.getElementById('tdLeadsPager');
+  if (pager) {
+    pager.innerHTML = TEAMS.leads.pages <= 1 ? '' : `
+      <button class="btn btn-outline btn-sm" onclick="tdLeadsGoPage(${TEAMS.leads.page - 1})" ${TEAMS.leads.page <= 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-left"></i></button>
+      <span style="font-size:12px;color:var(--gray-500)">Page ${TEAMS.leads.page} of ${TEAMS.leads.pages} · ${TEAMS.leads.total} leads</span>
+      <button class="btn btn-outline btn-sm" onclick="tdLeadsGoPage(${TEAMS.leads.page + 1})" ${TEAMS.leads.page >= TEAMS.leads.pages ? 'disabled' : ''}><i class="fa-solid fa-chevron-right"></i></button>`;
+  }
+}
+
+function tdLeadsGoPage(p) {
+  if (p < 1 || p > TEAMS.leads.pages) return;
+  TEAMS.leads.page = p;
+  _fetchTeamLeads();
+}
+
+async function tdReassignSelected() {
+  const t = TEAMS.current;
+  if (!t) return;
+  const ids = [...document.querySelectorAll('.td-lead-cb:checked')].map(cb => cb.value);
+  if (!ids.length) { showToast('error', 'Select at least one lead to reassign.'); return; }
+  const memberId = document.getElementById('tdReassignMember')?.value;
+  if (!memberId) return;
+  if (!await showConfirm('Reassign Leads', `Reassign ${ids.length} selected lead(s) to the chosen member?`)) return;
+
+  const r = await TeamsAPI.assignLeads(t._id, { leadIds: ids, distribution: 'manual', memberId });
+  if (r.ok) {
+    showToast('success', r.data.message || 'Leads reassigned.');
+    _fetchTeamLeads();
+    loadTeams(true);
+  } else showToast('error', r.error || 'Failed to reassign leads.');
+}
+
+/* ── Details: Performance tab ─────────────────────────────────── */
+async function _loadTeamPerformanceTab() {
+  const t = TEAMS.current;
+  if (!t) return;
+  TEAMS.loaded.performance = true;
+  const panel = document.getElementById('tdPanel-performance');
+  panel.innerHTML = '<div style="text-align:center;padding:60px;color:var(--gray-400)"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem"></i></div>';
+
+  clearApiCache(`/teams/${t._id}/analytics`);
+  const r = await TeamsAPI.getTeamAnalytics(t._id);
+  if (!r.ok) {
+    panel.innerHTML = `<div style="text-align:center;padding:60px;color:var(--gray-400)">Failed to load analytics.<div style="margin-top:12px"><button class="btn btn-outline btn-sm" onclick="TEAMS.loaded.performance=false;_loadTeamPerformanceTab()"><i class="fa-solid fa-rotate"></i> Retry</button></div></div>`;
+    return;
+  }
+
+  const { perMember = [], topPerformers = [], responseTime = [] } = r.data.data || {};
+  const maxTotal = Math.max(...perMember.map(m => m.total), 1);
+  const maxRt    = Math.max(...responseTime.map(m => m.avgHours), 1);
+
+  const barRow = (label, pct, color, valueText) => `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <span style="font-size:11px;color:#6b7280;width:110px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escHtml(label)}">${escHtml(label)}</span>
+      <div style="flex:1;height:8px;background:#f1f5f9;border-radius:4px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${color};border-radius:4px"></div></div>
+      <span style="font-size:11px;font-weight:700;color:#374151;width:46px;text-align:right">${valueText}</span>
+    </div>`;
+
+  const section = (title, icon, content) => `
+    <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:16px">
+      <div style="font-size:13px;font-weight:800;color:#0a1628;margin-bottom:12px"><i class="fa-solid ${icon}" style="color:var(--royal);margin-right:6px"></i>${title}</div>
+      ${content || '<div style="font-size:12px;color:#9ca3af;text-align:center;padding:16px 0">No data yet</div>'}
+    </div>`;
+
+  const distBars = perMember.map(m => barRow(m.name, Math.round(m.total / maxTotal * 100), '#2563eb', m.total)).join('');
+  const convBars = perMember.map(m => barRow(m.name, m.conversionRate, m.conversionRate >= 50 ? '#16a34a' : m.conversionRate >= 20 ? '#ca8a04' : '#dc2626', m.conversionRate + '%')).join('');
+  const rtBars   = responseTime.map(m => barRow(m.name, Math.round(m.avgHours / maxRt * 100), '#7c3aed', m.avgHours + 'h')).join('');
+
+  const topList = topPerformers.map((m, i) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #f1f5f9">
+      <span style="width:22px;height:22px;border-radius:50%;background:${['#fbbf24','#94a3b8','#d97706'][i] || '#e5e7eb'};color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0">${i + 1}</span>
+      <span style="font-size:12px;font-weight:600;color:#0a1628;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(m.name)}</span>
+      <span class="badge badge-success">${m.closed} closed</span>
+      <span style="font-size:11px;color:#9ca3af">${m.total} leads</span>
+    </div>`).join('');
+
+  panel.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px">
+      ${section('Lead Distribution', 'fa-chart-simple', distBars)}
+      ${section('Conversion Rate', 'fa-percent', convBars)}
+      ${section('Top Performers', 'fa-trophy', topList)}
+      ${section('Avg. First Response Time', 'fa-stopwatch', rtBars)}
+    </div>`;
+}
+
+/* ── Details: Activity tab ────────────────────────────────────── */
+async function _loadTeamActivityTab() {
+  const t = TEAMS.current;
+  if (!t) return;
+  TEAMS.loaded.activity = true;
+  const panel = document.getElementById('tdPanel-activity');
+  panel.innerHTML = '<div style="text-align:center;padding:60px;color:var(--gray-400)"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem"></i></div>';
+
+  clearApiCache(`/teams/${t._id}/activity`);
+  const r = await TeamsAPI.getTeamActivity(t._id);
+  if (!r.ok) {
+    panel.innerHTML = `<div style="text-align:center;padding:60px;color:var(--gray-400)">Failed to load activity.<div style="margin-top:12px"><button class="btn btn-outline btn-sm" onclick="TEAMS.loaded.activity=false;_loadTeamActivityTab()"><i class="fa-solid fa-rotate"></i> Retry</button></div></div>`;
+    return;
+  }
+
+  const items = r.data.data || [];
+  if (!items.length) {
+    panel.innerHTML = '<div style="text-align:center;padding:60px;color:var(--gray-400)"><i class="fa-solid fa-clock-rotate-left" style="font-size:2rem;margin-bottom:12px;display:block;opacity:.3"></i>No activity recorded yet.</div>';
+    return;
+  }
+
+  panel.innerHTML = `<div style="max-height:420px;overflow-y:auto">${items.map(a => {
+    const meta = TEAM_ACT_META[a.type] || { icon: 'fa-circle-info', clr: '#64748b' };
+    return `<div style="display:flex;gap:12px;padding:10px 4px;border-bottom:1px solid #f1f5f9">
+      <div style="width:32px;height:32px;border-radius:50%;background:${meta.clr}15;color:${meta.clr};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid ${meta.icon}" style="font-size:12px"></i></div>
+      <div style="min-width:0">
+        <div style="font-size:13px;color:#0a1628;font-weight:600">${escHtml(a.message || a.type.replace(/_/g, ' '))}</div>
+        <div style="font-size:11px;color:#9ca3af">${a.by ? escHtml(teamAdminName(a.by)) + ' · ' : ''}${teamFmtDT(a.at)}</div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+/* ── Exports ──────────────────────────────────────────────────── */
+async function _teamExportRows() {
+  // export respects current search/filter/sort, ignores pagination
+  const q      = document.getElementById('teamSearch')?.value.trim() || '';
+  const status = document.getElementById('teamStatusFilter')?.value || '';
+  const sort   = document.getElementById('teamSort')?.value || 'newest';
+  const p = new URLSearchParams({ sort, page: 1, limit: 200 });
+  if (q) p.set('q', q);
+  if (status) p.set('status', status);
+  clearApiCache('/teams');
+  const r = await TeamsAPI.getTeams(`?${p.toString()}`);
+  if (!r.ok) { showToast('error', r.error || 'Failed to fetch teams for export.'); return null; }
+
+  const headers = ['Team Name', 'Description', 'Status', 'Team Lead', 'Members', 'Total Leads', 'Pending Leads', "Today's Leads", 'Closed Leads', 'Conversion %', 'Distribution', 'Max Leads/Member', 'Tags', 'Created'];
+  const rows = (r.data.data || []).map(t => [
+    t.name, t.description || '', t.status, t.leader ? teamAdminName(t.leader) : '',
+    t.memberCount ?? (t.members || []).length, t.totalLeads || 0, t.pendingLeads || 0, t.todayLeads || 0,
+    t.closedLeads || 0, (t.conversionRate || 0) + '%', TEAM_DIST_LBL[t.distributionType] || 'Round Robin',
+    t.maxLeadsPerMember || 'Unlimited', (t.tags || []).join(' | '), formatDate(t.createdAt),
+  ]);
+  return { headers, rows };
+}
+
+async function exportTeamsCSV() {
+  const data = await _teamExportRows();
+  if (!data) return;
+  const esc = v => `"${String(v).replace(/"/g, '""')}"`;
+  const csv = [data.headers.map(esc).join(','), ...data.rows.map(r => r.map(esc).join(','))].join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `teams_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('success', `Exported ${data.rows.length} teams to CSV.`);
+}
+
+async function exportTeamsExcel() {
+  const data = await _teamExportRows();
+  if (!data) return;
+  const cell = v => `<td>${escHtml(v)}</td>`;
+  // NOTE: keep this markup free of literal body/html close tags — dev servers
+  // (Live Server) inject their reload snippet before the first "</body"
+  // sequence in the response, which would truncate this inline script.
+  const html = `<meta charset="UTF-8"><table border="1">
+    <tr>${data.headers.map(h => `<th>${escHtml(h)}</th>`).join('')}</tr>
+    ${data.rows.map(r => `<tr>${r.map(cell).join('')}</tr>`).join('')}
+  </table>`;
+  const blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `teams_${new Date().toISOString().slice(0, 10)}.xls`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('success', `Exported ${data.rows.length} teams to Excel.`);
 }
 
 /* ============================================================
@@ -9349,6 +10423,7 @@ async function _doUpdateOverviewStats() {
   if (cached) {
     _renderStatCards(cached, true);
     renderBarChart(cached.monthlyTrend);
+    renderStatusDonut(cached);
   } else {
     /* No cache — show stat card skeletons while fetching */
     const el = document.getElementById('overviewStats');
@@ -9365,19 +10440,8 @@ async function _doUpdateOverviewStats() {
       </div>`).join('');
   }
 
-  const statsRes = await apiFetch('GET', '/dashboard/stats');
-  if (gen !== _statsGeneration) return;
-
-  let stats = cached || {};
-
-  if (statsRes.ok) {
-    stats = statsRes.data.data || statsRes.data.stats || statsRes.data;
-    _saveStatsCache(stats);
-  }
-
-  _renderStatCards(stats, false);
-  renderBarChart(stats.monthlyTrend);
-
+  // Independent sections — start alongside the stats fetch, not after it.
+  // Both have their own skeletons and apiFetch dedupes/caches the GETs.
   if (state.currentPage === 'overview') {
     loadRecentActivity();
     const actSection = document.getElementById('adminActivitySection');
@@ -9390,6 +10454,20 @@ async function _doUpdateOverviewStats() {
       }
     }
   }
+
+  const statsRes = await apiFetch('GET', '/dashboard/stats');
+  if (gen !== _statsGeneration) return;
+
+  let stats = cached || {};
+
+  if (statsRes.ok) {
+    stats = statsRes.data.data || statsRes.data.stats || statsRes.data;
+    _saveStatsCache(stats);
+  }
+
+  _renderStatCards(stats, false);
+  renderBarChart(stats.monthlyTrend);
+  renderStatusDonut(stats);
 }
 
 function renderBarChart(monthlyTrend) {
@@ -9414,11 +10492,91 @@ function renderBarChart(monthlyTrend) {
 
   const max = Math.max(...values, 1);
   barChart.innerHTML = labels.map((m, i) => `
-    <div class="bar-item">
-      <div class="bar ${i === 5 ? 'orange' : ''}" style="height:${Math.round(values[i] / max * 90)}px" title="${values[i]} students"></div>
+    <div class="bar-item ${i === 5 ? 'is-current' : ''}">
+      <div class="chart-tooltip">${values[i]} student${values[i] === 1 ? '' : 's'}${i === 5 ? ' · this month' : ''}</div>
+      <div class="bar" data-target-height="${Math.round(values[i] / max * 90)}"></div>
+      ${i === 5 ? '<div class="bar-current-dot"></div>' : ''}
       <div class="bar-label">${m}</div>
     </div>
   `).join('');
+
+  // Animate bars growing in from 0 on the next frame (so the CSS transition fires)
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      barChart.querySelectorAll('.bar').forEach(bar => {
+        bar.style.height = bar.dataset.targetHeight + 'px';
+      });
+    });
+  });
+}
+
+function renderStatusDonut(stats) {
+  const svg    = document.getElementById('statusDonutSvg');
+  const legend = document.getElementById('statusDonutLegend');
+  const centerVal = document.getElementById('donutCenterValue');
+  if (!svg || !legend) return;
+
+  const segs = [
+    { key:'approved', label:'Approved', value: stats.approvedStudents || 0, color:'var(--royal)'   },
+    { key:'pending',  label:'Pending',  value: stats.pendingStudents  || 0, color:'var(--success)' },
+    { key:'rejected', label:'Rejected', value: stats.rejectedStudents || 0, color:'var(--orange)'   },
+  ];
+  const total = segs.reduce((s, x) => s + x.value, 0);
+  if (centerVal) centerVal.textContent = total;
+
+  // Clear previously-drawn arcs (background reference circle stays)
+  svg.querySelectorAll('circle[data-key]').forEach(c => c.remove());
+
+  const GAP = 1.5; // small breathing gap between segments (circle uses a 0-100 unit circumference)
+  let cum = 0;
+  segs.forEach(s => {
+    const pct     = total ? (s.value / total * 100) : 0;
+    const drawLen = pct > 0 ? Math.max(pct - GAP, 0.001) : 0;
+    const circle  = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', '18'); circle.setAttribute('cy', '18'); circle.setAttribute('r', '15.9');
+    circle.setAttribute('fill', 'none');
+    circle.setAttribute('stroke', s.color);
+    circle.setAttribute('stroke-width', '3');
+    circle.setAttribute('stroke-linecap', 'round');
+    circle.setAttribute('data-key', s.key);
+    circle.setAttribute('stroke-dasharray', '0 100');       // collapsed — animates open below
+    circle.setAttribute('stroke-dashoffset', String(25 - cum));
+    circle.dataset.targetDasharray = `${drawLen} ${100 - drawLen}`;
+    svg.appendChild(circle);
+    cum += pct;
+  });
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      svg.querySelectorAll('circle[data-key]').forEach(c => {
+        c.setAttribute('stroke-dasharray', c.dataset.targetDasharray);
+      });
+    });
+  });
+
+  legend.innerHTML = segs.map(s => {
+    const pct = total ? Math.round(s.value / total * 100) : 0;
+    return `<div class="donut-item" data-key="${s.key}" onmouseenter="_donutHover('${s.key}')" onmouseleave="_donutHover(null)">
+      <div class="donut-dot" style="background:${s.color}"></div>
+      <span>${s.label} (${pct}%)</span>
+      <span class="donut-item-count">${s.value}</span>
+    </div>`;
+  }).join('');
+}
+
+function _donutHover(key) {
+  const svg    = document.getElementById('statusDonutSvg');
+  const legend = document.getElementById('statusDonutLegend');
+  if (!svg || !legend) return;
+  svg.querySelectorAll('circle[data-key]').forEach(c => {
+    if (!key) { c.style.strokeWidth = ''; c.style.opacity = ''; return; }
+    const match = c.dataset.key === key;
+    c.style.strokeWidth = match ? '4' : '3';
+    c.style.opacity     = match ? '1' : '.35';
+  });
+  legend.querySelectorAll('.donut-item').forEach(el => {
+    el.classList.toggle('is-dim', !!key && el.dataset.key !== key);
+  });
 }
 
 async function loadRecentActivity() {
@@ -10823,21 +11981,32 @@ async function init() {
       applySidebarPermissions();
     }
 
+    // Prewarm overview data in parallel with the auth check — apiFetch
+    // dedupes in-flight GETs, so the overview loaders reuse these same
+    // requests instead of waiting for auth → roles → stats serially.
+    apiFetch('GET', '/dashboard/stats');
+    apiFetch('GET', '/dashboard/recent-activity');
+    if (canDo('admin_management', 'view')) apiFetch('GET', '/dashboard/admin-activity');
+
     // Fetch current user first, then conditionally load sensitive data
     await fetchCurrentUser();
+
+    // Kick off roles/admins in the background — the overview page does not
+    // depend on them, so first paint no longer waits for these fetches.
     const fetches = [];
     if (canDo('roles', 'view'))            fetches.push(fetchRoles());
     if (canDo('admin_management', 'view')) fetches.push(fetchAdmins());
+
+    // Explicitly activate overview page — guards against any race that
+    // strips the active class before JS finishes booting
+    navTo('overview');
+
     if (fetches.length) await Promise.all(fetches);
 
     // Apply permissions once with fresh data
     applySidebarPermissions();
     _updateNavbarUser();
     _initNotifBadge();
-
-    // Explicitly activate overview page — guards against any race that
-    // strips the active class before JS finishes booting
-    navTo('overview');
 
     // Start polling only after auth is confirmed
     _startPolling();
@@ -10853,8 +12022,15 @@ async function init() {
       }
     }, 60000);
 
-    wireDashboardAccessibility();
-    applyDashboardPerformanceHints();
+    // Full-document DOM sweeps — defer to idle time so they don't block
+    // first paint / first interaction. Behaviour is unchanged.
+    const _idle = window.requestIdleCallback
+      ? (fn) => requestIdleCallback(fn, { timeout: 1500 })
+      : (fn) => setTimeout(fn, 300);
+    _idle(() => {
+      wireDashboardAccessibility();
+      applyDashboardPerformanceHints();
+    });
 
   } catch (err) {
     console.error('Init error:', err);
