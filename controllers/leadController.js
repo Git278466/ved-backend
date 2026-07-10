@@ -30,6 +30,12 @@ const buildLeadFilter = (q) => {
     { email: new RegExp(q.search, 'i') },
     { mobile:new RegExp(q.search, 'i') },
   ];
+  // Per-column text filters (independent of the combined `search` above —
+  // used by the column-header filter row so name/mobile/email/city can be
+  // filtered simultaneously with different values)
+  if (q.name)       f.name       = new RegExp(q.name,   'i');
+  if (q.mobile)     f.mobile     = new RegExp(q.mobile, 'i');
+  if (q.email)      f.email      = new RegExp(q.email,  'i');
   if (q.stage)      f.stage      = q.stage.includes(',') ? { $in: q.stage.split(',') } : q.stage;
   if (q.source)     f.source     = q.source;
   if (q.priority)   f.priority   = q.priority;
@@ -48,6 +54,11 @@ const buildLeadFilter = (q) => {
     f.createdAt = {};
     if (q.startDate) f.createdAt.$gte = new Date(q.startDate);
     if (q.endDate)   f.createdAt.$lte = new Date(q.endDate);
+  }
+  if (q.nextFollowUpFrom || q.nextFollowUpTo) {
+    f.nextFollowUp = { ...(f.nextFollowUp || {}) };
+    if (q.nextFollowUpFrom) f.nextFollowUp.$gte = new Date(q.nextFollowUpFrom);
+    if (q.nextFollowUpTo)   f.nextFollowUp.$lte = new Date(q.nextFollowUpTo);
   }
   return f;
 };
@@ -86,6 +97,16 @@ exports.getLeads = async (req, res) => {
     ]);
 
     res.json({ success: true, total, page: Number(page), data });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ── GET /api/leads/meta/courses — distinct course values for the filter dropdown ──
+exports.getCourseOptions = async (req, res) => {
+  try {
+    const values = await Lead.distinct('courseInterest', { courseInterest: { $nin: [null, ''] } });
+    res.json({ success: true, data: values.sort((a, b) => a.localeCompare(b)).slice(0, 300) });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

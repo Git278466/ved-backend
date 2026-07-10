@@ -24,6 +24,7 @@ router.get('/funnel',           hasPermission('leads.view'), scopeToOwn, ctrl.ge
 router.get('/analytics',        hasPermission('leads.view'), scopeToOwn, ctrl.getAnalytics);
 router.get('/export',           hasPermission('leads.export'), scopeToOwn, ctrl.exportLeads);
 router.get('/partner-progress', hasPermission('leads.view'), ctrl.getPartnerProgress);
+router.get('/meta/courses',     hasPermission('leads.view'), ctrl.getCourseOptions);
 router.get('/import-history',   hasPermission('leads.view'),  ctrl.getImportHistory);
 router.post('/import',          hasPermission('leads.create'), upload.single('file'), ctrl.importLeads);
 router.post('/bulk-assign',        hasPermission('leads.update'), ctrl.bulkAssign);
