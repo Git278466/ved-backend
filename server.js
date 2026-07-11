@@ -437,7 +437,7 @@ app.use("/api/workshops",              workshopRoutes);
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
   });
 
-  // All routes below — admin auth required
+  // All routes below — admin auth required (role populated for permission checks)
   const mobAuth = async (req, res, next) => {
     try {
       const h = req.headers.authorization || "";
@@ -445,15 +445,32 @@ app.use("/api/workshops",              workshopRoutes);
       const decoded = jwt.verify(h.split(" ")[1], process.env.JWT_SECRET);
       if (decoded.type === "student") return res.status(403).json({ success: false, message: "Admins only." });
       const Admin = require("./models/Admin");
-      const admin = await Admin.findById(decoded.id).select("-password").lean();
+      const admin = await Admin.findById(decoded.id)
+        .select("-password")
+        .populate({ path: "role", select: "name permissions isSystem status" })
+        .lean();
       if (!admin || admin.status !== "active") return res.status(401).json({ success: false, message: "Admin not found." });
       req.admin = admin;
       next();
     } catch (e) { res.status(401).json({ success: false, message: "Invalid or expired token." }); }
   };
 
+  // Permission gate for mobilization routes. Super Admin bypasses; every
+  // other role must carry the exact "mobilization.<action>" permission.
+  const mobRequire = (perm) => (req, res, next) => {
+    const role = req.admin && req.admin.role;
+    if (!role) return res.status(403).json({ success: false, message: "No role assigned to your account." });
+    if (role.isSystem === true && role.name === "Super Admin") return next();
+    if (role.status === "inactive") return res.status(403).json({ success: false, message: "Your role is inactive." });
+    const perms = Array.isArray(role.permissions) ? role.permissions : [];
+    if (!perms.includes(perm)) {
+      return res.status(403).json({ success: false, message: `Access denied. Required permission: "${perm}".` });
+    }
+    next();
+  };
+
   // GET /api/mobilization  — list
-  app.get("/api/mobilization", mobAuth, async (req, res) => {
+  app.get("/api/mobilization", mobAuth, mobRequire("mobilization.view"), async (req, res) => {
     if (!Mob) return res.status(503).json({ success: false, message: "Mobilization model unavailable.", data: [], total: 0 });
     try {
       const { search, status, gender, skillCourse, certificateProgram, educationDest, dateFrom, dateTo, page = 1, limit = 25 } = req.query;
@@ -490,7 +507,7 @@ app.use("/api/workshops",              workshopRoutes);
   });
 
   // GET /api/mobilization/stats
-  app.get("/api/mobilization/stats", mobAuth, async (req, res) => {
+  app.get("/api/mobilization/stats", mobAuth, mobRequire("mobilization.view"), async (req, res) => {
     if (!Mob) return res.status(503).json({ success: false, message: "Unavailable.", data: {} });
     try {
       // Single $facet aggregation replaces 4 separate countDocuments calls
@@ -523,7 +540,7 @@ app.use("/api/workshops",              workshopRoutes);
   });
 
   // GET /api/mobilization/export/:program — export NESCOM or IBM students as Excel
-  app.get("/api/mobilization/export/:program", mobAuth, async (req, res) => {
+  app.get("/api/mobilization/export/:program", mobAuth, mobRequire("mobilization.export"), async (req, res) => {
     if (!Mob) return res.status(503).json({ success: false, message: "Unavailable." });
     try {
       const XLSX = require("xlsx");
@@ -571,7 +588,7 @@ app.use("/api/workshops",              workshopRoutes);
   });
 
   // PATCH /api/mobilization/:id
-  app.patch("/api/mobilization/:id", mobAuth, async (req, res) => {
+  app.patch("/api/mobilization/:id", mobAuth, mobRequire("mobilization.update"), async (req, res) => {
     if (!Mob) return res.status(503).json({ success: false, message: "Unavailable." });
     try {
       const doc = await Mob.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -581,7 +598,7 @@ app.use("/api/workshops",              workshopRoutes);
   });
 
   // DELETE /api/mobilization/:id
-  app.delete("/api/mobilization/:id", mobAuth, async (req, res) => {
+  app.delete("/api/mobilization/:id", mobAuth, mobRequire("mobilization.delete"), async (req, res) => {
     if (!Mob) return res.status(503).json({ success: false, message: "Unavailable." });
     try {
       const doc = await Mob.findByIdAndDelete(req.params.id);
