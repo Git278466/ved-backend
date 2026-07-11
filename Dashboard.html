@@ -2837,15 +2837,10 @@ button:focus-visible,
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Source</label>
+              <!-- Options are populated dynamically from real lead sources via
+                   _crmPopulateSourceSelect(); "Manual" is the always-present default. -->
               <select class="form-select" id="leadSource">
-                <option value="manual">Manual Entry</option>
-                <option value="website">Website</option>
-                <option value="referral">Referral</option>
-                <option value="event">Event</option>
-                <option value="social_media">Social Media</option>
-                <option value="walk_in">Walk-in</option>
-                <option value="csv_import">CSV Import</option>
-                <option value="other">Other</option>
+                <option value="Manual">Manual</option>
               </select>
             </div>
             <div class="form-group">
@@ -6413,16 +6408,10 @@ button:focus-visible,
           Set Source For All Imported Leads
           <span style="font-weight:400;color:#9ca3af;margin-left:4px">(overrides file's source column)</span>
         </label>
+        <!-- Options populated dynamically from real lead sources; the default
+             keeps each row's own source from the file. -->
         <select class="form-select" id="importSource" style="font-size:13px">
           <option value="">— Use source from file (default: CSV Import) —</option>
-          <option value="csv_import">CSV Import</option>
-          <option value="website">Website</option>
-          <option value="referral">Referral</option>
-          <option value="event">Event / Camp</option>
-          <option value="social_media">Social Media</option>
-          <option value="walk_in">Walk-in</option>
-          <option value="manual">Manual</option>
-          <option value="other">Other</option>
         </select>
       </div>
 
@@ -12793,6 +12782,9 @@ async function submitInlineImport() {
         </div>`;
       if (r.imported > 0) {
         CRM.initialized = false;
+        _crmLoadSourceOptions();   // new import may have added new sources
+        // Show the freshly imported leads at the top: reset to page 1, newest first.
+        CRM.page = 1; CRM.sortBy = 'createdAt'; CRM.sortOrder = 'desc';
         setTimeout(() => { closeModal('leadModal'); crmRefresh(); }, 1800);
       }
     } else {
@@ -12949,6 +12941,9 @@ async function submitImport() {
       if (r.imported > 0) {
         LIVE.loaded.partners = false; clearApiCache('/partners');
         CRM.initialized = false;
+        _crmLoadSourceOptions();   // new import may have added new sources
+        // Show the freshly imported leads at the top: reset to page 1, newest first.
+        CRM.page = 1; CRM.sortBy = 'createdAt'; CRM.sortOrder = 'desc';
         setTimeout(() => { closeModal('leadImportModal'); crmRefresh(); }, 1500);
       }
     } else {
@@ -13141,6 +13136,7 @@ async function initCRM() {
   await _crmLoadAdmins();
   _crmLoadCourseOptions();
   _crmLoadCityOptions();
+  _crmLoadSourceOptions();
   await crmRefresh();
 }
 
@@ -13163,6 +13159,46 @@ async function _crmLoadCourseOptions() {
 async function _crmLoadCityOptions() {
   const r = await apiFetch('GET', '/leads/meta/cities');
   CRM.cityOptions = r.ok ? (r.data.data || []) : [];
+}
+
+// Dynamic lead sources — derived from actual lead data (no hardcoded list).
+async function _crmLoadSourceOptions() {
+  clearApiCache('/leads/meta/sources');
+  const r = await apiFetch('GET', '/leads/meta/sources');
+  CRM.sourceOptions = r.ok ? (r.data.data || []) : [];
+  _crmPopulateSourceSelect();          // Add/Edit Lead <select>
+  _crmPopulateImportSourceSelect();    // Import "override source" <select>
+}
+
+// Import "override source" select — dynamic list, keeps the "use from file" default.
+function _crmPopulateImportSourceSelect() {
+  const sel = document.getElementById('importSource');
+  if (!sel) return;
+  const cur = sel.value;
+  const base = '<option value="">— Use source from file (default: CSV Import) —</option>';
+  sel.innerHTML = base + (CRM.sourceOptions || [])
+    .map(s => `<option value="${escHtml(s)}">${escHtml(s)}</option>`).join('');
+  sel.value = cur;
+}
+
+// Populate the Add/Edit Lead "Source" <select> from the dynamic list.
+// "Manual" is always available so a brand-new manual lead can be created even
+// before any sources exist. `currentValue` (a lead's existing source, possibly
+// legacy lowercase) is kept selectable and matched case-insensitively.
+function _crmPopulateSourceSelect(currentValue) {
+  const sel = document.getElementById('leadSource');
+  if (!sel) return;
+  const cur  = currentValue !== undefined ? currentValue : sel.value;
+  const list = ['Manual'].concat(CRM.sourceOptions || []);
+  if (cur && !list.some(s => String(s).toLowerCase() === String(cur).toLowerCase())) list.push(cur);
+  const seen = new Set();
+  sel.innerHTML = list
+    .filter(s => { const k = String(s).toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; })
+    .map(s => `<option value="${escHtml(s)}">${escHtml(s)}</option>`).join('');
+  if (cur) {
+    const match = [...sel.options].find(o => o.value.toLowerCase() === String(cur).toLowerCase());
+    sel.value = match ? match.value : cur;
+  }
 }
 
 function _crmShowImportedByFilter() {
@@ -13283,11 +13319,8 @@ const CRM_SDD_PLACEHOLDER = {
   priority:'All Priority', assignedTo:'All Assigned', importedBy:'All Imported From',
 };
 const CRM_SDD_STATIC = {
-  source: [
-    { value:'website', label:'Website' }, { value:'referral', label:'Referral' },
-    { value:'event', label:'Event' }, { value:'social_media', label:'Social Media' },
-    { value:'walk_in', label:'Walk-in' }, { value:'manual', label:'Manual' }, { value:'other', label:'Other' },
-  ],
+  // 'source' is intentionally NOT here — it is generated dynamically from real
+  // lead data (see crmSddOptions + CRM.sourceOptions). Nothing hardcoded.
   stage: [
     { value:'new', label:'New' }, { value:'not_answering', label:'Not Answering' },
     { value:'not_reachable', label:'Not Reachable' }, { value:'call_back', label:'Call Back' },
@@ -13302,6 +13335,7 @@ function crmSddOptions(field) {
   const all = { value: '', label: CRM_SDD_PLACEHOLDER[field] || 'All' };
   if (field === 'course') return [all].concat((CRM.courseOptions || []).map(c => ({ value: c, label: c })));
   if (field === 'city')   return [all].concat((CRM.cityOptions   || []).map(c => ({ value: c, label: c })));
+  if (field === 'source') return [all].concat((CRM.sourceOptions || []).map(c => ({ value: c, label: c })));
   if (CRM_SDD_STATIC[field]) return [all].concat(CRM_SDD_STATIC[field]);
   if (field === 'assignedTo' || field === 'importedBy') {
     const base = field === 'assignedTo' ? [all, { value: 'unassigned', label: 'Unassigned' }] : [all];
@@ -14066,7 +14100,7 @@ function openAddLeadModal() {
   ['leadName','leadMobile','leadEmail','leadCity','leadState','leadCourse','leadNotes'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
-  document.getElementById('leadSource').value   = 'manual';
+  _crmPopulateSourceSelect('Manual');
   document.getElementById('leadStage').value    = '';
   document.getElementById('leadPriority').value = 'medium';
   _assignPick('', '', '');
@@ -14093,7 +14127,7 @@ async function openEditLead(id) {
   document.getElementById('leadState').value       = l.state       || '';
   document.getElementById('leadCourse').value      = l.courseInterest || '';
   document.getElementById('leadNotes').value       = l.notes       || '';
-  document.getElementById('leadSource').value      = l.source      || 'manual';
+  _crmPopulateSourceSelect(l.source || 'Manual');
   document.getElementById('leadStage').value       = l.stage       || '';
   document.getElementById('leadPriority').value    = l.priority    || 'medium';
   const _assignId = l.assignedTo?._id || l.assignedTo || '';
