@@ -13631,6 +13631,8 @@ function _renderCrmStats(f, a) {
   const cards = [
     { lbl:'Total Leads',    val: f.total      || 0, icon:'fa-bullseye',       cls:'blue',   icoBg:'rgba(37,99,235,0.1)',   icoClr:'var(--royal)',   filter:''            },
     { lbl:'New',            val: (f.funnel?.find(x=>x.stage==='new')?.count)||0, icon:'fa-star', cls:'orange', icoBg:'rgba(249,115,22,0.1)', icoClr:'var(--orange)', filter:'new' },
+    { lbl:'Not Answering',  val: (f.funnel?.find(x=>x.stage==='not_answering')?.count)||0, icon:'fa-phone-slash', cls:'red',    icoBg:'rgba(220,38,38,0.1)',  icoClr:'#DC2626', filter:'not_answering' },
+    { lbl:'Not Reachable',  val: (f.funnel?.find(x=>x.stage==='not_reachable')?.count)||0, icon:'fa-signal',      cls:'orange', icoBg:'rgba(234,88,12,0.1)',  icoClr:'#EA580C', filter:'not_reachable' },
     { lbl:'Interested',     val: (f.funnel?.find(x=>x.stage==='interested')?.count)||0, icon:'fa-fire', cls:'gold', icoBg:'rgba(234,179,8,0.1)', icoClr:'var(--warning)', filter:'interested' },
     { lbl:'Follow Up',      val: (f.funnel?.find(x=>x.stage==='follow_up')?.count)||0, icon:'fa-calendar-check', cls:'purple', icoBg:'rgba(139,92,246,0.1)', icoClr:'#8B5CF6', filter:'follow_up' },
     { lbl:'Enrolled',       val: (f.funnel?.find(x=>x.stage==='enrolled')?.count)||0, icon:'fa-circle-check', cls:'green', icoBg:'rgba(34,197,94,0.1)', icoClr:'var(--success)', filter:'enrolled' },
