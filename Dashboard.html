@@ -2627,6 +2627,8 @@ button:focus-visible,
         <span class="nav-badge" id="mobNewBadge" style="display:none">0</span>
       </div>
 
+      <!-- Marketing Material: read is open to all admins (promotional content);
+           write ops are permission-gated on the backend. No data-perm by design. -->
       <div class="nav-item" onclick="navTo('marketing')" data-page="marketing">
         <i class="fa-solid fa-bullhorn"></i><span>Marketing Material</span>
       </div>
@@ -10436,6 +10438,54 @@ async function fetchCurrentUser() {
   return null;
 }
 
+/* ── Live permission refresh ──────────────────────────────────────
+   Re-fetches the current user's role from the server. If the Super
+   Admin changed this user's role/permissions (or deactivated them)
+   while they were logged in, the sidebar + page access update live —
+   no logout required. Runs on a timer and whenever the tab regains
+   focus. */
+async function refreshPermissions() {
+  const token = getToken();
+  if (!token) return;
+  clearApiCache('/auth/me');
+  const r = await apiFetch('GET', '/auth/me');
+
+  // Account deactivated / token invalidated mid-session → force re-login
+  if (r.status === 401 || r.status === 403) {
+    clearAuth();
+    window.location.href = 'login.html';
+    return;
+  }
+  if (!r.ok) return;   // transient network error — keep current perms
+
+  const user    = r.data.user || r.data.admin || r.data.currentUser || r.data.data || r.data;
+  const newRole = user.role || null;
+  const oldSig  = JSON.stringify([state.currentUserRole?.name, state.currentUserRole?.status, state.currentUserRole?.permissions || []]);
+  const newSig  = JSON.stringify([newRole?.name, newRole?.status, newRole?.permissions || []]);
+  if (oldSig === newSig) return;   // nothing changed
+
+  // Permissions/role changed — apply live
+  state.currentUser     = user;
+  state.currentUserRole = newRole;
+  saveUser(user);
+  updateUserUI(user);
+  applySidebarPermissions();
+  _enforceCurrentPageAccess();
+  showToast('info', 'Your access permissions were updated.');
+}
+
+/* If the user is sitting on a page they just lost access to, move them
+   to the Overview page (which every role can see). */
+function _enforceCurrentPageAccess() {
+  const page = state.currentPage;
+  if (!page || page === 'overview' || page === 'profile') return;
+  const nav = document.querySelector(`.nav-item[data-page="${page}"]`);
+  // Hidden nav item = no permission for this page anymore
+  if (nav && (nav.style.display === 'none' || getComputedStyle(nav).display === 'none')) {
+    navTo('overview');
+  }
+}
+
 async function fetchRoles() {
   if (!canDo('roles', 'view')) { state.roles = []; return; }
   clearApiCache('/roles');
@@ -14607,10 +14657,18 @@ async function _pollCepCount() {
 function _startPolling() {
   if (window._notifInterval) clearInterval(window._notifInterval);
   if (window._cepInterval) clearInterval(window._cepInterval);
+  if (window._permInterval) clearInterval(window._permInterval);
   setTimeout(_pollNotifCount, 5000);
   window._notifInterval = setInterval(_pollNotifCount, 30000);
   setTimeout(_pollCepCount, 8000);
   window._cepInterval = setInterval(_pollCepCount, 60000);
+
+  // Live permission refresh — every 45s and whenever the tab regains focus
+  window._permInterval = setInterval(() => { if (!document.hidden) refreshPermissions(); }, 45000);
+  if (!window._permFocusBound) {
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshPermissions(); });
+    window._permFocusBound = true;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════
