@@ -22,6 +22,23 @@ const ACTIVITY_SCORE = {
 
 const clampScore = (s) => Math.max(0, Math.min(100, s));
 
+// Canonical case/separator-insensitive key for a source value.
+const _sourceKey = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+// Title-Case label from a normalized key ("social media" → "Social Media").
+const _sourceLabel = (key) => key.replace(/\b\w/g, c => c.toUpperCase());
+// De-duplicate a list of raw source strings into sorted Title-Case labels.
+const _dedupeSources = (rawList) => {
+  const seen = new Set();
+  const out = [];
+  for (const s of rawList) {
+    const key = _sourceKey(s);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push(_sourceLabel(key));
+  }
+  return out.sort((a, b) => a.localeCompare(b));
+};
+
 // ── Build filter from query ───────────────────────────────────
 const buildLeadFilter = (q) => {
   const f = {};
@@ -37,7 +54,14 @@ const buildLeadFilter = (q) => {
   if (q.mobile)     f.mobile     = new RegExp(q.mobile, 'i');
   if (q.email)      f.email      = new RegExp(q.email,  'i');
   if (q.stage)      f.stage      = q.stage.includes(',') ? { $in: q.stage.split(',') } : q.stage;
-  if (q.source)     f.source     = q.source;
+  // Source match is case- AND separator-insensitive so a single dropdown option
+  // ("Website", "Social Media") matches every stored variant ('website',
+  // 'Website', 'social_media', 'Social Media'). Non-alphanumerics become a
+  // flexible separator; alphanumerics are regex-safe.
+  if (q.source) {
+    const pat = String(q.source).trim().replace(/[^a-z0-9]+/gi, '[\\s_-]*');
+    f.source  = new RegExp('^' + pat + '$', 'i');
+  }
   if (q.priority)   f.priority   = q.priority;
   if (q.assignedTo) f.assignedTo = q.assignedTo === 'unassigned' ? null : q.assignedTo;
   if (q.importedBy) f.createdBy  = q.importedBy;
@@ -122,6 +146,20 @@ exports.getCityOptions = async (req, res) => {
   }
 };
 
+// ── GET /api/leads/meta/sources — dynamic lead sources (from actual lead data) ──
+// Returns only sources that exist in leads, de-duplicated case- AND separator-
+// insensitively ("Website"/"website"/"WEBSITE" → one; "social_media"/"Social Media"
+// → one), each with a human label, sorted alphabetically. Nothing hardcoded.
+exports.getSourceOptions = async (req, res) => {
+  try {
+    const raw = await Lead.distinct('source', { source: { $nin: [null, ''] } });
+    const data = _dedupeSources(raw);
+    res.json({ success: true, data });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 // ── GET /api/leads/funnel ──────────────────────────────────────
 exports.getFunnelStats = async (req, res) => {
   try {
@@ -193,9 +231,21 @@ exports.getAnalytics = async (req, res) => {
       Lead.countDocuments({ score: { $gte: 31, $lt: 61 }, ...extraFilter }),
     ]);
 
+    // Merge source variants case/separator-insensitively so the analytics chart
+    // shows the same de-duplicated sources as the filter dropdown. Same
+    // {_id, count} shape → frontend unchanged (backward compatible).
+    const _srcMerged = {};
+    for (const r of bySource) {
+      const key = _sourceKey(r._id) || '__unknown__';
+      _srcMerged[key] = (_srcMerged[key] || 0) + r.count;
+    }
+    const bySourceDeduped = Object.entries(_srcMerged)
+      .map(([key, count]) => ({ _id: key === '__unknown__' ? 'Unknown' : _sourceLabel(key), count }))
+      .sort((a, b) => b.count - a.count);
+
     res.json({
       success: true,
-      data: { bySource, byPriority, trend, topAdmins, overdueCount, total, hot, warm, cold: total - hot - warm },
+      data: { bySource: bySourceDeduped, byPriority, trend, topAdmins, overdueCount, total, hot, warm, cold: total - hot - warm },
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -484,9 +534,9 @@ exports.exportLeads = async (req, res) => {
 exports.importLeads = async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ success:false, message:'No file uploaded.' });
-    const VALID_SOURCES_GLOBAL = ['website','referral','event','social_media','walk_in','manual','csv_import','other'];
     const assignedTo   = req.body.assignedTo || null;
-    const globalSource = req.body.source && VALID_SOURCES_GLOBAL.includes(req.body.source) ? req.body.source : null;
+    // Optional per-import override source (any value); else use each row's own.
+    const globalSource = req.body.source ? String(req.body.source).trim() : null;
 
     const ext  = req.file.originalname.split('.').pop().toLowerCase();
     let rows   = [];
@@ -521,7 +571,6 @@ exports.importLeads = async (req, res) => {
       date:['date','lead date','enquiry date','created date','entry date'],
     };
 
-    const VALID_SOURCES  = ['website','referral','event','social_media','walk_in','manual','csv_import','other'];
     const VALID_PRIORITY = ['low','medium','high'];
 
     const normalize = (key) => String(key||'').toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -547,7 +596,10 @@ exports.importLeads = async (req, res) => {
       const name = get('name');
       if (!name) { skipped++; errors.push('Row ' + (i+2) + ': Name is required — skipped.'); continue; }
 
-      const source   = globalSource || (VALID_SOURCES.includes(get('source').toLowerCase()) ? get('source').toLowerCase() : 'csv_import');
+      // Preserve the exact source from the Excel row (trimmed); fall back to
+      // 'csv_import' only when the row has no source at all. New/unique sources
+      // are thus added automatically without any hardcoded list.
+      const source   = globalSource || get('source') || 'csv_import';
       const priority = VALID_PRIORITY.includes(get('priority').toLowerCase())? get('priority').toLowerCase(): 'medium';
       const score    = Number(get('score')) || 10;
       const rawDate  = get('date');
@@ -565,7 +617,10 @@ exports.importLeads = async (req, res) => {
           source, stage: 'new', priority, score,
           createdBy:  req.admin?._id,
           assignedTo: assignedTo || undefined,
-          ...(leadDate && !isNaN(leadDate) && { createdAt: leadDate }),
+          // Preserve the file's business date separately; DO NOT backdate
+          // createdAt, so freshly imported leads always appear at the top of
+          // the list (sorted by createdAt desc).
+          ...(leadDate && !isNaN(leadDate) && { leadDate }),
         });
         imported++;
         createdLeadIds.push(lead._id);

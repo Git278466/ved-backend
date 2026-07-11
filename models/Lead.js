@@ -12,20 +12,23 @@ const leadSchema = new mongoose.Schema({
   courseInterest: { type: String, trim: true },
 
   // ── Classification ──────────────────────────────────────────
+  // Source is a free string so imported Excel sources are preserved verbatim
+  // (dynamic source management). Existing values remain valid; de-duplication
+  // and pretty labels are handled at read time via /leads/meta/sources.
   source: {
     type: String,
-    enum: ['website', 'referral', 'event', 'social_media', 'walk_in', 'manual', 'csv_import', 'other'],
+    trim: true,
     default: 'manual',
   },
   stage: {
     type: String,
     enum: [
       'not_answering', 'not_reachable', 'call_back',
-      'interested', 'enrolled', 'not_interested',
+      'interested', 'enrolled', 'not_interested', 'follow_up',
       /* legacy values kept for backward compatibility */
       'new', 'contacted', 'applied', 'converted', 'lost',
     ],
-    default: 'not_answering',
+    default: 'new',
   },
   priority: {
     type: String,
@@ -62,6 +65,12 @@ const leadSchema = new mongoose.Schema({
   notes: { type: String, trim: true },
   tags:  [{ type: String, trim: true }],
 
+  // ── Dates ───────────────────────────────────────────────────
+  // Original business/enquiry date from an imported file (if any). Kept
+  // separate from createdAt so imported leads still sort to the top by
+  // recency (createdAt = when the record entered the system).
+  leadDate:         { type: Date },
+
   // ── Follow-up tracking ──────────────────────────────────────
   nextFollowUp:     { type: Date },
   lastContactedAt:  { type: Date },
@@ -95,13 +104,14 @@ const leadSchema = new mongoose.Schema({
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
 }, { timestamps: true });
 
-leadSchema.index({ stage: 1 });
-leadSchema.index({ assignedTo: 1 });
+leadSchema.index({ stage: 1, createdAt: -1 });
+leadSchema.index({ assignedTo: 1, stage: 1 });
+leadSchema.index({ createdBy: 1, stage: 1 });
 leadSchema.index({ assignedInstitution: 1 });
 leadSchema.index({ assignedInstitution: 1, institutionStatus: 1 });
 leadSchema.index({ assignedInstitution: 1, institutionFollowUpDate: 1 });
 leadSchema.index({ score: -1 });
-leadSchema.index({ nextFollowUp: 1 });
+leadSchema.index({ nextFollowUp: 1, stage: 1 });
 leadSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model('Lead', leadSchema);
