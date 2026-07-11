@@ -178,7 +178,7 @@ app.use("/icons",        express.static(path.join(ROOT, "icons")));
 app.use("/manifest.json",(_, res) => res.sendFile(path.join(ROOT, "manifest.json")));
 app.use("/sw.js",        (_, res) => res.sendFile(path.join(ROOT, "sw.js")));
 app.use("/offline.html", (_, res) => res.sendFile(path.join(ROOT, "offline.html")));
-app.use("/shared.js",    (_, res) => res.sendFile(path.join(ROOT, "shared.js")));
+app.use("/shared.js",    (_, res) => { res.setHeader("Cache-Control", "no-cache, must-revalidate"); res.sendFile(path.join(ROOT, "shared.js")); });
 app.use("/header.html",  (_, res) => res.sendFile(path.join(ROOT, "header.html")));
 app.use("/footer.html",  (_, res) => res.sendFile(path.join(ROOT, "footer.html")));
 
@@ -191,16 +191,34 @@ serveImg("Untitled design.png");
 app.use(express.static(ROOT, {
   index: false,
   dotfiles: "ignore",
+  // Safe caching policy (no asset hashing in this project, so JS/HTML are never
+  // long-cached — prevents stale config.js/shared.js/dashboard). Rollback:
+  // delete the three branches below, leaving only the backend-block guard.
   setHeaders: (res, filePath) => {
     if (filePath.startsWith(path.join(ROOT, "backend"))) {
       res.status(403).end(); // block backend folder
+      return;
     }
+    if (filePath.endsWith(".html")) {
+      // HTML must always revalidate so users get the latest UI immediately
+      res.setHeader("Cache-Control", "no-cache, must-revalidate");
+    } else if (/[\\/](config|shared)\.js$/.test(filePath)) {
+      // config.js / shared.js are NOT versioned — never long-cache them
+      res.setHeader("Cache-Control", "no-cache, must-revalidate");
+    } else if (/\.(jpe?g|png|gif|svg|webp|ico|woff2?|ttf|eot|otf)$/i.test(filePath)) {
+      // Images & fonts rarely change — safe to cache for 30 days
+      res.setHeader("Cache-Control", "public, max-age=2592000");
+    }
+    // Any other file keeps express-static's default (max-age=0, revalidate)
   }
 }));
 
-// Public website pages
+// Public website pages — HTML always revalidates (no stale UI)
 const servePage = (url, file) => {
-  app.get(url, (_, res) => res.sendFile(path.join(ROOT, file)));
+  app.get(url, (_, res) => {
+    res.setHeader("Cache-Control", "no-cache, must-revalidate");
+    res.sendFile(path.join(ROOT, file));
+  });
 };
 servePage("/",                    "index.html");
 servePage("/index.html",          "index.html");
