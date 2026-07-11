@@ -130,7 +130,11 @@ exports.statsSummary = async (req, res) => {
 // ── GET /api/students/:id ─────────────────────────────────────
 exports.getStudent = async (req, res) => {
   try {
-    const student = await Student.findById(req.params.id).lean();
+    // Owner scoping: Institution / Associate Partner may only read students
+    // they submitted. Admin / Super Admin get an empty filter → all students
+    // (unchanged behaviour). Prevents cross-tenant record access via /:id.
+    const scope = req.ownerFilter || {};
+    const student = await Student.findOne({ _id: req.params.id, ...scope }).lean();
     if (!student) return res.status(404).json({ success: false, message: 'Student not found.' });
     res.json({ success: true, data: student });
   } catch (err) {
@@ -162,8 +166,10 @@ exports.updateStudent = async (req, res) => {
       updates.statusUpdatedAt = new Date();
       if (req.admin?._id) updates.statusUpdatedBy = req.admin._id;
     }
-    const student = await Student.findByIdAndUpdate(
-      req.params.id, updates, { new: true, runValidators: true }
+    // Owner scoping (defensive) — scoped roles can only update their own records.
+    const scope = req.ownerFilter || {};
+    const student = await Student.findOneAndUpdate(
+      { _id: req.params.id, ...scope }, updates, { new: true, runValidators: true }
     );
     if (!student) return res.status(404).json({ success: false, message: 'Student not found.' });
     res.json({ success: true, message: 'Student updated.', data: student });
@@ -175,7 +181,9 @@ exports.updateStudent = async (req, res) => {
 // ── DELETE /api/students/:id ──────────────────────────────────
 exports.deleteStudent = async (req, res) => {
   try {
-    const student = await Student.findByIdAndDelete(req.params.id);
+    // Owner scoping (defensive) — scoped roles can only delete their own records.
+    const scope = req.ownerFilter || {};
+    const student = await Student.findOneAndDelete({ _id: req.params.id, ...scope });
     if (!student) return res.status(404).json({ success: false, message: 'Student not found.' });
     await Promise.all([
       Attendance.deleteMany({ student: student._id }),

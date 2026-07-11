@@ -305,18 +305,21 @@ router.post(
 router.get(
   "/:id",
   hasPermission("students.view"),
+  scopeToOwn,
   ctrl.getStudent
 );
 
 router.put(
   "/:id",
   hasPermission("students.update"),
+  scopeToOwn,
   ctrl.updateStudent
 );
 
 router.delete(
   "/:id",
   hasPermission("students.delete"),
+  scopeToOwn,
   ctrl.deleteStudent
 );
 

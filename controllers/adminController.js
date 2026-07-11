@@ -20,7 +20,7 @@ const AuditLog = require('../models/AuditLog');
 const signToken = (id) =>
   jwt.sign(
     { id, type: 'admin' },
-    process.env.JWT_SECRET || 'ved_secret_key',
+    process.env.JWT_SECRET,
     {
       expiresIn: process.env.JWT_EXPIRES_IN || '7d',
     }

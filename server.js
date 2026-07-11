@@ -42,10 +42,35 @@ connectDB();
 ========================= */
 app.use(
   helmet({
-    contentSecurityPolicy: false,
+    // Content-Security-Policy in REPORT-ONLY mode — browsers log violations to
+    // the console but nothing is blocked, so there is ZERO risk of breaking the
+    // app. This lets us observe what a future enforced policy would affect
+    // before switching `reportOnly` to false. Rollback = set contentSecurityPolicy
+    // back to false.
+    contentSecurityPolicy: {
+      reportOnly: true,
+      useDefaults: false,
+      directives: {
+        defaultSrc: ["'self'"],
+        // App relies heavily on inline <script>/onclick and inline styles.
+        scriptSrc:  ["'self'", "'unsafe-inline'"],
+        styleSrc:   ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+        fontSrc:    ["'self'", "data:", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
+        imgSrc:     ["'self'", "data:", "https:"],
+        connectSrc: ["'self'", "https://api.vededufoundation.in", "https://vededufoundation.in"],
+        frameAncestors: ["'self'"],
+        objectSrc:  ["'none'"],
+        baseUri:    ["'self'"],
+      },
+    },
     crossOriginResourcePolicy: { policy: "cross-origin" }
   })
 );
+// Permissions-Policy — deny powerful features the app never uses.
+app.use((req, res, next) => {
+  res.setHeader("Permissions-Policy", "geolocation=(), microphone=(), camera=(), payment=()");
+  next();
+});
 
 app.use(
   cors({
@@ -674,7 +699,7 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
         id: admin._id,
         type: "admin"
       },
-      process.env.JWT_SECRET || "ved_secret_key",
+      process.env.JWT_SECRET,
       {
         expiresIn: process.env.JWT_EXPIRES_IN || "7d"
       }
@@ -714,7 +739,7 @@ app.get("/api/auth/me", async (req, res) => {
 
     let decoded;
     try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET || "ved_secret_key");
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch (err) {
       return res.status(401).json({ success: false, message: "Invalid or expired token" });
     }

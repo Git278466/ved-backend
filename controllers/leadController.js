@@ -205,7 +205,14 @@ exports.getAnalytics = async (req, res) => {
 // ── GET /api/leads/:id ─────────────────────────────────────────
 exports.getLead = async (req, res) => {
   try {
-    const lead = await Lead.findById(req.params.id)
+    // Owner scoping: scoped roles (Institution / Associate Partner) may only
+    // read a lead they created or are assigned to. Admin / Super Admin have no
+    // scopedAdminId → unrestricted (unchanged behaviour).
+    const q = { _id: req.params.id };
+    if (req.scopedAdminId) {
+      q.$or = [{ createdBy: req.scopedAdminId }, { assignedTo: req.scopedAdminId }];
+    }
+    const lead = await Lead.findOne(q)
       .populate('assignedTo', 'firstName lastName fullName email')
       .populate('createdBy',  'firstName lastName fullName')
       .populate('convertedToStudent', 'fullName email status')
