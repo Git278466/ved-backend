@@ -31,6 +31,7 @@ const logger    = require("./utils/logger");
 const ROOT      = path.resolve(__dirname, "..");
 
 const app = express();
+app.set('trust proxy', 1);
 
 /* =========================
    CONNECT DATABASE
