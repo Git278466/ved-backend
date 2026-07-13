@@ -610,7 +610,8 @@ app.use("/api/workshops",              workshopRoutes);
         "Aadhaar":               d.aadhaar || "",
         "Education":             d.education || "",
         "Certificate Program":   d.certificateProgram || "",
-        "Referral Code":         d.referralCode || "",
+        "Mobilizer Name":        d.referredByName || "",
+        "Mobilizer Code":        d.referralCode || "",
         "Status":                d.status || "",
         "Registration Date":     d.registrationDate ? new Date(d.registrationDate).toLocaleDateString("en-IN") : "",
       }));
