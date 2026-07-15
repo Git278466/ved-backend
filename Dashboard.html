@@ -9045,7 +9045,12 @@ async function confirmTeamAssign() {
     if (upload) {
       const imp = await _taImportFile(TEAMS.assignFile);
       if (!imp.success) throw new Error(imp.message || 'Import failed.');
-      if (!imp.leadIds || !imp.leadIds.length) throw new Error('File imported 0 leads — nothing to assign.' + (imp.errors?.length ? ' ' + imp.errors[0] : ''));
+      if (!imp.leadIds || !imp.leadIds.length) {
+        const why = imp.summary && Object.keys(imp.summary).length
+          ? ' Reasons: ' + Object.entries(imp.summary).map(([k, v]) => `${k}: ${v}`).join(', ') + '.'
+          : (imp.errors?.length ? ' ' + imp.errors[0] : '');
+        throw new Error('File imported 0 leads — nothing to assign.' + why);
+      }
       body.leadIds = imp.leadIds;
       importSummary = `${imp.imported} imported${imp.skipped ? `, ${imp.skipped} skipped` : ''} · `;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Assigning…';
@@ -12781,12 +12786,8 @@ async function submitInlineImport() {
       el.innerHTML = `
         <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 14px">
           <div style="font-weight:700;color:#166534;margin-bottom:6px"><i class="fa-solid fa-circle-check"></i> ${escHtml(r.message)}</div>
-          <div style="display:flex;gap:16px;font-size:13px">
-            <span><strong style="color:#16a34a">${r.imported}</strong> Imported</span>
-            <span><strong style="color:#dc2626">${r.skipped}</strong> Skipped</span>
-            ${partnerName ? `<span>→ Assigned to <strong>${escHtml(partnerName)}</strong></span>` : ''}
-          </div>
-          ${r.errors?.length ? `<details style="margin-top:8px"><summary style="font-size:12px;color:#dc2626;cursor:pointer">⚠ ${r.errors.length} issue(s)</summary><ul style="margin:6px 0 0 12px;font-size:11px;color:#6b7280">${r.errors.map(e=>`<li>${escHtml(e)}</li>`).join('')}</ul></details>` : ''}
+          ${partnerName ? `<div style="font-size:13px;margin-bottom:6px">→ Assigned to <strong>${escHtml(partnerName)}</strong></div>` : ''}
+          ${_importResultHTML(r)}
         </div>`;
       if (r.imported > 0) {
         CRM.initialized = false;
@@ -12902,6 +12903,52 @@ function clearImportFile() {
   document.getElementById('importSubmitBtn').disabled = true;
 }
 
+/* ── Shared renderer for the import result panel ──
+   Shows Total Rows / Imported / Skipped, a per-reason breakdown
+   (from r.summary) and an expandable list of every skipped row with its
+   exact reason (from r.skippedRows). Falls back to r.errors for older
+   API responses. */
+function _importResultHTML(r) {
+  const total = (r.totalRows != null) ? r.totalRows : (r.imported + r.skipped);
+  const stats = `
+    <div style="display:flex;gap:16px;font-size:13px;color:#374151;flex-wrap:wrap">
+      <span><strong style="color:#334155">${total}</strong> Total Rows</span>
+      <span><strong style="color:#16a34a">${r.imported}</strong> Imported</span>
+      <span><strong style="color:#dc2626">${r.skipped}</strong> Skipped</span>
+      ${r.blankRowsIgnored ? `<span style="color:#94a3b8">${r.blankRowsIgnored} blank row(s) ignored</span>` : ''}
+    </div>`;
+
+  const cats = r.summary ? Object.entries(r.summary) : [];
+  const breakdown = cats.length ? `
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+      ${cats.map(([k, v]) => `<span style="background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;border-radius:99px;padding:2px 10px;font-size:11px;font-weight:600">${escHtml(k)}: ${v}</span>`).join('')}
+    </div>` : '';
+
+  let details = '';
+  if (r.skippedRows && r.skippedRows.length) {
+    details = `
+      <details style="margin-top:10px">
+        <summary style="font-size:12px;color:#dc2626;cursor:pointer">View ${r.skippedRows.length} skipped row(s) with exact reason</summary>
+        <div style="max-height:220px;overflow:auto;margin-top:8px;border:1px solid #e2e8f0;border-radius:6px">
+          ${r.skippedRows.map(s => `
+            <div style="padding:6px 10px;border-bottom:1px solid #f1f5f9;font-size:11px">
+              <strong>Row ${s.row}</strong>${s.name ? ' · ' + escHtml(s.name) : ''}${s.mobile ? ' · ' + escHtml(s.mobile) : ''}
+              <div style="color:#dc2626;margin-top:2px">${escHtml(s.category || '')}${s.category ? ' — ' : ''}${escHtml(s.reason || '')}</div>
+            </div>`).join('')}
+        </div>
+      </details>`;
+  } else if (r.errors && r.errors.length) {
+    details = `
+      <details style="margin-top:10px">
+        <summary style="font-size:12px;color:#dc2626;cursor:pointer">⚠ ${r.errors.length} row(s) had issues</summary>
+        <ul style="margin:8px 0 0 12px;font-size:11px;color:#6b7280">
+          ${r.errors.map(e => `<li>${escHtml(e)}</li>`).join('')}
+        </ul>
+      </details>`;
+  }
+  return stats + breakdown + details;
+}
+
 async function submitImport() {
   if (!_importFile) return;
   const btn = document.getElementById('importSubmitBtn');
@@ -12932,19 +12979,9 @@ async function submitImport() {
       el.innerHTML = `
         <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px">
           <div style="font-weight:700;color:#166534;font-size:14px;margin-bottom:8px">
-            <i class="fa-solid fa-circle-check"></i> ${r.message}
+            <i class="fa-solid fa-circle-check"></i> ${escHtml(r.message)}
           </div>
-          <div style="display:flex;gap:16px;font-size:13px;color:#374151">
-            <span><strong style="color:#16a34a">${r.imported}</strong> Imported</span>
-            <span><strong style="color:#dc2626">${r.skipped}</strong> Skipped</span>
-          </div>
-          ${r.errors && r.errors.length ? `
-            <details style="margin-top:10px">
-              <summary style="font-size:12px;color:#dc2626;cursor:pointer">⚠ ${r.errors.length} row(s) had issues</summary>
-              <ul style="margin:8px 0 0 12px;font-size:11px;color:#6b7280">
-                ${r.errors.map(e => `<li>${escHtml(e)}</li>`).join('')}
-              </ul>
-            </details>` : ''}
+          ${_importResultHTML(r)}
         </div>`;
       if (r.imported > 0) {
         LIVE.loaded.partners = false; clearApiCache('/partners');
