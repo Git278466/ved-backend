@@ -529,8 +529,163 @@ exports.exportLeads = async (req, res) => {
 /* ── POST /api/leads/import ─────────────────────────────────────
    Accepts multipart/form-data with a file field named 'file'.
    Supports: .xlsx, .xls, .csv, .pdf
-   Returns:  { success, imported, skipped, errors[], data[] }
+   Returns:  { success, imported, skipped, totalRows, blankRowsIgnored,
+               summary{category:count}, skippedRows[], errors[], preview[],
+               leadIds[], message }
 ───────────────────────────────────────────────────────────────── */
+
+// Column aliases shared by header-row detection and field mapping.
+// Exact (normalized) matches are claimed first; substring matches are a
+// fallback for still-unmapped fields only, so a "Contact Number" column can
+// never hijack the Name field when a real Name column exists.
+const IMPORT_FIELD_ALIASES = {
+  name:  ['name','full name','fullname','student name','lead name','candidate name','contact person','contact'],
+  email: ['email','email address','email id','mail'],
+  mobile:['mobile','mobile number','mobile no','phone','contact number','contact no','phone number','whatsapp','whatsapp number','mob','cell'],
+  city:  ['city','town','district'],
+  state: ['state','province'],
+  courseInterest: ['course','course interest','interested course','course name','program','programme'],
+  source:['source','lead source'],
+  priority:['priority'],
+  score: ['score','lead score'],
+  notes: ['notes','note','remarks','comment','comments'],
+  date:  ['date','lead date','enquiry date','created date','entry date'],
+};
+
+const VALID_PRIORITY = ['low','medium','high'];
+
+const _normHeader = (k) => String(k == null ? '' : k).toLowerCase().replace(/[^a-z0-9]/g, '');
+
+// Copy each merged range's top-left value into the covered cells so rows
+// under a merged Name/City cell don't parse as blank.
+function _expandMerges(ws) {
+  for (const m of ws['!merges'] || []) {
+    const src = ws[XLSX.utils.encode_cell({ r: m.s.r, c: m.s.c })];
+    if (!src || src.v === undefined || src.v === null || String(src.v).trim() === '') continue;
+    for (let R = m.s.r; R <= m.e.r; R++) {
+      for (let C = m.s.c; C <= m.e.c; C++) {
+        const addr = XLSX.utils.encode_cell({ r: R, c: C });
+        const cell = ws[addr];
+        if (!cell || cell.v === undefined || cell.v === null || String(cell.v).trim() === '') {
+          ws[addr] = { t: src.t, v: src.v, w: src.w };
+        }
+      }
+    }
+  }
+}
+
+/* Extract data rows from the first non-empty sheet.
+   Handles: title/blank rows above the real header (auto-detected by scoring
+   rows against known column aliases), merged cells, duplicate headers,
+   whitespace-only phantom rows, and real Excel row numbers for messages. */
+function _extractSheetRows(wb) {
+  let ws = null, sheetName = '';
+  for (const sn of wb.SheetNames) {
+    const s = wb.Sheets[sn];
+    if (!s || !s['!ref']) continue;
+    const probe = XLSX.utils.sheet_to_json(s, { header: 1, defval: '', blankrows: false });
+    if (probe.some(r => r.some(c => String(c == null ? '' : c).trim() !== ''))) { ws = s; sheetName = sn; break; }
+  }
+  if (!ws) return { rows: [], headers: [], blankRowsIgnored: 0, sheetName: '' };
+
+  _expandMerges(ws);
+
+  const startRow = XLSX.utils.decode_range(ws['!ref']).s.r;   // 0-based sheet row of aoa[0]
+  const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '', blankrows: true });
+
+  // Header row = the row (among the first 10) with the most cells that
+  // exactly match a known alias. Falls back to the first row (old behavior).
+  const allAliases = new Set();
+  for (const aliases of Object.values(IMPORT_FIELD_ALIASES)) {
+    for (const a of aliases) allAliases.add(_normHeader(a));
+  }
+  let headerIdx = 0, bestScore = 0;
+  for (let r = 0; r < Math.min(aoa.length, 10); r++) {
+    const score = (aoa[r] || []).reduce((s, c) => s + (allAliases.has(_normHeader(c)) ? 1 : 0), 0);
+    if (score > bestScore) { bestScore = score; headerIdx = r; }
+  }
+
+  // De-duplicate header names the same way sheet_to_json does ("Name_1", …)
+  const seen = {};
+  const headers = (aoa[headerIdx] || []).map(h => {
+    let k = String(h == null ? '' : h).trim();
+    if (!k) return '';
+    if (seen[k] != null) k = k + '_' + (++seen[k]); else seen[k] = 0;
+    return k;
+  });
+
+  // Last row that actually holds data — trailing phantom rows are ignored
+  const nonBlank = (arr) => (arr || []).some(v => String(v == null ? '' : v).trim() !== '');
+  let lastData = headerIdx;
+  for (let r = aoa.length - 1; r > headerIdx; r--) {
+    if (nonBlank(aoa[r])) { lastData = r; break; }
+  }
+
+  const rows = [];
+  let blankRowsIgnored = 0;
+  for (let r = headerIdx + 1; r <= lastData; r++) {
+    const arr = aoa[r] || [];
+    if (!nonBlank(arr)) { blankRowsIgnored++; continue; }
+    const data = {};
+    headers.forEach((h, c) => { if (h) data[h] = arr[c] === undefined ? '' : arr[c]; });
+    rows.push({ rowNum: startRow + r + 1, data });   // 1-based Excel row number
+  }
+  return { rows, headers, blankRowsIgnored, sheetName };
+}
+
+// Exact-match pass first, substring fallback second; each header can be
+// claimed by only one field.
+function _buildFieldMap(headers) {
+  const fieldMap = {};
+  const claimed  = new Set();
+  for (const [field, aliases] of Object.entries(IMPORT_FIELD_ALIASES)) {
+    for (const h of headers) {
+      if (!h || claimed.has(h)) continue;
+      if (aliases.some(a => _normHeader(h) === _normHeader(a))) { fieldMap[field] = h; claimed.add(h); break; }
+    }
+  }
+  for (const [field, aliases] of Object.entries(IMPORT_FIELD_ALIASES)) {
+    if (fieldMap[field]) continue;
+    for (const h of headers) {
+      if (!h || claimed.has(h)) continue;
+      if (aliases.some(a => _normHeader(h).includes(_normHeader(a)))) { fieldMap[field] = h; claimed.add(h); break; }
+    }
+  }
+  return fieldMap;
+}
+
+// Mobile cells may arrive as numbers or scientific-notation text
+// ("9.88E+09") — render them as plain digit strings without altering
+// genuinely textual values ("+91 98765 43210" passes through unchanged).
+function _cleanMobile(v) {
+  if (v === undefined || v === null) return '';
+  if (typeof v === 'number') return v.toLocaleString('fullwide', { useGrouping: false, maximumFractionDigits: 0 });
+  let s = String(v).trim();
+  if (/^\d+(\.\d+)?[eE]\+?\d+$/.test(s)) s = Number(s).toLocaleString('fullwide', { useGrouping: false, maximumFractionDigits: 0 });
+  if (/^\d+\.0+$/.test(s)) s = s.replace(/\..*$/, '');
+  return s;
+}
+
+// Excel serial numbers, dd/mm/yyyy (India-first), and ISO strings.
+function _parseLeadDate(v) {
+  if (v === undefined || v === null || v === '') return undefined;
+  if (typeof v === 'number' && v > 20000 && v < 80000) {
+    const d = new Date(Math.round((v - 25569) * 86400000));
+    return isNaN(d) ? undefined : d;
+  }
+  const s = String(v).trim();
+  const dmy = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+  if (dmy) {
+    let d = Number(dmy[1]), m = Number(dmy[2]);
+    const y = Number(dmy[3].length === 2 ? '20' + dmy[3] : dmy[3]);
+    if (m > 12 && d <= 12) { const t = d; d = m; m = t; }   // mm/dd written by mistake
+    const dt = new Date(y, m - 1, d);
+    return isNaN(dt) ? undefined : dt;
+  }
+  const dt = new Date(s);
+  return isNaN(dt) ? undefined : dt;
+}
+
 exports.importLeads = async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ success:false, message:'No file uploaded.' });
@@ -539,77 +694,93 @@ exports.importLeads = async (req, res) => {
     const globalSource = req.body.source ? String(req.body.source).trim() : null;
 
     const ext  = req.file.originalname.split('.').pop().toLowerCase();
-    let rows   = [];
+    let parsedRows = [], headers = [], blankRowsIgnored = 0;
 
     // ── Parse file ──────────────────────────────────────────────
     if (['xlsx','xls','csv'].includes(ext)) {
       const wb = XLSX.read(req.file.buffer, { type:'buffer', dateNF:'yyyy-mm-dd' });
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      rows = XLSX.utils.sheet_to_json(ws, { defval:'' });
+      const extracted = _extractSheetRows(wb);
+      parsedRows       = extracted.rows;
+      headers          = extracted.headers;
+      blankRowsIgnored = extracted.blankRowsIgnored;
     } else if (ext === 'pdf') {
       if (!pdfParse) return res.status(400).json({ success:false, message:'PDF parsing library not available. Please use Excel/CSV.' });
       const data = await pdfParse(req.file.buffer);
-      rows = _parsePdfText(data.text);
+      parsedRows = _parsePdfText(data.text).map((d, i) => ({ rowNum: i + 1, data: d }));
+      headers    = ['name', 'mobile', 'email', 'city', 'course'];
     } else {
       return res.status(400).json({ success:false, message:'Unsupported format. Use .xlsx, .xls, .csv, or .pdf' });
     }
 
-    if (!rows.length) return res.status(400).json({ success:false, message:'File is empty or has no parseable rows.' });
+    if (!parsedRows.length) return res.status(400).json({ success:false, message:'File is empty or has no parseable rows.' });
 
-    // ── Normalise column names (case-insensitive) ────────────────
-    const MAP = {
-      name:['name','full name','fullname','student name','lead name','contact'],
-      email:['email','email address','mail'],
-      mobile:['mobile','phone','contact number','phone number','mob','cell'],
-      city:['city','town'],
-      state:['state','province'],
-      courseInterest:['course','course interest','interested course','program','programme'],
-      source:['source','lead source'],
-      priority:['priority'],
-      score:['score'],
-      notes:['notes','note','remarks','comment'],
-      date:['date','lead date','enquiry date','created date','entry date'],
-    };
+    const fieldMap = _buildFieldMap(headers);
 
-    const VALID_PRIORITY = ['low','medium','high'];
-
-    const normalize = (key) => String(key||'').toLowerCase().replace(/[^a-z0-9]/g,'');
-    const headers = Object.keys(rows[0] || {});
-
-    // Build field → header mapping
-    const fieldMap = {};
-    for (const [field, aliases] of Object.entries(MAP)) {
-      for (const h of headers) {
-        if (aliases.some(a => normalize(h).includes(normalize(a)))) {
-          if (!fieldMap[field]) fieldMap[field] = h;
-        }
-      }
+    // No Name column at all → fail loudly instead of skipping every row with
+    // an identical per-row error. Still records the batch for audit.
+    if (!fieldMap.name) {
+      const msg = 'Could not find a "Name" column. Detected columns: '
+        + (headers.filter(Boolean).join(', ') || 'none')
+        + '. Make sure the header row includes a Name column (see the template).';
+      await LeadImport.create({
+        importedBy: req.admin._id, fileName: req.file.originalname,
+        totalRows: parsedRows.length, imported: 0, skipped: parsedRows.length,
+        importErrors: [msg], status: 'failed', leads: [],
+      });
+      console.warn('[LeadImport] ' + req.file.originalname + ' FAILED: ' + msg);
+      return res.status(400).json({ success:false, message: msg, totalRows: parsedRows.length });
     }
 
-    let imported=0, skipped=0;
-    const errors=[], preview=[], createdLeadIds=[];
+    let imported = 0, skipped = 0;
+    const errors = [], preview = [], createdLeadIds = [], skippedRows = [];
+    const summary = {};   // { category: count }
+    const DEBUG = process.env.LEAD_IMPORT_DEBUG === '1';
 
-    for (let i=0; i<rows.length; i++) {
-      const row = rows[i];
-      const get = (field) => String(row[fieldMap[field]] || '').trim();
+    const recordSkip = (rowNum, info, category, reason) => {
+      skipped++;
+      summary[category] = (summary[category] || 0) + 1;
+      skippedRows.push({ row: rowNum, name: info.name || '', mobile: info.mobile || '', email: info.email || '', category, reason });
+      errors.push('Row ' + rowNum + ': ' + reason);
+      console.warn('[LeadImport] Row ' + rowNum + ' SKIPPED [' + category + ']: ' + reason);
+    };
 
-      const name = get('name');
-      if (!name) { skipped++; errors.push('Row ' + (i+2) + ': Name is required — skipped.'); continue; }
+    for (const { rowNum, data: row } of parsedRows) {
+      const get = (field) => {
+        const h = fieldMap[field];
+        if (!h) return '';
+        const v = row[h];
+        return v === undefined || v === null ? '' : String(v).trim();
+      };
+
+      const name   = get('name');
+      const mobile = _cleanMobile(fieldMap.mobile ? row[fieldMap.mobile] : '');
+      const email  = get('email');
+
+      if (DEBUG) console.log('[LeadImport] Row ' + rowNum + ' parsed: ' + JSON.stringify({ name, mobile, email }));
+
+      if (!name) {
+        const hint = (mobile || email)
+          ? ' (row has mobile: ' + (mobile || '—') + ', email: ' + (email || '—') + ')'
+          : '';
+        recordSkip(rowNum, { name, mobile, email }, 'Missing Name', 'Name is required' + hint);
+        continue;
+      }
 
       // Preserve the exact source from the Excel row (trimmed); fall back to
       // 'csv_import' only when the row has no source at all. New/unique sources
       // are thus added automatically without any hardcoded list.
       const source   = globalSource || get('source') || 'csv_import';
-      const priority = VALID_PRIORITY.includes(get('priority').toLowerCase())? get('priority').toLowerCase(): 'medium';
-      const score    = Number(get('score')) || 10;
-      const rawDate  = get('date');
-      const leadDate = rawDate ? new Date(rawDate) : undefined;
+      const priority = VALID_PRIORITY.includes(get('priority').toLowerCase()) ? get('priority').toLowerCase() : 'medium';
+      // Clamp to the schema's 0-100 range so an out-of-range score cell can't
+      // fail validation and skip an otherwise valid lead.
+      const score    = Math.max(0, Math.min(100, Number(get('score')) || 10));
+      const leadDate = _parseLeadDate(fieldMap.date ? row[fieldMap.date] : undefined);
 
       try {
         const lead = await Lead.create({
           name,
-          email:          get('email')  || undefined,
-          mobile:         get('mobile') || undefined,
+          email:          email  || undefined,
+          mobile:         mobile || undefined,
           city:           get('city')   || undefined,
           state:          get('state')  || undefined,
           courseInterest: get('courseInterest') || undefined,
@@ -620,34 +791,50 @@ exports.importLeads = async (req, res) => {
           // Preserve the file's business date separately; DO NOT backdate
           // createdAt, so freshly imported leads always appear at the top of
           // the list (sorted by createdAt desc).
-          ...(leadDate && !isNaN(leadDate) && { leadDate }),
+          ...(leadDate && { leadDate }),
         });
         imported++;
         createdLeadIds.push(lead._id);
-        if (preview.length < 5) preview.push({ name, email: get('email'), mobile: get('mobile'), stage: 'new', source });
+        if (DEBUG) console.log('[LeadImport] Row ' + rowNum + ' imported → ' + lead._id);
+        if (preview.length < 5) preview.push({ name, email, mobile, stage: 'new', source });
       } catch (err) {
-        skipped++;
-        errors.push('Row ' + (i+2) + ' ("' + name + '"): ' + err.message);
+        const category = err.name === 'ValidationError' ? 'Validation Failed'
+                       : err.code === 11000            ? 'Duplicate (Database)'
+                       : 'Database Error';
+        recordSkip(rowNum, { name, mobile, email }, category, '"' + name + '": ' + err.message);
       }
     }
+
+    console.log('[LeadImport] ' + req.file.originalname
+      + ' → totalRows=' + parsedRows.length + ' imported=' + imported + ' skipped=' + skipped
+      + (blankRowsIgnored ? ' blankRowsIgnored=' + blankRowsIgnored : '')
+      + (Object.keys(summary).length ? ' reasons=' + JSON.stringify(summary) : ''));
 
     // ── Save import batch record ─────────────────────────────────
     const batchStatus = imported === 0 ? 'failed' : skipped > 0 ? 'partial' : 'completed';
     await LeadImport.create({
       importedBy: req.admin._id,
       fileName:   req.file.originalname,
-      totalRows:  rows.length,
+      totalRows:  parsedRows.length,
       imported,
       skipped,
-      importErrors: errors.slice(0, 20),
+      importErrors: errors.slice(0, 50),
       status:       batchStatus,
       leads:      createdLeadIds,
     });
 
-    res.json({ success:true, imported, skipped, errors: errors.slice(0,20), preview,
+    res.json({ success:true, imported, skipped,
+      totalRows: parsedRows.length,
+      blankRowsIgnored,
+      summary,
+      skippedRows: skippedRows.slice(0, 500),
+      errors: errors.slice(0, 100),
+      preview,
+      leadIds: createdLeadIds,
       message: 'Imported ' + imported + ' lead(s)' + (skipped ? ', skipped ' + skipped : '') + '.' });
 
   } catch (err) {
+    console.error('[LeadImport] FAILED: ' + err.message);
     res.status(500).json({ success:false, message: err.message });
   }
 };
@@ -771,6 +958,8 @@ function _parsePdfText(text) {
   for (const line of lines) {
     const parts = line.split(/[,|\t]/).map(p => p.trim());
     if (parts.length >= 2) {
+      // Skip a header line ("Name, Mobile, …") so it doesn't become a lead
+      if (_normHeader(parts[0]) === 'name') continue;
       rows.push({ name: parts[0], mobile: parts[1], email: parts[2]||'', city: parts[3]||'', course: parts[4]||'' });
     }
   }
