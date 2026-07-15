@@ -759,9 +759,19 @@ exports.importLeads = async (req, res) => {
       if (DEBUG) console.log('[LeadImport] Row ' + rowNum + ' parsed: ' + JSON.stringify({ name, mobile, email }));
 
       if (!name) {
-        const hint = (mobile || email)
-          ? ' (row has mobile: ' + (mobile || '—') + ', email: ' + (email || '—') + ')'
-          : '';
+        let hint = '';
+        if (mobile || email) {
+          hint = ' (row has mobile: ' + (mobile || '—') + ', email: ' + (email || '—') + ')';
+        } else {
+          // Show what the row DOES contain so multi-line exports (e.g. Just
+          // Dial enquiry-detail rows) are self-explanatory in the skip list.
+          const cells = Object.values(row)
+            .map(v => String(v == null ? '' : v).trim())
+            .filter(Boolean)
+            .slice(0, 3)
+            .map(c => '"' + (c.length > 40 ? c.slice(0, 40) + '…' : c) + '"');
+          if (cells.length) hint = ' (row content: ' + cells.join(', ') + ')';
+        }
         recordSkip(rowNum, { name, mobile, email }, 'Missing Name', 'Name is required' + hint);
         continue;
       }
