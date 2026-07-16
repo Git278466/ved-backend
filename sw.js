@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE_NAME    = 'ved-admin-v4';
+const CACHE_NAME    = 'ved-admin-v5';
 const OFFLINE_URL   = '/offline.html';
 
 // Static assets to cache immediately on install
@@ -9,7 +9,8 @@ const PRECACHE = [
   '/manifest.json',
   '/icons/icon-192.svg',
   '/icons/icon-512.svg',
-  'https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap',
+  'https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&family=Dancing+Script:wght@700&display=swap',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
 ];
 

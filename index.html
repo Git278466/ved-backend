@@ -8,8 +8,13 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Non-render-blocking fonts: page paints immediately, font applies when ready -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"></noscript>
   <link rel="stylesheet" href="global.css">
+  <!-- Preload above-the-fold hero images for faster LCP -->
+  <link rel="preload" as="image" href="WhatsApp%20Image%202026-03-18%20at%201.03.20%20PM.jpeg">
+  <link rel="preload" as="image" href="children-art.jpeg">
   <meta name="google-site-verification" content="jp3INNMVt0Xynufd1Xn4A2DfXQwR7RWHoXWLv4yRIt4" />
   <style>
     *{
@@ -2917,7 +2922,7 @@ footer{
 
   <img class="hero-bg-img"
        src="WhatsApp%20Image%202026-03-18%20at%201.03.20%20PM.jpeg"
-       alt="VED Foundation banner" loading="eager" decoding="async">
+       alt="VED Foundation banner" loading="eager" decoding="async" fetchpriority="high">
 
   <div class="hero-banner">
 
