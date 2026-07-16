@@ -232,6 +232,19 @@
 [data-theme="dark"] .theme-toggle .fa-sun{display:inline;}
 [data-theme="dark"] .theme-toggle .fa-moon{display:none;}
 
+/* ── Fullscreen toggle button (inherits base look from .hdr-btn) ── */
+.fs-toggle{cursor:pointer;border:none;}
+.fs-toggle:hover{transform:scale(1.05);}
+.fs-toggle i{transition:var(--transition);}
+.fs-toggle .fa-expand{display:inline;}
+.fs-toggle .fa-compress{display:none;}
+.fs-toggle.fs-active .fa-expand{display:none;}
+.fs-toggle.fs-active .fa-compress{display:inline;}
+/* Fullscreen mode: slide sidebar away; prior state restores itself on exit */
+body.fs-mode .sidebar{width:0 !important;overflow:hidden !important;box-shadow:none;}
+body.fs-mode .sidebar-resizer{display:none;}
+body.fs-mode #mobileOverlay{display:none !important;}
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:auto;}
 body{
@@ -2698,6 +2711,10 @@ button:focus-visible,
 
         <button class="theme-toggle" id="themeToggleBtn" title="Toggle Dark/Light Mode" aria-label="Toggle dark mode" onclick="toggleTheme()">
           <i class="fa-solid fa-moon"></i><i class="fa-solid fa-sun"></i>
+        </button>
+
+        <button class="hdr-btn fs-toggle" id="fullscreenBtn" title="Enter Full Screen" aria-label="Enter Full Screen" aria-pressed="false" onclick="toggleFullscreen()">
+          <i class="fa-solid fa-expand"></i><i class="fa-solid fa-compress"></i>
         </button>
 
         <div class="hdr-panel-wrap">
@@ -12106,6 +12123,41 @@ function toggleTheme() {
   localStorage.setItem('ved-theme', next);
   const m = document.getElementById('metaThemeColor');
   if (m) m.setAttribute('content', next === 'dark' ? '#0B1120' : '#1A4FBB');
+}
+
+/* ── Fullscreen toggle (native Fullscreen API, webkit fallback for Safari) ── */
+function _fsElement() {
+  return document.fullscreenElement || document.webkitFullscreenElement || null;
+}
+
+function toggleFullscreen() {
+  const root = document.documentElement;
+  const p = _fsElement()
+    ? (document.exitFullscreen || document.webkitExitFullscreen).call(document)
+    : (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
+  if (p && p.catch) p.catch(() => {}); // request can be denied (e.g. iframe policy)
+}
+
+function _syncFullscreenBtn() {
+  const btn = document.getElementById('fullscreenBtn');
+  if (!btn) return;
+  const active = !!_fsElement();
+  const label  = active ? 'Exit Full Screen' : 'Enter Full Screen';
+  btn.classList.toggle('fs-active', active);
+  document.body.classList.toggle('fs-mode', active); // hides sidebar via CSS while fullscreen
+  btn.title = label;
+  btn.setAttribute('aria-label', label);
+  btn.setAttribute('aria-pressed', String(active));
+}
+
+// Fires on every entry/exit path (button, ESC, browser UI) — keeps icon in sync
+document.addEventListener('fullscreenchange', _syncFullscreenBtn);
+document.addEventListener('webkitfullscreenchange', _syncFullscreenBtn);
+
+// Hide the button entirely where the API is unavailable (e.g. iPhone Safari)
+if (!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen)) {
+  const _fsBtn = document.getElementById('fullscreenBtn');
+  if (_fsBtn) _fsBtn.style.display = 'none';
 }
 
 function toggleSidebar() {
